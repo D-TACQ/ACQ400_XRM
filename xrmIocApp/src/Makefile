@@ -80,13 +80,10 @@ ifneq ($(SNCSEQ),)
     sncProgram_LIBS += $(EPICS_BASE_HOST_LIBS)
 endif
 
-# Link QSRV (pvAccess Server) if available
-ifdef EPICS_QSRV_MAJOR_VERSION
-    xrmIoc_LIBS += qsrv
-    xrmIoc_LIBS += $(EPICS_BASE_PVA_CORE_LIBS)
-    xrmIoc_DBD += PVAServerRegister.dbd
-    xrmIoc_DBD += qsrv.dbd
-endif
+xrmIoc_DBD += softIocPVX.dbd
+xrmIoc_DBD += pvxsIoc.dbd
+xrmIoc_LIBS += pvxs
+xrmIoc_LIBS += pvxsIoc
 
 # Finally link IOC to the EPICS Base libraries
 xrmIoc_LIBS += $(EPICS_BASE_IOC_LIBS)
