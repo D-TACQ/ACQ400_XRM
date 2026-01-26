@@ -80,10 +80,15 @@ ifneq ($(SNCSEQ),)
     sncProgram_LIBS += $(EPICS_BASE_HOST_LIBS)
 endif
 
+# XRM customer mandated features
+
+xrmIoc_DBD += reccaster.dbd
 xrmIoc_DBD += softIocPVX.dbd
 xrmIoc_DBD += pvxsIoc.dbd
+
 xrmIoc_LIBS += pvxs
 xrmIoc_LIBS += pvxsIoc
+xrmIoc_LIBS += reccaster
 
 # Finally link IOC to the EPICS Base libraries
 xrmIoc_LIBS += $(EPICS_BASE_IOC_LIBS)
