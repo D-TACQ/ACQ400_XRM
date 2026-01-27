@@ -23,10 +23,11 @@
 
 # Variables and paths to dependent modules:
 #MODULES = /path/to/modules
+MODULES = $(EPICS_BASE)/../modules/
 #MYMODULE = $(MODULES)/my-module
 
 # If using the sequencer, point SNCSEQ at its top directory:
-#SNCSEQ = $(MODULES)/seq-ver
+SNCSEQ = $(MODULES)/seq
 
 # EPICS_BASE should appear last so earlier modules can override stuff:
 EPICS_BASE = /home/pgm/PROJECTS/ACQ400_ESW_TOP/EPICS7/acq400_epics_base
@@ -40,3 +41,5 @@ EPICS_BASE = /home/pgm/PROJECTS/ACQ400_ESW_TOP/EPICS7/acq400_epics_base
 -include $(TOP)/../RELEASE.local
 -include $(TOP)/../RELEASE.$(EPICS_HOST_ARCH).local
 -include $(TOP)/configure/RELEASE.local
+
+ASYN=$(MODULES)/asyn/

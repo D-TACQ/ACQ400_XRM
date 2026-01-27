@@ -63,6 +63,7 @@ xrmIoc_LIBS += xrmIocSupport
 # To build SNL programs, SNCSEQ must be defined
 # in the <top>/configure/RELEASE file
 ifneq ($(SNCSEQ),)
+    $(info pgmwashere SNCSEQ $(SNCSEQ))
     # Build sncExample into xrmIocSupport
     sncExample_SNCFLAGS += +r
     xrmIoc_DBD += sncExample.dbd
@@ -80,6 +81,13 @@ ifneq ($(SNCSEQ),)
     sncProgram_LIBS += $(EPICS_BASE_HOST_LIBS)
 endif
 
+# XRM D-TACQ mandated
+acq400ioc_DBD += asyn.dbd
+acq400ioc_DBD += drvAsynIPPort.dbd
+acq400ioc_DBD += stream.dbd
+
+
+
 # XRM customer mandated features
 
 xrmIoc_DBD += reccaster.dbd
@@ -92,6 +100,8 @@ xrmIoc_LIBS += reccaster
 
 # Finally link IOC to the EPICS Base libraries
 xrmIoc_LIBS += $(EPICS_BASE_IOC_LIBS)
+
+PROD_SYS_LIBS_DEFAULT += stream asyn pcre fftw3f
 
 include $(TOP)/configure/RULES
 #----------------------------------------
