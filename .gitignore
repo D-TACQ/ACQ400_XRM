@@ -2,7 +2,6 @@ xrmIocApp/src/O.Common/
 xrmIocApp/src/O.linux-arm/
 xrmIocApp/src/O.linux-x86_64/
 xrmIocApp/src/split2.h
-xrmIocApp/Db
 bin/
 lib
 opkg/
