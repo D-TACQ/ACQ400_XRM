@@ -1,6 +1,7 @@
 #!/bin/bash
 # xl- excluding libraries. Libs are assumed to be preloaded, eg with .ovl
 
+PACKAGE=acq400_xrm
 DC="$(date +%y%m%d%H%M)"
 ISXL=1
 
@@ -70,21 +71,21 @@ else
 	GS=""
 fi
 
-if [ "$BR" = "epics7" ]; then
+if [ "$BR" = "main" ]; then
 	echo building default branch epics7, nothing to say
 	BC=$GS
 else
 	echo building branch $BR
 	BC="${BR}_${GS}"
 fi
-RN=${SEQ}-xrmioc-${BC}${DC}.tgz
+RN=${SEQ}-${PACKAGE}-${BC}${DC}.tgz
 tar cvzf release/$RN -C opkg .
 echo git tag -a -m R${DC} R${DC}
 git tag -a -m "R${DC} ${BR}" R${DC}
 ls -l release/$RN
 if [ "$BR" = "epics7" ]; then
 	echo "default branch $BR, releasing package"
-	rm -f ../PACKAGES/${SEQ}-xrmioc*
-	cp release/${SEQ}-xrmioc-${DC}.tgz ../PACKAGES/
+	rm -f ../PACKAGES/${SEQ}-${PACKAGE}*
+	cp release/${SEQ}-${PACKAGE}-${DC}.tgz ../PACKAGES/
 fi
 
