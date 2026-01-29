@@ -1,29 +1,26 @@
-# Install directories
-/bin/
-/cfg/
-/db/
-/dbd/
-/html/
-/include/
-/lib/
-/templates/
+acq400iocApp/src/O.Common/
+acq400iocApp/src/O.linux-arm/
+acq400iocApp/src/O.linux-x86_64/
+bin/
+lib
+opkg/
+release/
+# pgm
+.cproject
+.project
+.settings/
+TODO
+acq2iocApp/Db/O.linux-arm/
+acq2iocApp/Db/O.linux-x86_64/
+acq2iocApp/src/O.Common/
+acq2iocApp/src/O.linux-arm/
+acq2iocApp/src/O.linux-x86_64/
+acq400iocApp/src/split2.h
+configure/O.linux-arm/
+configure/O.linux-x86_64/
+db/intclk_noinhibit.db
+dbd/acq2ioc.dbd
+dbd/acq400ioc.dbd
+include/
+SAFE/
 
-# Local configuration files
-/configure/*.local
-
-# iocBoot generated files
-/iocBoot/*ioc*/cdCommands
-/iocBoot/*ioc*/dllPath.bat
-/iocBoot/*ioc*/envPaths
-/iocBoot/*ioc*/relPaths.sh
-
-# Build directories
-O.*/
-
-# Common files created by other tools
-/QtC-*
-/.vscode/
-*.orig
-*.log
-.*.swp
-.DS_Store
