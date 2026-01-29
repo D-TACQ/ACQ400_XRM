@@ -29,9 +29,9 @@ else
 	echo "WARNING: file /mnt/local/sysconfig/epics.sh missing"
 fi
 
-ACQ400_XRM_IOC=/usr/local/bin/acq400_xrm_ioc
-if [ -e /mnt/local/acq400_xrm_ioc ]; then
-	ACQ400_XRM_IOC=/mnt/local/acq400_xrm_ioc
+ACQ400_XRM_IOC=/usr/local/bin/xrmIoc
+if [ -e /mnt/local/xrmIoc ]; then
+	ACQ400_XRM_IOC=/mnt/local/xrmIoc
 	echo use patch IOC $ACQ400_XRM_IOC
 fi
 
