@@ -1,0 +1,6 @@
+record(lsi, "$(user):xrmIoc:version") {
+    field(DTYP, "xrmIoc version")
+    field(DESC, "Version string")
+    field(SIZV, "$(SIZV=200)")
+    field(PINI, "YES")
+}
