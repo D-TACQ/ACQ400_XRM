@@ -16,7 +16,7 @@ if [ -f /mnt/local/epics.sh ]; then
 	source /mnt/local/epics.sh
 fi
 if [ -f /mnt/local/sysconfig/epics.sh ]; then
-	if [ -z $EPICS_LOCAL_SYSCONFIG ]; then 
+	if [ -z $EPICS_LOCAL_SYSCONFIG ]; then
 		source /mnt/local/sysconfig/epics.sh
 		(
 			grep ^export /mnt/local/sysconfig/epics.sh
@@ -52,14 +52,14 @@ wait_ioc_records_loaded() {
 		fi
 		sleep 1
 		let pollcat="$pollcat+1"
-	done	
+	done
 }
 
 
 make_stcmd() {
 	if [ ! -e ${STCMD} ]; then (
-		echo "++ create EPICS db ${STCMD}" 
-		cd ${ETOP}		
+		echo "++ create EPICS db ${STCMD}"
+		cd ${ETOP}
 		./scripts/load.records > ${STCMD}
 	) fi
 	for file in /usr/local/epics_xrm/init.d/*.init_final
@@ -70,11 +70,11 @@ make_stcmd() {
 		elif [ -e $file ]; then
 			echo 1>&2 "source extension $file"
 			source $file
-		fi 
+		fi
 	done
 	cat - >> ${STCMD} <<EOF
 dbLoadRecords("db/local-aliases.db","UUT=${HOST}")
-iocInit()	
+iocInit()
 dbl > ${RL}
 seqShow > ${RL}.done
 EOF
@@ -91,10 +91,10 @@ make_aliases_loop() {
 	done
 }
 make_aliases() {
-	make_aliases_loop $1 <$RL >/usr/local/epics/db/local-aliases.db	 
+	make_aliases_loop $1 <$RL >/usr/local/epics/db/local-aliases.db
 }
 
-bump() 
+bump()
 {
 	echo X | tr X \\030 | acq4xx-epics-console >/dev/null
 }
@@ -140,7 +140,7 @@ wait_ntp() {
 restart() {
 	if [ "$1" = "force" ]; then
 		rm -f ${STCMD}
-	fi	
+	fi
 	make_stcmd
 	wait_ntp
 	stop_ioc
