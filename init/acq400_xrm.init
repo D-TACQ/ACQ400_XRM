@@ -8,6 +8,7 @@ LOG=/var/log/xrm_epics.log
 NICE=10
 LG="logger -t acq400_xrm.init"
 RL=/tmp/xrm_records.dbl
+CP=2322                        # @@todo /etc/services
 
 if [ -f /etc/profile.d/epics.sh ]; then
 	source /etc/profile.d/epics.sh
@@ -101,8 +102,8 @@ bump()
 
 start_ioc() {
 	/usr/local/bin/procServ \
-		-c ${ETOP} -p $PIDF -L $LOG 2222 \
-		/bin/nice -n $NICE ${ACQ400IOC} ${STCMD}
+		-c ${ETOP} -p $PIDF -L $LOG ${CP} \
+		/bin/nice -n $NICE ${ACQ400_XRM_IOC} ${STCMD}
 	while [ ! -r $PIDF ]; do
 		usleep 10000
 	done
