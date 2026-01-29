@@ -11,6 +11,11 @@ DB += xrmIocVersion.db
 DB += dbSubExample.db
 DB += user.substitutions
 
+DB += RecCaster.substitutions
+DB += ch.template ch32.substitutions ch32.db
+DB += ch.template ch16.substitutions ch16.db
+DB += ch.template ch8.substitutions ch8.db
+
 # If <anyname>.db template is not named <anyname>*.template add
 # <anyname>_TEMPLATE = <templatename>
 
