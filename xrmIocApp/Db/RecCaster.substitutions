@@ -1,0 +1,15 @@
+# RecCaster.substitutions
+# Initialise templates for RecCaster variables
+# Pierrick Hanlet - 2022-01-18
+#
+#################################################################
+# RecCaster
+#
+file reccaster.template
+{
+pattern { acc,  sys,  sub, num    }
+        { A0TST, IS, BLE, SYS }
+}
+#################################################################
+
+
