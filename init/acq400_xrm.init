@@ -11,12 +11,6 @@ RL=/tmp/xrm_records.dbl
 CP=2322                        # @@todo /etc/services
 XRM_EPICS_SH=/mnt/local/sysconfig/xrm_epics.sh
 
-if [ -f /etc/profile.d/epics.sh ]; then
-	source /etc/profile.d/epics.sh
-fi
-if [ -f /mnt/local/epics.sh ]; then
-	source /mnt/local/epics.sh
-fi
 if [ -f $XRM_EPICS_SH ]; then
 	source $XRM_EPICS_SH
 	(
