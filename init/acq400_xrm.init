@@ -9,6 +9,7 @@ NICE=10
 LG="logger -t acq400_xrm.init"
 RL=/tmp/xrm_records.dbl
 CP=2322                        # @@todo /etc/services
+XRM_EPICS_SH=/mnt/local/sysconfig/xrm_epics.sh
 
 if [ -f /etc/profile.d/epics.sh ]; then
 	source /etc/profile.d/epics.sh
@@ -16,17 +17,15 @@ fi
 if [ -f /mnt/local/epics.sh ]; then
 	source /mnt/local/epics.sh
 fi
-if [ -f /mnt/local/sysconfig/epics.sh ]; then
-	if [ -z $EPICS_LOCAL_SYSCONFIG ]; then
-		source /mnt/local/sysconfig/epics.sh
-		(
-			grep ^export /mnt/local/sysconfig/epics.sh
-			[ -z $IOC_HOST ] && echo export IOC_HOST=$(hostname)
-			echo export EPICS_LOCAL_SYSCONFIG=1
-		) >> /etc/profile.d/epics.sh
-	fi
+if [ -f $XRM_EPICS_SH ]; then
+	source $XRM_EPICS_SH
+	(
+		grep ^export $XRM_EPICS_SH
+		[ -z $IOC_HOST ] && echo export IOC_HOST=$(hostname)
+		echo export EPICS_LOCAL_SYSCONFIG=1
+	) >> /etc/profile.d/xrm_epics.sh
 else
-	echo "WARNING: file /mnt/local/sysconfig/epics.sh missing"
+	echo "WARNING: file $XRM_EPICS_SH missing"
 fi
 
 ACQ400_XRM_IOC=/usr/local/bin/xrmIoc
