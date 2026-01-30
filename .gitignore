@@ -1,10 +1,13 @@
-xrmIocApp/src/O.Common/
-xrmIocApp/src/O.linux-arm/
-xrmIocApp/src/O.linux-x86_64/
 xrmIocApp/src/split2.h
+O.*/
 bin/
 lib
 opkg/
+db/*.template
+db/*.substitutions
+db/ch32.db
+db/ch16.db
+db/ch8.db
 release/
 # pgm
 .cproject

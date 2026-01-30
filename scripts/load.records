@@ -7,6 +7,8 @@ TYPE=${TYPE:-SHORT}
 CB_QSIZE=${CB_QSIZE:-2000}
 PVD_TABLE_SIZE=${PVD_TABLE_SIZE:-1024}
 
+ACQ400XRM_ALIASES=/mnt/local/sysconfig/xrm-aliases.db
+
 load_system() {
     [ -e /sys/class/net/eth0 ] && ip0=$(/usr/local/epics/scripts/ifconfig_eth0)
     [ -e /sys/class/net/eth1 ] && ip1=$(/usr/local/epics/scripts/ifconfig_eth0 eth1)
@@ -23,7 +25,14 @@ cat - <<EOF
 epicsEnvSet("STREAM_PROTOCOL_PATH","./protocols")
 dbPvdTableSize($PVD_TABLE_SIZE)
 dbLoadDatabase("dbd/xrmIoc.dbd",0,0)
-acq400ioc_registerRecordDeviceDriver(pdbbase)
+xrmIoc_registerRecordDeviceDriver(pdbbase)
+
+# cribs from auto-gen st.cmd
+#- Set this to see messages from mySub
+#-var mySubDebug 1
+
+#- Run this to trace the stages of iocInit
+traceIocInit
 dbLoadRecords("db/system.db","UUT=${HOST},$dba,SPORT=S0")
 EOF
 }
@@ -31,7 +40,9 @@ EOF
 source /etc/sysconfig/acq400.conf
 
 load_system
-#  st_pre.cmd                                                                   
+#  st_pre.cmd
+[ -e $ACQ400XRM_ALIASES ] && \
+        dbLoadRecords("$ACQ400XRM_ALIASES","UUT=$HOST")
 dbLoadRecords("db/local-aliases.db","UUT=acq2206_088")
 iocInit()
 dbl > /tmp/xrmrecords.dbl
