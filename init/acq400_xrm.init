@@ -138,7 +138,7 @@ bump)
 forcestart)
 	restart force;;
 start|"")
-	make_aliases
+	make_aliases $HOST
 	restart;;
 stop)
 	stop_ioc;;
