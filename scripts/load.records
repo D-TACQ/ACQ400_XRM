@@ -10,7 +10,8 @@ PVD_TABLE_SIZE=${PVD_TABLE_SIZE:-1024}
 ACQ400XRM_ALIASES=/mnt/local/sysconfig/xrm-aliases.db
 RL=/tmp/xrm_records.dbl
 
-load_system() {
+source /etc/sysconfig/acq400.conf
+
 cat - <<EOF
 epicsEnvSet("STREAM_PROTOCOL_PATH","./protocols")
 dbPvdTableSize($PVD_TABLE_SIZE)
@@ -25,15 +26,17 @@ xrmIoc_registerRecordDeviceDriver(pdbbase)
 traceIocInit
 #dbLoadRecords("db/system.db","UUT=${HOST},$dba,SPORT=S0")
 EOF
-}
 
-source /etc/sysconfig/acq400.conf
-
-load_system
 #  st_pre.cmd
-[ -e $ACQ400XRM_ALIASES ] && \
-        dbLoadRecords("$ACQ400XRM_ALIASES","UUT=$HOST")
+if [ -e $ACQ400XRM_ALIASES ]; then
+        cat - <<EOF
+dbLoadRecords("$ACQ400XRM_ALIASES","UUT=$HOST")
+EOF
+cat - <<EOF
 dbLoadRecords("db/local-aliases.db","UUT=acq2206_088")
 iocInit()
 dbl > ${RL}
+EOF
+
+
 
