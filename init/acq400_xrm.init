@@ -7,7 +7,7 @@ PIDF=/var/run/acq400_xrm_ioc.pid
 LOG=/var/log/xrm_epics.log
 NICE=10
 LG="logger -t acq400_xrm.init"
-RL=/tmp/xrm_records.dbl
+RL_ACQ400=/tmp/records.dbl
 CP=2322                        # @@todo /etc/services
 XRM_EPICS_SH=/mnt/local/sysconfig/xrm_epics.sh
 
@@ -66,16 +66,6 @@ make_stcmd() {
 			source $file
 		fi
 	done
-	cat - >> ${STCMD} <<EOF
-dbLoadRecords("db/local-aliases.db","UUT=${HOST}")
-iocInit()
-dbl > ${RL}
-seqShow > ${RL}.done
-EOF
-	touch /dev/shm/AI
-	if [ -x /usr/local/epics/scripts/${MB_MODEL}_init.sh ]; then
-		/usr/local/epics/scripts/${MB_MODEL}_init.sh create
-	fi
 }
 
 make_aliases_loop() {
@@ -85,12 +75,12 @@ make_aliases_loop() {
 	done
 }
 make_aliases() {
-	make_aliases_loop $1 <$RL >/usr/local/epics/db/local-aliases.db
+	make_aliases_loop $1 <$RL_ACQ400 >${ETOP}/db/local-aliases.db
 }
 
 bump()
 {
-	echo X | tr X \\030 | acq4xx-epics-console >/dev/null
+	echo X | tr X \\030 | xrm_epics-console >/dev/null
 }
 
 start_ioc() {

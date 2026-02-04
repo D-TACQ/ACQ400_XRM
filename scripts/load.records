@@ -8,6 +8,7 @@ CB_QSIZE=${CB_QSIZE:-2000}
 PVD_TABLE_SIZE=${PVD_TABLE_SIZE:-1024}
 
 ACQ400XRM_ALIASES=/mnt/local/sysconfig/xrm-aliases.db
+RL=/tmp/xrm_records.dbl
 
 load_system() {
 cat - <<EOF
@@ -32,7 +33,7 @@ load_system
 #  st_pre.cmd
 [ -e $ACQ400XRM_ALIASES ] && \
         dbLoadRecords("$ACQ400XRM_ALIASES","UUT=$HOST")
-#dbLoadRecords("db/local-aliases.db","UUT=acq2206_088")
+dbLoadRecords("db/local-aliases.db","UUT=acq2206_088")
 iocInit()
-dbl > /tmp/xrmrecords.dbl
+dbl > ${RL}
 
