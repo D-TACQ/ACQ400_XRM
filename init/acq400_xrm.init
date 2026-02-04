@@ -138,6 +138,7 @@ bump)
 forcestart)
 	restart force;;
 start|"")
+	make_aliases
 	restart;;
 stop)
 	stop_ioc;;
