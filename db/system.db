@@ -1,0 +1,87 @@
+record (longin, "${UUT}:SYS:UPTIME") {
+	field(DTYP, "Soft Channel")
+#	field(DTYP, "longinAcqHost")
+#	field(INP, "@/proc/uptime")
+	field(SCAN, "1 second")
+	field(FLNK, "${UUT}:SYS:IOCUPTIME")
+}
+
+record (calc, "${UUT}:SYS:IOCUPTIME") {
+	field(CALC, "VAL+1")
+	field(FLNK, "${UUT}:SYS:HB")
+}
+
+record (calc, "${UUT}:SYS:HB") {
+	field(INPA, "${UUT}:SYS:UPTIME")
+	field(CALC, "A&3")
+}
+
+record (bo, "${UUT}:IOC_READY") {
+	field(DESC, "IOC is ready")
+	field(DTYP, "Soft Channel")
+	field(VAL,  "0")
+	field(PINI, "YES")
+	field(ZNAM, "0")
+	field(ONAM, "1")
+}
+
+
+record (stringin, "${UUT}:SYS:VERSION:SW") {
+	field(DTYP, "Soft Channel")
+	field(VAL,  "${SW}")	
+	field(PINI, "YES")
+}
+
+record (stringin, "${UUT}:SYS:VERSION:FPGA" ) {
+	field(DTYP, "Soft Channel")
+	field(VAL,  "${GW}")	
+	field(PINI, "YES")
+}
+record (stringin, "${UUT}:SYS:VERSION:FPGA1" ) {
+        field(DTYP, "Soft Channel")
+        field(VAL,  "${GW1}")
+        field(PINI, "YES")
+}
+record (stringin, "${UUT}:SYS:VERSION:FPGA2" ) {
+        field(DTYP, "Soft Channel")
+        field(VAL,  "${GW2}")
+        field(PINI, "YES")
+}
+
+
+record (stringin, "${UUT}:SYS:IFCONFIG:ETH0" ) {
+	field(DTYP, "Soft Channel")
+	field(VAL,  "${IP0}")
+	field(PINI, "YES")
+}
+record (stringin, "${UUT}:SYS:IFCONFIG:ETH1" ) {
+	field(DTYP, "Soft Channel")
+	field(VAL,  "${IP1}")
+	field(PINI, "YES")
+}
+record (stringin, "IP:${ipaddrbis}") {
+	field(DTYP, "Soft Channel")
+	field(VAL,  "${UUT}")
+	field(PINI, "YES")
+	field(DESC,  "Reverse DNS feature")
+}
+
+record (bo, "${UUT}:NOALIASES") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "disable aliases")
+	field(DTYP, "Soft Channel")
+}
+
+record(stringout, "${UUT}:USER") {
+	field(DTYP, "Soft Channel")
+	field(OUT, "")
+	field(PINI, "YES")
+}
+
+record(stringout, "${UUT}:TEST_DESCR") {
+	field(DTYP, "Soft Channel")
+	field(OUT, "")
+	field(PINI, "YES")
+}
+
