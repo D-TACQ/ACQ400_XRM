@@ -12,20 +12,34 @@ RL=/tmp/xrm_records.dbl
 
 source /etc/sysconfig/acq400.conf
 
+
+load_system() {
+    [ -e /sys/class/net/eth0 ] && ip0=$(/usr/local/epics/scripts/ifconfig_eth0)
+    [ -e /sys/class/net/eth1 ] && ip1=$(/usr/local/epics/scripts/ifconfig_eth0 eth1)
+    if [ "x$ip0" != "x" ]; then
+        ipx=$ip0
+    elif [ "x$ip1" != "x" ]; then
+        ipx=$ip1
+    fi
+    ipb=$(echo $ipx | tr . :)
+    sw=$(head -n1 $ETC0/software_version)
+    gw=$(sed -e 's/TOP_//' /etc/acq400/0/fpga_version | awk '{ print $1 }' | sed -e 's/ACQ2106/216/' -e 's/ACQ2206/226/' -e 's/DMA/D/')
+    dba="ipaddrbis=$ipb,IP0=$ip0,IP1=$ip1,SW=$sw,GW=${gw:0:39},GW1=${gw:0:21},GW2=${gw:21:66}"
 cat - <<EOF
+# load_system
 epicsEnvSet("STREAM_PROTOCOL_PATH","./protocols")
 dbPvdTableSize($PVD_TABLE_SIZE)
 dbLoadDatabase("dbd/xrmIoc.dbd",0,0)
 xrmIoc_registerRecordDeviceDriver(pdbbase)
-
-# cribs from auto-gen st.cmd
-#- Set this to see messages from mySub
-#-var mySubDebug 1
-
 #- Run this to trace the stages of iocInit
 traceIocInit
-dbLoadRecords("db/system.db","UUT=${HOST}")
+dbLoadRecords("db/system.db","UUT=${HOST},$dba")
 EOF
+}
+
+# execution begins
+
+load_system
 
 #  st_pre.cmd
 if [ -e $ACQ400XRM_ALIASES ]; then
