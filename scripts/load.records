@@ -8,6 +8,7 @@ CB_QSIZE=${CB_QSIZE:-2000}
 PVD_TABLE_SIZE=${PVD_TABLE_SIZE:-1024}
 
 ACQ400XRM_ALIASES=/mnt/local/sysconfig/xrm-aliases.db
+ACQ400XRM_GROUP=/mnt/local/sysconfig/xrm-group.json
 RL=/tmp/xrm_records.dbl
 
 source /etc/sysconfig/acq400.conf
@@ -45,6 +46,11 @@ load_system
 if [ -e $ACQ400XRM_ALIASES ]; then
         cat - <<EOF
 dbLoadRecords("$ACQ400XRM_ALIASES","UUT=$HOST")
+EOF
+fi
+if [ -e $ACQ400XRM_GROUP ]; then
+        cat - <<EOF
+dbLoadGroup("$ACQ400XRM_GROUP","UUT=$HOST")
 EOF
 fi
 cat - <<EOF

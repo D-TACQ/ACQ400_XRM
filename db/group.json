@@ -1,0 +1,18 @@
+# https://epics-base.github.io/pvxs/qgroup.html#groupjson
+
+record(ai, "rec:X") {
+    info(Q:group, {
+        "grp:name": {
+            "X": {+channel:"VAL"}
+        }
+    })
+}
+record(ai, "rec:Y") {
+    info(Q:group, {
+        "grp:name": {
+            "Y": {+channel:"VAL"} # .VAL in enclosing record()
+        }
+    })
+}
+
+
