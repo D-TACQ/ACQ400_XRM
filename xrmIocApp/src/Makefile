@@ -52,6 +52,7 @@ xrmIoc_DBD += initTrace.dbd
 
 # xrmIoc_registerRecordDeviceDriver.cpp derives from xrmIoc.dbd
 xrmIoc_SRCS += xrmIoc_registerRecordDeviceDriver.cpp
+xrmIoc_SRCS += xrm_struct_test.cpp
 
 # Build the main IOC entry point where needed
 xrmIoc_SRCS_DEFAULT += xrmIocMain.cpp
