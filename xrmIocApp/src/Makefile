@@ -49,11 +49,13 @@ xrmIoc_DBD += dbSubExample.dbd
 xrmIoc_DBD += devxrmIocVersion.dbd
 xrmIoc_DBD += xrmIocHello.dbd
 xrmIoc_DBD += initTrace.dbd
+xrmIoc_DBD += acq400_FMT_sim.dbd
 
 # xrmIoc_registerRecordDeviceDriver.cpp derives from xrmIoc.dbd
 xrmIoc_SRCS += xrmIoc_registerRecordDeviceDriver.cpp
 xrmIoc_SRCS += xrm_struct_support.cpp
 xrmIoc_SRCS += xrm_struct_test.cpp
+xrmIoc_SRCS += acq400_FMT_sim.cpp
 
 # Build the main IOC entry point where needed
 xrmIoc_SRCS_DEFAULT += xrmIocMain.cpp
@@ -61,6 +63,7 @@ xrmIoc_SRCS_vxWorks += -nil-
 
 # Link in the code from our support library
 xrmIoc_LIBS += xrmIocSupport
+xrmIoc_LIBS += acq
 
 # To build SNL programs, SNCSEQ must be defined
 # in the <top>/configure/RELEASE file
