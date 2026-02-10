@@ -80,7 +80,9 @@ void acq400_FMT_Sim::task(void) {
 		update_fmt();
 		setIntegerParam(P_UPDATES, ++update);
 		setInteger64Param(P_TS_USEC, now_us);
+		callParamCallbacks();
 		usleep(50000);
+
 	}
 }
 
