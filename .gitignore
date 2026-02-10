@@ -19,3 +19,5 @@ configure/O.linux-x86_64/
 include/
 SAFE/
 iocBoot/iocxrmIoc/envPaths
+dbd/xrmIoc.dbd
+
