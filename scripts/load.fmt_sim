@@ -1,5 +1,5 @@
 #!/bin/sh
 
 echo acq400_FMT_SimConfigure\(FMTS\)
-PRAMS="UUT=${HOST},PORT=FMTS"
+PRAMS="UUT=${IOC_HOST},PORT=FMTS"
 echo dbLoadRecords\(\"db/fmt_sim.db\",\"${PRAMS}\"\)

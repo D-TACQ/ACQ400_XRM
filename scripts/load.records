@@ -11,6 +11,8 @@ ACQ400XRM_ALIASES=/mnt/local/sysconfig/xrm-aliases.db
 ACQ400XRM_GROUP=/mnt/local/sysconfig/xrm-group.json
 RL=/tmp/xrm_records.dbl
 
+ETC0=/etc/acq400/0
+
 source /etc/sysconfig/acq400.conf
 
 XRM_DEFS=/mnt/local/sysconfig/xrm_epics.sh
