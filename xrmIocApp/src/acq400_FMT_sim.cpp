@@ -18,12 +18,27 @@ int acq400_FMT_Sim::nice = ::getenv_default("acq400_FMT_Sim_NICE", 0);
 epicsInt64 time_now()
 {
 	struct timespec ts_now;
+	static bool report_complete;
 	epicsInt64 _now_us;
 	int rc = clock_gettime(CLOCK_REALTIME, &ts_now);
 	if (rc != 0){
 		perror("clock_gettime");
 	}
+#ifndef OVERFLOW_NOW_SUCKER
+	_now_us = ts_now.tv_sec;
+	_now_us = _now_us*1000000 + ts_now.tv_nsec/1000;
+	if (_now_us < 0){
+		if (!report_complete){
+			fprintf(stderr, "NO WAY, JOSE! %lld  %u %u\n", _now_us, ts_now.tv_sec, ts_now.tv_nsec);
+			report_complete = true;
+		}
+	}else{
+		report_complete = false;
+	}
+#else
 	_now_us = ts_now.tv_sec*1000000 + ts_now.tv_nsec/1000;
+#endif
+
 	return _now_us;
 }
 
@@ -47,8 +62,8 @@ void acq400_FMT_Sim::task_runner(void *drvPvt)
 acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 		asynPortDriver(portName,
 		/* maxAddr */		FMT_ROWS,    /* nchan from 0 */
-		/* Interface mask */    asynEnumMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask|asynDrvUserMask,
-		/* Interrupt mask */	asynEnumMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask,
+		/* Interface mask */    asynEnumMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask|asynInt64Mask|asynDrvUserMask,
+		/* Interrupt mask */	asynEnumMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask|asynInt64Mask,
 		/* asynFlags no block*/ 0,
 		/* Autoconnect */       1,
 		/* Default priority */  0,

@@ -7,7 +7,7 @@ record(longin, "${UUT}:FMT_SIM:UPDATES")
 	field(TSE,  "-2")
 }
 
-record(longin, "${UUT}:FMT_SIM:TS_USEC")
+record(int64in, "${UUT}:FMT_SIM:TS_USEC")
 {
 	field(PINI, "0")
 	field(DTYP, "asynInt64")
