@@ -78,6 +78,7 @@ void acq400_FMT_Sim::task(void) {
 	/* fake event loop to start */
 	while(1){
 		update_fmt();
+		updateTimeStamp();
 		setIntegerParam(P_UPDATES, ++update);
 		setInteger64Param(P_TS_USEC, now_us);
 		callParamCallbacks();
