@@ -87,9 +87,9 @@ ifneq ($(SNCSEQ),)
 endif
 
 # XRM D-TACQ mandated
-acq400ioc_DBD += asyn.dbd
-acq400ioc_DBD += drvAsynIPPort.dbd
-acq400ioc_DBD += stream.dbd
+xrmIoc_DBD += asyn.dbd
+xrmIoc_DBD += drvAsynIPPort.dbd
+xrmIoc_DBD += stream.dbd
 
 
 
