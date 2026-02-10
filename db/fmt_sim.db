@@ -1,0 +1,17 @@
+record(longin, "${UUT}:FMT_SIM:UPDATES")
+{
+	field(PINI, "0")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))UPDATES")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+}
+
+record(longin, "${UUT}:FMT_SIM:TS_USEC")
+{
+	field(PINI, "0")
+	field(DTYP, "asynInt64")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TS_USEC")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+}
