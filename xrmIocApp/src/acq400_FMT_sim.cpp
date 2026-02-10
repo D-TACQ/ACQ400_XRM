@@ -8,33 +8,33 @@
 #include "acq400_asyn_common.h"
 #include "acq400_FMT_sim.h"
 #include "acq-util.h"
-
+#include <unistd.h>
 
 
 static const char *driverName="acq400_FMT_sim";
 
 int acq400_FMT_Sim::nice = ::getenv_default("acq400_FMT_Sim_NICE", 0);
 
-epicsUInt64 time_now()
+epicsInt64 time_now()
 {
 	struct timespec ts_now;
-	epicsUInt64 us_now;
+	epicsInt64 _now_us;
 	int rc = clock_gettime(CLOCK_REALTIME, &ts_now);
 	if (rc != 0){
 		perror("clock_gettime");
 	}
-	us_now = ts_now.tv_sec*1000000 + ts_now.tv_nsec/1000;
-	return us_now;
+	_now_us = ts_now.tv_sec*1000000 + ts_now.tv_nsec/1000;
+	return _now_us;
 }
 
 void acq400_FMT_Sim::update_fmt()
 {
-	epicsUInt64 now = time_now();
+	now_us = time_now();
 
 	for (int ii = 0; ii < FMT_ROWS; ++ii){
 		fmt[ii].event = 0x1000 + ii;
 		fmt[ii].client_data = ii;
-		fmt[ii].timestamp = now + ii*10;
+		fmt[ii].timestamp = now_us + ii*10;
 	}
 }
 
@@ -52,10 +52,13 @@ acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 		/* asynFlags no block*/ 0,
 		/* Autoconnect */       1,
 		/* Default priority */  0,
-		/* Default stack size*/ 0)
+		/* Default stack size*/ 0),
+		update(0)
 {
 	asynStatus status = asynSuccess;
 
+	createParam(PS_UPDATES,  asynParamInt32,        &P_UPDATES);
+	createParam(PS_TS_USEC,  asynParamInt64,	&P_TS_USEC);
 
 	/* Create the thread that computes the waveforms in the background */
 	status = (asynStatus)(epicsThreadCreate("FMT_simTask",
@@ -71,6 +74,14 @@ acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 
 void acq400_FMT_Sim::task(void) {
 	update_fmt();
+
+	/* fake event loop to start */
+	while(1){
+		update_fmt();
+		setIntegerParam(P_UPDATES, ++update);
+		setInteger64Param(P_TS_USEC, now_us);
+		usleep(50000);
+	}
 }
 
 extern "C" {

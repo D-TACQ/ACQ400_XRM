@@ -13,6 +13,13 @@ RL=/tmp/xrm_records.dbl
 
 source /etc/sysconfig/acq400.conf
 
+XRM_DEFS=/mnt/local/sysconfig/xrm_epics.sh
+
+if [ -e $XRM_DEFS ]; then
+        source $XRM_DEFS
+else
+        echo "# WARNING $XRM_DEFS NOT FOUND"
+fi
 
 load_system() {
     [ -e /sys/class/net/eth0 ] && ip0=$(/usr/local/epics/scripts/ifconfig_eth0)
@@ -53,6 +60,9 @@ if [ -e $ACQ400XRM_GROUP ]; then
 dbLoadGroup("$ACQ400XRM_GROUP","UUT=$HOST")
 EOF
 fi
+
+[ ! -z $XRM_FMT_SIM ] && ./scripts/load.fmt_sim
+
 cat - <<EOF
 dbLoadRecords("db/local-aliases.db","UUT=acq2206_088")
 iocInit()
