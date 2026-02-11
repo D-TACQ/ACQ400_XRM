@@ -10,8 +10,13 @@
 #include "acq-util.h"
 #include <unistd.h>
 
+#include "Multicast.h"
+
 
 static const char *driverName="acq400_FMT_sim";
+
+#define DN	driverName
+#define FN	__FUNCTION__
 
 int acq400_FMT_Sim::nice = ::getenv_default("acq400_FMT_Sim_NICE", 0);
 
@@ -29,7 +34,7 @@ epicsInt64 time_now()
 	_now_us = _now_us*1000000 + ts_now.tv_nsec/1000;
 	if (_now_us < 0){
 		if (!report_complete){
-			fprintf(stderr, "NO WAY, JOSE! %lld  %u %u\n", _now_us, ts_now.tv_sec, ts_now.tv_nsec);
+			fprintf(stderr, "NO WAY, JOSE! %lld  %lu %lu\n", _now_us, ts_now.tv_sec, ts_now.tv_nsec);
 			report_complete = true;
 		}
 	}else{
@@ -59,11 +64,16 @@ void acq400_FMT_Sim::task_runner(void *drvPvt)
 	pPvt->task();
 }
 
+namespace G {
+	const char* fmt_mc_group = "1.2.3.4";
+	const int fmt_mc_port = 6789;
+}
+
 acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 		asynPortDriver(portName,
 		/* maxAddr */		FMT_ROWS,    /* nchan from 0 */
-		/* Interface mask */    asynEnumMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask|asynInt64Mask|asynDrvUserMask,
-		/* Interrupt mask */	asynEnumMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask|asynInt64Mask,
+		/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask|asynInt64Mask|asynDrvUserMask,
+		/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask|asynInt64Mask,
 		/* asynFlags no block*/ 0,
 		/* Autoconnect */       1,
 		/* Default priority */  0,
@@ -74,6 +84,11 @@ acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 
 	createParam(PS_UPDATES,  asynParamInt32,        &P_UPDATES);
 	createParam(PS_TS_USEC,  asynParamInt64,	&P_TS_USEC);
+	createParam(PS_FMT_MC_GRP,  asynParamOctet,	&P_FMT_MC_GRP);
+	createParam(PS_FMT_MC_PORT,  asynParamInt32,	&P_FMT_MC_PORT);
+
+	setStringParam(P_FMT_MC_GRP, G::fmt_mc_group);
+	setIntegerParam(P_FMT_MC_PORT, G::fmt_mc_port);
 
 	/* Create the thread that computes the waveforms in the background */
 	status = (asynStatus)(epicsThreadCreate("FMT_simTask",
@@ -82,17 +97,38 @@ acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 			(EPICSTHREADFUNC)task_runner,
 			this) == NULL);
 	if (status) {
-		printf("%s:%s: epicsThreadCreate failure\n", driverName, __FUNCTION__);
+		printf("%s:%s: epicsThreadCreate failure\n", DN, FN);
 		return;
 	}
+
 }
 
 void acq400_FMT_Sim::task(void) {
+	asynStatus status = asynSuccess;
 	update_fmt();
+	char mc_group[80];
+	int mc_port;
+
+	status = getStringParam(P_FMT_MC_GRP, 80, mc_group);
+	if (status){
+		fprintf(stderr, "%s:%s getStringParam P_FMT_MC_GRP fail\n", DN, FN);
+		return;
+	}
+	status = getIntegerParam(P_FMT_MC_PORT, &mc_port);
+	if (status){
+		fprintf(stderr, "%s:%s getIntegerParam P_FMT_MC_PORT fail\n", DN, FN);
+		return;
+	}
+
+	fprintf(stderr, "%s:%s mc_group \"%s\" mc_port %d\n", DN, FN, mc_group, mc_port);
+
+	MultiCast& multicast = MultiCast::factory(
+			mc_group, mc_port, MultiCast::MC_SENDER);
 
 	/* fake event loop to start */
 	while(1){
 		update_fmt();
+		//multicast.sendto(fmt, sizeof(fmt));
 		updateTimeStamp();
 		setIntegerParam(P_UPDATES, ++update);
 		setInteger64Param(P_TS_USEC, now_us);

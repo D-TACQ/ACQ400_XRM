@@ -14,6 +14,8 @@
 
 #define PS_UPDATES	"UPDATES"	/* asynInt32, r/c */
 #define PS_TS_USEC	"TS_USEC"       /* asynInt32, ro  */
+#define PS_FMT_MC_GRP	"FMT_MC_GRP"    /* string, r/set on PINI */
+#define PS_FMT_MC_PORT  "FMT_MC_PORT"   /* asynInt32, r/set on PINI */
 
 class acq400_FMT_Sim: public asynPortDriver {
 	FMT fmt;
@@ -30,6 +32,8 @@ protected:
 
 	int P_UPDATES;
 	int P_TS_USEC;
+	int P_FMT_MC_GRP;
+	int P_FMT_MC_PORT;
 public:
 	acq400_FMT_Sim(const char* portName);
 

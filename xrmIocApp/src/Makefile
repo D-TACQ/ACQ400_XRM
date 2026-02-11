@@ -28,6 +28,7 @@ xrmIocSupport_SRCS += devxrmIocVersion.c
 xrmIocSupport_SRCS += xrmIocHello.c
 xrmIocSupport_SRCS += initTrace.c
 
+
 xrmIocSupport_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 # Auto-generate a header file containing a version string.
@@ -56,6 +57,8 @@ xrmIoc_SRCS += xrmIoc_registerRecordDeviceDriver.cpp
 xrmIoc_SRCS += xrm_struct_support.cpp
 xrmIoc_SRCS += xrm_struct_test.cpp
 xrmIoc_SRCS += acq400_FMT_sim.cpp
+# this should be a lib from ACQ400DRV, copy bodily for now..
+xrmIoc_SRCS += Multicast.cpp
 
 # Build the main IOC entry point where needed
 xrmIoc_SRCS_DEFAULT += xrmIocMain.cpp
