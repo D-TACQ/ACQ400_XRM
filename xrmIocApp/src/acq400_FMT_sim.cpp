@@ -65,8 +65,8 @@ void acq400_FMT_Sim::task_runner(void *drvPvt)
 }
 
 namespace G {
-	const char* fmt_mc_group = "1.2.3.4";
-	const int fmt_mc_port = 6789;
+	const char* fmt_mc_group = "224.0.23.200";
+	const int fmt_mc_port = 5055;
 }
 
 acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
@@ -82,6 +82,8 @@ acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 {
 	asynStatus status = asynSuccess;
 
+	eventId = epicsEventCreate(epicsEventEmpty);
+	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
 	createParam(PS_UPDATES,  asynParamInt32,        &P_UPDATES);
 	createParam(PS_TS_USEC,  asynParamInt64,	&P_TS_USEC);
 	createParam(PS_FMT_MC_GRP,  asynParamOctet,	&P_FMT_MC_GRP);
@@ -109,6 +111,8 @@ void acq400_FMT_Sim::task(void) {
 	char mc_group[80];
 	int mc_port;
 
+	epicsEventWait(eventId);
+
 	status = getStringParam(P_FMT_MC_GRP, 80, mc_group);
 	if (status){
 		fprintf(stderr, "%s:%s getStringParam P_FMT_MC_GRP fail\n", DN, FN);
@@ -127,15 +131,57 @@ void acq400_FMT_Sim::task(void) {
 
 	/* fake event loop to start */
 	while(1){
-		update_fmt();
-		//multicast.sendto(fmt, sizeof(fmt));
-		updateTimeStamp();
-		setIntegerParam(P_UPDATES, ++update);
-		setInteger64Param(P_TS_USEC, now_us);
-		callParamCallbacks();
+		int runstop;
+		lock();
+		status = getIntegerParam(P_RUNSTOP, &runstop);
+		if (status){
+			fprintf(stderr, "%s:%s getIntegerParam P_FMT_MC_PORT fail\n", DN, FN);
+			return;
+		}
+		unlock();
+		if (runstop == 1){
+			update_fmt();
+			multicast.sendto(fmt, sizeof(fmt));
+			lock();
+			updateTimeStamp();
+			setIntegerParam(P_UPDATES, ++update);
+			setInteger64Param(P_TS_USEC, now_us);
+			callParamCallbacks();
+			unlock();
+		}
 		usleep(50000);
-
 	}
+}
+
+
+asynStatus acq400_FMT_Sim::writeInt32(asynUser *pasynUser, epicsInt32 value)
+{
+	    int function = pasynUser->reason;
+	    asynStatus status = asynSuccess;
+	    const char *paramName;
+
+	    /* Set the parameter in the parameter library. */
+	    status = (asynStatus) setIntegerParam(function, value);
+
+	    /* Fetch the parameter string name for possible use in debugging */
+	    getParamName(function, &paramName);
+
+	    if (function == P_RUNSTOP) {
+	        if (value) epicsEventSignal(eventId);
+	    }
+
+	    /* Do callbacks so higher layers see any changes */
+	    status = (asynStatus) callParamCallbacks();
+
+	    if (status)
+	        epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
+	                  "%s:%s: status=%d, function=%d, name=%s, value=%d",
+	                  DN, FN, status, function, paramName, value);
+	    else
+	        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+	              "%s:%s: function=%d, name=%s, value=%d\n",
+	              DN, FN, function, paramName, value);
+	    return status;
 }
 
 extern "C" {
