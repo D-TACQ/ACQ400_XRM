@@ -1,0 +1,8 @@
+	/mnt/local/mc-rx.sh 224.0.23.200 5055 | \
+	hexdump -e '2/2 "%04x," 3/4 "%08x," "\n" ' | \
+	awk -F, '{print $1" "$2" "$3" "$5$4 }' | head -n 10 >/tmp/mc.txt.tmp
+        mv /tmp/mc.txt.tmp /tmp/mc.txt
+
+
+
+
