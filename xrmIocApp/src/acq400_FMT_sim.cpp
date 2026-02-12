@@ -9,8 +9,10 @@
 #include "acq400_FMT_sim.h"
 #include "acq-util.h"
 #include <unistd.h>
+#include <string.h>
 
 #include "Multicast.h"
+
 
 
 static const char *driverName="acq400_FMT_sim";
@@ -52,7 +54,7 @@ void acq400_FMT_Sim::update_fmt()
 	now_us = time_now();
 
 	for (int ii = 0; ii < FMT_ROWS; ++ii){
-		fmt[ii].event = 0x1000 + ii;
+		fmt[ii].event = 0x100 + ii;
 		fmt[ii].client_data = ii;
 		fmt[ii].timestamp = now_us + ii*10;
 	}
@@ -91,6 +93,7 @@ acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 		update(0)
 {
 	asynStatus status = asynSuccess;
+	memset(fmt, 0, sizeof(fmt));
 
 	eventId = epicsEventCreate(epicsEventEmpty);
 	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
