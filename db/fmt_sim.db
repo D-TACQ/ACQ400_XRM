@@ -42,40 +42,87 @@ record(longin, "${UUT}:FMT_SIM:MC_PORT")
 	field(SCAN, "I/O Intr")
 }
 
-record(waveform, "${UUT}:FMT_SIM:COL:EVENT")
+record(waveform, "${UUT}:FMT_SIM:TAB:Labels_") {
+        field(FTVL, "STRING")
+        field(NELM, "4")
+        field(INP , {const:["Event", "Pad", "CliDat", "TS"]})
+        info(Q:group, {
+        	"${UUT}:FMT_SIM:TAB:Tbl":{
+        		+id:"epics:nt/NTTable:1.0",
+        		"labels":{+type:"plain", +channel:"VAL"}
+        	}
+        })
+        field(TPRO, "1")
+}
+
+record(waveform, "${UUT}:FMT_SIM:TAB:EVENT")
 {
 	field(DTYP, "asynInt16ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_EVENT")
 	field(FTVL, "USHORT")
 	field(NELM, "64")
 	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:FMT_SIM:TAB:Tbl": {
+			"value.EVENT": {+type:"plain", +channel:"VAL", +putorder:0 }
+		}
+	})
 }
 
-record(waveform, "${UUT}:FMT_SIM:COL:PAD")
+record(waveform, "${UUT}:FMT_SIM:TAB:PAD")
 {
 	field(DTYP, "asynInt16ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_PAD")
 	field(FTVL, "USHORT")
 	field(NELM, "64")
 	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:FMT_SIM:TAB:Tbl": {
+			"value.PAD": {+type:"plain", +channel:"VAL", +putorder:1 }
+		}
+	})
 }
 
-record(waveform, "${UUT}:FMT_SIM:COL:CLIDAT")
+
+record(waveform, "${UUT}:FMT_SIM:TAB:CLIDAT")
 {
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_CLIDAT")
 	field(FTVL, "ULONG")
 	field(NELM, "64")
 	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:FMT_SIM:TAB:Tbl": {
+			"value.CLIDAT": {+type:"plain", +channel:"VAL", +putorder:2 }
+		}
+	})
 }
 
-record(waveform, "${UUT}:FMT_SIM:COL:TS")
+record(waveform, "${UUT}:FMT_SIM:TAB:TS")
 {
 	field(DTYP, "asynInt64ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_TS")
 	field(FTVL, "INT64")
 	field(NELM, "64")
 	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:FMT_SIM:TAB:Tbl": {
+			"value.TS": {+type:"plain", +channel:"VAL", +putorder:3 }
+		}
+	})
+}
+
+record(longout, "${UUT}:FMT_SIM:TAB:Save") {
+    field(MDEL, "-1") # ensure we always trigger group monitor
+    field(TPRO, "1")
+    info(Q:group, {
+	"${UUT}:FMT_SIM:TAB:Tbl":{
+	    "_save":{+type:"proc",
+		     +channel:"VAL",
+		     +putorder:4,
+		     +trigger:"*"}
+	}
+    })
 }
 
 
