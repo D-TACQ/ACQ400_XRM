@@ -82,8 +82,8 @@ namespace G {
 acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 		asynPortDriver(portName,
 		/* maxAddr */		FMT_ROWS,    /* nchan from 0 */
-		/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask|asynInt64Mask|asynDrvUserMask,
-		/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask|asynInt64Mask,
+		/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask|asynInt64Mask|asynInt64ArrayMask|asynDrvUserMask,
+		/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask|asynInt64Mask|asynInt64ArrayMask,
 		/* asynFlags no block*/ 0,
 		/* Autoconnect */       1,
 		/* Default priority */  0,
