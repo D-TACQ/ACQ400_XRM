@@ -48,7 +48,7 @@ class acq400_FMT_Sim: public asynPortDriver {
 		epicsInt64 c_timestamp[FMT_ROWS];
 	} cols;
 
-	void update_fmt();
+	void update_fmt(bool first_time = false);
 	void update_fmt_columns();
 	static void task_runner(void *drvPvt);
 

@@ -49,14 +49,18 @@ epicsInt64 time_now()
 	return _now_us;
 }
 
-void acq400_FMT_Sim::update_fmt()
+void acq400_FMT_Sim::update_fmt(bool first_time)
 {
+	if (first_time){
+		for (int row = 0; row < FMT_ROWS; ++row){
+			fmt[row].event = 0x100 + row;
+			fmt[row].client_data = row;
+		}
+	}
 	now_us = time_now();
 
-	for (int ii = 0; ii < FMT_ROWS; ++ii){
-		fmt[ii].event = 0x100 + ii;
-		fmt[ii].client_data = ii;
-		fmt[ii].timestamp = now_us + ii*10;
+	for (int row = 0; row < FMT_ROWS; ++row){
+		fmt[row].timestamp = now_us + row*10;
 	}
 }
 
@@ -94,6 +98,7 @@ acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 {
 	asynStatus status = asynSuccess;
 	memset(fmt, 0, sizeof(fmt));
+	update_fmt(true);
 
 	eventId = epicsEventCreate(epicsEventEmpty);
 	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
