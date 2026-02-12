@@ -58,6 +58,16 @@ void acq400_FMT_Sim::update_fmt()
 	}
 }
 
+void acq400_FMT_Sim::update_fmt_columns()
+{
+	for (int row = 0; row < FMT_ROWS; ++row){
+		cols.c_event[row]= fmt[row].event;
+		cols.c_pad[row] = fmt[row].pad;
+		cols.c_client_data[row] = fmt[row].client_data;
+		cols.c_timestamp[row] = fmt[row].timestamp;
+	}
+}
+
 void acq400_FMT_Sim::task_runner(void *drvPvt)
 {
 	acq400_FMT_Sim *pPvt = (acq400_FMT_Sim *)drvPvt;
@@ -88,6 +98,10 @@ acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 	createParam(PS_TS_USEC,  asynParamInt64,	&P_TS_USEC);
 	createParam(PS_FMT_MC_GRP,  asynParamOctet,	&P_FMT_MC_GRP);
 	createParam(PS_FMT_MC_PORT,  asynParamInt32,	&P_FMT_MC_PORT);
+	createParam(PS_FMT_COL_EVENT, asynParamInt16Array, &P_FMT_COL_EVENT);
+	createParam(PS_FMT_COL_PAD,  asynParamInt16Array,   &P_FMT_COL_PAD);
+	createParam(PS_FMT_COL_CLIDAT, asynParamInt32Array, &P_FMT_COL_CLIDAT);
+	createParam(PS_FMT_COL_TS, asynParamInt64Array,     &P_FMT_COL_TS);
 
 	setStringParam(P_FMT_MC_GRP, G::fmt_mc_group);
 	setIntegerParam(P_FMT_MC_PORT, G::fmt_mc_port);
@@ -142,11 +156,16 @@ void acq400_FMT_Sim::task(void) {
 		if (runstop == 1){
 			update_fmt();
 			multicast.sendto(fmt, sizeof(fmt));
+			update_fmt_columns();
 			lock();
 			updateTimeStamp();
 			setIntegerParam(P_UPDATES, ++update);
 			setInteger64Param(P_TS_USEC, now_us);
 			callParamCallbacks();
+			doCallbacksInt16Array(cols.c_event, FMT_ROWS, P_FMT_EVENTS, 0);
+			doCallbacksInt16Array(cols.c_pad, FMT_ROWS, P_FMT_PAD, 0);
+			doCallbacksInt32Array(cols.c_client_data, FMT_ROWS, P_FMT_CLIDAT, 0);
+			doCallbacksInt64Array(cols.c_timestamp, FMT_ROWS, P_FMT_TS, 0);
 			unlock();
 		}
 		usleep(50000);
