@@ -162,10 +162,11 @@ void acq400_FMT_Sim::task(void) {
 			setIntegerParam(P_UPDATES, ++update);
 			setInteger64Param(P_TS_USEC, now_us);
 			callParamCallbacks();
-			doCallbacksInt16Array(cols.c_event, FMT_ROWS, P_FMT_EVENTS, 0);
-			doCallbacksInt16Array(cols.c_pad, FMT_ROWS, P_FMT_PAD, 0);
-			doCallbacksInt32Array(cols.c_client_data, FMT_ROWS, P_FMT_CLIDAT, 0);
-			doCallbacksInt64Array(cols.c_timestamp, FMT_ROWS, P_FMT_TS, 0);
+
+			doCallbacksInt16Array(cols.c_event, FMT_ROWS, P_FMT_COL_EVENT, 0);
+			doCallbacksInt16Array(cols.c_pad, FMT_ROWS, P_FMT_COL_PAD, 0);
+			doCallbacksInt32Array(cols.c_client_data, FMT_ROWS, P_FMT_COL_CLIDAT, 0);
+			doCallbacksInt64Array(cols.c_timestamp, FMT_ROWS, P_FMT_COL_TS, 0);
 			unlock();
 		}
 		usleep(50000);
