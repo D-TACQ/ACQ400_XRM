@@ -107,7 +107,7 @@ record(waveform, "${UUT}:FMT_SIM:TAB:TS")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:FMT_SIM:TAB:Tbl": {
-			"value.TS": {+type:"plain", +channel:"VAL", +putorder:3 }
+			"value.TS": {+type:"plain", +channel:"VAL", +putorder:3, +trigger:"*" }
 		}
 	})
 }
