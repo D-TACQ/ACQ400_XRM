@@ -46,6 +46,8 @@ record(longout, "${UUT}:FMT_SIM:REDIT:ROW")
 {
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_REDIT_ROW")
+	field(PINI, "YES")
+	field(VAL,  "0")
 	info(Q:group, {
 		"${UUT}:FMT_SIM:REDIT": {
 			"ROW": {+channel:"VAL"}
@@ -56,6 +58,8 @@ record(longout, "${UUT}:FMT_SIM:REDIT:ROWCOUNT")
 {
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_REDIT_ROWCOUNT")
+	field(PINI, "YES")
+	field(VAL,  "1")
 	info(Q:group, {
 		"${UUT}:FMT_SIM:REDIT": {
 			"ROWCOUNT": {+channel:"VAL"}
@@ -66,6 +70,8 @@ record(longout, "${UUT}:FMT_SIM:REDIT:EVENT")
 {
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_REDIT_EVENT")
+	field(PINI, "YES")
+	field(VAL,  "0")
 	info(Q:group, {
 		"${UUT}:FMT_SIM:REDIT": {
 			"EVENT": {+channel:"VAL"}
@@ -76,6 +82,8 @@ record(longout, "${UUT}:FMT_SIM:REDIT:EVENT_STEP")
 {
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_REDIT_EVENT_STEP")
+	field(PINI, "YES")
+	field(VAL,  "0")
 	info(Q:group, {
 		"${UUT}:FMT_SIM:REDIT": {
 			"EVENT_STEP": {+channel:"VAL"}
@@ -86,6 +94,8 @@ record(longout, "${UUT}:FMT_SIM:REDIT:CLIDAT")
 {
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_REDIT_CLIDAT")
+	field(PINI, "YES")
+	field(VAL,  "0")
 	info(Q:group, {
 		"${UUT}:FMT_SIM:REDIT": {
 			"CLIDAT": {+channel:"VAL"}
@@ -96,6 +106,8 @@ record(longout, "${UUT}:FMT_SIM:REDIT:CLIDAT_STEP")
 {
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_REDIT_CLIDAT_STEP")
+	field(PINI, "YES")
+	field(VAL,  "0")
 	info(Q:group, {
 		"${UUT}:FMT_SIM:REDIT": {
 			"CLIDAT_STEP": {+channel:"VAL"}

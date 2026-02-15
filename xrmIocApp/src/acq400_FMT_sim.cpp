@@ -193,7 +193,7 @@ asynStatus acq400_FMT_Sim::gip(int pnum, int* pram)
 {
 	asynStatus status = getIntegerParam(pnum, pram);
 	if (status){
-		fprintf(stderr, "%s:%s getIntegerParam %dP_FMT_REDIT_ROW fail\n",
+		fprintf(stderr, "%s:%s getIntegerParam %d fail\n",
 				DN, FN, pnum);
 	}
 	return status;
@@ -203,6 +203,15 @@ void acq400_FMT_Sim::redit()
 {
 	int row, row_count, event, event_step, clidat, clidat_step;
 	asynStatus status;
+
+	fprintf(stderr, "%d %d %d %d %d %d\n",
+			P_FMT_REDIT_ROW,
+			P_FMT_REDIT_ROWCOUNT,
+			P_FMT_REDIT_EVENT,
+			P_FMT_REDIT_EVENT_STEP,
+			P_FMT_REDIT_CLIDAT,
+			P_FMT_REDIT_CLIDAT_STEP);
+
 	if (gip(P_FMT_REDIT_ROW, 	&row)		||
 	    gip(P_FMT_REDIT_ROWCOUNT, 	&row_count)	||
 	    gip(P_FMT_REDIT_EVENT,    	&event)		||
@@ -212,6 +221,8 @@ void acq400_FMT_Sim::redit()
 		return;
 	}
 
+	fprintf(stderr, "%s:%s %d,%d %d,%d %d,%d\n", DN, FN,
+			row, row_count, event, event_step, clidat, clidat_step);
 
 	lock();
 	for (int rn = 0; rn < row_count; ++rn){
