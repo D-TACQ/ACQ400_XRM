@@ -111,6 +111,14 @@ acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 	createParam(PS_FMT_COL_CLIDAT, asynParamInt32Array, &P_FMT_COL_CLIDAT);
 	createParam(PS_FMT_COL_TS, asynParamInt64Array,     &P_FMT_COL_TS);
 
+	createParam(PS_FMT_REDIT_ROW, 		asynParamInt32, &P_FMT_REDIT_ROW);
+	createParam(PS_FMT_REDIT_ROWCOUNT, 	asynParamInt32, &P_FMT_REDIT_ROWCOUNT);
+	createParam(PS_FMT_REDIT_EVENT,		asynParamInt32, &P_FMT_REDIT_EVENT);
+	createParam(PS_FMT_REDIT_EVENT_STEP, 	asynParamInt32, &P_FMT_REDIT_EVENT_STEP);
+	createParam(PS_FMT_REDIT_CLIDAT, 	asynParamInt32, &P_FMT_REDIT_CLIDAT);
+	createParam(PS_FMT_REDIT_CLIDAT_STEP, 	asynParamInt32, &P_FMT_REDIT_CLIDAT_STEP);
+	createParam(PS_FMT_REDIT_COMMIT,	asynParamInt32, &P_FMT_REDIT_COMMIT);
+
 	setStringParam(P_FMT_MC_GRP, G::fmt_mc_group);
 	setIntegerParam(P_FMT_MC_PORT, G::fmt_mc_port);
 
@@ -181,7 +189,39 @@ void acq400_FMT_Sim::task(void) {
 	}
 }
 
+asynStatus acq400_FMT_Sim::gip(int pnum, int* pram)
+{
+	asynStatus status = getIntegerParam(pnum, pram);
+	if (status){
+		fprintf(stderr, "%s:%s getIntegerParam %dP_FMT_REDIT_ROW fail\n",
+				DN, FN, pnum);
+	}
+	return status;
+}
 
+void acq400_FMT_Sim::redit()
+{
+	int row, row_count, event, event_step, clidat, clidat_step;
+	asynStatus status;
+	if (gip(P_FMT_REDIT_ROW, 	&row)		||
+	    gip(P_FMT_REDIT_ROWCOUNT, 	&row_count)	||
+	    gip(P_FMT_REDIT_EVENT,    	&event)		||
+	    gip(P_FMT_REDIT_EVENT_STEP, &event_step)	||
+	    gip(P_FMT_REDIT_CLIDAT,     &clidat)	||
+	    gip(P_FMT_REDIT_CLIDAT_STEP,&clidat_step)		){
+		return;
+	}
+
+
+	lock();
+	for (int rn = 0; rn < row_count; ++rn){
+		struct FMT_ROW& this_row = fmt[row+rn];
+		this_row.event = event + rn*event_step;
+		this_row.client_data = clidat + rn*clidat_step;
+		this_row.timestamp = 0;
+	}
+	unlock();
+}
 asynStatus acq400_FMT_Sim::writeInt32(asynUser *pasynUser, epicsInt32 value)
 {
 	    int function = pasynUser->reason;
@@ -196,6 +236,8 @@ asynStatus acq400_FMT_Sim::writeInt32(asynUser *pasynUser, epicsInt32 value)
 
 	    if (function == P_RUNSTOP) {
 	        if (value) epicsEventSignal(eventId);
+	    }else if (function == P_FMT_REDIT_COMMIT){
+		    redit();
 	    }
 
 	    /* Do callbacks so higher layers see any changes */

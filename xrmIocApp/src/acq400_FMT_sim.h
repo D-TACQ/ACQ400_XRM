@@ -33,6 +33,15 @@ epicsUInt64 timestamp;
 #define PS_FMT_COL_CLIDAT	"FMT_COL_CLIDAT"	/* asynInt32Array, ro */
 #define PS_FMT_COL_TS 		"FMT_COL_TS"	/* asynInt64Array, ro */
 
+#define PS_FMT_REDIT_ROW	"FMT_REDIT_ROW" 	/* edit this row */
+#define PS_FMT_REDIT_ROWCOUNT	"FMT_REDIT_ROWCOUNT"	/* for this many rows */
+#define PS_FMT_REDIT_EVENT      "FMT_REDIT_EVENT"       /* set this event */
+#define PS_FMT_REDIT_EVENT_STEP "FMT_REDIT_EVENT_STEP"  /* adding to subsequent rows */
+#define PS_FMT_REDIT_CLIDAT	"FMT_REDIT_CLIDAT"
+#define PS_FMT_REDIT_CLIDAT_STEP "FMT_REDIT_CLIDAT_STEP"
+
+#define PS_FMT_REDIT_COMMIT 	"FMT_REDIT_COMMIT"
+
 class acq400_FMT_Sim: public asynPortDriver {
 	FMT fmt;
 	/* EPICS NTTABLE is a convenient display mechanism,
@@ -56,6 +65,8 @@ class acq400_FMT_Sim: public asynPortDriver {
 
 	epicsEventId eventId;
 
+	asynStatus gip(int pnum, int* pram);
+	void redit();  /* Row EDIT */
 protected:
 	virtual void task();
 
@@ -71,6 +82,14 @@ protected:
 	int P_FMT_COL_PAD;
 	int P_FMT_COL_CLIDAT;
 	int P_FMT_COL_TS;
+
+	int P_FMT_REDIT_ROW;
+	int P_FMT_REDIT_ROWCOUNT;
+	int P_FMT_REDIT_EVENT;
+	int P_FMT_REDIT_EVENT_STEP;
+	int P_FMT_REDIT_CLIDAT;
+	int P_FMT_REDIT_CLIDAT_STEP;
+	int P_FMT_REDIT_COMMIT;
 
 public:
 	acq400_FMT_Sim(const char* portName);
