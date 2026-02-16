@@ -53,7 +53,7 @@ void acq400_FMT_Sim::update_fmt(bool first_time)
 {
 	if (first_time){
 		assert(FMT_ROWS < 0xffU);
-		for (epicsUInt8 row = 0; row < FMT_ROWS; ++row){
+		for (epicsInt8 row = 0; row < FMT_ROWS; ++row){
 			cols.c_rownum[row] = row;
 			fmt[row].event = 0x100 + row;
 			fmt[row].client_data = row;
@@ -93,8 +93,12 @@ namespace G {
 acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 		asynPortDriver(portName,
 		/* maxAddr */		FMT_ROWS,    /* nchan from 0 */
-		/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask|asynInt64Mask|asynInt64ArrayMask|asynDrvUserMask,
-		/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynFloat64Mask|asynInt16ArrayMask|asynInt32ArrayMask|asynFloat32ArrayMask|asynInt64Mask|asynInt64ArrayMask,
+		/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
+						asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
+						asynFloat32ArrayMask|asynInt64ArrayMask|asynDrvUserMask,
+		/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
+						asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
+						asynFloat32ArrayMask|asynInt64ArrayMask,
 		/* asynFlags no block*/ 0,
 		/* Autoconnect */       1,
 		/* Default priority */  0,
@@ -185,7 +189,7 @@ void acq400_FMT_Sim::task(void) {
 			setIntegerParam(P_UPDATES, ++update);
 			setInteger64Param(P_TS_USEC, now_us);
 			callParamCallbacks();
-
+			doCallbacksInt8Array(cols.c_rownum, FMT_ROWS, P_FMT_COL_ROWNUM, 0);
 			doCallbacksInt16Array(cols.c_event, FMT_ROWS, P_FMT_COL_EVENT, 0);
 			doCallbacksInt16Array(cols.c_pad, FMT_ROWS, P_FMT_COL_PAD, 0);
 			doCallbacksInt32Array(cols.c_client_data, FMT_ROWS, P_FMT_COL_CLIDAT, 0);

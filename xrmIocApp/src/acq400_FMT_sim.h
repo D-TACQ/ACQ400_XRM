@@ -55,7 +55,7 @@ class acq400_FMT_Sim: public asynPortDriver {
 	 * ie 64 groups of 4 scalar pvs, that's a lot of PV names.. rather than one array..
 	 */
 	struct COLUMNS {
-		epicsUInt8  c_rownum[FMT_ROWS];
+		epicsInt8  c_rownum[FMT_ROWS];
 		epicsInt16 c_event[FMT_ROWS];
 		epicsInt16 c_pad[FMT_ROWS];
 		epicsInt32 c_client_data[FMT_ROWS];

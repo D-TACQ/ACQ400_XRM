@@ -129,8 +129,8 @@ record(longout, "${UUT}:FMT_SIM:REDIT:COMMIT")
 
 record(waveform, "${UUT}:FMT_SIM:TAB:Labels_") {
         field(FTVL, "STRING")
-        field(NELM, "4")
-        field(INP , {const:["Event", "Pad", "CliDat", "TS"]})
+        field(NELM, "5")
+        field(INP , {const:["Row", "Event", "Pad", "CliDat", "TS"]})
         info(Q:group, {
         	"${UUT}:FMT_SIM:TAB:Tbl":{
         		+id:"epics:nt/NTTable:1.0",
@@ -150,7 +150,8 @@ record(waveform, "${UUT}:FMT_SIM:TAB:ROWNUM")
 	info(Q:group, {
 		"${UUT}:FMT_SIM:TAB:Tbl": {
 			"value.ROWNUM": {+type:"plain", 
-				         +channel:"VAL", +putorder:0 }
+				         +channel:"VAL"}
+#, +putorder:0 }
 		}
 	})
 }
