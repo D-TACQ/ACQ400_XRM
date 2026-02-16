@@ -20,7 +20,7 @@ static const char *driverName="acq400_FMT_sim";
 #define DN	driverName
 #define FN	__FUNCTION__
 
-int acq400_FMT_Sim::nice = ::getenv_default("acq400_FMT_Sim_NICE", 0);
+int acq400_FMT_abstract::nice = ::getenv_default("acq400_FMT_NICE", 0);
 
 epicsInt64 time_now()
 {
@@ -66,61 +66,23 @@ void acq400_FMT_Sim::update_fmt(bool first_time)
 	}
 }
 
-
-void acq400_FMT_Sim::update_fmt_columns()
-{
-
-
-	for (int row = 0; row < FMT_ROWS; ++row){
-		cols.c_event[row]= fmt[row].event;
-		cols.c_pad[row] = fmt[row].pad;
-		cols.c_client_data[row] = fmt[row].client_data;
-		cols.c_timestamp[row] = fmt[row].timestamp;
-	}
-}
-
-void acq400_FMT_Sim::task_runner(void *drvPvt)
-{
-	acq400_FMT_Sim *pPvt = (acq400_FMT_Sim *)drvPvt;
-	pPvt->task();
-}
-
-namespace G {
-	const char* fmt_mc_group = "224.0.23.200";
-	const int fmt_mc_port = 5055;
-}
-
 acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
-		asynPortDriver(portName,
-		/* maxAddr */		FMT_ROWS,    /* nchan from 0 */
-		/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
-						asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
-						asynFloat32ArrayMask|asynInt64ArrayMask|asynDrvUserMask,
-		/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
-						asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
-						asynFloat32ArrayMask|asynInt64ArrayMask,
-		/* asynFlags no block*/ 0,
-		/* Autoconnect */       1,
-		/* Default priority */  0,
-		/* Default stack size*/ 0),
-		update(0)
+	acq400_FMT_abstract(portName,
+	/* maxAddr */		FMT_ROWS,    /* nchan from 0 */
+	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
+					asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
+					asynFloat32ArrayMask|asynInt64ArrayMask|asynDrvUserMask,
+	/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
+					asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
+					asynFloat32ArrayMask|asynInt64ArrayMask,
+	/* asynFlags no block*/ 0,
+	/* Autoconnect */       1,
+	/* Default priority */  0,
+	/* Default stack size*/ 0)
 {
 	asynStatus status = asynSuccess;
 	memset(fmt, 0, sizeof(fmt));
 	update_fmt(true);
-
-	eventId = epicsEventCreate(epicsEventEmpty);
-	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
-	createParam(PS_UPDATES,  asynParamInt32,        &P_UPDATES);
-	createParam(PS_TS_USEC,  asynParamInt64,	&P_TS_USEC);
-	createParam(PS_FMT_MC_GRP,  asynParamOctet,	&P_FMT_MC_GRP);
-	createParam(PS_FMT_MC_PORT,  asynParamInt32,	&P_FMT_MC_PORT);
-
-	createParam(PS_FMT_COL_ROWNUM, asynParamInt8Array, &P_FMT_COL_ROWNUM);
-	createParam(PS_FMT_COL_EVENT, asynParamInt16Array, &P_FMT_COL_EVENT);
-	createParam(PS_FMT_COL_PAD,  asynParamInt16Array,   &P_FMT_COL_PAD);
-	createParam(PS_FMT_COL_CLIDAT, asynParamInt32Array, &P_FMT_COL_CLIDAT);
-	createParam(PS_FMT_COL_TS, asynParamInt64Array,     &P_FMT_COL_TS);
 
 	createParam(PS_FMT_REDIT_ROW, 		asynParamInt32, &P_FMT_REDIT_ROW);
 	createParam(PS_FMT_REDIT_ROWCOUNT, 	asynParamInt32, &P_FMT_REDIT_ROWCOUNT);
@@ -130,8 +92,6 @@ acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 	createParam(PS_FMT_REDIT_CLIDAT_STEP, 	asynParamInt32, &P_FMT_REDIT_CLIDAT_STEP);
 	createParam(PS_FMT_REDIT_COMMIT,	asynParamInt32, &P_FMT_REDIT_COMMIT);
 
-	setStringParam(P_FMT_MC_GRP, G::fmt_mc_group);
-	setIntegerParam(P_FMT_MC_PORT, G::fmt_mc_port);
 
 	/* Create the thread that computes the waveforms in the background */
 	status = (asynStatus)(epicsThreadCreate("FMT_simTask",
@@ -145,6 +105,8 @@ acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 	}
 
 }
+
+
 
 void acq400_FMT_Sim::task(void) {
 	asynStatus status = asynSuccess;
@@ -275,6 +237,13 @@ asynStatus acq400_FMT_Sim::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	              DN, FN, function, paramName, value);
 	    return status;
 }
+
+void acq400_FMT_Sim::task_runner(void *drvPvt)
+{
+	acq400_FMT_Sim *pPvt = (acq400_FMT_Sim *)drvPvt;
+	pPvt->task();
+}
+
 
 extern "C" {
 

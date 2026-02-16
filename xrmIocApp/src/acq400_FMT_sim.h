@@ -18,11 +18,12 @@
 #define PS_FMT_MC_GRP	"FMT_MC_GRP"    /* string, r/set on PINI */
 #define PS_FMT_MC_PORT  "FMT_MC_PORT"   /* asynInt32, r/set on PINI */
 
+/*
 epicsUInt16 event;           // FNAL Event number
 epicsUInt16 pad;             // 32 bit alignment is best, available for future
 epicsUInt32 client_data;     // opaque value to pass back
 epicsUInt64 timestamp;
-
+*/
 /* arrays should be writable on sim... but a user would _really_ want to write rows */
 /* writeable FMT interface should be by rows. so a row should be a GROUP of scalars,
  * and the TABLE should be an array of the groups.. @@todo LATER!
@@ -43,10 +44,9 @@ epicsUInt64 timestamp;
 
 #define PS_FMT_REDIT_COMMIT 	"FMT_REDIT_COMMIT"
 
-class abstract_acq400_FMT: public asynPortDriver {
+class acq400_FMT_abstract: public asynPortDriver {
 
-};
-class acq400_FMT_Sim: public asynPortDriver {
+protected:
 	FMT fmt;
 	/* EPICS NTTABLE is a convenient display mechanism,
 	 * but unfortunately it needs the data in columns.
@@ -62,18 +62,14 @@ class acq400_FMT_Sim: public asynPortDriver {
 		epicsInt64 c_timestamp[FMT_ROWS];
 	} cols;
 
-	void update_fmt(bool first_time = false);
-	void update_fmt_columns();
-	static void task_runner(void *drvPvt);
+	virtual void update_fmt(bool first_time = false) = 0;
+	virtual void update_fmt_columns(void);
 
 	static int nice;
 
 	epicsEventId eventId;
 
-	asynStatus gip(int pnum, int* pram);
-	void redit();  /* Row EDIT */
-protected:
-	virtual void task();
+	virtual void task() = 0;
 
 	unsigned update;
 	epicsInt64 now_us;
@@ -89,6 +85,22 @@ protected:
 	int P_FMT_COL_CLIDAT;
 	int P_FMT_COL_TS;
 
+	acq400_FMT_abstract(const char *portName, int maxAddr, int interfaceMask, int interruptMask,
+	                   int asynFlags, int autoConnect, int priority, int stackSize);
+	virtual ~acq400_FMT_abstract() {}
+
+};
+class acq400_FMT_Sim: public acq400_FMT_abstract {
+	virtual void update_fmt(bool first_time = false);
+
+
+	static void task_runner(void *drvPvt);
+
+	asynStatus gip(int pnum, int* pram);
+	void redit();  /* Row EDIT */
+protected:
+	virtual void task();
+
 	int P_FMT_REDIT_ROW;
 	int P_FMT_REDIT_ROWCOUNT;
 	int P_FMT_REDIT_EVENT;
@@ -99,6 +111,7 @@ protected:
 
 public:
 	acq400_FMT_Sim(const char* portName);
+	virtual ~acq400_FMT_Sim() {}
 
 	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
 
