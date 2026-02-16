@@ -149,7 +149,8 @@ record(waveform, "${UUT}:FMT_SIM:TAB:ROWNUM")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:FMT_SIM:TAB:Tbl": {
-			"value.ROWNUM": {+type:"plain", +channel:"VAL", +putorder:0 }
+			"value.ROWNUM": {+type:"plain", 
+				         +channel:"VAL", +putorder:0 }
 		}
 	})
 }
@@ -163,7 +164,8 @@ record(waveform, "${UUT}:FMT_SIM:TAB:EVENT")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:FMT_SIM:TAB:Tbl": {
-			"value.EVENT": {+type:"plain", +channel:"VAL", +putorder:0 }
+			"value.EVENT": {+type:"plain", 
+				        +channel:"VAL", +putorder:1 }
 		}
 	})
 }
@@ -177,7 +179,8 @@ record(waveform, "${UUT}:FMT_SIM:TAB:PAD")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:FMT_SIM:TAB:Tbl": {
-			"value.PAD": {+type:"plain", +channel:"VAL", +putorder:1 }
+			"value.PAD": {+type:"plain", 
+				      +channel:"VAL", +putorder:2 }
 		}
 	})
 }
@@ -192,7 +195,8 @@ record(waveform, "${UUT}:FMT_SIM:TAB:CLIDAT")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:FMT_SIM:TAB:Tbl": {
-			"value.CLIDAT": {+type:"plain", +channel:"VAL", +putorder:2 }
+			"value.CLIDAT": {+type:"plain", 
+					 +channel:"VAL", +putorder:3 }
 		}
 	})
 }
@@ -206,7 +210,9 @@ record(waveform, "${UUT}:FMT_SIM:TAB:TS")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:FMT_SIM:TAB:Tbl": {
-			"value.TS": {+type:"plain", +channel:"VAL", +putorder:3, +trigger:"*" }
+			"value.TS": {+type:"plain", 
+				     +channel:"VAL", 
+				     +putorder:4, +trigger:"*" }
 		}
 	})
 }
@@ -218,7 +224,7 @@ record(longout, "${UUT}:FMT_SIM:TAB:Save") {
 	"${UUT}:FMT_SIM:TAB:Tbl":{
 	    "_save":{+type:"proc",
 		     +channel:"VAL",
-		     +putorder:4,
+		     +putorder:5,
 		     +trigger:"*"}
 	}
     })
