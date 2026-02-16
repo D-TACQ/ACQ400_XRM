@@ -52,7 +52,9 @@ epicsInt64 time_now()
 void acq400_FMT_Sim::update_fmt(bool first_time)
 {
 	if (first_time){
-		for (int row = 0; row < FMT_ROWS; ++row){
+		assert(FMT_ROWS < 0xffU);
+		for (epicsUInt8 row = 0; row < FMT_ROWS; ++row){
+			cols.c_rownum[row] = row;
 			fmt[row].event = 0x100 + row;
 			fmt[row].client_data = row;
 		}
@@ -64,8 +66,11 @@ void acq400_FMT_Sim::update_fmt(bool first_time)
 	}
 }
 
+
 void acq400_FMT_Sim::update_fmt_columns()
 {
+
+
 	for (int row = 0; row < FMT_ROWS; ++row){
 		cols.c_event[row]= fmt[row].event;
 		cols.c_pad[row] = fmt[row].pad;
@@ -106,6 +111,8 @@ acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 	createParam(PS_TS_USEC,  asynParamInt64,	&P_TS_USEC);
 	createParam(PS_FMT_MC_GRP,  asynParamOctet,	&P_FMT_MC_GRP);
 	createParam(PS_FMT_MC_PORT,  asynParamInt32,	&P_FMT_MC_PORT);
+
+	createParam(PS_FMT_COL_ROWNUM, asynParamInt8Array, &P_FMT_COL_ROWNUM);
 	createParam(PS_FMT_COL_EVENT, asynParamInt16Array, &P_FMT_COL_EVENT);
 	createParam(PS_FMT_COL_PAD,  asynParamInt16Array,   &P_FMT_COL_PAD);
 	createParam(PS_FMT_COL_CLIDAT, asynParamInt32Array, &P_FMT_COL_CLIDAT);

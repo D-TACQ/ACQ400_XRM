@@ -140,6 +140,20 @@ record(waveform, "${UUT}:FMT_SIM:TAB:Labels_") {
         field(TPRO, "1")
 }
 
+record(waveform, "${UUT}:FMT_SIM:TAB:ROWNUM")
+{
+	field(DTYP, "asynInt8ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_ROWNUM")
+	field(FTVL, "UCHAR")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:FMT_SIM:TAB:Tbl": {
+			"value.ROWNUM": {+type:"plain", +channel:"VAL", +putorder:0 }
+		}
+	})
+}
+
 record(waveform, "${UUT}:FMT_SIM:TAB:EVENT")
 {
 	field(DTYP, "asynInt16ArrayIn")

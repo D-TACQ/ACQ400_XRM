@@ -28,6 +28,7 @@ epicsUInt64 timestamp;
  * and the TABLE should be an array of the groups.. @@todo LATER!
  * or we just have a name explosion of scalars that happen to be grouped for atomicity..
  */
+#define PS_FMT_COL_ROWNUM	"FMT_COL_ROWNUM"  /* cosmetic for display, NOT part of FMT */
 #define PS_FMT_COL_EVENT	"FMT_COL_EVENT"  	/* asynInt16Array, ro */
 #define PS_FMT_COL_PAD		"FMT_COL_PAD"	/* asynInt16Array, ro */
 #define PS_FMT_COL_CLIDAT	"FMT_COL_CLIDAT"	/* asynInt32Array, ro */
@@ -42,6 +43,9 @@ epicsUInt64 timestamp;
 
 #define PS_FMT_REDIT_COMMIT 	"FMT_REDIT_COMMIT"
 
+class abstract_acq400_FMT: public asynPortDriver {
+
+};
 class acq400_FMT_Sim: public asynPortDriver {
 	FMT fmt;
 	/* EPICS NTTABLE is a convenient display mechanism,
@@ -51,6 +55,7 @@ class acq400_FMT_Sim: public asynPortDriver {
 	 * ie 64 groups of 4 scalar pvs, that's a lot of PV names.. rather than one array..
 	 */
 	struct COLUMNS {
+		epicsUInt8  c_rownum[FMT_ROWS];
 		epicsInt16 c_event[FMT_ROWS];
 		epicsInt16 c_pad[FMT_ROWS];
 		epicsInt32 c_client_data[FMT_ROWS];
@@ -78,6 +83,7 @@ protected:
 	int P_TS_USEC;
 	int P_FMT_MC_GRP;
 	int P_FMT_MC_PORT;
+	int P_FMT_COL_ROWNUM;
 	int P_FMT_COL_EVENT;
 	int P_FMT_COL_PAD;
 	int P_FMT_COL_CLIDAT;
