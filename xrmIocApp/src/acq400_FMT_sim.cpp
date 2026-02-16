@@ -1,5 +1,5 @@
 /*
- * acq400_FMC_sim.cpp
+ * acq400_FMT_sim.cpp
  *
  *  Created on: 9 Feb 2026
  *      Author: pgm
