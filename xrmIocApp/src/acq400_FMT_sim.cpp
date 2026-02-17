@@ -9,6 +9,7 @@
 #include "acq400_FMT_sim.h"
 #include "acq-util.h"
 #include <unistd.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "Multicast.h"
@@ -22,7 +23,18 @@ static const char *driverName="acq400_FMT_sim";
 
 int acq400_FMT_abstract::nice = ::getenv_default("acq400_FMT_NICE", 0);
 
-epicsInt64 time_now()
+
+
+
+class TimeProviderLocaltime: public TimeProvider {
+	epicsInt64 _time_now();
+public:
+	virtual epicsInt64 time_now();
+};
+
+
+epicsInt64 TimeProviderLocaltime::_time_now()
+/* non-Blocking */
 {
 	struct timespec ts_now;
 	static bool report_complete;
@@ -31,6 +43,7 @@ epicsInt64 time_now()
 	if (rc != 0){
 		perror("clock_gettime");
 	}
+
 #ifndef OVERFLOW_NOW_SUCKER
 	_now_us = ts_now.tv_sec;
 	_now_us = _now_us*1000000 + ts_now.tv_nsec/1000;
@@ -49,6 +62,74 @@ epicsInt64 time_now()
 	return _now_us;
 }
 
+epicsInt64 TimeProviderLocaltime::time_now()
+/* "Blocking" */
+{
+	usleep(50000);
+	return _time_now();
+}
+
+#define WR_TS 	"/dev/acq400.0.wr_ts"
+#define WR_TAI	"/dev/acq400.0.knobs/wr_tai_cur_raw"
+#define TICKS_PER_US	40	/* @@todo ASSUME 40Mhz clock */
+
+
+class TimeProviderWrts: public TimeProvider {
+	FILE* fp_wrts;
+
+	/* BLOCKING */
+	epicsInt64 _time_now() {
+		unsigned wr_ts;
+		int rc = fread(&wr_ts, sizeof(unsigned), 1, fp_wrts);
+		if (rc != 1){
+			fprintf(stderr, "ERROR %s:%s %s fread()\n", DN, FN, WR_TS);
+			exit(1);
+			return 0;
+		}
+
+		FILE* fp_tai_raw = fopen(WR_TAI, "r");
+		if (fp_tai_raw == 0){
+			fprintf(stderr, "ERROR %s:%s %s\n", DN, FN, WR_TAI);
+			exit(1);
+		}
+		char txt_line[80];
+		if (fgets(txt_line, 80, fp_tai_raw) == 0){
+			fprintf(stderr, "ERROR %s:%s %s fgets()\n", DN, FN, WR_TAI);
+			exit(1);
+		}
+		fclose(fp_tai_raw);
+
+		unsigned seconds = strtol(txt_line, 0, 16);
+
+		if ((seconds&0x7) != ((wr_ts>>28)&0x7)){
+			fprintf(stderr, "WARNING %s:%s %s seconds mismatch %08x %08x DISCARD\n",
+					DN, FN, WR_TAI, seconds, wr_ts);
+		}
+		epicsInt64 usec = ((epicsInt64)seconds) * 1000000;
+		usec += (wr_ts&0x0fffffff) / TICKS_PER_US;
+		return usec;
+	}
+public:
+	TimeProviderWrts() {
+		fp_wrts = fopen(WR_TS, "r");
+		if (fp_wrts == 0){
+			fprintf(stderr, "ERROR %s:%s %s\n", DN, FN, WR_TS);
+			exit(1);
+		}
+	}
+
+
+	virtual epicsInt64 time_now() {
+		epicsInt64 tc;
+		do {
+			tc = _time_now();
+		} while(tc == 0);
+
+		return tc;
+	}
+};
+
+
 void acq400_FMT_Sim::update_fmt(bool first_time)
 {
 	if (first_time){
@@ -59,14 +140,15 @@ void acq400_FMT_Sim::update_fmt(bool first_time)
 			fmt[row].client_data = row;
 		}
 	}
-	now_us = time_now();
+	now_us = timeProvider.time_now();
 
 	for (int row = 0; row < FMT_ROWS; ++row){
 		fmt[row].timestamp = now_us + row*10;
 	}
 }
 
-acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
+acq400_FMT_Sim::acq400_FMT_Sim(
+		const char* portName, TimeProvider& _timeProvider):
 	acq400_FMT_abstract(portName,
 	/* maxAddr */		FMT_ROWS,    /* nchan from 0 */
 	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
@@ -78,7 +160,8 @@ acq400_FMT_Sim::acq400_FMT_Sim(const char* portName):
 	/* asynFlags no block*/ 0,
 	/* Autoconnect */       1,
 	/* Default priority */  0,
-	/* Default stack size*/ 0)
+	/* Default stack size*/ 0),
+	timeProvider(_timeProvider)
 {
 	asynStatus status = asynSuccess;
 	memset(fmt, 0, sizeof(fmt));
@@ -157,8 +240,9 @@ void acq400_FMT_Sim::task(void) {
 			doCallbacksInt32Array(cols.c_client_data, FMT_ROWS, P_FMT_COL_CLIDAT, 0);
 			doCallbacksInt64Array(cols.c_timestamp, FMT_ROWS, P_FMT_COL_TS, 0);
 			unlock();
+		}else{
+			usleep(50000);
 		}
-		usleep(50000);
 	}
 }
 
@@ -175,7 +259,6 @@ asynStatus acq400_FMT_Sim::gip(int pnum, int* pram)
 void acq400_FMT_Sim::redit()
 {
 	int row, row_count, event, event_step, clidat, clidat_step;
-	asynStatus status;
 
 	fprintf(stderr, "%d %d %d %d %d %d\n",
 			P_FMT_REDIT_ROW,
@@ -250,24 +333,29 @@ extern "C" {
 	/** EPICS iocsh callable function to call constructor for the testAsynPortDriver class.
 	  * \param[in] portName The name of the asyn port driver to be created.
 	  */
-	int acq400_FMT_SimConfigure(const char *portName)
+	int acq400_FMT_SimConfigure(const char *portName, const char* timeProviderDef)
 	{
-		//return MultiChannelScope::factory(portName, nchan, maxPoints, data_size);
-		printf("pgmwashere R1000\n");
-		printf("%s: %s %s\n", __FUNCTION__, driverName, portName);
+		printf("%s:%s R1001 %s, %s\n", DN, FN, portName, timeProviderDef);
+		TimeProvider* tp;
 
-		new acq400_FMT_Sim(portName);
+		if (strcmp(timeProviderDef, "WRTS") == 0){
+			tp = new TimeProviderWrts();
+		}else{
+			tp = new TimeProviderLocaltime();
+		}
+		new acq400_FMT_Sim(portName, *tp);
 		return 0;
 	}
 
 	/* EPICS iocsh shell commands */
 
 	static const iocshArg initArg0 = { "port", iocshArgString };
-	static const iocshArg * const initArgs[] = { &initArg0 };
-	static const iocshFuncDef initFuncDef = { "acq400_FMT_SimConfigure", 1, initArgs };
+	static const iocshArg initArg1 = { "time_provider", iocshArgString };
+	static const iocshArg * const initArgs[] = { &initArg0, &initArg1 };
+	static const iocshFuncDef initFuncDef = { "acq400_FMT_SimConfigure", 2, initArgs };
 	static void initCallFunc(const iocshArgBuf *args)
 	{
-		acq400_FMT_SimConfigure(args[0].sval);
+		acq400_FMT_SimConfigure(args[0].sval, args[1].sval);
 	}
 
 	void acq400_FMT_simRegister(void)

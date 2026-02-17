@@ -10,7 +10,7 @@
 
 #include "acq400_FMT.h"
 
-
+/* REDIT : Row EDIT */
 #define PS_FMT_REDIT_ROW	"FMT_REDIT_ROW" 	/* edit this row */
 #define PS_FMT_REDIT_ROWCOUNT	"FMT_REDIT_ROWCOUNT"	/* for this many rows */
 #define PS_FMT_REDIT_EVENT      "FMT_REDIT_EVENT"       /* set this event */
@@ -20,6 +20,10 @@
 
 #define PS_FMT_REDIT_COMMIT 	"FMT_REDIT_COMMIT"
 
+class TimeProvider {
+public:
+	virtual epicsInt64 time_now() = 0; /* time in usec since epoch. Blocks until time available */
+};
 class acq400_FMT_Sim: public acq400_FMT_abstract {
 	virtual void update_fmt(bool first_time = false);
 
@@ -28,6 +32,8 @@ class acq400_FMT_Sim: public acq400_FMT_abstract {
 
 	asynStatus gip(int pnum, int* pram);
 	void redit();  /* Row EDIT */
+
+	TimeProvider& timeProvider;
 protected:
 	virtual void task();
 
@@ -40,7 +46,7 @@ protected:
 	int P_FMT_REDIT_COMMIT;
 
 public:
-	acq400_FMT_Sim(const char* portName);
+	acq400_FMT_Sim(const char* portName, TimeProvider& _timeProvider);
 	virtual ~acq400_FMT_Sim() {}
 
 	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
