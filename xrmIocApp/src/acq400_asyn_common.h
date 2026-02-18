@@ -21,6 +21,11 @@
 #include <vector>
 #include <split2.h>
 
+#include "acq-util.h"
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+
 static inline
 std::vector<int> csv2int(const char* csv) {
 	std::vector<std::string> strings;

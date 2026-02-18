@@ -10,6 +10,7 @@
 
 #include "asynPortDriver.h"
 #include "xrm_structs.h"
+#include "Multicast.h"
 
 #define PS_RUNSTOP	"RUNSTOP"	/* asynInt32, r/w */
 #define PS_UPDATES	"UPDATES"	/* asynInt32, r/c */
@@ -34,7 +35,8 @@ epicsUInt64 timestamp;
 #define PS_FMT_COL_CLIDAT	"FMT_COL_CLIDAT"	/* asynInt32Array, ro */
 #define PS_FMT_COL_TS 		"FMT_COL_TS"	/* asynInt64Array, ro */
 
-class acq400_FMT_abstract: public asynPortDriver {
+
+class acq400_FMT_abc: public asynPortDriver {
 
 protected:
 	FMT fmt;
@@ -54,12 +56,16 @@ protected:
 
 	virtual void update_fmt(bool first_time = false) = 0;
 	virtual void update_fmt_columns(void);
+	virtual void update_fmt_callbacks(void);
+	MultiCast& mc_factory(MultiCast::MC txrx);
 
 	static int nice;
 
 	epicsEventId eventId;
 
 	virtual void task() = 0;
+
+	static void task_runner(void *drvPvt);
 
 	unsigned update;
 	epicsInt64 now_us;
@@ -75,9 +81,9 @@ protected:
 	int P_FMT_COL_CLIDAT;
 	int P_FMT_COL_TS;
 
-	acq400_FMT_abstract(const char *portName, int maxAddr, int interfaceMask, int interruptMask,
+	acq400_FMT_abc(const char *portName, int maxAddr, int interfaceMask, int interruptMask,
 	                   int asynFlags, int autoConnect, int priority, int stackSize);
-	virtual ~acq400_FMT_abstract() {}
+	virtual ~acq400_FMT_abc() {}
 
 };
 

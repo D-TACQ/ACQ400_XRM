@@ -7,11 +7,6 @@
 
 #include "acq400_asyn_common.h"
 #include "acq400_FMT_sim.h"
-#include "acq-util.h"
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "Multicast.h"
 
 
@@ -20,11 +15,6 @@ static const char *driverName="acq400_FMT_sim";
 
 #define DN	driverName
 #define FN	__FUNCTION__
-
-int acq400_FMT_abstract::nice = ::getenv_default("acq400_FMT_NICE", 0);
-
-
-
 
 class TimeProviderLocaltime: public TimeProvider {
 	epicsInt64 _time_now();
@@ -135,7 +125,6 @@ void acq400_FMT_Sim::update_fmt(bool first_time)
 	if (first_time){
 		assert(FMT_ROWS < 0xffU);
 		for (epicsInt8 row = 0; row < FMT_ROWS; ++row){
-			cols.c_rownum[row] = row;
 			fmt[row].event = 0x100 + row;
 			fmt[row].client_data = row;
 		}
@@ -149,7 +138,7 @@ void acq400_FMT_Sim::update_fmt(bool first_time)
 
 acq400_FMT_Sim::acq400_FMT_Sim(
 		const char* portName, TimeProvider& _timeProvider):
-	acq400_FMT_abstract(portName,
+	acq400_FMT_abc(portName,
 	/* maxAddr */		FMT_ROWS,    /* nchan from 0 */
 	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
 					asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
@@ -164,7 +153,6 @@ acq400_FMT_Sim::acq400_FMT_Sim(
 	timeProvider(_timeProvider)
 {
 	asynStatus status = asynSuccess;
-	memset(fmt, 0, sizeof(fmt));
 	update_fmt(true);
 
 	createParam(PS_FMT_REDIT_ROW, 		asynParamInt32, &P_FMT_REDIT_ROW);
@@ -194,28 +182,11 @@ acq400_FMT_Sim::acq400_FMT_Sim(
 void acq400_FMT_Sim::task(void) {
 	asynStatus status = asynSuccess;
 	update_fmt();
-	char mc_group[80];
-	int mc_port;
 
 	epicsEventWait(eventId);
 
-	status = getStringParam(P_FMT_MC_GRP, 80, mc_group);
-	if (status){
-		fprintf(stderr, "%s:%s getStringParam P_FMT_MC_GRP fail\n", DN, FN);
-		return;
-	}
-	status = getIntegerParam(P_FMT_MC_PORT, &mc_port);
-	if (status){
-		fprintf(stderr, "%s:%s getIntegerParam P_FMT_MC_PORT fail\n", DN, FN);
-		return;
-	}
+	MultiCast& multicast = acq400_FMT_abc::mc_factory(MultiCast::MC_SENDER);
 
-	fprintf(stderr, "%s:%s mc_group \"%s\" mc_port %d\n", DN, FN, mc_group, mc_port);
-
-	MultiCast& multicast = MultiCast::factory(
-			mc_group, mc_port, MultiCast::MC_SENDER);
-
-	/* fake event loop to start */
 	while(1){
 		int runstop;
 		lock();
@@ -231,14 +202,7 @@ void acq400_FMT_Sim::task(void) {
 			update_fmt_columns();
 			lock();
 			updateTimeStamp();
-			setIntegerParam(P_UPDATES, ++update);
-			setInteger64Param(P_TS_USEC, now_us);
-			callParamCallbacks();
-			doCallbacksInt8Array(cols.c_rownum, FMT_ROWS, P_FMT_COL_ROWNUM, 0);
-			doCallbacksInt16Array(cols.c_event, FMT_ROWS, P_FMT_COL_EVENT, 0);
-			doCallbacksInt16Array(cols.c_pad, FMT_ROWS, P_FMT_COL_PAD, 0);
-			doCallbacksInt32Array(cols.c_client_data, FMT_ROWS, P_FMT_COL_CLIDAT, 0);
-			doCallbacksInt64Array(cols.c_timestamp, FMT_ROWS, P_FMT_COL_TS, 0);
+			update_fmt_callbacks();
 			unlock();
 		}else{
 			usleep(50000);
@@ -321,11 +285,6 @@ asynStatus acq400_FMT_Sim::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    return status;
 }
 
-void acq400_FMT_Sim::task_runner(void *drvPvt)
-{
-	acq400_FMT_Sim *pPvt = (acq400_FMT_Sim *)drvPvt;
-	pPvt->task();
-}
 
 
 extern "C" {
