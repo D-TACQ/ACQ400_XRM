@@ -20,10 +20,11 @@
 
 #define PS_FMT_REDIT_COMMIT 	"FMT_REDIT_COMMIT"
 
-class TimeProvider {
-public:
+struct TimeProvider {
 	virtual epicsInt64 time_now() = 0; /* time in usec since epoch. Blocks until time available */
 };
+
+
 class acq400_FMT_Sim: public acq400_FMT_abstract {
 	virtual void update_fmt(bool first_time = false);
 
