@@ -80,7 +80,7 @@ MultiCast& acq400_FMT_abc::mc_factory(MultiCast::MC txrx)
 	fprintf(stderr, "%s:%s mc_group \"%s\" mc_port %d\n",
 			DN, FN, mc_group, mc_port);
 
-	return MultiCast::factory(mc_group, mc_port, MultiCast::MC_SENDER);
+	return MultiCast::factory(mc_group, mc_port, txrx);
 
 }
 

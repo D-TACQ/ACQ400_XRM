@@ -94,6 +94,8 @@ public:
 	MultiCastReceiver(const char* _group, int _port):
 		MultiCastImpl(_group, _port)
 	{
+		if (verbose) printf("MultiCastReceiver() 01\n");
+
 		if (bind(sock, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
 			perror("bind");
 			exit(1);
