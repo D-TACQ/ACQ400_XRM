@@ -57,6 +57,7 @@ void acq400_FMT_rx::update_fmt(bool first_time)
 		fmt[9].pad = dt;            // BIG truncation, max 65536 us
 		fmt[10].pad = dt/1000;	    // ms, 65s rollover
 	}
+	ts = fmt[0].timestamp;
 }
 
 void acq400_FMT_rx::process_fmt(bool first_time)
