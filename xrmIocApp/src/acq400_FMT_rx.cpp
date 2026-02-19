@@ -97,6 +97,37 @@ void acq400_FMT_rx::task(void) {
 	}
 }
 
+asynStatus acq400_FMT_rx::writeInt32(asynUser *pasynUser, epicsInt32 value)
+{
+	    int function = pasynUser->reason;
+	    asynStatus status = asynSuccess;
+	    const char *paramName;
+
+	    /* Set the parameter in the parameter library. */
+	    status = (asynStatus) setIntegerParam(function, value);
+
+	    /* Fetch the parameter string name for possible use in debugging */
+	    getParamName(function, &paramName);
+
+	    if (function == P_RUNSTOP) {
+	        if (value) epicsEventSignal(eventId);
+	    }
+
+	    /* Do callbacks so higher layers see any changes */
+	    status = (asynStatus) callParamCallbacks();
+
+	    if (status)
+	        epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
+	                  "%s:%s: status=%d, function=%d, name=%s, value=%d",
+	                  DN, FN, status, function, paramName, value);
+	    else
+	        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+	              "%s:%s: function=%d, name=%s, value=%d\n",
+	              DN, FN, function, paramName, value);
+	    return status;
+}
+
+
 extern "C" {
 
 	/** EPICS iocsh callable function to call constructor for the testAsynPortDriver class.

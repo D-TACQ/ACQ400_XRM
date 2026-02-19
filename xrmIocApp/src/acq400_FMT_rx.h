@@ -26,9 +26,8 @@ public:
 	acq400_FMT_rx(const char* portName);
 	virtual ~acq400_FMT_rx() {}
 
-	/*
+
 	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
-*/
 };
 
 
