@@ -63,7 +63,8 @@ dbLoadGroup("$ACQ400XRM_GROUP","UUT=$HOST")
 EOF
 fi
 
-[ ! -z $XRM_FMT_SIM ] && ./scripts/load.fmt_sim
+[ ! -z $XRM_FMT_SIM ] && ./scripts/load.fmt_sim $XRM_FMT_SIM
+[ ! -z $XRM_FMT_RX ] && ./scripts/load.fmt_rx $XRM_FMT_RX
 
 cat - <<EOF
 dbLoadRecords("db/local-aliases.db","UUT=acq2206_088")
