@@ -143,18 +143,18 @@ extern "C" {
 
 	static const iocshArg initArg0 = { "port", iocshArgString };
 	static const iocshArg * const initArgs[] = { &initArg0 };
-	static const iocshFuncDef initFuncDef = { "acq400_FMT_SimConfigure", 1, initArgs };
+	static const iocshFuncDef initFuncDef = { "acq400_FMT_rxConfigure", 1, initArgs };
 	static void initCallFunc(const iocshArgBuf *args)
 	{
 		acq400_FMT_rxConfigure(args[0].sval);
 	}
 
-	void acq400_FMT_rx(void)
+	void acq400_FMT_rxRegister(void)
 	{
 	    iocshRegister(&initFuncDef, initCallFunc);
 	}
 
-	epicsExportRegistrar(acq400_FMT_rx);
+	epicsExportRegistrar(acq400_FMT_rxRegister);
 }
 
 
