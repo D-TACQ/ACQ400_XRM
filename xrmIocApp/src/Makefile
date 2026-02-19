@@ -51,6 +51,7 @@ xrmIoc_DBD += devxrmIocVersion.dbd
 xrmIoc_DBD += xrmIocHello.dbd
 xrmIoc_DBD += initTrace.dbd
 xrmIoc_DBD += acq400_FMT_sim.dbd
+xrmIoc_DBD += acq400_FMT_rx.dbd
 
 # xrmIoc_registerRecordDeviceDriver.cpp derives from xrmIoc.dbd
 xrmIoc_SRCS += xrmIoc_registerRecordDeviceDriver.cpp
