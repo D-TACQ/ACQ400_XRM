@@ -134,6 +134,9 @@ void acq400_FMT_Sim::update_fmt(bool first_time)
 	for (int row = 0; row < FMT_ROWS; ++row){
 		fmt[row].timestamp = now_us + row*10;
 	}
+
+	fmt[0].pad = update >> 16;
+	fmt[1].pad = update;
 }
 
 acq400_FMT_Sim::acq400_FMT_Sim(

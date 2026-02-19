@@ -26,7 +26,9 @@ acq400_FMT_rx::acq400_FMT_rx(const char* portName) :
 		/* asynFlags no block*/ 0,
 		/* Autoconnect */       1,
 		/* Default priority */  0,
-		/* Default stack size*/ 0)
+		/* Default stack size*/ 0),
+		packet_count(0),
+		ts(0)
 {
 	asynStatus status = asynSuccess;
 
@@ -44,12 +46,27 @@ acq400_FMT_rx::acq400_FMT_rx(const char* portName) :
 
 void acq400_FMT_rx::update_fmt(bool first_time)
 {
+	++packet_count;
+	fmt[4].pad = packet_count>>16;
+	fmt[5].pad = packet_count&0x0ffff;
+	if (!first_time){
+		epicsInt64 dt = fmt[0].timestamp - ts;
+		fmt[6].pad = dt>>48;
+		fmt[7].pad = dt>>32;
+		fmt[8].pad = dt>>16;
+		fmt[9].pad = dt;            // BIG truncation, max 65536 us
+		fmt[10].pad = dt/1000;	    // ms, 65s rollover
+	}
+}
+
+void acq400_FMT_rx::process_fmt(bool first_time)
+{
 
 }
 
-
 void acq400_FMT_rx::task(void) {
 	asynStatus status = asynSuccess;
+	bool first_time = true;
 
 	epicsEventWait(eventId);
 
@@ -66,11 +83,14 @@ void acq400_FMT_rx::task(void) {
 		unlock();
 		if (runstop == 1){
 			multicast.recvfrom(fmt, sizeof(fmt));
+			update_fmt(first_time);
+			process_fmt(first_time);
 			update_fmt_columns();
 			lock();
 			updateTimeStamp();
 			update_fmt_callbacks();
 			unlock();
+			first_time = false;
 		}else{
 			usleep(50000);
 		}
