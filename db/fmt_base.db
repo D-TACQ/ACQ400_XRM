@@ -1,0 +1,153 @@
+# fmt_base : common to SIM and RX
+
+record(bo, "${UUT}:FMT:RUNSTOP")
+{
+	field(PINI, "YES")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))RUNSTOP")
+	field(SCAN, "Passive")
+	field(ZNAM, "STOP")
+	field(ONAM, "RUN")
+	field(VAL,  "0")
+}
+record(longin, "${UUT}:FMT:UPDATES")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))UPDATES")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+}
+
+record(int64in, "${UUT}:FMT:TS_USEC")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt64")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TS_USEC")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+}
+
+record(stringin, "${UUT}:FMT:MC_GROUP")
+{
+	field(PINI, "YES")
+	field(DTYP, "asynOctetRead")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_MC_GRP")
+	field(SCAN, "I/O Intr")
+}
+
+record(longin, "${UUT}:FMT:MC_PORT")
+{
+	field(PINI, "YES")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_MC_PORT")
+	field(SCAN, "I/O Intr")
+}
+
+
+
+record(waveform, "${UUT}:FMT:TAB:Labels_") {
+        field(FTVL, "STRING")
+        field(NELM, "5")
+        field(INP , {const:["Row", "Event", "Pad", "CliDat", "TS"]})
+        info(Q:group, {
+        	"${UUT}:FMT:TAB:Tbl":{
+        		+id:"epics:nt/NTTable:1.0",
+        		"labels":{+type:"plain", +channel:"VAL"}
+        	}
+        })
+        field(TPRO, "1")
+}
+
+record(waveform, "${UUT}:FMT:TAB:ROWNUM")
+{
+	field(DTYP, "asynInt8ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_ROWNUM")
+	field(FTVL, "UCHAR")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:FMT:TAB:Tbl": {
+			"value.ROWNUM": {+type:"plain", 
+				         +channel:"VAL"}
+#, +putorder:0 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:FMT:TAB:EVENT")
+{
+	field(DTYP, "asynInt16ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_EVENT")
+	field(FTVL, "USHORT")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:FMT:TAB:Tbl": {
+			"value.EVENT": {+type:"plain", 
+				        +channel:"VAL", +putorder:1 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:FMT:TAB:PAD")
+{
+	field(DTYP, "asynInt16ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_PAD")
+	field(FTVL, "USHORT")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:FMT:TAB:Tbl": {
+			"value.PAD": {+type:"plain", 
+				      +channel:"VAL", +putorder:2 }
+		}
+	})
+}
+
+
+record(waveform, "${UUT}:FMT:TAB:CLIDAT")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_CLIDAT")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:FMT:TAB:Tbl": {
+			"value.CLIDAT": {+type:"plain", 
+					 +channel:"VAL", +putorder:3 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:FMT:TAB:TS")
+{
+	field(DTYP, "asynInt64ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_TS")
+	field(FTVL, "INT64")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:FMT:TAB:Tbl": {
+			"value.TS": {+type:"plain", 
+				     +channel:"VAL", 
+				     +putorder:4, +trigger:"*" }
+		}
+	})
+}
+
+record(longout, "${UUT}:FMT:TAB:Save") {
+    field(MDEL, "-1") # ensure we always trigger group monitor
+    field(TPRO, "1")
+    info(Q:group, {
+	"${UUT}:FMT:TAB:Tbl":{
+	    "_save":{+type:"proc",
+		     +channel:"VAL",
+		     +putorder:5,
+		     +trigger:"*"}
+	}
+    })
+}
+
+

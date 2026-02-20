@@ -4,4 +4,5 @@ SPORT=FMTS
 SRC=WRTS
 echo acq400_FMT_SimConfigure\($SPORT,$SRC\)
 PRAMS="UUT=${IOC_HOST},PORT=FMTS,ADDR=0,TIMEOUT=0"
+echo dbLoadRecords\(\"db/fmt_base.db\",\"${PRAMS}\"\)
 echo dbLoadRecords\(\"db/fmt_sim.db\",\"${PRAMS}\"\)
