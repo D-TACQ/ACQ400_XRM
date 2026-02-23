@@ -96,6 +96,8 @@ public:
 	acq400_SOE(const char *portName);
 	virtual ~acq400_SOE() {}
 
+	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+
 };
 
 #endif /* XRMIOCAPP_SRC_ACQ400_SOE_H_ */

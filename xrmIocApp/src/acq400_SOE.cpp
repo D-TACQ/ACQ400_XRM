@@ -37,6 +37,8 @@ acq400_SOE::acq400_SOE(const char* portName):
 	asynStatus status = asynSuccess;
 	memset(soe_lut, 0, sizeof(soe_lut));
 
+	eventId = epicsEventCreate(epicsEventEmpty);
+
 	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
 	createParam(PS_UPDATES,  asynParamInt32,        &P_UPDATES);
 	createParam(PS_TS_USEC,  asynParamInt64,	&P_TS_USEC);
@@ -90,10 +92,55 @@ void acq400_SOE::update_soe_lut_callbacks(void)
 
 void acq400_SOE::task()
 {
+	asynStatus status = asynSuccess;
+	epicsEventWait(eventId);
+
 	while(1){
+		int runstop;
+		lock();
+		status = getIntegerParam(P_RUNSTOP, &runstop);
+		if (status){
+			fprintf(stderr, "%s:%s getIntegerParam P_FMT_MC_PORT fail\n", DN, FN);
+			return;
+		}
+		unlock();
+		if (runstop == 1){
+			update_soe_lut_callbacks();
+		}
 		usleep(50000);
 	}
 }
+
+asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
+{
+	    int function = pasynUser->reason;
+	    asynStatus status = asynSuccess;
+	    const char *paramName;
+
+	    /* Set the parameter in the parameter library. */
+	    status = (asynStatus) setIntegerParam(function, value);
+
+	    /* Fetch the parameter string name for possible use in debugging */
+	    getParamName(function, &paramName);
+
+	    if (function == P_RUNSTOP) {
+	        if (value) epicsEventSignal(eventId);
+	    }
+
+	    /* Do callbacks so higher layers see any changes */
+	    status = (asynStatus) callParamCallbacks();
+
+	    if (status)
+	        epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
+	                  "%s:%s: status=%d, function=%d, name=%s, value=%d",
+	                  DN, FN, status, function, paramName, value);
+	    else
+	        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+	              "%s:%s: function=%d, name=%s, value=%d\n",
+	              DN, FN, function, paramName, value);
+	    return status;
+}
+
 
 
 extern "C" {
