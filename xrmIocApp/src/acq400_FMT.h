@@ -37,9 +37,10 @@ epicsUInt64 timestamp;
 
 
 class acq400_FMT_abc: public asynPortDriver {
-
+public:
+	FMT fmt;               /* consumed by acq400_SOE */
 protected:
-	FMT fmt;
+
 	/* EPICS NTTABLE is a convenient display mechanism,
 	 * but unfortunately it needs the data in columns.
 	 *
@@ -57,6 +58,7 @@ protected:
 	virtual void update_fmt(bool first_time = false) = 0;
 	virtual void update_fmt_columns(void);
 	virtual void update_fmt_callbacks(void);
+	void init_mc_url(char* group, int maxgroup, int* port);
 	MultiCast& mc_factory(MultiCast::MC txrx);
 
 	static int nice;

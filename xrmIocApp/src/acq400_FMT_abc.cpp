@@ -56,32 +56,35 @@ acq400_FMT_abc::acq400_FMT_abc(
 	setIntegerParam(P_FMT_MC_PORT, G::fmt_mc_port);
 }
 
-MultiCast& acq400_FMT_abc::mc_factory(MultiCast::MC txrx)
+void acq400_FMT_abc::init_mc_url(char* group, int maxgroup, int *port)
 {
 	asynStatus status = asynSuccess;
-	char mc_group[80];
-	int mc_port;
 
-	status = getStringParam(P_FMT_MC_GRP, 80, mc_group);
+	status = getStringParam(P_FMT_MC_GRP, 80, group);
 	if (status){
 		fprintf(stderr, "%s:%s getStringParam P_FMT_MC_GRP fail\n",
 				DN, FN);
 		exit(1);
-		return MultiCast::factory(0, 0, MultiCast::MC_SENDER);
 	}
-	status = getIntegerParam(P_FMT_MC_PORT, &mc_port);
+	status = getIntegerParam(P_FMT_MC_PORT, port);
 	if (status){
 		fprintf(stderr, "%s:%s getIntegerParam P_FMT_MC_PORT fail\n",
 				DN, FN);
 		exit(1);
-		return MultiCast::factory(0, 0, MultiCast::MC_SENDER);
+
 	}
 
 	fprintf(stderr, "%s:%s mc_group \"%s\" mc_port %d\n",
-			DN, FN, mc_group, mc_port);
+			DN, FN, group, *port);
+}
 
+MultiCast& acq400_FMT_abc::mc_factory(MultiCast::MC txrx)
+{
+	char mc_group[80];
+	int mc_port;
+
+	init_mc_url(mc_group, 80, &mc_port);
 	return MultiCast::factory(mc_group, mc_port, txrx);
-
 }
 
 void acq400_FMT_abc::update_fmt_columns()
