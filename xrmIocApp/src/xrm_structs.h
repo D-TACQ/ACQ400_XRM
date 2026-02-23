@@ -48,16 +48,16 @@ struct SOE_HOLD_HEADER {
 	epicsUInt32 pv_id;		// links Event and Offset
 	epicsUInt32 client_data;	// copied from FMT (if required)
 	epicsUInt64 timestamp;		// cross check: which FMT update this derives from.
-	epicsUInt16 data_offset;	// offset in bytes to data array
+	epicsUInt16 data_offset;	// offset in u32 in data array
 	/* description of raw sample from hardware
 	 * it's not totally raw because all AI are presented as calibrated V.
 	 * but after that a series of U32 representing DI, SPAD
 	 * this is not in the spec, but will be useful for validation.
 	 */
-
+	epicsUInt8  ss_u32;		// sample size  (u32)
 	epicsUInt8  ai_count;           // number of AI (floats) in data
 	epicsUInt8  di_count;           // number of DI (u32) in data
-					// data followed by at least 2 SPAD32 entries.
+	epicsUInt8  sp_count;           // number of SP (u32) in data
 };
 
 const int SPAD0_SC = 0;                   // SPAD[0] is sample count (u32)
