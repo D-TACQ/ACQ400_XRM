@@ -88,6 +88,8 @@ void acq400_SOE::update_soe_lut_callbacks(void)
 {
 	setIntegerParam(P_UPDATES, ++update);
 	//setInteger64Param(P_TS_USEC, now_us);
+
+	callParamCallbacks();
 }
 
 void acq400_SOE::task()
@@ -105,7 +107,9 @@ void acq400_SOE::task()
 		}
 		unlock();
 		if (runstop == 1){
+			lock();
 			update_soe_lut_callbacks();
+			unlock();
 		}
 		usleep(50000);
 	}
