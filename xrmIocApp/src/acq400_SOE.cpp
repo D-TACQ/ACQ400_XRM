@@ -29,7 +29,8 @@ acq400_SOE::acq400_SOE(const char* portName):
 	/* asynFlags no block*/ 0,
 	/* Autoconnect */       1,
 	/* Default priority */  0,
-	/* Default stack size*/ 0)
+	/* Default stack size*/ 0),
+	update(0)
 {
 	memset(soe_lut, 0, sizeof(soe_lut));
 
@@ -69,12 +70,15 @@ void acq400_SOE::update_soe_lut_columns(void)
 }
 void acq400_SOE::update_soe_lut_callbacks(void)
 {
-	;
+	setIntegerParam(P_UPDATES, ++update);
+	//setInteger64Param(P_TS_USEC, now_us);
 }
 
 void acq400_SOE::task()
 {
-	;
+	while(1){
+		usleep(50000);
+	}
 }
 
 

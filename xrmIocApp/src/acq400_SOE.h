@@ -58,6 +58,8 @@ protected:
 		epicsInt64 c_offset_us[SOE_LUT_ROWS];
 	}cols;
 
+	unsigned update;
+
 	virtual void update_soe_lut(bool first_time = false);
 	virtual void update_soe_lut_columns(void);
 	virtual void update_soe_lut_callbacks(void);

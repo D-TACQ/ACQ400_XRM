@@ -1,0 +1,29 @@
+# soe_base : Sample On Event
+
+record(bo, "${UUT}:SOE:RUNSTOP")
+{
+	field(PINI, "YES")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))RUNSTOP")
+	field(SCAN, "Passive")
+	field(ZNAM, "STOP")
+	field(ONAM, "RUN")
+	field(VAL,  "0")
+}
+record(longin, "${UUT}:SOE:UPDATES")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))UPDATES")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+}
+
+record(int64in, "${UUT}:SOE:TS_USEC")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt64")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TS_USEC")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+}
