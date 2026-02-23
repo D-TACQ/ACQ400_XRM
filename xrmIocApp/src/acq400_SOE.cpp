@@ -17,6 +17,8 @@ static const char *driverName="acq400_SOE";
 #define FN	__FUNCTION__
 
 
+int acq400_SOE::nice = ::getenv_default("acq400_SOE_NICE", 0);
+
 acq400_SOE::acq400_SOE(const char* portName):
 	asynPortDriver(portName,
 	/* maxAddr */		SOE_HOLD_HEADER_ROWS,    /* nchan from 0 */
@@ -32,6 +34,7 @@ acq400_SOE::acq400_SOE(const char* portName):
 	/* Default stack size*/ 0),
 	update(0)
 {
+	asynStatus status = asynSuccess;
 	memset(soe_lut, 0, sizeof(soe_lut));
 
 	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
@@ -52,6 +55,17 @@ acq400_SOE::acq400_SOE(const char* portName):
 	createParam(PS_SOE_HHR_COL_AI_COUNT,	asynParamOctet,	     &P_SOE_HHR_COL_AI_COUNT);
 	createParam(PS_SOE_HHR_COL_DI_COUNT,	asynParamOctet,	     &P_SOE_HHR_COL_DI_COUNT);
 	createParam(PS_SOE_HHR_COL_SP_COUNT,	asynParamOctet,	     &P_SOE_HHR_COL_SP_COUNT);
+
+	/* Create the thread that computes the waveforms in the background */
+	status = (asynStatus)(epicsThreadCreate("SOE_task",
+			epicsThreadPriorityHigh - nice,
+			epicsThreadGetStackSize(epicsThreadStackMedium),
+			(EPICSTHREADFUNC)task_runner,
+			this) == NULL);
+	if (status) {
+		printf("%s:%s: epicsThreadCreate failure\n", DN, FN);
+		return;
+	}
 }
 
 void acq400_SOE::task_runner(void *drvPvt)

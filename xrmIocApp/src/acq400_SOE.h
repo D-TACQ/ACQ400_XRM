@@ -59,6 +59,7 @@ protected:
 	}cols;
 
 	unsigned update;
+	static int nice;
 
 	virtual void update_soe_lut(bool first_time = false);
 	virtual void update_soe_lut_columns(void);
