@@ -40,10 +40,9 @@ acq400_SOE::acq400_SOE(const char* portName):
 	assert(SOE_LUT_ROWS < 0xffU);
 	for (epicsInt8 row = 0; row < SOE_LUT_ROWS; ++row){
 		cols.c_rownum[row] = row;
-
-		cols.c_event[row] = 1000+row;
-		cols.c_pv_id[row] = 2000+row;
-		cols.c_offset_us[row] = row*2;
+		soe_lut[row].event = 1000+row;
+		soe_lut[row].pv_id = 2000+row;
+		soe_lut[row].offset_us = row*2;
 	}
 
 
