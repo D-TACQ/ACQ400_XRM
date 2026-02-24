@@ -28,7 +28,7 @@ struct TimeProvider {
 class acq400_FMT_Sim: public acq400_FMT_abc {
 	virtual void update_fmt(bool first_time = false);
 
-	asynStatus gip(int pnum, int* pram);
+
 	void redit();  /* Row EDIT */
 
 	TimeProvider& timeProvider;

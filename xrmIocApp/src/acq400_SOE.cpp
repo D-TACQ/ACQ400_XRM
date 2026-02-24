@@ -67,6 +67,18 @@ acq400_SOE::acq400_SOE(const char* portName):
 	createParam(PS_SOE_HHR_COL_DI_COUNT,	asynParamOctet,	     &P_SOE_HHR_COL_DI_COUNT);
 	createParam(PS_SOE_HHR_COL_SP_COUNT,	asynParamOctet,	     &P_SOE_HHR_COL_SP_COUNT);
 
+	createParam(PS_SOE_LUT_REDIT_ROW, 	asynParamInt32,      &P_SOE_LUT_REDIT_ROW);
+
+
+	createParam(PS_SOE_LUT_REDIT_ROWCOUNT, 	asynParamInt32, &P_SOE_LUT_REDIT_ROWCOUNT);
+	createParam(PS_SOE_LUT_REDIT_EVENT,	asynParamInt32, &P_SOE_LUT_REDIT_EVENT);
+	createParam(PS_SOE_LUT_REDIT_EVENT_STEP,asynParamInt32, &P_SOE_LUT_REDIT_EVENT_STEP);
+	createParam(PS_SOE_LUT_REDIT_PV_ID, 	asynParamInt32, &P_SOE_LUT_REDIT_PV_ID);
+	createParam(PS_SOE_LUT_REDIT_PV_ID_STEP,asynParamInt32, &P_SOE_LUT_REDIT_PV_ID_STEP);
+	createParam(PS_SOE_LUT_REDIT_OFFSET_US, asynParamInt32, &P_SOE_LUT_REDIT_OFFSET_US);
+	createParam(PS_SOE_LUT_REDIT_OFFSET_US_STEP,asynParamInt32, &P_SOE_LUT_REDIT_OFFSET_US_STEP);
+	createParam(PS_SOE_LUT_REDIT_COMMIT,	asynParamInt32, &P_SOE_LUT_REDIT_COMMIT);
+
 	/* Create the thread that computes the waveforms in the background */
 	status = (asynStatus)(epicsThreadCreate("SOE_task",
 			epicsThreadPriorityHigh - nice,
@@ -79,6 +91,15 @@ acq400_SOE::acq400_SOE(const char* portName):
 	}
 }
 
+asynStatus acq400_SOE::gip(int pnum, int* pram)
+{
+	asynStatus status = getIntegerParam(pnum, pram);
+	if (status){
+		fprintf(stderr, "%s:%s getIntegerParam %d fail\n",
+				DN, FN, pnum);
+	}
+	return status;
+}
 void acq400_SOE::task_runner(void *drvPvt)
 {
 	acq400_SOE *pPvt = (acq400_SOE *)drvPvt;
@@ -136,6 +157,44 @@ void acq400_SOE::task()
 	}
 }
 
+
+void acq400_SOE::redit()
+{
+	int row, row_count, event, event_step, pv_id, pv_id_step, offset_us, offset_us_step;
+
+	fprintf(stderr, "%d %d %d %d %d %d %d %d\n",
+			P_SOE_LUT_REDIT_ROW,
+			P_SOE_LUT_REDIT_ROWCOUNT,
+			P_SOE_LUT_REDIT_EVENT,
+			P_SOE_LUT_REDIT_EVENT_STEP,
+			P_SOE_LUT_REDIT_PV_ID,
+			P_SOE_LUT_REDIT_PV_ID_STEP,
+			P_SOE_LUT_REDIT_OFFSET_US,
+			P_SOE_LUT_REDIT_OFFSET_US_STEP);
+
+	if (gip(P_SOE_LUT_REDIT_ROW, 	&row)			||
+	    gip(P_SOE_LUT_REDIT_ROWCOUNT, 	&row_count)	||
+	    gip(P_SOE_LUT_REDIT_EVENT,    	&event)		||
+	    gip(P_SOE_LUT_REDIT_EVENT_STEP, &event_step)	||
+	    gip(P_SOE_LUT_REDIT_PV_ID,     &pv_id)		||
+	    gip(P_SOE_LUT_REDIT_PV_ID_STEP,&pv_id_step)		||
+	    gip(P_SOE_LUT_REDIT_OFFSET_US,     &offset_us)	||
+	    gip(P_SOE_LUT_REDIT_OFFSET_US_STEP,&offset_us_step)	){
+		return;
+	}
+
+	fprintf(stderr, "%s:%s %d,%d %d,%d %d,%d, %d, %d\n", DN, FN,
+			row, row_count, event, event_step, pv_id, pv_id_step, offset_us, offset_us_step);
+
+	lock();
+	for (int rn = 0; rn < row_count; ++rn){
+		struct SOE_LUT_ROW& this_row = soe_lut[row+rn];
+		this_row.event = event + rn*event_step;
+		this_row.pv_id = pv_id + rn*pv_id_step;
+		this_row.offset_us = offset_us +rn*offset_us_step;
+	}
+	unlock();
+}
 asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 {
 	    int function = pasynUser->reason;

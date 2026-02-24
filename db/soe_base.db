@@ -133,3 +133,116 @@ record(longout, "${UUT}:SOE_LUT:TAB:Save") {
 }
 
 
+record(longout, "${UUT}:SOE_LUT:REDIT:ROW")
+{
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_ROW")
+	field(PINI, "YES")
+	field(VAL,  "0")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:REDIT": {
+			"ROW": {+channel:"VAL"}
+		}
+	})
+}
+record(longout, "${UUT}:SOE_LUT:REDIT:ROWCOUNT")
+{
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_ROWCOUNT")
+	field(PINI, "YES")
+	field(VAL,  "1")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:REDIT": {
+			"ROWCOUNT": {+channel:"VAL"}
+		}
+	})
+}
+
+
+record(longout, "${UUT}:SOE_LUT:REDIT:EVENT")
+{
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_EVENT")
+	field(PINI, "YES")
+	field(VAL,  "0")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:REDIT": {
+			"EVENT": {+channel:"VAL"}
+		}
+	})
+}
+record(longout, "${UUT}:SOE_LUT:REDIT:EVENT_STEP")
+{
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_EVENT_STEP")
+	field(PINI, "YES")
+	field(VAL,  "0")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:REDIT": {
+			"EVENT_STEP": {+channel:"VAL"}
+		}
+	})
+}
+record(longout, "${UUT}:SOE_LUT:REDIT:PV_ID")
+{
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_PV_ID")
+	field(PINI, "YES")
+	field(VAL,  "0")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:REDIT": {
+			"PV_ID": {+channel:"VAL"}
+		}
+	})
+}
+record(longout, "${UUT}:SOE_LUT:REDIT:PV_ID_STEP")
+{
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_PV_ID_STEP")
+	field(PINI, "YES")
+	field(VAL,  "0")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:REDIT": {
+			"PV_ID_STEP": {+channel:"VAL"}
+		}
+	})
+}
+record(longout, "${UUT}:SOE_LUT:REDIT:COUNT_US")
+{
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_COUNT_US")
+	field(PINI, "YES")
+	field(VAL,  "0")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:REDIT": {
+			"COUNT_US": {+channel:"VAL"}
+		}
+	})
+}
+
+record(longout, "${UUT}:SOE_LUT:REDIT:COUNT_US_STEP")
+{
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_COUNT_US_STEP")
+	field(PINI, "YES")
+	field(VAL,  "0")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:REDIT": {
+			"COUNT_US_STEP": {+channel:"VAL"}
+		}
+	})
+}
+
+record(longout, "${UUT}:SOE_LUT:REDIT:COMMIT")
+{
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_REDIT_COMMIT")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:REDIT": {
+			"COMMIT": {+type:"proc", +channel:"VAL",
+				   +trigger:"*"
+			}
+		}
+	})
+}
+

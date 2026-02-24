@@ -213,15 +213,6 @@ void acq400_FMT_Sim::task(void) {
 	}
 }
 
-asynStatus acq400_FMT_Sim::gip(int pnum, int* pram)
-{
-	asynStatus status = getIntegerParam(pnum, pram);
-	if (status){
-		fprintf(stderr, "%s:%s getIntegerParam %d fail\n",
-				DN, FN, pnum);
-	}
-	return status;
-}
 
 void acq400_FMT_Sim::redit()
 {

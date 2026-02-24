@@ -56,6 +56,16 @@ acq400_FMT_abc::acq400_FMT_abc(
 	setIntegerParam(P_FMT_MC_PORT, G::fmt_mc_port);
 }
 
+asynStatus acq400_FMT_abc::gip(int pnum, int* pram)
+{
+	asynStatus status = getIntegerParam(pnum, pram);
+	if (status){
+		fprintf(stderr, "%s:%s getIntegerParam %d fail\n",
+				DN, FN, pnum);
+	}
+	return status;
+}
+
 void acq400_FMT_abc::init_mc_url(char* group, int maxgroup, int *port)
 {
 	asynStatus status = asynSuccess;

@@ -25,6 +25,18 @@
 #define PS_SOE_LUT_COL_PV_ID	 "SOE_LUT_COL_PV_ID"	/* asynInt32Array, ro */
 #define PS_SOE_LUT_COL_OFFSET_US "SOE_LUT_COL_OFFSET_US" /* asynInt32Array, ro */
 
+/* REDIT : Row EDIT */
+#define PS_SOE_LUT_REDIT_ROW		"SOE_LUT_REDIT_ROW" 	/* edit this row */
+#define PS_SOE_LUT_REDIT_ROWCOUNT	"SOE_LUT_REDIT_ROWCOUNT"	/* for this many rows */
+#define PS_SOE_LUT_REDIT_EVENT      	"SOE_LUT_REDIT_EVENT"       /* set this event */
+#define PS_SOE_LUT_REDIT_EVENT_STEP 	"SOE_LUT_REDIT_EVENT_STEP"  /* adding to subsequent rows */
+#define PS_SOE_LUT_REDIT_PV_ID      	"SOE_LUT_REDIT_PV_ID"       /* set this event */
+#define PS_SOE_LUT_REDIT_PV_ID_STEP 	"SOE_LUT_REDIT_PV_ID_STEP"  /* adding to subsequent rows */
+#define PS_SOE_LUT_REDIT_OFFSET_US	"SOE_LUT_REDIT_OFFSET_US"
+#define PS_SOE_LUT_REDIT_OFFSET_US_STEP "SOE_LUT_REDIT_OFFSET_US_STEP"
+
+#define PS_SOE_LUT_REDIT_COMMIT 	"SOE_LUT_REDIT_COMMIT"
+
 #define PS_SOE_HHR_COL_ROWNUM	 "SOE_HHR_COL_ROWNUM"
 #define PS_SOE_HHR_COL_CLIDAT    "SOE_HHR_COL_CLIDAT"
 #define PS_SOE_HHR_COL_TS        "SOE_HHR_COL_TS"
@@ -61,6 +73,8 @@ protected:
 	unsigned update;
 	static int nice;
 
+	asynStatus gip(int pnum, int* pram);
+	void redit();
 	virtual void update_soe_lut(bool first_time = false);
 	virtual void update_soe_lut_columns(void);
 	virtual void update_soe_lut_callbacks(void);
@@ -81,6 +95,18 @@ protected:
 	int P_SOE_LUT_COL_PAD;
 	int P_SOE_LUT_COL_PV_ID;
 	int P_SOE_LUT_COL_OFFSET_US;
+
+	int P_SOE_LUT_REDIT_ROW;
+	int P_SOE_LUT_REDIT_ROWCOUNT;
+	int P_SOE_LUT_REDIT_EVENT;
+	int P_SOE_LUT_REDIT_EVENT_STEP;
+	int P_SOE_LUT_REDIT_PV_ID;
+	int P_SOE_LUT_REDIT_PV_ID_STEP;
+	int P_SOE_LUT_REDIT_OFFSET_US;
+	int P_SOE_LUT_REDIT_OFFSET_US_STEP;
+
+	int P_SOE_LUT_REDIT_COMMIT;
+
 
 	int P_SOE_HHR_COL_ROWNUM;
 	int P_SOE_HHR_COL_CLIDAT;
