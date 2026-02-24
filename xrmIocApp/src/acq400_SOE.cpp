@@ -105,6 +105,11 @@ void acq400_SOE::update_soe_lut_callbacks(void)
 	//setInteger64Param(P_TS_USEC, now_us);
 
 	callParamCallbacks();
+	doCallbacksInt8Array(cols.c_rownum, FMT_ROWS, P_SOE_LUT_COL_ROWNUM, 0);
+	doCallbacksInt16Array(cols.c_event, FMT_ROWS, P_SOE_LUT_COL_EVENT, 0);
+	doCallbacksInt16Array(cols.c_pad, FMT_ROWS, P_SOE_LUT_COL_PAD, 0);
+	doCallbacksInt32Array(cols.c_pv_id, FMT_ROWS, P_SOE_LUT_COL_PV_ID, 0);
+	doCallbacksInt64Array(cols.c_offset_us, FMT_ROWS, P_SOE_LUT_COL_OFFSET_US, 0);
 }
 
 void acq400_SOE::task()
