@@ -207,28 +207,28 @@ record(longout, "${UUT}:SOE_LUT:REDIT:PV_ID_STEP")
 		}
 	})
 }
-record(longout, "${UUT}:SOE_LUT:REDIT:COUNT_US")
+record(longout, "${UUT}:SOE_LUT:REDIT:OFFSET_US")
 {
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_COUNT_US")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_OFFSET_US")
 	field(PINI, "YES")
 	field(VAL,  "0")
 	info(Q:group, {
 		"${UUT}:SOE_LUT:REDIT": {
-			"COUNT_US": {+channel:"VAL"}
+			"OFFSET_US": {+channel:"VAL"}
 		}
 	})
 }
 
-record(longout, "${UUT}:SOE_LUT:REDIT:COUNT_US_STEP")
+record(longout, "${UUT}:SOE_LUT:REDIT:OFFSET_US_STEP")
 {
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_COUNT_US_STEP")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_OFFSET_US_STEP")
 	field(PINI, "YES")
 	field(VAL,  "0")
 	info(Q:group, {
 		"${UUT}:SOE_LUT:REDIT": {
-			"COUNT_US_STEP": {+channel:"VAL"}
+			"OFFSET_US_STEP": {+channel:"VAL"}
 		}
 	})
 }
@@ -236,7 +236,7 @@ record(longout, "${UUT}:SOE_LUT:REDIT:COUNT_US_STEP")
 record(longout, "${UUT}:SOE_LUT:REDIT:COMMIT")
 {
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_REDIT_COMMIT")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_COMMIT")
 	info(Q:group, {
 		"${UUT}:SOE_LUT:REDIT": {
 			"COMMIT": {+type:"proc", +channel:"VAL",

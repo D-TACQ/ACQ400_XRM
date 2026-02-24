@@ -209,6 +209,8 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 
 	    if (function == P_RUNSTOP) {
 	        if (value) epicsEventSignal(eventId);
+	    }else if (function == P_SOE_LUT_REDIT_COMMIT){
+		    redit();
 	    }
 
 	    /* Do callbacks so higher layers see any changes */
