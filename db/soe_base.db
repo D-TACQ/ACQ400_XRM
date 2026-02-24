@@ -27,3 +27,109 @@ record(int64in, "${UUT}:SOE:TS_USEC")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
 }
+
+
+record(waveform, "${UUT}:SOE_LUT:TAB:Labels_") {
+	field(FTVL, "STRING")
+	field(NELM, "5")
+	field(INP , {const:["Row", "Event", "Pad", "PV_ID", "OFFSET_US"]})
+	info(Q:group, {
+		"${UUT}:SOE_LUT:TAB:Tbl":{
+			+id:"epics:nt/NTTable:1.0",
+			"labels":{+type:"plain", +channel:"VAL"}
+		}
+	})
+	field(TPRO, "1")
+}
+
+record(waveform, "${UUT}:SOE_LUT:TAB:ROWNUM")
+{
+	field(DTYP, "asynInt8ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_LUT_COL_ROWNUM")
+	field(FTVL, "UCHAR")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:TAB:Tbl": {
+			"value.ROWNUM": {+type:"plain", 
+					 +channel:"VAL", +putorder:0 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:SOE_LUT:TAB:EVENT")
+{
+	field(DTYP, "asynInt16ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_LUT_COL_EVENT")
+	field(FTVL, "USHORT")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:TAB:Tbl": {
+			"value.EVENT": {+type:"plain", 
+					+channel:"VAL", +putorder:1 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:SOE_LUT:TAB:PAD")
+{
+	field(DTYP, "asynInt16ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_LUT_COL_PAD")
+	field(FTVL, "USHORT")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:TAB:Tbl": {
+			"value.PAD": {+type:"plain", 
+				      +channel:"VAL", +putorder:2 }
+		}
+	})
+}
+
+
+record(waveform, "${UUT}:SOE_LUT:TAB:PV_ID")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_LUT_COL_PV_ID")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:TAB:Tbl": {
+			"value.CLIDAT": {+type:"plain", 
+					 +channel:"VAL", +putorder:3 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:SOE_LUT:TAB:TS")
+{
+	field(DTYP, "asynInt64ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_LUT_COL_OFFSET_US")
+	field(FTVL, "INT64")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_LUT:TAB:Tbl": {
+			"value.TS": {+type:"plain", 
+				     +channel:"VAL", 
+				     +putorder:4, +trigger:"*" }
+		}
+	})
+}
+
+record(longout, "${UUT}:SOE_LUT:TAB:Save") {
+    field(MDEL, "-1") # ensure we always trigger group monitor
+    field(TPRO, "1")
+    info(Q:group, {
+	"${UUT}:SOE_LUT:TAB:Tbl":{
+	    "_save":{+type:"proc",
+		     +channel:"VAL",
+		     +putorder:5,
+		     +trigger:"*"}
+	}
+    })
+}
+
+

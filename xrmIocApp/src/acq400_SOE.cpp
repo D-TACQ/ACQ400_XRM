@@ -37,6 +37,16 @@ acq400_SOE::acq400_SOE(const char* portName):
 	asynStatus status = asynSuccess;
 	memset(soe_lut, 0, sizeof(soe_lut));
 
+	assert(SOE_LUT_ROWS < 0xffU);
+	for (epicsInt8 row = 0; row < SOE_LUT_ROWS; ++row){
+		cols.c_rownum[row] = row;
+
+		cols.c_event[row] = 1000+row;
+		cols.c_pv_id[row] = 2000+row;
+		cols.c_offset_us[row] = row*2;
+	}
+
+
 	eventId = epicsEventCreate(epicsEventEmpty);
 
 	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
@@ -82,7 +92,12 @@ void acq400_SOE::update_soe_lut(bool first_time)
 }
 void acq400_SOE::update_soe_lut_columns(void)
 {
-	;
+	for (int row = 0; row < SOE_LUT_ROWS; ++row){
+		cols.c_event[row]= soe_lut[row].event;
+		cols.c_pad[row] = soe_lut[row].pad;
+		cols.c_pv_id[row] = soe_lut[row].pv_id;
+		cols.c_offset_us[row] = soe_lut[row].offset_us;
+	};
 }
 void acq400_SOE::update_soe_lut_callbacks(void)
 {
@@ -107,6 +122,8 @@ void acq400_SOE::task()
 		}
 		unlock();
 		if (runstop == 1){
+			/** @@todo SOE_LUT doesn't really update periodically, make it PASV, for now, period is good */
+			update_soe_lut_columns();
 			lock();
 			update_soe_lut_callbacks();
 			unlock();
