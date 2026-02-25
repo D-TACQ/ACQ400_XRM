@@ -55,6 +55,7 @@
 #define PS_SOE_HLD_COL_DI1	"SOE_HLD_COL_DI1"
 #define PS_SOE_HLD_COL_DI2	"SOE_HLD_COL_DI2"
 
+
 /* SP0 : SPAD0 aka Sample Number
  * SP1 : SPAD1 aka WR_VERNIER
  */
@@ -85,16 +86,16 @@ protected:
 	}cols;
 
 	struct HOLD_COLS {
-		epicsInt8    c_rownum[SOE_HOLD_ROWS];
-		epicsInt32  c_pv_id[SOE_HOLD_ROWS];
-		epicsInt32  c_client_data[SOE_HOLD_ROWS];
-		epicsInt64  c_timestamp[SOE_HOLD_ROWS];		// really U64 but..
-		epicsFloat32 c_AI1[SOE_HOLD_ROWS];
-		epicsFloat32 c_AI2[SOE_HOLD_ROWS];
-		epicsInt32  c_DI1[SOE_HOLD_ROWS];       // really U32, but we only have doCallbacksInt32Array()
-		epicsInt32  c_DI2[SOE_HOLD_ROWS];
-		epicsInt32  c_SP0[SOE_HOLD_ROWS];
-		epicsInt32  c_SP1[SOE_HOLD_ROWS];
+		epicsInt8    c_rownum[SOE_HLD_ROWS];
+		epicsInt32  c_pv_id[SOE_HLD_ROWS];
+		epicsInt32  c_client_data[SOE_HLD_ROWS];
+		epicsInt64  c_timestamp[SOE_HLD_ROWS];		// really U64 but..
+		epicsFloat32 c_AI1[SOE_HLD_ROWS];
+		epicsFloat32 c_AI2[SOE_HLD_ROWS];
+		epicsInt32  c_DI1[SOE_HLD_ROWS];       // really U32, but we only have doCallbacksInt32Array()
+		epicsInt32  c_DI2[SOE_HLD_ROWS];
+		epicsInt32  c_SP0[SOE_HLD_ROWS];
+		epicsInt32  c_SP1[SOE_HLD_ROWS];
 	} hold_cols;
 	unsigned update;
 	static int nice;

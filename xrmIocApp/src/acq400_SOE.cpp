@@ -21,7 +21,7 @@ int acq400_SOE::nice = ::getenv_default("acq400_SOE_NICE", 0);
 
 acq400_SOE::acq400_SOE(const char* portName):
 	asynPortDriver(portName,
-	/* maxAddr */		SOE_HOLD_ROWS,    /* nchan from 0 */
+	/* maxAddr */		SOE_HLD_ROWS,    /* nchan from 0 */
 	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
 				asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
 				asynFloat32ArrayMask|asynInt64ArrayMask|asynDrvUserMask,
@@ -45,8 +45,8 @@ acq400_SOE::acq400_SOE(const char* portName):
 		soe_lut[row].offset_us = row*2;
 	}
 
-	assert(SOE_HOLD_ROWS < 0xffU);
-	for (epicsInt8 row = 0; row < SOE_HOLD_ROWS; ++row){
+	assert(SOE_HLD_ROWS < 0xffU);
+	for (epicsInt8 row = 0; row < SOE_HLD_ROWS; ++row){
 		hold_cols.c_rownum[row] = row;
 		/* .. temp will get overwritten from raw TABLE copy */
 		hold_cols.c_DI1[row] = 0xd1;
@@ -159,22 +159,27 @@ void acq400_SOE::update_hld_tab(bool first_time)
 {
 
 }
+
+static int SP1_SIM = 0;
 void acq400_SOE::update_hld_tab_columns(void)
 {
-
+	for (int row = 0; row < SOE_HLD_ROWS; ++row){
+		hold_cols.c_DI1[row] = 0xd1+row;
+		hold_cols.c_SP1[row] = ++SP1_SIM;
+	}
 }
 void acq400_SOE::update_hld_tab_callbacks(void)
 {
-	doCallbacksInt8Array(hold_cols.c_rownum, SOE_HOLD_ROWS, P_SOE_LUT_COL_ROWNUM, 0);
-	doCallbacksInt32Array(hold_cols.c_pv_id, SOE_HOLD_ROWS, P_SOE_HLD_COL_PV_ID, 0);
-	doCallbacksInt32Array(hold_cols.c_client_data, SOE_HOLD_ROWS, P_SOE_HLD_COL_CLIDAT, 0);
-	doCallbacksInt64Array(hold_cols.c_timestamp, SOE_HOLD_ROWS, P_SOE_HLD_COL_TS, 0);
-	doCallbacksFloat32Array(hold_cols.c_AI1, SOE_HOLD_ROWS, P_SOE_HLD_COL_AI1, 0);
-	doCallbacksFloat32Array(hold_cols.c_AI2, SOE_HOLD_ROWS, P_SOE_HLD_COL_AI2, 0);
-	doCallbacksInt32Array(hold_cols.c_DI1, SOE_HOLD_ROWS, P_SOE_HLD_COL_DI1, 0);
-	doCallbacksInt32Array(hold_cols.c_DI2, SOE_HOLD_ROWS, P_SOE_HLD_COL_DI2, 0);
-	doCallbacksInt32Array(hold_cols.c_SP0, SOE_HOLD_ROWS, P_SOE_HLD_COL_SP0, 0);
-	doCallbacksInt32Array(hold_cols.c_SP1, SOE_HOLD_ROWS, P_SOE_HLD_COL_SP1, 0);
+	doCallbacksInt8Array(hold_cols.c_rownum, SOE_HLD_ROWS, P_SOE_LUT_COL_ROWNUM, 0);
+	doCallbacksInt32Array(hold_cols.c_pv_id, SOE_HLD_ROWS, P_SOE_HLD_COL_PV_ID, 0);
+	doCallbacksInt32Array(hold_cols.c_client_data, SOE_HLD_ROWS, P_SOE_HLD_COL_CLIDAT, 0);
+	doCallbacksInt64Array(hold_cols.c_timestamp, SOE_HLD_ROWS, P_SOE_HLD_COL_TS, 0);
+	doCallbacksFloat32Array(hold_cols.c_AI1, SOE_HLD_ROWS, P_SOE_HLD_COL_AI1, 0);
+	doCallbacksFloat32Array(hold_cols.c_AI2, SOE_HLD_ROWS, P_SOE_HLD_COL_AI2, 0);
+	doCallbacksInt32Array(hold_cols.c_DI1, SOE_HLD_ROWS, P_SOE_HLD_COL_DI1, 0);
+	doCallbacksInt32Array(hold_cols.c_DI2, SOE_HLD_ROWS, P_SOE_HLD_COL_DI2, 0);
+	doCallbacksInt32Array(hold_cols.c_SP0, SOE_HLD_ROWS, P_SOE_HLD_COL_SP0, 0);
+	doCallbacksInt32Array(hold_cols.c_SP1, SOE_HLD_ROWS, P_SOE_HLD_COL_SP1, 0);
 }
 
 void acq400_SOE::task()
@@ -194,6 +199,7 @@ void acq400_SOE::task()
 		if (runstop == 1){
 			/** @@todo SOE_LUT doesn't really update periodically, make it PASV, for now, period is good */
 			update_soe_lut_columns();
+			update_hld_tab_columns();
 			lock();
 			update_soe_lut_callbacks();
 			update_hld_tab_callbacks();

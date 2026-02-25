@@ -39,7 +39,7 @@ void print(SOE_LUT& lut, bool verbose)
 
 void print(SOE_HOLD_TABLE& hold, bool verbose)
 {
-	for (int row = 0; row < SOE_HOLD_ROWS; ++row){
+	for (int row = 0; row < SOE_HLD_ROWS; ++row){
 		if (hold.entries[row].pv_id){
 			printf("%2d: %10d 0x%08x %3d %2d %2d %llu\n",
 				row,
@@ -51,7 +51,7 @@ void print(SOE_HOLD_TABLE& hold, bool verbose)
 				hold.entries[row].timestamp);
 		}
 	}
-	for (int row = 0; row < SOE_HOLD_ROWS; ++row){
+	for (int row = 0; row < SOE_HLD_ROWS; ++row){
 		if (hold.entries[row].pv_id){
 			printf("%2d: ", row);
 			float* ai = (float*)((char*)&hold+hold.entries[row].data_offset);
