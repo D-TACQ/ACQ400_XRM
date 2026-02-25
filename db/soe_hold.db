@@ -44,9 +44,9 @@ record(waveform, "${UUT}:SOE_HLD:TAB:PV_ID")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:CLIDAT")
 {
-	field(DTYP, "asynInt16ArrayIn")
+	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_CLIDAT")
-	field(FTVL, "USHORT")
+	field(FTVL, "ULONG")
 	field(NELM, "64")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
