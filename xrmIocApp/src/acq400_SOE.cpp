@@ -48,7 +48,7 @@ acq400_SOE::acq400_SOE(const char* portName):
 	assert(SOE_HOLD_ROWS < 0xffU);
 	for (epicsInt8 row = 0; row < SOE_HOLD_ROWS; ++row){
 		hold_cols.c_rownum[row] = row;
-		/* .. temp will get overwritted from raw TABLE copy */
+		/* .. temp will get overwritten from raw TABLE copy */
 		hold_cols.c_DI1[row] = 0xd1;
 		hold_cols.c_DI2[row] = 0xd2;
 		hold_cols.c_SP0[row] = row;

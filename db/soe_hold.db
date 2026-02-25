@@ -35,7 +35,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:PV_ID")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:SOE_HLD:TAB:Tbl": {
-			"value.CLIDAT": {+type:"plain", 
+			"value.PV_ID": {+type:"plain", 
 					 +channel:"VAL", +putorder:1 }
 		}
 	})
@@ -51,7 +51,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:CLIDAT")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:SOE_HLD:TAB:Tbl": {
-			"value.EVENT": {+type:"plain", 
+			"value.CLIDAT": {+type:"plain", 
 					+channel:"VAL", +putorder:2 }
 		}
 	})
@@ -68,7 +68,6 @@ record(waveform, "${UUT}:SOE_HLD:TAB:TS")
 		"${UUT}:SOE_HLD:TAB:Tbl": {
 			"value.TS": {+type:"plain", 
 				     +channel:"VAL", +putorder:3 }
-#				     +putorder:3, +trigger:"*" }
 		}
 	})
 }
@@ -171,7 +170,7 @@ record(longout, "${UUT}:SOE_HLD:TAB:Save") {
 	"${UUT}:SOE_HLD:TAB:Tbl":{
 	    "_save":{+type:"proc",
 		     +channel:"VAL",
-		     +putorder:5,
+		     +putorder:9,
 		     +trigger:"*"}
 	}
     })
