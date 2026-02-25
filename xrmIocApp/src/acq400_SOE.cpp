@@ -170,16 +170,16 @@ void acq400_SOE::update_hld_tab_columns(void)
 }
 void acq400_SOE::update_hld_tab_callbacks(void)
 {
-	doCallbacksInt8Array(hold_cols.c_rownum, SOE_HLD_ROWS, P_SOE_LUT_COL_ROWNUM, 0);
-	doCallbacksInt32Array(hold_cols.c_pv_id, SOE_HLD_ROWS, P_SOE_HLD_COL_PV_ID, 0);
-	doCallbacksInt32Array(hold_cols.c_client_data, SOE_HLD_ROWS, P_SOE_HLD_COL_CLIDAT, 0);
-	doCallbacksInt64Array(hold_cols.c_timestamp, SOE_HLD_ROWS, P_SOE_HLD_COL_TS, 0);
-	doCallbacksFloat32Array(hold_cols.c_AI1, SOE_HLD_ROWS, P_SOE_HLD_COL_AI1, 0);
-	doCallbacksFloat32Array(hold_cols.c_AI2, SOE_HLD_ROWS, P_SOE_HLD_COL_AI2, 0);
-	doCallbacksInt32Array(hold_cols.c_DI1, SOE_HLD_ROWS, P_SOE_HLD_COL_DI1, 0);
-	doCallbacksInt32Array(hold_cols.c_DI2, SOE_HLD_ROWS, P_SOE_HLD_COL_DI2, 0);
-	doCallbacksInt32Array(hold_cols.c_SP0, SOE_HLD_ROWS, P_SOE_HLD_COL_SP0, 0);
-	doCallbacksInt32Array(hold_cols.c_SP1, SOE_HLD_ROWS, P_SOE_HLD_COL_SP1, 0);
+	doCallbacksInt8Array(hold_cols.c_rownum, 	SOE_HLD_ROWS, P_SOE_HLD_COL_ROWNUM, 0);
+	doCallbacksInt32Array(hold_cols.c_pv_id, 	SOE_HLD_ROWS, P_SOE_HLD_COL_PV_ID, 0);
+	doCallbacksInt32Array(hold_cols.c_client_data,  SOE_HLD_ROWS, P_SOE_HLD_COL_CLIDAT, 0);
+	doCallbacksInt64Array(hold_cols.c_timestamp, 	SOE_HLD_ROWS, P_SOE_HLD_COL_TS, 0);
+	doCallbacksFloat32Array(hold_cols.c_AI1, 	SOE_HLD_ROWS, P_SOE_HLD_COL_AI1, 0);
+	doCallbacksFloat32Array(hold_cols.c_AI2, 	SOE_HLD_ROWS, P_SOE_HLD_COL_AI2, 0);
+	doCallbacksInt32Array(hold_cols.c_DI1, 		SOE_HLD_ROWS, P_SOE_HLD_COL_DI1, 0);
+	doCallbacksInt32Array(hold_cols.c_DI2, 		SOE_HLD_ROWS, P_SOE_HLD_COL_DI2, 0);
+	doCallbacksInt32Array(hold_cols.c_SP0, 		SOE_HLD_ROWS, P_SOE_HLD_COL_SP0, 0);
+	doCallbacksInt32Array(hold_cols.c_SP1, 		SOE_HLD_ROWS, P_SOE_HLD_COL_SP1, 0);
 }
 
 void acq400_SOE::task()
