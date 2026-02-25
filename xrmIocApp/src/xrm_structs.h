@@ -63,13 +63,13 @@ struct SOE_HOLD_HEADER {
 const int SPAD0_SC = 0;                   // SPAD[0] is sample count (u32)
 const int SPAD1_TS = 1;                   // SPAD[1] is WR TS 3 bit seconds, 28 bit ticks
 
-const int SOE_HOLD_HEADER_ROWS = 64;
+const int SOE_HOLD_ROWS = 64;
 
 
 
 
 typedef struct {
-	struct SOE_HOLD_HEADER entries[SOE_HOLD_HEADER_ROWS];
+	struct SOE_HOLD_HEADER entries[SOE_HOLD_ROWS];
 	epicsUInt32 data[1];             // first data word. Many more to follow
 } SOE_HOLD_TABLE;
 

@@ -38,6 +38,7 @@
 #define PS_SOE_LUT_REDIT_COMMIT 	"SOE_LUT_REDIT_COMMIT"
 
 #define PS_SOE_HLD_COL_ROWNUM	 "SOE_HLD_COL_ROWNUM"
+#define PS_SOE_HLD_COL_PV_ID    "SOE_HLD_COL_PV_ID"
 #define PS_SOE_HLD_COL_CLIDAT    "SOE_HLD_COL_CLIDAT"
 #define PS_SOE_HLD_COL_TS        "SOE_HLD_COL_TS"
 #define PS_SOE_HLD_COL_DATA_OFFSET "SOE_HLD_COL_DATA_OFFSET"
@@ -48,7 +49,17 @@
 #define PS_SOE_HLD_COL_SP_COUNT "SOE_HLD_COL_SP_COUNT"
 
 /* 2 columns each data for show */
-#define PS_SOE_HLD
+#define PS_SOE_HLD_COL_AI1	"SOE_HLD_COL_AI1"
+#define PS_SOE_HLD_COL_AI2	"SOE_HLD_COL_AI2"
+
+#define PS_SOE_HLD_COL_DI1	"SOE_HLD_COL_DI1"
+#define PS_SOE_HLD_COL_DI2	"SOE_HLD_COL_DI2"
+
+/* SP0 : SPAD0 aka Sample Number
+ * SP1 : SPAD1 aka WR_VERNIER
+ */
+#define PS_SOE_HLD_COL_SP0	"SOE_HLD_COL_SP0"
+#define PS_SOE_HLD_COL_SP1	"SOE_HLD_COL_SP1"
 
 /* define a column for each data type.
  * There will be up to 64 of these by asyn "address"
@@ -73,6 +84,18 @@ protected:
 		epicsInt64 c_offset_us[SOE_LUT_ROWS];
 	}cols;
 
+	struct HOLD_COLS {
+		epicsInt8    c_rownum[SOE_HOLD_ROWS];
+		epicsInt32  c_pv_id[SOE_HOLD_ROWS];
+		epicsInt32  c_client_data[SOE_HOLD_ROWS];
+		epicsInt64  c_timestamp[SOE_HOLD_ROWS];		// really U64 but..
+		epicsFloat32 c_AI1[SOE_HOLD_ROWS];
+		epicsFloat32 c_AI2[SOE_HOLD_ROWS];
+		epicsInt32  c_DI1[SOE_HOLD_ROWS];       // really U32, but we only have doCallbacksInt32Array()
+		epicsInt32  c_DI2[SOE_HOLD_ROWS];
+		epicsInt32  c_SP0[SOE_HOLD_ROWS];
+		epicsInt32  c_SP1[SOE_HOLD_ROWS];
+	} hold_cols;
 	unsigned update;
 	static int nice;
 
@@ -81,6 +104,10 @@ protected:
 	virtual void update_soe_lut(bool first_time = false);
 	virtual void update_soe_lut_columns(void);
 	virtual void update_soe_lut_callbacks(void);
+
+	virtual void update_hld_tab(bool first_time = false);
+	virtual void update_hld_tab_columns(void);
+	virtual void update_hld_tab_callbacks(void);
 
 	epicsEventId eventId;
 
@@ -112,6 +139,7 @@ protected:
 
 
 	int P_SOE_HLD_COL_ROWNUM;
+	int P_SOE_HLD_COL_PV_ID;
 	int P_SOE_HLD_COL_CLIDAT;
 	int P_SOE_HLD_COL_TS;
 	int P_SOE_HLD_COL_DATA_OFFSET;
@@ -120,6 +148,16 @@ protected:
 	int P_SOE_HLD_COL_AI_COUNT;
 	int P_SOE_HLD_COL_DI_COUNT;
 	int P_SOE_HLD_COL_SP_COUNT;
+
+	int P_SOE_HLD_COL_AI1;
+	int P_SOE_HLD_COL_AI2;
+
+	int P_SOE_HLD_COL_DI1;
+	int P_SOE_HLD_COL_DI2;
+
+	int P_SOE_HLD_COL_SP0;
+	int P_SOE_HLD_COL_SP1;
+
 
 public:
 	acq400_SOE(const char *portName);

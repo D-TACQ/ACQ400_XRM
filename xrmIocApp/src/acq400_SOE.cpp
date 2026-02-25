@@ -21,7 +21,7 @@ int acq400_SOE::nice = ::getenv_default("acq400_SOE_NICE", 0);
 
 acq400_SOE::acq400_SOE(const char* portName):
 	asynPortDriver(portName,
-	/* maxAddr */		SOE_HOLD_HEADER_ROWS,    /* nchan from 0 */
+	/* maxAddr */		SOE_HOLD_ROWS,    /* nchan from 0 */
 	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
 				asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
 				asynFloat32ArrayMask|asynInt64ArrayMask|asynDrvUserMask,
@@ -45,6 +45,16 @@ acq400_SOE::acq400_SOE(const char* portName):
 		soe_lut[row].offset_us = row*2;
 	}
 
+	assert(SOE_HOLD_ROWS < 0xffU);
+	for (epicsInt8 row = 0; row < SOE_HOLD_ROWS; ++row){
+		hold_cols.c_rownum[row] = row;
+		/* .. temp will get overwritted from raw TABLE copy */
+		hold_cols.c_DI1[row] = 0xd1;
+		hold_cols.c_DI2[row] = 0xd2;
+		hold_cols.c_SP0[row] = row;
+		hold_cols.c_SP1[row] = 0x12345678;
+	}
+
 
 	eventId = epicsEventCreate(epicsEventEmpty);
 
@@ -59,13 +69,25 @@ acq400_SOE::acq400_SOE(const char* portName):
 	createParam(PS_SOE_LUT_COL_OFFSET_US,	asynParamInt32Array, &P_SOE_LUT_COL_OFFSET_US);
 
 	createParam(PS_SOE_HLD_COL_ROWNUM,	asynParamInt8Array,  &P_SOE_HLD_COL_ROWNUM);
-	createParam(PS_SOE_HLD_COL_CLIDAT,    	asynParamInt16Array, &P_SOE_HLD_COL_CLIDAT);
+	createParam(PS_SOE_HLD_COL_PV_ID,    	asynParamInt32Array, &P_SOE_HLD_COL_PV_ID);
+	createParam(PS_SOE_HLD_COL_CLIDAT,    	asynParamInt32Array, &P_SOE_HLD_COL_CLIDAT);
 	createParam(PS_SOE_HLD_COL_TS,    	asynParamInt64Array, &P_SOE_HLD_COL_TS);
 	createParam(PS_SOE_HLD_COL_DATA_OFFSET, asynParamInt32,      &P_SOE_HLD_COL_DATA_OFFSET);
 	createParam(PS_SOE_HLD_COL_SS_U32,	asynParamOctet,      &P_SOE_HLD_COL_SS_U32);
 	createParam(PS_SOE_HLD_COL_AI_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_AI_COUNT);
 	createParam(PS_SOE_HLD_COL_DI_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_DI_COUNT);
 	createParam(PS_SOE_HLD_COL_SP_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_SP_COUNT);
+
+	createParam(PS_SOE_HLD_COL_AI1,	asynParamFloat32Array, &P_SOE_HLD_COL_AI1);
+	createParam(PS_SOE_HLD_COL_AI2,	asynParamFloat32Array, &P_SOE_HLD_COL_AI2);
+
+	createParam(PS_SOE_HLD_COL_DI1,	asynParamInt32Array, &P_SOE_HLD_COL_DI1);
+	createParam(PS_SOE_HLD_COL_DI2,	asynParamInt32Array, &P_SOE_HLD_COL_DI2);
+/* SP0 : SPAD0 aka Sample Number
+ * SP1 : SPAD1 aka WR_VERNIER
+ */
+	createParam(PS_SOE_HLD_COL_SP0,	asynParamInt32Array, &P_SOE_HLD_COL_SP0);
+	createParam(PS_SOE_HLD_COL_SP1,	asynParamInt32Array, &P_SOE_HLD_COL_SP1);
 
 	createParam(PS_SOE_LUT_REDIT_ROW, 	asynParamInt32,      &P_SOE_LUT_REDIT_ROW);
 
@@ -132,6 +154,29 @@ void acq400_SOE::update_soe_lut_callbacks(void)
 	doCallbacksInt64Array(cols.c_offset_us, FMT_ROWS, P_SOE_LUT_COL_OFFSET_US, 0);
 }
 
+
+void acq400_SOE::update_hld_tab(bool first_time)
+{
+
+}
+void acq400_SOE::update_hld_tab_columns(void)
+{
+
+}
+void acq400_SOE::update_hld_tab_callbacks(void)
+{
+	doCallbacksInt8Array(hold_cols.c_rownum, SOE_HOLD_ROWS, P_SOE_LUT_COL_ROWNUM, 0);
+	doCallbacksInt32Array(hold_cols.c_pv_id, SOE_HOLD_ROWS, P_SOE_HLD_COL_PV_ID, 0);
+	doCallbacksInt32Array(hold_cols.c_client_data, SOE_HOLD_ROWS, P_SOE_HLD_COL_CLIDAT, 0);
+	doCallbacksInt64Array(hold_cols.c_timestamp, SOE_HOLD_ROWS, P_SOE_HLD_COL_TS, 0);
+	doCallbacksFloat32Array(hold_cols.c_AI1, SOE_HOLD_ROWS, P_SOE_HLD_COL_AI1, 0);
+	doCallbacksFloat32Array(hold_cols.c_AI2, SOE_HOLD_ROWS, P_SOE_HLD_COL_AI2, 0);
+	doCallbacksInt32Array(hold_cols.c_DI1, SOE_HOLD_ROWS, P_SOE_HLD_COL_DI1, 0);
+	doCallbacksInt32Array(hold_cols.c_DI2, SOE_HOLD_ROWS, P_SOE_HLD_COL_DI2, 0);
+	doCallbacksInt32Array(hold_cols.c_SP0, SOE_HOLD_ROWS, P_SOE_HLD_COL_SP0, 0);
+	doCallbacksInt32Array(hold_cols.c_SP1, SOE_HOLD_ROWS, P_SOE_HLD_COL_SP1, 0);
+}
+
 void acq400_SOE::task()
 {
 	asynStatus status = asynSuccess;
@@ -151,6 +196,7 @@ void acq400_SOE::task()
 			update_soe_lut_columns();
 			lock();
 			update_soe_lut_callbacks();
+			update_hld_tab_callbacks();
 			unlock();
 		}
 		usleep(50000);

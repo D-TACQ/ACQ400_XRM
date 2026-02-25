@@ -1,0 +1,179 @@
+record(waveform, "${UUT}:SOE_HLD:TAB:Labels_") {
+	field(FTVL, "STRING")
+	field(NELM, "10")
+	field(INP , {const:["Row", "PV_ID", "CLIDAT", "TIMESTAMP", "AI1", "AI2", "DI1", "DI2", "SP0", "SP1"]})
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl":{
+			+id:"epics:nt/NTTable:1.0",
+			"labels":{+type:"plain", +channel:"VAL"}
+		}
+	})
+	field(TPRO, "1")
+}
+
+record(waveform, "${UUT}:SOE_HLD:TAB:ROWNUM")
+{
+	field(DTYP, "asynInt8ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_ROWNUM")
+	field(FTVL, "UCHAR")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.ROWNUM": {+type:"plain", 
+					 +channel:"VAL", +putorder:0 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:SOE_HLD:TAB:PV_ID")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_PV_ID")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.CLIDAT": {+type:"plain", 
+					 +channel:"VAL", +putorder:1 }
+		}
+	})
+}
+
+
+record(waveform, "${UUT}:SOE_HLD:TAB:CLIDAT")
+{
+	field(DTYP, "asynInt16ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_CLIDAT")
+	field(FTVL, "USHORT")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.EVENT": {+type:"plain", 
+					+channel:"VAL", +putorder:2 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:SOE_HLD:TAB:TS")
+{
+	field(DTYP, "asynInt64ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_TS")
+	field(FTVL, "INT64")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.TS": {+type:"plain", 
+				     +channel:"VAL", +putorder:3 }
+#				     +putorder:3, +trigger:"*" }
+		}
+	})
+}
+
+
+record(waveform, "${UUT}:SOE_HLD:TAB:AI1")
+{
+	field(DTYP, "asynFloat32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_AI1")
+	field(FTVL, "FLOAT")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.AI1": {+type:"plain", 
+				      +channel:"VAL", +putorder:4 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:SOE_HLD:TAB:AI2")
+{
+	field(DTYP, "asynFloat32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_AI2")
+	field(FTVL, "FLOAT")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.AI2": {+type:"plain", 
+				      +channel:"VAL", +putorder:5 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:SOE_HLD:TAB:DI1")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_DI1")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.DI1": {+type:"plain", 
+				      +channel:"VAL", +putorder:6 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:SOE_HLD:TAB:DI2")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_DI2")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.DI2": {+type:"plain", 
+				      +channel:"VAL", +putorder:7 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:SOE_HLD:TAB:SP0")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_SP0")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.SP0": {+type:"plain", 
+				      +channel:"VAL", +putorder:8 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:SOE_HLD:TAB:SP1")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_SP1")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.SP1": {+type:"plain", 
+				      +channel:"VAL", +putorder:9, +trigger:"*" }
+		}
+	})
+}
+
+record(longout, "${UUT}:SOE_HLD:TAB:Save") {
+    field(MDEL, "-1") # ensure we always trigger group monitor
+    field(TPRO, "1")
+    info(Q:group, {
+	"${UUT}:SOE_HLD:TAB:Tbl":{
+	    "_save":{+type:"proc",
+		     +channel:"VAL",
+		     +putorder:5,
+		     +trigger:"*"}
+	}
+    })
+}
+
