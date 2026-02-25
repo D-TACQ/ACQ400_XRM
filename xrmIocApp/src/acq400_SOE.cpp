@@ -58,14 +58,14 @@ acq400_SOE::acq400_SOE(const char* portName):
 	createParam(PS_SOE_LUT_COL_PV_ID,	asynParamInt32Array, &P_SOE_LUT_COL_PV_ID);
 	createParam(PS_SOE_LUT_COL_OFFSET_US,	asynParamInt32Array, &P_SOE_LUT_COL_OFFSET_US);
 
-	createParam(PS_SOE_HHR_COL_ROWNUM,	asynParamInt8Array,  &P_SOE_HHR_COL_ROWNUM);
-	createParam(PS_SOE_HHR_COL_CLIDAT,    	asynParamInt16Array, &P_SOE_HHR_COL_CLIDAT);
-	createParam(PS_SOE_HHR_COL_TS,    	asynParamInt64Array, &P_SOE_HHR_COL_TS);
-	createParam(PS_SOE_HHR_COL_DATA_OFFSET, asynParamInt32,      &P_SOE_HHR_COL_DATA_OFFSET);
-	createParam(PS_SOE_HHR_COL_SS_U32,	asynParamOctet,      &P_SOE_HHR_COL_SS_U32);
-	createParam(PS_SOE_HHR_COL_AI_COUNT,	asynParamOctet,	     &P_SOE_HHR_COL_AI_COUNT);
-	createParam(PS_SOE_HHR_COL_DI_COUNT,	asynParamOctet,	     &P_SOE_HHR_COL_DI_COUNT);
-	createParam(PS_SOE_HHR_COL_SP_COUNT,	asynParamOctet,	     &P_SOE_HHR_COL_SP_COUNT);
+	createParam(PS_SOE_HLD_COL_ROWNUM,	asynParamInt8Array,  &P_SOE_HLD_COL_ROWNUM);
+	createParam(PS_SOE_HLD_COL_CLIDAT,    	asynParamInt16Array, &P_SOE_HLD_COL_CLIDAT);
+	createParam(PS_SOE_HLD_COL_TS,    	asynParamInt64Array, &P_SOE_HLD_COL_TS);
+	createParam(PS_SOE_HLD_COL_DATA_OFFSET, asynParamInt32,      &P_SOE_HLD_COL_DATA_OFFSET);
+	createParam(PS_SOE_HLD_COL_SS_U32,	asynParamOctet,      &P_SOE_HLD_COL_SS_U32);
+	createParam(PS_SOE_HLD_COL_AI_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_AI_COUNT);
+	createParam(PS_SOE_HLD_COL_DI_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_DI_COUNT);
+	createParam(PS_SOE_HLD_COL_SP_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_SP_COUNT);
 
 	createParam(PS_SOE_LUT_REDIT_ROW, 	asynParamInt32,      &P_SOE_LUT_REDIT_ROW);
 

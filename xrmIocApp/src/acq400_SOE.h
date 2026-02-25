@@ -5,7 +5,7 @@
  *      Author: pgm
  */
 
-/* provide an interface to the SOE_LUT and SOE_HOLD_TABLE
+/* provide an interface to the SOE_LUT and SOE_HOLD_TABLE  SOE_HLD
  * block on "new buffer"
  * copy new buffer to backing store (for PM)
  * wait for FMT
@@ -37,15 +37,18 @@
 
 #define PS_SOE_LUT_REDIT_COMMIT 	"SOE_LUT_REDIT_COMMIT"
 
-#define PS_SOE_HHR_COL_ROWNUM	 "SOE_HHR_COL_ROWNUM"
-#define PS_SOE_HHR_COL_CLIDAT    "SOE_HHR_COL_CLIDAT"
-#define PS_SOE_HHR_COL_TS        "SOE_HHR_COL_TS"
-#define PS_SOE_HHR_COL_DATA_OFFSET "SOE_HHT_COL_DATA_OFFSET"
+#define PS_SOE_HLD_COL_ROWNUM	 "SOE_HLD_COL_ROWNUM"
+#define PS_SOE_HLD_COL_CLIDAT    "SOE_HLD_COL_CLIDAT"
+#define PS_SOE_HLD_COL_TS        "SOE_HLD_COL_TS"
+#define PS_SOE_HLD_COL_DATA_OFFSET "SOE_HLD_COL_DATA_OFFSET"
 
-#define PS_SOE_HHR_COL_SS_U32	"SOE_HHR_COL_SS_U32"
-#define PS_SOE_HHR_COL_AI_COUNT "SOE_HHR_COL_AI_COUNT"
-#define PS_SOE_HHR_COL_DI_COUNT "SOE_HHR_COL_DI_COUNT"
-#define PS_SOE_HHR_COL_SP_COUNT "SOE_HHR_COL_SP_COUNT"
+#define PS_SOE_HLD_COL_SS_U32	"SOE_HLD_COL_SS_U32"
+#define PS_SOE_HLD_COL_AI_COUNT "SOE_HLD_COL_AI_COUNT"
+#define PS_SOE_HLD_COL_DI_COUNT "SOE_HLD_COL_DI_COUNT"
+#define PS_SOE_HLD_COL_SP_COUNT "SOE_HLD_COL_SP_COUNT"
+
+/* 2 columns each data for show */
+#define PS_SOE_HLD
 
 /* define a column for each data type.
  * There will be up to 64 of these by asyn "address"
@@ -53,9 +56,9 @@
  * Really, one row per event again, 32 AI cols, 2DI, 2SP ..
  * @@todo !Think! Also, suck it and see..
  */
-#define PS_SOE_HHR_DATA_COL_AI	"SOE_HHR_DATA_COL_AI"  // 64 records
-#define PS_SOE_HHR_DATA_COL_DI  "SOE_HHR_DATA_COL_DI"
-#define PS_SOE_HHR_DATA_COL_SP  "SOE_HHR_DATA_COL_SP"
+#define PS_SOE_HLD_DATA_COL_AI	"SOE_HLD_DATA_COL_AI"  // 64 records
+#define PS_SOE_HLD_DATA_COL_DI  "SOE_HLD_DATA_COL_DI"
+#define PS_SOE_HLD_DATA_COL_SP  "SOE_HLD_DATA_COL_SP"
 
 class acq400_SOE: public asynPortDriver {
 protected:
@@ -108,15 +111,15 @@ protected:
 	int P_SOE_LUT_REDIT_COMMIT;
 
 
-	int P_SOE_HHR_COL_ROWNUM;
-	int P_SOE_HHR_COL_CLIDAT;
-	int P_SOE_HHR_COL_TS;
-	int P_SOE_HHR_COL_DATA_OFFSET;
+	int P_SOE_HLD_COL_ROWNUM;
+	int P_SOE_HLD_COL_CLIDAT;
+	int P_SOE_HLD_COL_TS;
+	int P_SOE_HLD_COL_DATA_OFFSET;
 
-	int P_SOE_HHR_COL_SS_U32;
-	int P_SOE_HHR_COL_AI_COUNT;
-	int P_SOE_HHR_COL_DI_COUNT;
-	int P_SOE_HHR_COL_SP_COUNT;
+	int P_SOE_HLD_COL_SS_U32;
+	int P_SOE_HLD_COL_AI_COUNT;
+	int P_SOE_HLD_COL_DI_COUNT;
+	int P_SOE_HLD_COL_SP_COUNT;
 
 public:
 	acq400_SOE(const char *portName);
