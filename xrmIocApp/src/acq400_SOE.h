@@ -159,7 +159,7 @@ protected:
 	int P_SOE_HLD_COL_SP0;
 	int P_SOE_HLD_COL_SP1;
 
-
+	int ib;			/** ib is physical buffer contains bpb vpb's */
 public:
 	acq400_SOE(const char *portName);
 	virtual ~acq400_SOE() {}

@@ -8,8 +8,13 @@
 #include "acq400_asyn_common.h"
 #include "acq400_SOE.h"
 #include "acq-util.h"
+#include <fcntl.h>                // open()
 #include <unistd.h>
 #include <string.h>
+
+using namespace std;
+#include "Buffer.h"
+#include "ES.h"
 
 static const char *driverName="acq400_SOE";
 
@@ -163,6 +168,12 @@ void acq400_SOE::update_hld_tab(bool first_time)
 static int SP1_SIM = 0;
 void acq400_SOE::update_hld_tab_columns(void)
 {
+	/* first 10 rows c_client_data becomes ib history for diags.. */
+	for (int ii = 10; ii; --ii){
+		hold_cols.c_client_data[ii] = hold_cols.c_client_data[ii-1];
+	}
+	hold_cols.c_client_data[0] = ib;
+
 	for (int row = 0; row < SOE_HLD_ROWS; ++row){
 		hold_cols.c_DI1[row] = 0xd1+row;
 		hold_cols.c_SP1[row] = ++SP1_SIM;
@@ -187,7 +198,18 @@ void acq400_SOE::task()
 	asynStatus status = asynSuccess;
 	epicsEventWait(eventId);
 
-	while(1){
+	int fc = open("/dev/acq400.0.bq", O_RDONLY);
+	assert(fc >= 0);
+	for (unsigned ii = 0; ii < Buffer::nbuffers; ++ii){
+		Buffer::create(getRoot(0), Buffer::bufferlen);
+	}
+
+	if ((ib = getBufferId(fc)) < 0){
+		fprintf(stderr, "ERROR: getBufferId() fail");
+		return;
+	}
+
+	while((ib = getBufferId(fc)) >= 0){
 		int runstop;
 		lock();
 		status = getIntegerParam(P_RUNSTOP, &runstop);
@@ -205,7 +227,6 @@ void acq400_SOE::task()
 			update_hld_tab_callbacks();
 			unlock();
 		}
-		usleep(50000);
 	}
 }
 
