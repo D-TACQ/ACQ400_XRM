@@ -67,6 +67,13 @@ acq400_SOE::acq400_SOE(const char* portName):
 	createParam(PS_UPDATES,  asynParamInt32,        &P_UPDATES);
 	createParam(PS_TS_USEC,  asynParamInt64,	&P_TS_USEC);
 
+	createParam(PS_SOE_SMPL_SS_U32,		asynParamOctet,      &P_SOE_HLD_COL_SS_U32);
+	createParam(PS_SOE_SMPL_AI_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_AI_COUNT);
+	createParam(PS_SOE_SMPL_DI_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_DI_COUNT);
+	createParam(PS_SOE_SMPL_SP_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_SP_COUNT);
+	createParam(PS_SOE_SMPL_DI_INDEX, 	asynParamOctet,	     &P_SOE_SMPL_DI_INDEX);
+	createParam(PS_SOE_SMPL_SP_INDEX, 	asynParamOctet,	     &P_SOE_SMPL_SP_INDEX);
+
 	createParam(PS_SOE_LUT_COL_ROWNUM,	asynParamInt8Array,  &P_SOE_LUT_COL_ROWNUM);
 	createParam(PS_SOE_LUT_COL_EVENT,	asynParamInt16Array, &P_SOE_LUT_COL_EVENT);
 	createParam(PS_SOE_LUT_COL_PAD,		asynParamInt16Array, &P_SOE_LUT_COL_PAD);
@@ -77,12 +84,6 @@ acq400_SOE::acq400_SOE(const char* portName):
 	createParam(PS_SOE_HLD_COL_PV_ID,    	asynParamInt32Array, &P_SOE_HLD_COL_PV_ID);
 	createParam(PS_SOE_HLD_COL_CLIDAT,    	asynParamInt32Array, &P_SOE_HLD_COL_CLIDAT);
 	createParam(PS_SOE_HLD_COL_TS,    	asynParamInt64Array, &P_SOE_HLD_COL_TS);
-	createParam(PS_SOE_HLD_COL_DATA_OFFSET, asynParamInt32,      &P_SOE_HLD_COL_DATA_OFFSET);
-	createParam(PS_SOE_HLD_COL_SS_U32,	asynParamOctet,      &P_SOE_HLD_COL_SS_U32);
-	createParam(PS_SOE_HLD_COL_AI_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_AI_COUNT);
-	createParam(PS_SOE_HLD_COL_DI_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_DI_COUNT);
-	createParam(PS_SOE_HLD_COL_SP_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_SP_COUNT);
-
 	createParam(PS_SOE_HLD_COL_AI1,	asynParamFloat32Array, &P_SOE_HLD_COL_AI1);
 	createParam(PS_SOE_HLD_COL_AI2,	asynParamFloat32Array, &P_SOE_HLD_COL_AI2);
 
@@ -93,6 +94,10 @@ acq400_SOE::acq400_SOE(const char* portName):
  */
 	createParam(PS_SOE_HLD_COL_SP0,	asynParamInt32Array, &P_SOE_HLD_COL_SP0);
 	createParam(PS_SOE_HLD_COL_SP1,	asynParamInt32Array, &P_SOE_HLD_COL_SP1);
+
+	createParam(PS_SOE_HLD_COL_DATA_OFFSET, asynParamInt32,      &P_SOE_HLD_COL_DATA_OFFSET);
+
+
 
 	createParam(PS_SOE_LUT_REDIT_ROW, 	asynParamInt32,      &P_SOE_LUT_REDIT_ROW);
 
@@ -162,12 +167,45 @@ void acq400_SOE::update_soe_lut_callbacks(void)
 
 void acq400_SOE::update_hld_tab(bool first_time)
 {
-
+	/*
+	short* ai_raw = (short*)Buffer::the_buffers[ib];
+	int * di_raw = (int*)Buffer::the_buffers[ib];
+	*/
 }
 
 static int SP1_SIM = 0;
 void acq400_SOE::update_hld_tab_columns(void)
 {
+
+/* @@todo hardcoded make auto links to main ioc PV's
+acq2206_088> get.site 0 run0_log
+/usr/local/bin/run0 1,2 1,14,0 ssb=124
+acq2206_088> get.site 2 nchan
+ERROR:nchan" not found
+acq2206_088> get.site 2 nchan_enabled
+ERROR:nchan_enabled" not found
+acq2206_088> get.site 2 NCHAN
+32
+acq2206_088> get.site 1 NCHAN
+32
+acq2206_088> get.site 1 MODEL
+ACQ423ELF
+acq2206_088> get.site 2 MODEL
+DIO482ELF N=32 M=6B
+
+ param P_SOE_SMPL_DI_INDEX 32/2 = 16
+ param P_SOE_SMPL_SP_INDEX 16+4=20
+ */
+	const int SOE_SMPL_DI_INDEX = 16;
+	const int SOE_SMPL_SP_INDEX = 20;
+	const int SSB = 124;
+	const int SSS = SSB/sizeof(short);
+	const int SSL = SSB/sizeof(long);
+	short* ai_raw = (short*)Buffer::the_buffers[ib];
+	int * di_raw = (int*)Buffer::the_buffers[ib] + SOE_SMPL_DI_INDEX;
+	int * sp_raw = (int*)Buffer::the_buffers[ib] + SOE_SMPL_SP_INDEX;
+
+
 	/* first 10 rows c_client_data becomes ib history for diags.. */
 	for (int ii = 10; ii; --ii){
 		hold_cols.c_client_data[ii] = hold_cols.c_client_data[ii-1];
@@ -175,8 +213,16 @@ void acq400_SOE::update_hld_tab_columns(void)
 	hold_cols.c_client_data[0] = ib;
 
 	for (int row = 0; row < SOE_HLD_ROWS; ++row){
-		hold_cols.c_DI1[row] = 0xd1+row;
-		hold_cols.c_SP1[row] = ++SP1_SIM;
+		const int srow = row*SSS;
+		const int lrow = row*SSL;
+
+		hold_cols.c_AI1[row] = ai_raw[srow+0];
+		hold_cols.c_AI2[row] = ai_raw[srow+1];
+		hold_cols.c_DI1[row] = di_raw[lrow+0];
+		hold_cols.c_DI2[row] = ++SP1_SIM;
+		hold_cols.c_SP0[row] = sp_raw[lrow+0];
+		hold_cols.c_SP1[row] = sp_raw[lrow+1];
+
 	}
 }
 void acq400_SOE::update_hld_tab_callbacks(void)
