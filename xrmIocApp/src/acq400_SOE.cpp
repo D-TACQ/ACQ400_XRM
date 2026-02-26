@@ -173,6 +173,9 @@ void acq400_SOE::update_hld_tab(bool first_time)
 	*/
 }
 
+#define SKIP_ES 1
+#define TRANSLEN	1024
+
 static int SP1_SIM = 0;
 void acq400_SOE::update_hld_tab_columns(void)
 {
@@ -196,14 +199,15 @@ DIO482ELF N=32 M=6B
  param P_SOE_SMPL_DI_INDEX 32/2 = 16
  param P_SOE_SMPL_SP_INDEX 16+4=20
  */
-	const int SOE_SMPL_DI_INDEX = 16;
-	const int SOE_SMPL_SP_INDEX = 20;
+	const int SOE_SMPL_DI_INDEX = 16;   /* index in u32. There is only one DI32 here */
+	const int SOE_SMPL_SP_INDEX = 17;
 	const int SSB = 124;
 	const int SSS = SSB/sizeof(short);
 	const int SSL = SSB/sizeof(long);
-	short* ai_raw = (short*)Buffer::the_buffers[ib];
-	int * di_raw = (int*)Buffer::the_buffers[ib] + SOE_SMPL_DI_INDEX;
-	int * sp_raw = (int*)Buffer::the_buffers[ib] + SOE_SMPL_SP_INDEX;
+	char* raw = Buffer::the_buffers[ib]->getBase() + SKIP_ES*SSB;
+	short* ai_raw = (short*)raw;
+	int * di_raw = (int*)raw + SOE_SMPL_DI_INDEX;
+	int * sp_raw = (int*)raw + SOE_SMPL_SP_INDEX;
 
 
 	/* first 10 rows c_client_data becomes ib history for diags.. */
