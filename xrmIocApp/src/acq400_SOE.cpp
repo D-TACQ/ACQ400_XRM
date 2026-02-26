@@ -220,8 +220,8 @@ DIO482ELF N=32 M=6B
 		const int srow = row*SSS;
 		const int lrow = row*SSL;
 
-		hold_cols.c_AI1[row] = ai_raw[srow+0];
-		hold_cols.c_AI2[row] = ai_raw[srow+1];
+		hold_cols.c_AI1[row] = ai_raw[srow+0]*10.0/32768;
+		hold_cols.c_AI2[row] = ai_raw[srow+1]*10.0/32768;
 		hold_cols.c_DI1[row] = di_raw[lrow+0];
 		hold_cols.c_DI2[row] = ++SP1_SIM;
 		hold_cols.c_SP0[row] = sp_raw[lrow+0];
