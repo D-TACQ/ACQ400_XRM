@@ -243,7 +243,7 @@ DIO482ELF N=32 M=6B
 		hold_cols.c_SP0[row] = sp_raw[lrow+SP0];
 		hold_cols.c_SP1[row] = sp_raw[lrow+SP1];
 		hold_cols.c_SP2[row] = sp_raw[lrow+SP2];
-		hold_cols.c_WRVS[row]= sp_raw[lrow+SP2] >> 28;
+		hold_cols.c_WRVS[row]= (sp_raw[lrow+SP2] >> 28)&0x07;
 		hold_cols.c_WRVT[row]= sp_raw[lrow+SP2]&0x0fffffff;
 		hold_cols.c_WRUS[row]= getWrTs(sp_raw[lrow+SP2]);
 	}
