@@ -39,6 +39,7 @@ acq400_SOE::acq400_SOE(const char* portName):
 	/* Default stack size*/ 0),
 	update(0)
 {
+	fprintf(stderr, "%s R1001 SP2\n", FN);
 	asynStatus status = asynSuccess;
 	memset(soe_lut, 0, sizeof(soe_lut));
 
@@ -225,7 +226,7 @@ DIO482ELF N=32 M=6B
 		hold_cols.c_DI1[row] = di_raw[lrow+0];
 		hold_cols.c_DI2[row] = ++SP1_SIM;
 		hold_cols.c_SP0[row] = sp_raw[lrow+0];
-		hold_cols.c_SP1[row] = sp_raw[lrow+1];
+		hold_cols.c_SP1[row] = sp_raw[lrow+2];
 
 	}
 }
