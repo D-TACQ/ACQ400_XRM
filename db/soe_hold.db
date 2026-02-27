@@ -174,7 +174,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:SP2")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:SOE_HLD:TAB:Tbl": {
-			"value.SP1": {+type:"plain",
+			"value.SP2": {+type:"plain",
 				      +channel:"VAL", +putorder:10 }
 		}
 	})
@@ -189,7 +189,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:WRVS")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:SOE_HLD:TAB:Tbl": {
-			"value.SP1": {+type:"plain", 
+			"value.WRVS": {+type:"plain", 
 				      +channel:"VAL", +putorder:11 }
 		}
 	})
@@ -204,7 +204,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:WRVT")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:SOE_HLD:TAB:Tbl": {
-			"value.SP1": {+type:"plain",
+			"value.WRVT": {+type:"plain",
 				      +channel:"VAL", +putorder:12, +trigger:"*" }
 		}
 	})
@@ -219,7 +219,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:WRUS")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:SOE_HLD:TAB:Tbl": {
-			"value.SP1": {+type:"plain", 
+			"value.WRUS": {+type:"plain", 
 				      +channel:"VAL", +putorder:13, +trigger:"*" }
 		}
 	})
