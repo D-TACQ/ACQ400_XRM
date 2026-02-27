@@ -69,6 +69,15 @@
  */
 #define PS_SOE_HLD_COL_SP0	"SOE_HLD_COL_SP0"
 #define PS_SOE_HLD_COL_SP1	"SOE_HLD_COL_SP1"
+#define PS_SOE_HLD_COL_SP2	"SOE_HLD_COL_SP2"
+#define PS_SOE_HLD_COL_WRVS	"SOE_HLD_COL_WRVS"  // WR Vernier, seconds
+#define PS_SOE_HLD_COL_WRVT     "SOE_HLD_COL_WRVT"  // WR Vernier, ticks
+#define PS_SOE_HLD_COL_WRUS     "SOE_HLD_COL_WRUS"  // WR time, usec since epoch
+
+#define SP0	0
+#define SP1	1
+#define SP2	2
+#define SP3	3
 
 /* define a column for each data type.
  * There will be up to 64 of these by asyn "address"
@@ -104,6 +113,10 @@ protected:
 		epicsInt32  c_DI2[SOE_HLD_ROWS];
 		epicsInt32  c_SP0[SOE_HLD_ROWS];
 		epicsInt32  c_SP1[SOE_HLD_ROWS];
+		epicsInt32  c_SP2[SOE_HLD_ROWS];
+		epicsInt8   c_WRVS[SOE_HLD_ROWS];
+		epicsInt32  c_WRVT[SOE_HLD_ROWS];
+		epicsInt64  c_WRUS[SOE_HLD_ROWS];
 	} hold_cols;
 	unsigned update;
 	static int nice;
@@ -168,6 +181,10 @@ protected:
 
 	int P_SOE_HLD_COL_SP0;
 	int P_SOE_HLD_COL_SP1;
+	int P_SOE_HLD_COL_SP2;
+	int P_SOE_HLD_COL_WRVS;
+	int P_SOE_HLD_COL_WRVT;
+	int P_SOE_HLD_COL_WRUS;
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
 public:

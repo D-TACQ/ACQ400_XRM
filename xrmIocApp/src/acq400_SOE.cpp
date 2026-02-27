@@ -91,10 +91,16 @@ acq400_SOE::acq400_SOE(const char* portName):
 	createParam(PS_SOE_HLD_COL_DI1,	asynParamInt32Array, &P_SOE_HLD_COL_DI1);
 	createParam(PS_SOE_HLD_COL_DI2,	asynParamInt32Array, &P_SOE_HLD_COL_DI2);
 /* SP0 : SPAD0 aka Sample Number
- * SP1 : SPAD1 aka WR_VERNIER
+ * SP1 : SPAD1 aka local clock us
+ * SP2 : SPAD2 aka WR_VERNIER
  */
 	createParam(PS_SOE_HLD_COL_SP0,	asynParamInt32Array, &P_SOE_HLD_COL_SP0);
 	createParam(PS_SOE_HLD_COL_SP1,	asynParamInt32Array, &P_SOE_HLD_COL_SP1);
+	createParam(PS_SOE_HLD_COL_SP2, asynParamInt32Array, &P_SOE_HLD_COL_SP2);
+	createParam(PS_SOE_HLD_COL_WRVS, asynParamInt8Array, &P_SOE_HLD_COL_WRVS);
+	createParam(PS_SOE_HLD_COL_WRVT, asynParamInt32Array, &P_SOE_HLD_COL_WRVT);
+	createParam(PS_SOE_HLD_COL_WRUS, asynParamInt64Array, &P_SOE_HLD_COL_WRUS);
+
 
 	createParam(PS_SOE_HLD_COL_DATA_OFFSET, asynParamInt32,      &P_SOE_HLD_COL_DATA_OFFSET);
 
@@ -176,7 +182,16 @@ void acq400_SOE::update_hld_tab(bool first_time)
 
 #define SKIP_ES 1
 #define TRANSLEN	1024
+#define TICKSPERUS	40
 
+/* @@todo .. specialize time provider */
+static epicsInt64 getWrTs(unsigned wrv)
+{
+	int sec = wrv >> 28;
+	int usec = (wrv&0x0fffffff)/TICKSPERUS;
+	epicsInt64 ts = sec*1000000 + usec;
+	return ts;
+}
 static int SP1_SIM = 0;
 void acq400_SOE::update_hld_tab_columns(void)
 {
@@ -225,9 +240,12 @@ DIO482ELF N=32 M=6B
 		hold_cols.c_AI2[row] = ai_raw[srow+1]*10.0/32768;
 		hold_cols.c_DI1[row] = di_raw[lrow+0];
 		hold_cols.c_DI2[row] = ++SP1_SIM;
-		hold_cols.c_SP0[row] = sp_raw[lrow+0];
-		hold_cols.c_SP1[row] = sp_raw[lrow+2];
-
+		hold_cols.c_SP0[row] = sp_raw[lrow+SP0];
+		hold_cols.c_SP1[row] = sp_raw[lrow+SP1];
+		hold_cols.c_SP2[row] = sp_raw[lrow+SP2];
+		hold_cols.c_WRVS[row]= sp_raw[lrow+SP2] >> 28;
+		hold_cols.c_WRVT[row]= sp_raw[lrow+SP2]&0x0fffffff;
+		hold_cols.c_WRUS[row]= getWrTs(sp_raw[lrow+SP2]);
 	}
 }
 void acq400_SOE::update_hld_tab_callbacks(void)
@@ -242,6 +260,10 @@ void acq400_SOE::update_hld_tab_callbacks(void)
 	doCallbacksInt32Array(hold_cols.c_DI2, 		SOE_HLD_ROWS, P_SOE_HLD_COL_DI2, 0);
 	doCallbacksInt32Array(hold_cols.c_SP0, 		SOE_HLD_ROWS, P_SOE_HLD_COL_SP0, 0);
 	doCallbacksInt32Array(hold_cols.c_SP1, 		SOE_HLD_ROWS, P_SOE_HLD_COL_SP1, 0);
+	doCallbacksInt32Array(hold_cols.c_SP2, 		SOE_HLD_ROWS, P_SOE_HLD_COL_SP2, 0);
+	doCallbacksInt8Array( hold_cols.c_WRVS, 	SOE_HLD_ROWS, P_SOE_HLD_COL_WRVS, 0);
+	doCallbacksInt32Array(hold_cols.c_WRVT, 	SOE_HLD_ROWS, P_SOE_HLD_COL_WRVT, 0);
+	doCallbacksInt64Array(hold_cols.c_WRUS, 	SOE_HLD_ROWS, P_SOE_HLD_COL_WRUS, 0);
 }
 
 void acq400_SOE::task()

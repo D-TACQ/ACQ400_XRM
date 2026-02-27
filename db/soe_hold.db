@@ -1,7 +1,9 @@
 record(waveform, "${UUT}:SOE_HLD:TAB:Labels_") {
 	field(FTVL, "STRING")
-	field(NELM, "10")
-	field(INP , {const:["Row", "PV_ID", "CLIDAT", "TIMESTAMP", "AI1", "AI2", "DI1", "DI2", "SP0", "SP1"]})
+	field(NELM, "14")
+	field(INP , {const:["Row", "PV_ID", "CLIDAT", "TIMESTAMP",
+	                    "AI1", "AI2", "DI1", "DI2",
+	                    "SP0", "SP1", "SP2", "WRVS", "WRVT", "WRUS" ]})
 	info(Q:group, {
 		"${UUT}:SOE_HLD:TAB:Tbl":{
 			+id:"epics:nt/NTTable:1.0",
@@ -157,12 +159,71 @@ record(waveform, "${UUT}:SOE_HLD:TAB:SP1")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:SOE_HLD:TAB:Tbl": {
-			"value.SP1": {+type:"plain", 
-				      +channel:"VAL", +putorder:9, +trigger:"*" }
+			"value.SP1": {+type:"plain",
+				      +channel:"VAL", +putorder:9 }
 		}
 	})
 }
 
+record(waveform, "${UUT}:SOE_HLD:TAB:SP2")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_SP2")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.SP1": {+type:"plain",
+				      +channel:"VAL", +putorder:10 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:SOE_HLD:TAB:WRVS")
+{
+	field(DTYP, "asynInt8ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_WRVS")
+	field(FTVL, "UCHAR")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.SP1": {+type:"plain", 
+				      +channel:"VAL", +putorder:11 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:SOE_HLD:TAB:WRVT")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_WRVT")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.SP1": {+type:"plain",
+				      +channel:"VAL", +putorder:12, +trigger:"*" }
+		}
+	})
+}
+
+record(waveform, "${UUT}:SOE_HLD:TAB:WRUS")
+{
+	field(DTYP, "asynInt64ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_WRUS")
+	field(FTVL, "INT64")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.SP1": {+type:"plain", 
+				      +channel:"VAL", +putorder:13, +trigger:"*" }
+		}
+	})
+}
 record(longout, "${UUT}:SOE_HLD:TAB:Save") {
     field(MDEL, "-1") # ensure we always trigger group monitor
     field(TPRO, "1")
@@ -170,7 +231,7 @@ record(longout, "${UUT}:SOE_HLD:TAB:Save") {
 	"${UUT}:SOE_HLD:TAB:Tbl":{
 	    "_save":{+type:"proc",
 		     +channel:"VAL",
-		     +putorder:9,
+		     +putorder:13,
 		     +trigger:"*"}
 	}
     })
