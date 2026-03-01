@@ -43,7 +43,7 @@ dbLoadDatabase("dbd/xrmIoc.dbd",0,0)
 xrmIoc_registerRecordDeviceDriver(pdbbase)
 #- Run this to trace the stages of iocInit
 traceIocInit
-dbLoadRecords("db/system.db","UUT=${HOST},$dba")
+dbLoadRecords("db/system.db","UUT=${HOST},ACQ400IOC=${ACQ400IOC},$dba")
 EOF
 }
 
