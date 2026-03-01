@@ -11,6 +11,9 @@ RL_ACQ400=/tmp/records.dbl
 CP=2322                        # @@todo /etc/services
 XRM_EPICS_SH=/mnt/local/sysconfig/xrm_epics.sh
 
+
+wait_ioc_ready
+
 if [ -f $XRM_EPICS_SH ]; then
 	source $XRM_EPICS_SH
 	(
