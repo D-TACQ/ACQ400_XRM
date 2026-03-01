@@ -1,8 +1,7 @@
-record (longin, "${UUT}:SYS:UPTIME") {
+record (longout, "${UUT}:SYS:UPTIME") {
 	field(DTYP, "Soft Channel")
-#	field(DTYP, "longinAcqHost")
-#	field(INP, "@/proc/uptime")
-	field(SCAN, "1 second")
+	field(DOL, "${ACQ400IOC}:SYS:UPTIME CP")
+	field(OMSL, "closed_loop")
 	field(FLNK, "${UUT}:SYS:IOCUPTIME")
 }
 
