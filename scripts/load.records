@@ -61,9 +61,8 @@ get_inp() {
 }
 
 load_acq400ioc_proxies() {
-	for pv in $(grep :[0-9]:SSB /tmp/records.dbl | sort -n); do
-		strip_tail=${pv%:*}
-		site=${strip_tail#*:}
+	for site in $(pvget ${ACQ400IOC}:0:AGGREGATOR:SITES | awk '{ print "0,"$4 }' | sed 's/,/ /g'); do
+		pv="${ACQ400IOC}:${site}:SSB"
 		inp=$(get_inp $site)
 		HNS="UUT=${HOST},ACQ400IOC=${ACQ400IOC}"
 		echo 'dbLoadRecords("db/ssb.db","'${HNS}',SRPV='${pv}',SITE='${site}',INP='${inp}'")'

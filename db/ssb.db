@@ -14,15 +14,15 @@ record (longout, "${UUT}:${SITE}:IS_ADC") {
 }
 
 record(calcout, "${UUT}:AGG:SPAD:IX") {
-	field(DESC,  "INDEX of first SPAD element")
+	field(DESC,  "0 INDEX of first SPAD element")
 	field(${INP}, "${UUT}:${SITE}:SSB")
 # sum all the modules	
-	field(CALC, "(A+B+C+D+E+F)/4")
+	field(CALC, "(A+B+C+D+E+F)/4 - 1")
 	
 	field(OOPT, "Every Time")
 	field(DOPT, "Use OCAL")
 # compute SPAD size, INPH is "site 0 SSB"	
-	field(OCAL, "H/4 - VAL")
+	field(OCAL, "H/4 - VAL + 1")
 	field(OUT,  "${UUT}:AGG:SPAD:N")
 	field(FLNK, "${UUT}:AGG:SPAD:N")
 }
