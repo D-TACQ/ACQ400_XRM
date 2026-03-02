@@ -43,6 +43,8 @@
 #define PS_SOE_HLD_COL_TS        "SOE_HLD_COL_TS"
 #define PS_SOE_HLD_COL_DATA_OFFSET "SOE_HLD_COL_DATA_OFFSET"
 
+#define PS_SOE_SITE_SSB		"SOE_SITE_SSB" /* addr per site */
+#define PS_SOE_SITE_IS_ADC	"SOE_SITE_IS_ADC"  /* addr per site */
 #define PS_SOE_SMPL_SS_U32	"SOE_SMPL_SS_U32"
 #define PS_SOE_SMPL_AI_COUNT 	"SOE_SMPL_AI_COUNT"
 #define PS_SOE_SMPL_DI_COUNT 	"SOE_SMPL_DI_COUNT"

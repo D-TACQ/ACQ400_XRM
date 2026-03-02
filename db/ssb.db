@@ -1,14 +1,16 @@
 # proxies for SSB records.
 
 record (longout, "${UUT}:${SITE}:SSB") {
-	field(DTYP, "Soft Channel")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_SSB"))
 	field(DOL, "${SRPV} CP")
 	field(OMSL, "closed_loop")
 	field(FLNK, "${UUT}:AGG:SPAD:IX")
 }
 
 record (longout, "${UUT}:${SITE}:IS_ADC") {
-	field(DTYP, "Soft Channel")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_IS_ADC"))
 	field(DOL, "${ACQ400IOC}:${SITE}:IS_ADC CP")
 	field(OMSL, "closed_loop")
 }
@@ -17,17 +19,35 @@ record(calcout, "${UUT}:AGG:SPAD:IX") {
 	field(DESC,  "0 INDEX of first SPAD element")
 	field(${INP}, "${UUT}:${SITE}:SSB")
 # sum all the modules	
-	field(CALC, "(A+B+C+D+E+F)/4 - 1")
+	field(CALC, "(A+B+C+D+E+F)/4")
 	
 	field(OOPT, "Every Time")
 	field(DOPT, "Use OCAL")
 # compute SPAD size, INPH is "site 0 SSB"	
-	field(OCAL, "H/4 - VAL + 1")
+	field(OCAL, "(H-(A+B+C+D+E+F))/4")
 	field(OUT,  "${UUT}:AGG:SPAD:N")
 	field(FLNK, "${UUT}:AGG:SPAD:N")
 }
 
 record (longout, "${UUT}:AGG:SPAD:N") {
-	field(DTYP, "Soft Channel")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_COUNT"))
 	field(DESC, "# SPAD entries")
+}
+
+record (longin, "${UUT}:SOE:SAMPLE_DI_INDEX") {
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_DI_INDEX")
+	field(SCAN, "I/O Intr")
+}
+
+record (longin, "${UUT}:SOE:SMPL_DI_COUNT") {
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_DI_COUNT")
+	field(SCAN, "I/O Intr")
+}
+
+record (longout, "${UUT}:SOE:SAMPLE_SP_INDEX") {
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_INDEX"))
 }
