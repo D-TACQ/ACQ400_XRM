@@ -353,6 +353,11 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    /* Fetch the parameter string name for possible use in debugging */
 	    getParamName(function, &paramName);
 
+
+	    fprintf(stderr,
+	    	              "%s:%s: function=%d, name=%s, value=%d\n",
+	    	              DN, FN, function, paramName, value);
+
 	    if (function == P_RUNSTOP) {
 	        if (value) epicsEventSignal(eventId);
 	    }else if (function == P_SOE_LUT_REDIT_COMMIT){
