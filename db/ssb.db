@@ -2,7 +2,7 @@
 
 record (longout, "${UUT}:${SITE}:SSB") {
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_SSB"))
+	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_SSB")
 	field(DOL, "${SRPV} CP")
 	field(OMSL, "closed_loop")
 	field(FLNK, "${UUT}:AGG:SPAD:IX")
@@ -10,7 +10,7 @@ record (longout, "${UUT}:${SITE}:SSB") {
 
 record (longout, "${UUT}:${SITE}:IS_ADC") {
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_IS_ADC"))
+	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_IS_ADC")
 	field(DOL, "${ACQ400IOC}:${SITE}:IS_ADC CP")
 	field(OMSL, "closed_loop")
 }
@@ -31,7 +31,7 @@ record(calcout, "${UUT}:AGG:SPAD:IX") {
 
 record (longout, "${UUT}:AGG:SPAD:N") {
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_COUNT"))
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_COUNT")
 	field(DESC, "# SPAD entries")
 }
 
@@ -49,5 +49,5 @@ record (longin, "${UUT}:SOE:SMPL_DI_COUNT") {
 
 record (longout, "${UUT}:SOE:SAMPLE_SP_INDEX") {
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_INDEX"))
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_INDEX")
 }

@@ -68,12 +68,15 @@ acq400_SOE::acq400_SOE(const char* portName):
 	createParam(PS_UPDATES,  asynParamInt32,        &P_UPDATES);
 	createParam(PS_TS_USEC,  asynParamInt64,	&P_TS_USEC);
 
-	createParam(PS_SOE_SMPL_SS_U32,		asynParamOctet,      &P_SOE_HLD_COL_SS_U32);
-	createParam(PS_SOE_SMPL_AI_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_AI_COUNT);
-	createParam(PS_SOE_SMPL_DI_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_DI_COUNT);
-	createParam(PS_SOE_SMPL_SP_COUNT,	asynParamOctet,	     &P_SOE_HLD_COL_SP_COUNT);
-	createParam(PS_SOE_SMPL_DI_INDEX, 	asynParamOctet,	     &P_SOE_SMPL_DI_INDEX);
-	createParam(PS_SOE_SMPL_SP_INDEX, 	asynParamOctet,	     &P_SOE_SMPL_SP_INDEX);
+
+	createParam(PS_SOE_SITE_SSB,		asynParamInt32,      &P_SOE_SITE_SSB);
+	createParam(PS_SOE_SITE_IS_ADC,		asynParamInt32,      &P_SOE_SITE_IS_ADC);
+	createParam(PS_SOE_SMPL_SS_U32,		asynParamInt32,      &P_SOE_HLD_COL_SS_U32);
+	createParam(PS_SOE_SMPL_AI_COUNT,	asynParamInt32,	     &P_SOE_HLD_COL_AI_COUNT);
+	createParam(PS_SOE_SMPL_DI_COUNT,	asynParamInt32,	     &P_SOE_HLD_COL_DI_COUNT);
+	createParam(PS_SOE_SMPL_SP_COUNT,	asynParamInt32,	     &P_SOE_HLD_COL_SP_COUNT);
+	createParam(PS_SOE_SMPL_DI_INDEX, 	asynParamInt32,	     &P_SOE_SMPL_DI_INDEX);
+	createParam(PS_SOE_SMPL_SP_INDEX, 	asynParamInt32,	     &P_SOE_SMPL_SP_INDEX);
 
 	createParam(PS_SOE_LUT_COL_ROWNUM,	asynParamInt8Array,  &P_SOE_LUT_COL_ROWNUM);
 	createParam(PS_SOE_LUT_COL_EVENT,	asynParamInt16Array, &P_SOE_LUT_COL_EVENT);
