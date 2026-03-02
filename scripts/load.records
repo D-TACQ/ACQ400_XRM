@@ -47,9 +47,31 @@ dbLoadRecords("db/system.db","UUT=${HOST},ACQ400IOC=${ACQ400IOC},$dba")
 EOF
 }
 
+get_inp() {
+	case $1 in
+	0)	echo INPH;;
+	1)	echo INPA;;
+	2)	echo INPB;;
+	3)	echo INPC;;
+	4)	echo INPD;;
+	5)	echo INPE;;
+	6)	echo INPF;;
+	*)	echo ERROR $1; exit 1;;
+	esac
+}
+
+load_acq400ioc_proxies() {
+	for pv in $(grep :[0-9]:SSB /tmp/records.dbl | sort -n); do
+		strip_tail=${pv%:*}
+		site=${strip_tail#*:}
+		inp=$(get_inp $site)
+		dbloadRecords("db/ssb.db","UUT=${HOST},SRPV=${PV},SITE=${site},INP=${inp}")
+	done
+}
 # execution begins
 
 load_system
+load_acq400ioc_proxies
 
 #  st_pre.cmd
 if [ -e $ACQ400XRM_ALIASES ]; then

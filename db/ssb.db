@@ -1,0 +1,25 @@
+# proxies for SSB records.
+
+record (longout, "${UUT}:${SITE}:SSB") {
+	field(DTYP, "Soft Channel")
+	field(DOL, "${SRPV} CP")
+	field(OMSL, "closed_loop")
+	field(FLNK, "${UUT}:AGG:SSB")
+}
+
+record(calcout, "${UUT}:AGG:SSB") {
+	field($INP, "${UUT}:${SITE}:SSB")
+# sum all the modules	
+	field(CALC, "A+B+C+D+E+F")
+	field(OUT,  "${UUT}:AGG:SPAD:N")
+	field(OOPT, "Every Time")
+	field(DOPT, "Use OCAL")
+# compute SPAD size, INPH is "site 0 SSB"	
+	field(OCAL, "H - VAL")
+	field(FLNK, "${UUT}:AGG:SPAD:N")
+}
+
+record (longout, "${UUT}:AGG:SPAD:N") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "# SPAD entries")
+}

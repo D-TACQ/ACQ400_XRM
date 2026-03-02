@@ -5,6 +5,17 @@ record (longout, "${UUT}:SYS:UPTIME") {
 	field(FLNK, "${UUT}:SYS:IOCUPTIME")
 }
 
+record (longout, "${UUT}:1:RTM_TRANSLEN") {
+	field(DTYP, "Soft Channel")
+	field(DOL, "${ACQ400IOC}:1:RTM_TRANSLEN CP")
+	field(OMSL, "closed_loop")
+}
+
+record( stringout, "0:AGGREGATOR:SITES") {
+	field(DTYP, "Soft Channel")
+	field(DOL, "${ACQ400IOC}:0:AGGREGATOR:SITES CP")
+	field(OMSL, "closed_loop")
+}
 record (calc, "${UUT}:SYS:IOCUPTIME") {
 	field(CALC, "VAL+1")
 	field(FLNK, "${UUT}:SYS:HB")
