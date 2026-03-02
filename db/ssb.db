@@ -4,18 +4,25 @@ record (longout, "${UUT}:${SITE}:SSB") {
 	field(DTYP, "Soft Channel")
 	field(DOL, "${SRPV} CP")
 	field(OMSL, "closed_loop")
-	field(FLNK, "${UUT}:AGG:SSB")
+	field(FLNK, "${UUT}:AGG:SPAD:IX")
 }
 
-record(calcout, "${UUT}:AGG:SSB") {
+record (longout, "${UUT}:${SITE}:IS_ADC") {
+	field(DTYP, "Soft Channel")
+	field(DOL, "${ACQ400IOC}:${SITE}:IS_ADC CP")
+	field(OMSL, "closed_loop")
+}
+
+record(calcout, "${UUT}:AGG:SPAD:IX") {
+	field(DESC,  "INDEX of first SPAD element")
 	field(${INP}, "${UUT}:${SITE}:SSB")
 # sum all the modules	
-	field(CALC, "A+B+C+D+E+F")
+	field(CALC, "(A+B+C+D+E+F)/4")
 	
 	field(OOPT, "Every Time")
 	field(DOPT, "Use OCAL")
 # compute SPAD size, INPH is "site 0 SSB"	
-	field(OCAL, "(H - VAL)/4")
+	field(OCAL, "H/4 - VAL")
 	field(OUT,  "${UUT}:AGG:SPAD:N")
 	field(FLNK, "${UUT}:AGG:SPAD:N")
 }
