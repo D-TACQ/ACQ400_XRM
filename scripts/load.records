@@ -65,7 +65,8 @@ load_acq400ioc_proxies() {
 		strip_tail=${pv%:*}
 		site=${strip_tail#*:}
 		inp=$(get_inp $site)
-		dbloadRecords("db/ssb.db","UUT=${HOST},SRPV=${PV},SITE=${site},INP=${inp}")
+		echo 'dbLoadRecords("db/ssb.db","UUT='${HOST}',SRPV='${pv}',SITE='${site}',INP='${inp}'")'
+
 	done
 }
 # execution begins
