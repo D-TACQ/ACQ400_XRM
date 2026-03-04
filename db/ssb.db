@@ -14,7 +14,6 @@ record (longout, "${UUT}:${SITE}:SSB") {
 	field(DOL, "${SRPV} CP")
 
 	field(OMSL, "closed_loop")
-	field(FLNK, "${UUT}:AGG:SPAD:IX")
 }
 
 record (longout, "${UUT}:${SITE}:IS_ADC") {
@@ -24,24 +23,16 @@ record (longout, "${UUT}:${SITE}:IS_ADC") {
 	field(OMSL, "closed_loop")
 }
 
-record(calcout, "${UUT}:AGG:SPAD:IX") {
-	field(DESC,  "0 INDEX of first SPAD element")
-	field(${INP}, "${UUT}:${SITE}:SSB")
-# sum all the modules	
-	field(CALC, "(A+B+C+D+E+F)/4")
-	
-	field(OOPT, "Every Time")
-	field(DOPT, "Use OCAL")
-# compute SPAD size, INPH is "site 0 SSB"	
-	field(OCAL, "(H-(A+B+C+D+E+F))/4")
-	field(OUT,  "${UUT}:AGG:SPAD:N")
-	field(FLNK, "${UUT}:AGG:SPAD:N")
+record (longin, "${UUT}:AGG:SPAD:N") {
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_COUNT")
+	field(DESC, "# SPAD entries")
 }
 
-record (longout, "${UUT}:AGG:SPAD:N") {
+record (longin, "${UUT}:SOE:SMPL_AI_COUNT") {
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_COUNT")
-	field(DESC, "# SPAD entries")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_AI_COUNT")
+	field(SCAN, "I/O Intr")
 }
 
 record (longin, "${UUT}:SOE:SAMPLE_DI_INDEX") {
@@ -56,7 +47,16 @@ record (longin, "${UUT}:SOE:SMPL_DI_COUNT") {
 	field(SCAN, "I/O Intr")
 }
 
-record (longout, "${UUT}:SOE:SAMPLE_SP_INDEX") {
+record (longin, "${UUT}:SOE:SAMPLE_SP_INDEX") {
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_INDEX")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_INDEX")
+	field(SCAN, "I/O Intr")
 }
+
+record (longin, "${UUT}:SOE:SMPL_SP_COUNT") {
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_COUNT")
+	field(SCAN, "I/O Intr")
+}
+
+
