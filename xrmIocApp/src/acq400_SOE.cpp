@@ -287,16 +287,16 @@ void acq400_SOE::get_sample_dimensions()
 		fprintf(stderr, "SOE_AGG_SITES \"%s\"\n", site_list);
 	}
 
-	VS agg_sites;
+	VIS agg_sites;
 	split2(site_list, agg_sites, ',');
 	int ssb_total = 0;
 	int first_di_index = 0;
-	for (auto _site: agg_sites){
-		int site = atoi(_site.c_str());  // @@todo ugly attempted specialized split2(.., VI, ..) but C++20 required?
+	for (int site: agg_sites){
 		int is_adc;
+
 		status = getIntegerParam(site, P_SOE_SITE_IS_ADC, &is_adc);
 		if (status){
-			fprintf(stderr, "%s:%s %d, P_SOE_SITE_IS_ADC fail\n", DN, FN, site);
+			fprintf(stderr, "%s:%s %d, %d:P_SOE_SITE_IS_ADC fail\n", DN, FN, site, P_SOE_SITE_IS_ADC);
 		}else{
 			if (is_adc){
 				first_di_index = ssb_total/sizeof(short);
@@ -305,7 +305,7 @@ void acq400_SOE::get_sample_dimensions()
 		int ssb;
 		status = getIntegerParam(site, P_SOE_SITE_SSB, &ssb);
 		if (status){
-			fprintf(stderr, "%s:%s %d P_FMT_MC_PORT fail\n", DN, FN, site);
+			fprintf(stderr, "%s:%s %d %d:P_SOE_SITE_SSB fail\n", DN, FN, site, P_SOE_SITE_SSB);
 		}else{
 			ssb_total += ssb;
 		}
