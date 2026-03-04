@@ -126,6 +126,9 @@ protected:
 
 	void get_sample_dimensions();
 	asynStatus gip(int pnum, int* pram);
+	asynStatus gip(int addr, int pnum, int* pram);
+	asynStatus sip(int addr, int pnum, int pram);
+
 	void redit();
 	virtual void update_soe_lut(bool first_time = false);
 	virtual void update_soe_lut_columns(void);
