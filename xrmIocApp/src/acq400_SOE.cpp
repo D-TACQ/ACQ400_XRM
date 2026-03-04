@@ -8,6 +8,7 @@
 #include "acq400_asyn_common.h"
 #include "acq400_SOE.h"
 #include "acq-util.h"
+#include "split2.h"
 #include <fcntl.h>                // open()
 #include <unistd.h>
 #include <string.h>
@@ -269,6 +270,10 @@ void acq400_SOE::update_hld_tab_callbacks(void)
 	doCallbacksInt64Array(hold_cols.c_WRUS, 	SOE_HLD_ROWS, P_SOE_HLD_COL_WRUS, 0);
 }
 
+
+typedef std::vector<std::string> VS;
+
+
 void acq400_SOE::get_sample_dimensions()
 {
 	asynStatus status = asynSuccess;
@@ -281,9 +286,13 @@ void acq400_SOE::get_sample_dimensions()
 	}else{
 		fprintf(stderr, "SOE_AGG_SITES \"%s\"\n", site_list);
 	}
+
+	VS agg_sites;
+	split2(site_list, agg_sites, ',');
 	int ssb_total = 0;
 	int first_di_index = 0;
-	for (int site = 1; site <= 6; ++site){
+	for (auto _site: agg_sites){
+		int site = atoi(_site.c_str());  // @@todo ugly attempted specialized split2(.., VI, ..) but C++20 required?
 		int is_adc;
 		status = getIntegerParam(site, P_SOE_SITE_IS_ADC, &is_adc);
 		if (status){
@@ -304,6 +313,7 @@ void acq400_SOE::get_sample_dimensions()
 				DN, FN, site, ssb, is_adc, first_di_index, ssb_total);
 	}
 }
+
 void acq400_SOE::task()
 {
 	asynStatus status = asynSuccess;
