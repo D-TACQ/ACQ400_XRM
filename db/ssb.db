@@ -1,9 +1,18 @@
 # proxies for SSB records.
 
+
+record (stringout,  "${UUT}:0:AGGREGATOR:SITES") {
+	field(DTYP, "asynOctetWrite")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_AGG_SITES")
+	field(DOL,  "${ACQ400IOC}:0:AGGREGATOR:SITES CP")
+	field(OMSL, "closed_loop")
+}
+
 record (longout, "${UUT}:${SITE}:SSB") {
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_SSB")
 	field(DOL, "${SRPV} CP")
+
 	field(OMSL, "closed_loop")
 	field(FLNK, "${UUT}:AGG:SPAD:IX")
 }

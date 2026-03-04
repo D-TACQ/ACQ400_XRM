@@ -68,7 +68,7 @@ acq400_SOE::acq400_SOE(const char* portName):
 	createParam(PS_UPDATES,  asynParamInt32,        &P_UPDATES);
 	createParam(PS_TS_USEC,  asynParamInt64,	&P_TS_USEC);
 
-
+	createParam(PS_SOE_AGG_SITES,		asynParamOctet,      &P_SOE_AGG_SITES);
 	createParam(PS_SOE_SITE_SSB,		asynParamInt32,      &P_SOE_SITE_SSB);
 	createParam(PS_SOE_SITE_IS_ADC,		asynParamInt32,      &P_SOE_SITE_IS_ADC);
 	createParam(PS_SOE_SMPL_SS_U32,		asynParamInt32,      &P_SOE_HLD_COL_SS_U32);
@@ -269,6 +269,41 @@ void acq400_SOE::update_hld_tab_callbacks(void)
 	doCallbacksInt64Array(hold_cols.c_WRUS, 	SOE_HLD_ROWS, P_SOE_HLD_COL_WRUS, 0);
 }
 
+void acq400_SOE::get_sample_dimensions()
+{
+	asynStatus status = asynSuccess;
+	fprintf(stderr, "%s:%s getIntegerParam P_FMT_MC_PORT fail\n", DN, FN);
+
+	char site_list[80] = {};
+	status = getStringParam(P_SOE_AGG_SITES, 80, site_list);
+	if (status){
+		fprintf(stderr, "%s:%s SOE_AGG_SITES fail\n", DN, FN);
+	}else{
+		fprintf(stderr, "SOE_AGG_SITES \"%s\"\n", site_list);
+	}
+	int ssb_total = 0;
+	int first_di_index = 0;
+	for (int site = 1; site <= 6; ++site){
+		int is_adc;
+		status = getIntegerParam(site, P_SOE_SITE_IS_ADC, &is_adc);
+		if (status){
+			fprintf(stderr, "%s:%s %d, P_SOE_SITE_IS_ADC fail\n", DN, FN, site);
+		}else{
+			if (is_adc){
+				first_di_index = ssb_total/sizeof(short);
+			}
+		}
+		int ssb;
+		status = getIntegerParam(site, P_SOE_SITE_SSB, &ssb);
+		if (status){
+			fprintf(stderr, "%s:%s %d P_FMT_MC_PORT fail\n", DN, FN, site);
+		}else{
+			ssb_total += ssb;
+		}
+		fprintf(stderr, "%s:%s %d ssb:%d is_adc?:%d first_di_index:%d ssb_total:%d\n",
+				DN, FN, site, ssb, is_adc, first_di_index, ssb_total);
+	}
+}
 void acq400_SOE::task()
 {
 	asynStatus status = asynSuccess;
@@ -284,6 +319,7 @@ void acq400_SOE::task()
 		fprintf(stderr, "ERROR: getBufferId() fail");
 		return;
 	}
+	int runstop0 = 0;
 
 	while((ib = getBufferId(fc)) >= 0){
 		int runstop;
@@ -295,6 +331,10 @@ void acq400_SOE::task()
 		}
 		unlock();
 		if (runstop == 1){
+			if (runstop0 == 0){
+				get_sample_dimensions();
+				runstop0 = 1;
+			}
 			/** @@todo SOE_LUT doesn't really update periodically, make it PASV, for now, period is good */
 			update_soe_lut_columns();
 			update_hld_tab_columns();
@@ -302,6 +342,8 @@ void acq400_SOE::task()
 			update_soe_lut_callbacks();
 			update_hld_tab_callbacks();
 			unlock();
+		}else{
+			runstop0 = 0;
 		}
 	}
 }
@@ -349,6 +391,10 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    int function = pasynUser->reason;
 	    asynStatus status = asynSuccess;
 	    const char *paramName;
+	    int addr;
+
+	    status = pasynManager->getAddr(pasynUser, &addr);
+	    if(status!=asynSuccess) return status;
 
 	    /* Set the parameter in the parameter library. */
 	    status = (asynStatus) setIntegerParam(function, value);
@@ -358,8 +404,8 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 
 
 	    fprintf(stderr,
-	    	              "%s:%s: function=%d, name=%s, value=%d\n",
-	    	              DN, FN, function, paramName, value);
+	    	              "%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
+	    	              DN, FN, function, addr, paramName, value);
 
 	    if (function == P_RUNSTOP) {
 	        if (value) epicsEventSignal(eventId);

@@ -43,6 +43,7 @@
 #define PS_SOE_HLD_COL_TS        "SOE_HLD_COL_TS"
 #define PS_SOE_HLD_COL_DATA_OFFSET "SOE_HLD_COL_DATA_OFFSET"
 
+#define PS_SOE_AGG_SITES	"SOE_AGG_SITES"
 #define PS_SOE_SITE_SSB		"SOE_SITE_SSB" /* addr per site */
 #define PS_SOE_SITE_IS_ADC	"SOE_SITE_IS_ADC"  /* addr per site */
 #define PS_SOE_SMPL_SS_U32	"SOE_SMPL_SS_U32"
@@ -123,6 +124,7 @@ protected:
 	unsigned update;
 	static int nice;
 
+	void get_sample_dimensions();
 	asynStatus gip(int pnum, int* pram);
 	void redit();
 	virtual void update_soe_lut(bool first_time = false);
@@ -168,6 +170,7 @@ protected:
 	int P_SOE_HLD_COL_TS;
 	int P_SOE_HLD_COL_DATA_OFFSET;
 
+	int P_SOE_AGG_SITES; // asynParamOctet
 	int P_SOE_SITE_SSB;
 	int P_SOE_SITE_IS_ADC;
 	int P_SOE_HLD_COL_SS_U32;
