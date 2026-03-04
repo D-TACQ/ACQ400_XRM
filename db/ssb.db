@@ -35,7 +35,7 @@ record (longin, "${UUT}:SOE:SMPL_AI_COUNT") {
 	field(SCAN, "I/O Intr")
 }
 
-record (longin, "${UUT}:SOE:SAMPLE_DI_INDEX") {
+record (longin, "${UUT}:SOE:SMPL_DI_INDEX") {
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_DI_INDEX")
 	field(SCAN, "I/O Intr")
@@ -47,7 +47,7 @@ record (longin, "${UUT}:SOE:SMPL_DI_COUNT") {
 	field(SCAN, "I/O Intr")
 }
 
-record (longin, "${UUT}:SOE:SAMPLE_SP_INDEX") {
+record (longin, "${UUT}:SOE:SMPL_SP_INDEX") {
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_INDEX")
 	field(SCAN, "I/O Intr")
