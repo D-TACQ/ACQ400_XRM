@@ -163,6 +163,16 @@ asynStatus acq400_SOE::sip(int addr, int pnum, int pram)
 	}
 	return status;
 }
+
+asynStatus acq400_SOE::gsp(int pnum, int maxchar, char* str)
+{
+	asynStatus status = getStringParam(pnum, 80, str);
+	if (status){
+		fprintf(stderr, "%s:%s SOE_AGG_SITES fail\n", DN, FN);
+		assert(status==0);
+	}
+	return status;
+}
 void acq400_SOE::task_runner(void *drvPvt)
 {
 	acq400_SOE *pPvt = (acq400_SOE *)drvPvt;
@@ -296,15 +306,9 @@ typedef std::vector<std::string> VS;
 
 void acq400_SOE::get_sample_dimensions()
 {
-	asynStatus status = asynSuccess;
-
 	char site_list[80] = {};
-	status = getStringParam(P_SOE_AGG_SITES, 80, site_list);
-	if (status){
-		fprintf(stderr, "%s:%s SOE_AGG_SITES fail\n", DN, FN);
-	}else{
-		fprintf(stderr, "SOE_AGG_SITES \"%s\"\n", site_list);
-	}
+	gsp(P_SOE_AGG_SITES, 80, site_list);
+	fprintf(stderr, "SOE_AGG_SITES \"%s\"\n", site_list);
 
 	int modules_ssb_total = 0;
 	int first_di_index = 0;
@@ -317,56 +321,30 @@ void acq400_SOE::get_sample_dimensions()
 	for (int site: agg_sites){
 		int is_adc;
 
-		status = getIntegerParam(site, P_SOE_SITE_IS_ADC, &is_adc);
-		if (status){
-			fprintf(stderr, "%s:%s %d, %d:P_SOE_SITE_IS_ADC fail\n", DN, FN, site, P_SOE_SITE_IS_ADC);
-			assert(status==0);
-		}else{
-			if (!is_adc && first_di){
-				first_di_index = modules_ssb_total/sizeof(short);
-				status = setIntegerParam(0, P_SOE_SMPL_DI_INDEX, first_di_index);
-				if (status){
-					fprintf(stderr, "%s:%s %d, set %d:P_SOE_SMPL_DI_INDEX fail\n", DN, FN, site, P_SOE_SMPL_DI_INDEX);
-					assert(status==0);
-				}
-				first_di = false;
-			}
+		gip(site, P_SOE_SITE_IS_ADC, &is_adc);
+
+		if (!is_adc && first_di){
+			first_di_index = modules_ssb_total/sizeof(short);
+			sip(0, P_SOE_SMPL_DI_INDEX, first_di_index);
+			first_di = false;
 		}
 
 
-		status = getIntegerParam(site, P_SOE_SITE_SSB, &ssb);
-		if (status){
-			fprintf(stderr, "%s:%s %d %d:P_SOE_SITE_SSB fail\n", DN, FN, site, P_SOE_SITE_SSB);
-			assert(status==0);
-		}else{
-			modules_ssb_total += ssb;
-		}
+		gip(site, P_SOE_SITE_SSB, &ssb);
+		modules_ssb_total += ssb;
+
 		fprintf(stderr, "%s:%s %d ssb:%d is_adc?:%d first_di_index:%d modules_ssb_total:%d\n",
 				DN, FN, site, ssb, is_adc, first_di_index, modules_ssb_total);
 	}
-	status = getIntegerParam(0, P_SOE_SITE_SSB, &ssb);
-	if (status){
-		fprintf(stderr, "%s:%s %d, %d:P_SOE_SITE_SSB fail\n", DN, FN, 0, P_SOE_SITE_SSB);
-		assert(status==0);
-	}else{
-		int modules_ssl = modules_ssb_total/sizeof(long);
-		int agg_ssl = ssb/sizeof(long);
-		assert(agg_ssl >= modules_ssl);
-		status = setIntegerParam(0, P_SOE_HLD_COL_SP_COUNT, agg_ssl-modules_ssl);
-		if (status){
-			fprintf(stderr, "%s:%s %d, set %d:P_SOE_HLD_COL_SP_COUNT fail\n", DN, FN, 0, P_SOE_HLD_COL_SP_COUNT);
-			assert(status==0);
-		}
-		status = setIntegerParam(0, P_SOE_SMPL_SP_INDEX, modules_ssl);
-		if (status){
-			fprintf(stderr, "%s:%s %d, set %d:P_SOE_SMPL_SP_INDEX fail\n", DN, FN, 0, P_SOE_SMPL_SP_INDEX);
-			assert(status==0);
-		}
-		callParamCallbacks();
-	}
+	gip(0, P_SOE_SITE_SSB, &ssb);
 
+	int modules_ssl = modules_ssb_total/sizeof(long);
+	int agg_ssl = ssb/sizeof(long);
+	assert(agg_ssl >= modules_ssl);
+	sip(0, P_SOE_HLD_COL_SP_COUNT, agg_ssl-modules_ssl);
+	sip(0, P_SOE_SMPL_SP_INDEX, modules_ssl);
+	callParamCallbacks();
 }
-
 void acq400_SOE::task()
 {
 	asynStatus status = asynSuccess;
