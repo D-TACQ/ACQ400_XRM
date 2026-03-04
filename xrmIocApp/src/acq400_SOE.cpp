@@ -277,7 +277,6 @@ typedef std::vector<std::string> VS;
 void acq400_SOE::get_sample_dimensions()
 {
 	asynStatus status = asynSuccess;
-	fprintf(stderr, "%s:%s getIntegerParam P_FMT_MC_PORT fail\n", DN, FN);
 
 	char site_list[80] = {};
 	status = getStringParam(P_SOE_AGG_SITES, 80, site_list);
@@ -287,10 +286,12 @@ void acq400_SOE::get_sample_dimensions()
 		fprintf(stderr, "SOE_AGG_SITES \"%s\"\n", site_list);
 	}
 
-	VIS agg_sites;
-	split2(site_list, agg_sites, ',');
 	int ssb_total = 0;
 	int first_di_index = 0;
+
+	VIS agg_sites;
+	split2(site_list, agg_sites, ',');
+
 	for (int site: agg_sites){
 		int is_adc;
 
@@ -403,15 +404,14 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    const char *paramName;
 	    int addr;
 
+	    /* Fetch the parameter string name for possible use in debugging */
+	    getParamName(function, &paramName);
+
 	    status = pasynManager->getAddr(pasynUser, &addr);
 	    if(status!=asynSuccess) return status;
 
 	    /* Set the parameter in the parameter library. */
 	    status = (asynStatus) setIntegerParam(function, value);
-
-	    /* Fetch the parameter string name for possible use in debugging */
-	    getParamName(function, &paramName);
-
 
 	    fprintf(stderr,
 	    	              "%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
