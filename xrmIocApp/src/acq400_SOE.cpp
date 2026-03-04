@@ -411,7 +411,7 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    if(status!=asynSuccess) return status;
 
 	    /* Set the parameter in the parameter library. */
-	    status = (asynStatus) setIntegerParam(function, value);
+	    status = (asynStatus) setIntegerParam(addr, function, value);
 
 	    fprintf(stderr,
 	    	              "%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
