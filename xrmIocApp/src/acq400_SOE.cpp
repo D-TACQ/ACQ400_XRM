@@ -72,10 +72,10 @@ acq400_SOE::acq400_SOE(const char* portName):
 	createParam(PS_SOE_AGG_SITES,		asynParamOctet,      &P_SOE_AGG_SITES);
 	createParam(PS_SOE_SITE_SSB,		asynParamInt32,      &P_SOE_SITE_SSB);
 	createParam(PS_SOE_SITE_IS_ADC,		asynParamInt32,      &P_SOE_SITE_IS_ADC);
-	createParam(PS_SOE_SMPL_SS_U32,		asynParamInt32,      &P_SOE_HLD_COL_SS_U32);
-	createParam(PS_SOE_SMPL_AI_COUNT,	asynParamInt32,	     &P_SOE_HLD_COL_AI_COUNT);
-	createParam(PS_SOE_SMPL_DI_COUNT,	asynParamInt32,	     &P_SOE_HLD_COL_DI_COUNT);
-	createParam(PS_SOE_SMPL_SP_COUNT,	asynParamInt32,	     &P_SOE_HLD_COL_SP_COUNT);
+	createParam(PS_SOE_SMPL_SS_U32,		asynParamInt32,      &P_SOE_SMPL_SS_U32);
+	createParam(PS_SOE_SMPL_AI_COUNT,	asynParamInt32,	     &P_SOE_SMPL_AI_COUNT);
+	createParam(PS_SOE_SMPL_DI_COUNT,	asynParamInt32,	     &P_SOE_SMPL_DI_COUNT);
+	createParam(PS_SOE_SMPL_SP_COUNT,	asynParamInt32,	     &P_SOE_SMPL_SP_COUNT);
 	createParam(PS_SOE_SMPL_DI_INDEX, 	asynParamInt32,	     &P_SOE_SMPL_DI_INDEX);
 	createParam(PS_SOE_SMPL_SP_INDEX, 	asynParamInt32,	     &P_SOE_SMPL_SP_INDEX);
 
@@ -314,6 +314,8 @@ void acq400_SOE::get_sample_dimensions()
 	int first_di_index = 0;
 	int ssb;
 	bool first_di = true;
+	int modules_ai_ssb = 0;
+	int modules_di_ssb = 0;
 
 	VIS agg_sites;
 	split2(site_list, agg_sites, ',');
@@ -332,6 +334,11 @@ void acq400_SOE::get_sample_dimensions()
 
 		gip(site, P_SOE_SITE_SSB, &ssb);
 		modules_ssb_total += ssb;
+		if (is_adc){
+			modules_ai_ssb += ssb;
+		}else{
+			modules_di_ssb += ssb;
+		}
 
 		fprintf(stderr, "%s:%s %d ssb:%d is_adc?:%d first_di_index:%d modules_ssb_total:%d\n",
 				DN, FN, site, ssb, is_adc, first_di_index, modules_ssb_total);
@@ -341,8 +348,12 @@ void acq400_SOE::get_sample_dimensions()
 	int modules_ssl = modules_ssb_total/sizeof(long);
 	int agg_ssl = ssb/sizeof(long);
 	assert(agg_ssl >= modules_ssl);
-	sip(0, P_SOE_HLD_COL_SP_COUNT, agg_ssl-modules_ssl);
+	sip(0, P_SOE_SMPL_SP_COUNT, agg_ssl-modules_ssl);
 	sip(0, P_SOE_SMPL_SP_INDEX, modules_ssl);
+	sip(0, P_SOE_SMPL_DI_INDEX, modules_ai_ssb/sizeof(DI32_t));
+
+	sip(0, P_SOE_SMPL_AI_COUNT, modules_ai_ssb/sizeof(AI16_t));
+	sip(0, P_SOE_SMPL_DI_COUNT, modules_di_ssb/sizeof(DI32_t));
 	callParamCallbacks();
 }
 void acq400_SOE::task()

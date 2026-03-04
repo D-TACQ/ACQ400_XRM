@@ -77,6 +77,11 @@
 #define SP2	2
 #define SP3	3
 
+typedef short AI16_t;
+typedef unsigned long DI32_t;
+typedef unsigned long DO32_t;
+typedef unsigned long SP32_t;
+
 /* define a column for each data type.
  * There will be up to 64 of these by asyn "address"
  * BUT: this is NOT going to play well with a table
@@ -172,10 +177,10 @@ protected:
 	int P_SOE_AGG_SITES; // asynParamOctet
 	int P_SOE_SITE_SSB;
 	int P_SOE_SITE_IS_ADC;
-	int P_SOE_HLD_COL_SS_U32;
-	int P_SOE_HLD_COL_AI_COUNT;
-	int P_SOE_HLD_COL_DI_COUNT;
-	int P_SOE_HLD_COL_SP_COUNT;
+	int P_SOE_SMPL_SS_U32;
+	int P_SOE_SMPL_AI_COUNT;
+	int P_SOE_SMPL_DI_COUNT;
+	int P_SOE_SMPL_SP_COUNT;
 	int P_SOE_SMPL_DI_INDEX;
 	int P_SOE_SMPL_SP_INDEX;
 
