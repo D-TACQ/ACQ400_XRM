@@ -227,31 +227,14 @@ static epicsInt64 getWrTs(unsigned wrv)
 	return ts;
 }
 static int SP1_SIM = 0;
-void acq400_SOE::update_hld_tab_columns(void)
+
+
+void acq400_SOE::update_hld_tab_columns(
+		const int SSB,
+		const int SOE_SMPL_DI_INDEX,
+		const int SOE_SMPL_SP_INDEX)
 {
 
-/* @@todo hardcoded make auto links to main ioc PV's
-acq2206_088> get.site 0 run0_log
-/usr/local/bin/run0 1,2 1,14,0 ssb=124
-acq2206_088> get.site 2 nchan
-ERROR:nchan" not found
-acq2206_088> get.site 2 nchan_enabled
-ERROR:nchan_enabled" not found
-acq2206_088> get.site 2 NCHAN
-32
-acq2206_088> get.site 1 NCHAN
-32
-acq2206_088> get.site 1 MODEL
-ACQ423ELF
-acq2206_088> get.site 2 MODEL
-DIO482ELF N=32 M=6B
-
- param P_SOE_SMPL_DI_INDEX 32/2 = 16
- param P_SOE_SMPL_SP_INDEX 16+4=20
- */
-	const int SOE_SMPL_DI_INDEX = 16;   /* index in u32. There is only one DI32 here */
-	const int SOE_SMPL_SP_INDEX = 17;
-	const int SSB = 124;
 	const int SSS = SSB/sizeof(short);
 	const int SSL = SSB/sizeof(long);
 	char* raw = Buffer::the_buffers[ib]->getBase() + SKIP_ES*SSB;
@@ -282,6 +265,17 @@ DIO482ELF N=32 M=6B
 		hold_cols.c_WRUS[row]= getWrTs(sp_raw[lrow+SP2]);
 	}
 }
+
+void acq400_SOE::update_hld_tab_columns(void)
+{
+	int ssb, di_index, sp_index;
+
+	gip(0, P_SOE_SITE_SSB, &ssb);
+	gip(0, P_SOE_SMPL_DI_INDEX, &di_index);
+	gip(0, P_SOE_SMPL_SP_INDEX, &sp_index);
+	update_hld_tab_columns(ssb, di_index, sp_index);
+}
+
 void acq400_SOE::update_hld_tab_callbacks(void)
 {
 	doCallbacksInt8Array(hold_cols.c_rownum, 	SOE_HLD_ROWS, P_SOE_HLD_COL_ROWNUM, 0);
@@ -371,10 +365,8 @@ void acq400_SOE::task()
 		fprintf(stderr, "ERROR: getBufferId() fail");
 		return;
 	}
-	int runstop0 = 0;
 
-	while((ib = getBufferId(fc)) >= 0){
-		int runstop;
+	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0; runstop0 = runstop){
 		lock();
 		status = getIntegerParam(P_RUNSTOP, &runstop);
 		if (status){
@@ -385,7 +377,6 @@ void acq400_SOE::task()
 		if (runstop == 1){
 			if (runstop0 == 0){
 				get_sample_dimensions();
-				runstop0 = 1;
 			}
 			/** @@todo SOE_LUT doesn't really update periodically, make it PASV, for now, period is good */
 			update_soe_lut_columns();
@@ -394,8 +385,6 @@ void acq400_SOE::task()
 			update_soe_lut_callbacks();
 			update_hld_tab_callbacks();
 			unlock();
-		}else{
-			runstop0 = 0;
 		}
 	}
 }

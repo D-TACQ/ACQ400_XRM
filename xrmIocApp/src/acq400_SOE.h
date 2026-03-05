@@ -136,6 +136,10 @@ protected:
 	virtual void update_soe_lut_callbacks(void);
 
 	virtual void update_hld_tab(bool first_time = false);
+	virtual void update_hld_tab_columns(
+			const int SSB,
+			const int SOE_SMPL_DI_INDEX,
+			const int SOE_SMPL_SP_INDEX);
 	virtual void update_hld_tab_columns(void);
 	virtual void update_hld_tab_callbacks(void);
 
