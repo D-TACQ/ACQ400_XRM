@@ -317,9 +317,7 @@ void acq400_SOE::task()
 
 	int fc = open("/dev/acq400.0.bq", O_RDONLY);
 	assert(fc >= 0);
-	for (unsigned ii = 0; ii < Buffer::nbuffers; ++ii){
-		Buffer::create(getRoot(0), Buffer::bufferlen);
-	}
+
 
 	if ((ib = getBufferId(fc)) < 0){
 		fprintf(stderr, "ERROR: getBufferId() fail");

@@ -58,7 +58,8 @@ xrmIoc_DBD += acq400_PM.dbd
 # xrmIoc_registerRecordDeviceDriver.cpp derives from xrmIoc.dbd
 xrmIoc_SRCS += xrmIoc_registerRecordDeviceDriver.cpp
 xrmIoc_SRCS += xrm_struct_support.cpp
-xrmIoc_SRCS += xrm_struct_test.cpp
+#xrmIoc_SRCS += xrm_struct_test.cpp
+xrmIoc_SRCS += acq400_common.cpp
 xrmIoc_SRCS += acq400_asynPortDriver.cpp
 xrmIoc_SRCS += acq400_FMT_abc.cpp
 xrmIoc_SRCS += acq400_FMT_sim.cpp
