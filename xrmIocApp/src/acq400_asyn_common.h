@@ -21,6 +21,8 @@
 #include <vector>
 #include <split2.h>
 
+#include "asynPortDriver.h"
+#include "acq400_asynPortDriver.h"
 #include "acq-util.h"
 #include <unistd.h>
 #include <stdio.h>
@@ -56,7 +58,6 @@ bool epicsTimeDiffGreaterThan(epicsTimeStamp& t1, epicsTimeStamp& t0, double tgt
 
 	return (et1 - et0) > tgts;
 }
-
 
 
 

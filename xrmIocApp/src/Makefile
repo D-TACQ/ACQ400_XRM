@@ -53,15 +53,18 @@ xrmIoc_DBD += initTrace.dbd
 xrmIoc_DBD += acq400_FMT_sim.dbd
 xrmIoc_DBD += acq400_FMT_rx.dbd
 xrmIoc_DBD += acq400_SOE.dbd
+xrmIoc_DBD += acq400_PM.dbd
 
 # xrmIoc_registerRecordDeviceDriver.cpp derives from xrmIoc.dbd
 xrmIoc_SRCS += xrmIoc_registerRecordDeviceDriver.cpp
 xrmIoc_SRCS += xrm_struct_support.cpp
 xrmIoc_SRCS += xrm_struct_test.cpp
+xrmIoc_SRCS += acq400_asynPortDriver.cpp
 xrmIoc_SRCS += acq400_FMT_abc.cpp
 xrmIoc_SRCS += acq400_FMT_sim.cpp
 xrmIoc_SRCS += acq400_FMT_rx.cpp
 xrmIoc_SRCS += acq400_SOE.cpp
+xrmIoc_SRCS += acq400_PM.cpp
 # this should be a lib from ACQ400DRV, copy bodily for now..
 xrmIoc_SRCS += Multicast.cpp
 

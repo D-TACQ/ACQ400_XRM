@@ -26,7 +26,7 @@ static const char *driverName="acq400_SOE";
 int acq400_SOE::nice = ::getenv_default("acq400_SOE_NICE", 0);
 
 acq400_SOE::acq400_SOE(const char* portName):
-	asynPortDriver(portName,
+	acq400_asynPortDriver(portName,
 	/* maxAddr */		SOE_HLD_ROWS,    /* nchan from 0 */
 	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
 				asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
@@ -132,47 +132,7 @@ acq400_SOE::acq400_SOE(const char* portName):
 	}
 }
 
-asynStatus acq400_SOE::gip(int pnum, int* pram)
-{
-	asynStatus status = getIntegerParam(pnum, pram);
-	if (status){
-		fprintf(stderr, "%s:%s getIntegerParam %d fail\n",
-				DN, FN, pnum);
-		assert(status == 0);
-	}
-	return status;
-}
-asynStatus acq400_SOE::gip(int addr, int pnum, int* pram)
-{
-	asynStatus status = getIntegerParam(addr, pnum, pram);
-	if (status){
-		fprintf(stderr, "%s:%s:%d getIntegerParam %d fail\n",
-				DN, FN, addr, pnum);
-		assert(status == 0);
-	}
-	return status;
-}
 
-asynStatus acq400_SOE::sip(int addr, int pnum, int pram)
-{
-	asynStatus status = setIntegerParam(addr, pnum, pram);
-	if (status){
-		fprintf(stderr, "%s:%s:%d setIntegerParam %d fail\n",
-				DN, FN, addr, pnum);
-		assert(status == 0);
-	}
-	return status;
-}
-
-asynStatus acq400_SOE::gsp(int pnum, int maxchar, char* str)
-{
-	asynStatus status = getStringParam(pnum, 80, str);
-	if (status){
-		fprintf(stderr, "%s:%s SOE_AGG_SITES fail\n", DN, FN);
-		assert(status==0);
-	}
-	return status;
-}
 void acq400_SOE::task_runner(void *drvPvt)
 {
 	acq400_SOE *pPvt = (acq400_SOE *)drvPvt;

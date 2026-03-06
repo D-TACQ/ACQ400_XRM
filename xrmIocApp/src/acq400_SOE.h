@@ -14,7 +14,7 @@
 #ifndef XRMIOCAPP_SRC_ACQ400_SOE_H_
 #define XRMIOCAPP_SRC_ACQ400_SOE_H_
 
-#include "asynPortDriver.h"
+#include "acq400_asyn_common.h"
 #include "xrm_structs.h"
 #include "acq400_FMT.h"
 
@@ -92,7 +92,7 @@ typedef unsigned long SP32_t;
 #define PS_SOE_HLD_DATA_COL_DI  "SOE_HLD_DATA_COL_DI"
 #define PS_SOE_HLD_DATA_COL_SP  "SOE_HLD_DATA_COL_SP"
 
-class acq400_SOE: public asynPortDriver {
+class acq400_SOE: public acq400_asynPortDriver {
 protected:
 	SOE_LUT soe_lut;
 
@@ -125,10 +125,7 @@ protected:
 	static int nice;
 
 	void get_sample_dimensions();
-	asynStatus gip(int pnum, int* pram);
-	asynStatus gip(int addr, int pnum, int* pram);
-	asynStatus sip(int addr, int pnum, int pram);
-	asynStatus gsp(int pnum, int maxchar, char* str);
+
 
 	void redit();
 	virtual void update_soe_lut(bool first_time = false);
