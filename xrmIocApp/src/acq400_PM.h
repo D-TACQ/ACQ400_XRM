@@ -34,11 +34,17 @@ protected:
 
 	epicsEventId eventId;
 
+	virtual void task();
+
+	static void task_runner(void *drvPvt);
+
 	int P_RUNSTOP;
 	int P_UPDATES;
 	int P_NBUF;
 	int P_RING;
 	int P_RAWBUF;
+
+	int ib;			/** ib is physical buffer contains bpb vpb's */
 
 public:
 	acq400_PM(const char *portName);

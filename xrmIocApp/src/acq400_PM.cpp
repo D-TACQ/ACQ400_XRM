@@ -7,7 +7,9 @@
 
 #include "acq400_asyn_common.h"
 #include "acq400_PM.h"
-
+#include <fcntl.h>                // open()
+#include <unistd.h>
+#include <string.h>
 static const char *driverName="acq400_PM";
 
 #define DN	driverName
@@ -34,6 +36,48 @@ acq400_PM::acq400_PM(const char* portName):
 	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
 	createParam(PS_UPDATES,  asynParamInt32,        &P_UPDATES);
 
+}
+
+void acq400_PM::task_runner(void *drvPvt)
+{
+	((acq400_PM *)drvPvt)->task();
+}
+
+void acq400_PM::task()
+{
+	asynStatus status = asynSuccess;
+	epicsEventWait(eventId);
+
+	int fc = open("/dev/acq400.0.bq", O_RDONLY);
+	assert(fc >= 0);
+
+
+	if ((ib = getBufferId(fc)) < 0){
+		fprintf(stderr, "ERROR: getBufferId() fail");
+		return;
+	}
+
+	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0; runstop0 = runstop){
+		lock();
+		status = getIntegerParam(P_RUNSTOP, &runstop);
+		if (status){
+			fprintf(stderr, "%s:%s getIntegerParam P_FMT_MC_PORT fail\n", DN, FN);
+			return;
+		}
+		unlock();
+		if (runstop == 1){
+			// copy buffer and queue
+		}else{
+			if (runstop0 == 1){
+				// @@todo on stop actions: freeze
+				lock();
+				// @@todo update callbacks
+				unlock();
+			}
+		}
+	}
+
+	close(fc);
 }
 
 asynStatus acq400_PM::writeInt32(asynUser *pasynUser, epicsInt32 value)

@@ -135,8 +135,7 @@ acq400_SOE::acq400_SOE(const char* portName):
 
 void acq400_SOE::task_runner(void *drvPvt)
 {
-	acq400_SOE *pPvt = (acq400_SOE *)drvPvt;
-	pPvt->task();
+	((acq400_SOE *)drvPvt)->task();
 }
 
 void acq400_SOE::update_soe_lut(bool first_time)
@@ -345,6 +344,8 @@ void acq400_SOE::task()
 			unlock();
 		}
 	}
+
+	close(fc);
 }
 
 
