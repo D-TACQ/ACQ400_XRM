@@ -68,6 +68,7 @@ fi
 [ ! -z $XRM_FMT_SIM ] && ./scripts/load.fmt_sim $XRM_FMT_SIM
 [ ! -z $XRM_FMT_RX ] && ./scripts/load.fmt_rx $XRM_FMT_RX
 [ ! -z $XRM_SOE ] && ./scripts/load.soe $XRM_SOE
+[ ! -z $XRM_PM ] && ./scripts/load.pm $XRM_PM
 
 cat - <<EOF
 dbLoadRecords("db/local-aliases.db","UUT=acq2206_088")
