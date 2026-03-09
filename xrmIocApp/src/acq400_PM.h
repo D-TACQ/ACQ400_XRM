@@ -18,6 +18,18 @@
 #define XRMIOCAPP_SRC_ACQ400_PM_H_
 
 #include "acq400_asyn_common.h"
+#include "epicsRingBytes.h"
+
+#include <algorithm>
+#include <iostream>
+#include <numeric>
+#include <string>
+#include <deque>
+
+struct BufferPair {
+	short ib_live;	// index of live buffer
+	short ib_store;	// index of buffer in store
+};
 
 #define MAX_PM_BUFFERS	32
 
@@ -30,9 +42,26 @@
 
 class acq400_PM: public acq400_asynPortDriver {
 
+
 protected:
+	std::deque<BufferPair> empties;
+	std::deque<BufferPair> filled;
+
+	void init_buffers(const unsigned nbuf);
+	void stash_buffer(int ib_live, const unsigned nbuf);
+
+	struct PM_COLS {
+		epicsInt8   c_rownum[MAX_PM_BUFFERS];
+		epicsInt16   c_ib_live[MAX_PM_BUFFERS];
+		epicsInt16   c_ib_store[MAX_PM_BUFFERS];
+		epicsInt64  c_timestamp[MAX_PM_BUFFERS];		// really U64 but..
+		epicsInt8   c_WRVS[MAX_PM_BUFFERS];
+		epicsInt32  c_WRVT[MAX_PM_BUFFERS];
+		epicsInt64  c_WRUS[MAX_PM_BUFFERS];
+	} hold_cols;
 
 	epicsEventId eventId;
+
 
 	virtual void task();
 

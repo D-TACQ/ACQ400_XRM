@@ -12,6 +12,8 @@
 #include <string.h>
 static const char *driverName="acq400_PM";
 
+
+
 #define DN	driverName
 #define FN	__FUNCTION__
 
@@ -35,7 +37,6 @@ acq400_PM::acq400_PM(const char* portName):
 
 	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
 	createParam(PS_UPDATES,  asynParamInt32,        &P_UPDATES);
-
 }
 
 void acq400_PM::task_runner(void *drvPvt)
@@ -43,6 +44,36 @@ void acq400_PM::task_runner(void *drvPvt)
 	((acq400_PM *)drvPvt)->task();
 }
 
+int FIRST=2;
+
+void acq400_PM::init_buffers(const unsigned nbuf)
+{
+	filled.clear();
+	empties.clear();
+	for (short ii = FIRST; ii <= (short)nbuf; ++ii){
+		empties.push_back({ii, 0});
+	}
+}
+
+void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
+{
+	BufferPair bp;
+
+	if (filled.size() >= nbuf){
+		bp = filled.back(); filled.pop_back();
+	}else{
+		bp = empties.back(); empties.pop_back();
+	}
+	bp.ib_live = ib_live;
+	filled.push_front(bp);
+
+	// @@todo copy DRAM using ioctl
+}
+
+void update_pm_callbacks(void)
+{
+	// @@todo ... create P_ first!
+}
 void acq400_PM::task()
 {
 	asynStatus status = asynSuccess;
@@ -51,6 +82,9 @@ void acq400_PM::task()
 	int fc = open("/dev/acq400.0.bq", O_RDONLY);
 	assert(fc >= 0);
 
+	int nbuf;
+	gip(P_NBUF, &nbuf);
+	const unsigned NBUF = (unsigned)nbuf;
 
 	if ((ib = getBufferId(fc)) < 0){
 		fprintf(stderr, "ERROR: getBufferId() fail");
@@ -65,15 +99,25 @@ void acq400_PM::task()
 			return;
 		}
 		unlock();
-		if (runstop == 1){
-			// copy buffer and queue
-		}else{
-			if (runstop0 == 1){
-				// @@todo on stop actions: freeze
-				lock();
-				// @@todo update callbacks
-				unlock();
+		if (runstop == 1 || runstop0 == 1){
+			if (runstop0 == 0){
+				init_buffers(NBUF);
 			}
+			stash_buffer(ib, NBUF);
+
+			int icol = 0;
+			for (auto&& bpi: filled){
+				hold_cols.c_ib_live[icol] = bpi.ib_live;
+				hold_cols.c_ib_store[icol] = bpi.ib_store;
+				++icol;
+			}
+			// @@todo on stop actions: freeze
+			lock();
+			update_pm_callbacks();
+			unlock();
+		}
+		if (runstop == 0 && runstop0 == 1){
+			// update all PM buffers/
 		}
 	}
 
