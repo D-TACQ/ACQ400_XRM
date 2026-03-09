@@ -85,12 +85,14 @@ void acq400_PM::init_buffers(const unsigned nbuf)
 		fprintf(stderr, "%s 50\n", FN);
 		empties.push_back({ii, 0});
 	}
-	fprintf(stderr, "%s 99\n", FN);
+	fprintf(stderr, "%s size empties %d\n", FN, empties.size());
 }
 
 void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
 {
 	BufferPair bp;
+
+	fprintf(stderr, "%s 01\n", FN);
 
 	if (filled.size() >= nbuf){
 		bp = filled.back(); filled.pop_back();
