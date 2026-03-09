@@ -28,10 +28,11 @@ record(int64in, "${UUT}:PM:TS_USEC")
 	field(TSE,  "-2")
 }
 
-record(longin, "${UUT}:PM:${PMB02}")
+record(waveform, "${UUT}:PM:${PMB02}")
 {
 	 field(DTYP, "asynInt32ArrayIn")
-	 field(INP,  "@asyn($PORT),$(PMB),$(TIMEOUT),RAWBUF")
+	 field(INP,  "@asyn($(PORT),$(PMB),$(TIMEOUT))RAWBUF")
+	 field(FTVL, "ULONG")
 	 field(SCAN, "I/O Intr")
 }
 
