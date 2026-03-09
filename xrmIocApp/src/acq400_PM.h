@@ -80,6 +80,7 @@ protected:
 	virtual void task();
 
 	static void task_runner(void *drvPvt);
+	static int nice;
 
 	int P_RUNSTOP;
 	int P_UPDATES;

@@ -18,6 +18,9 @@ using namespace std;
 #define DN	driverName
 #define FN	__FUNCTION__
 
+int acq400_PM::nice = ::getenv_default("acq400_PM_NICE", 0);
+
+
 acq400_PM::acq400_PM(const char* portName):
 	acq400_asynPortDriver(portName,
 	/* maxAddr */		MAX_PM_BUFFERS,    /* nbuffers from 0 (most recent) */
@@ -32,6 +35,7 @@ acq400_PM::acq400_PM(const char* portName):
 	/* Default priority */  0,
 	/* Default stack size*/ 0)
 {
+	asynStatus status = asynSuccess;
 	fprintf(stderr, "%s R1000 \n", FN);
 
 	eventId = epicsEventCreate(epicsEventEmpty);
@@ -52,6 +56,17 @@ acq400_PM::acq400_PM(const char* portName):
 	createParam(PS_PM_COL_WRUS,	asynParamInt32, &P_COL_WRUS);
 
 	createParam(PS_RAWBUF,		asynParamInt32Array, &P_RAWBUF);
+
+	/* Create the thread that computes the waveforms in the background */
+	status = (asynStatus)(epicsThreadCreate("PM_task",
+			epicsThreadPriorityHigh - nice,
+			epicsThreadGetStackSize(epicsThreadStackMedium),
+			(EPICSTHREADFUNC)task_runner,
+			this) == NULL);
+	if (status) {
+		printf("%s:%s: epicsThreadCreate failure\n", DN, FN);
+		return;
+	}
 }
 
 void acq400_PM::task_runner(void *drvPvt)
@@ -105,6 +120,8 @@ void acq400_PM::update_pm_callbacks(void)
 void acq400_PM::task()
 {
 	asynStatus status = asynSuccess;
+
+	fprintf(stderr, "%s 01\n", FN);
 	epicsEventWait(eventId);
 
 	fprintf(stderr, "%s LET's go\n", FN);
