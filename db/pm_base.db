@@ -19,6 +19,14 @@ record(longin, "${UUT}:PM:UPDATES")
 	field(TSE,  "-2")
 }
 
+record(longout, "${UUT}:PM:NBUF")
+{
+	field(PINI, "YES")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))NBUF")
+	field(VAL,  "20")
+}
+
 record(int64in, "${UUT}:PM:TS_USEC")
 {
 	field(PINI, "NO")

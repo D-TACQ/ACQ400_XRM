@@ -42,6 +42,7 @@ acq400_PM::acq400_PM(const char* portName):
 
 	createParam(PS_RUNSTOP,		asynParamInt32,		&P_RUNSTOP);
 	createParam(PS_UPDATES,  	asynParamInt32,		&P_UPDATES);
+	createParam(PS_NBUF,  		asynParamInt32,		&P_NBUF);
 	createParam(PS_PM_COL_ROWNUM,	asynParamInt8Array,	&P_COL_ROWNUM);
 	createParam(PS_PM_COL_IBLIVE,	asynParamInt16Array,	&P_COL_IBLIVE);
 	createParam(PS_PM_COL_IBSTORE,	asynParamInt16Array,	&P_COL_IBSTORE);
