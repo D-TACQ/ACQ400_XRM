@@ -1,0 +1,176 @@
+record(waveform, "${UUT}:PM:TAB:Labels_") {
+	field(FTVL, "STRING")
+	field(NELM, "10")
+	field(INP , {const:["Row", "Live Buf", "PM Buf", "TIMESTAMP",
+			    "SP0", "SP1", "SP2", "WRVS", "WRVT", "WRUS" ]})
+	info(Q:group, {
+		"${UUT}:PM:TAB:Tbl":{
+			+id:"epics:nt/NTTable:1.0",
+			"labels":{+type:"plain", +channel:"VAL"}
+		}
+	})
+	field(TPRO, "1")
+}
+
+record(waveform, "${UUT}:PM:TAB:ROWNUM")
+{
+	field(DTYP, "asynInt8ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_ROWNUM")
+	field(FTVL, "UCHAR")
+	field(NELM, "32")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:PM:TAB:Tbl": {
+			"value.ROWNUM": {+type:"plain", 
+					 +channel:"VAL", +putorder:0 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:PM:TAB:IBLIVE")
+{
+	field(DTYP, "asynInt16ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_IBLIVE")
+	field(FTVL, "USHORT")
+	field(NELM, "32")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:PM:TAB:Tbl": {
+			"value.IBLIVE": {+type:"plain", 
+					 +channel:"VAL", +putorder:1 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:PM:TAB:IBSTORE")
+{
+	field(DTYP, "asynInt16ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_IBSTORE")
+	field(FTVL, "USHORT")
+	field(NELM, "32")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:PM:TAB:Tbl": {
+			"value.IBSTORE": {+type:"plain", 
+					 +channel:"VAL", +putorder:2 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:PM:TAB:TS")
+{
+	field(DTYP, "asynInt64ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_TS")
+	field(FTVL, "INT64")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:PM:TAB:Tbl": {
+			"value.TS": {+type:"plain", 
+				     +channel:"VAL", +putorder:3 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:PM:TAB:SP0")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_SP0")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:PM:TAB:Tbl": {
+			"value.SP0": {+type:"plain", 
+				      +channel:"VAL", +putorder:4 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:PM:TAB:SP1")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_SP1")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:PM:TAB:Tbl": {
+			"value.SP1": {+type:"plain",
+				      +channel:"VAL", +putorder:5 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:PM:TAB:SP2")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_SP2")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:PM:TAB:Tbl": {
+			"value.SP2": {+type:"plain",
+				      +channel:"VAL", +putorder:6 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:PM:TAB:WRVS")
+{
+	field(DTYP, "asynInt8ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_WRVS")
+	field(FTVL, "UCHAR")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:PM:TAB:Tbl": {
+			"value.WRVS": {+type:"plain", 
+				      +channel:"VAL", +putorder:7 }
+		}
+	})
+}
+
+record(waveform, "${UUT}:PM:TAB:WRVT")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_WRVT")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:PM:TAB:Tbl": {
+			"value.WRVT": {+type:"plain",
+				      +channel:"VAL", +putorder:8, +trigger:"*" }
+		}
+	})
+}
+
+record(waveform, "${UUT}:PM:TAB:WRUS")
+{
+	field(DTYP, "asynInt64ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_WRUS")
+	field(FTVL, "INT64")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:PM:TAB:Tbl": {
+			"value.WRUS": {+type:"plain", 
+				      +channel:"VAL", +putorder:9, +trigger:"*" }
+		}
+	})
+}
+record(longout, "${UUT}:PM:TAB:Save") {
+    field(MDEL, "-1") # ensure we always trigger group monitor
+    field(TPRO, "1")
+    info(Q:group, {
+	"${UUT}:PM:TAB:Tbl":{
+	    "_save":{+type:"proc",
+		     +channel:"VAL",
+		     +putorder:10,
+		     +trigger:"*"}
+	}
+    })
+}
+

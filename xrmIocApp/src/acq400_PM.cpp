@@ -12,7 +12,8 @@
 #include <string.h>
 static const char *driverName="acq400_PM";
 
-
+using namespace std;
+#include "Buffer.h"
 
 #define DN	driverName
 #define FN	__FUNCTION__
@@ -35,8 +36,22 @@ acq400_PM::acq400_PM(const char* portName):
 
 	eventId = epicsEventCreate(epicsEventEmpty);
 
-	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
-	createParam(PS_UPDATES,  asynParamInt32,        &P_UPDATES);
+	createParam(PS_RUNSTOP,		asynParamInt32,		&P_RUNSTOP);
+	createParam(PS_UPDATES,  	asynParamInt32,		&P_UPDATES);
+	createParam(PS_PM_COL_ROWNUM,	asynParamInt8Array,	&P_COL_ROWNUM);
+	createParam(PS_PM_COL_IBLIVE,	asynParamInt16Array,	&P_COL_IBLIVE);
+	createParam(PS_PM_COL_IBSTORE,	asynParamInt16Array,	&P_COL_IBSTORE);
+	createParam(PS_PM_COL_TS,	asynParamInt64Array,	&P_COL_TS);
+
+
+	createParam(PS_PM_COL_SP0,	asynParamInt32, &P_COL_SP0);
+	createParam(PS_PM_COL_SP1,	asynParamInt32, &P_COL_SP1);
+	createParam(PS_PM_COL_SP2,	asynParamInt32, &P_COL_SP2);
+	createParam(PS_PM_COL_WRVS,	asynParamInt32, &P_COL_WRVS);
+	createParam(PS_PM_COL_WRVT,	asynParamInt32, &P_COL_WRVT);
+	createParam(PS_PM_COL_WRUS,	asynParamInt32, &P_COL_WRUS);
+
+	createParam(PS_RAWBUF,		asynParamInt32Array, &P_RAWBUF);
 }
 
 void acq400_PM::task_runner(void *drvPvt)
@@ -44,7 +59,7 @@ void acq400_PM::task_runner(void *drvPvt)
 	((acq400_PM *)drvPvt)->task();
 }
 
-int FIRST=2;
+int FIRST=2;   // @@todo SWAG. Make official.
 
 void acq400_PM::init_buffers(const unsigned nbuf)
 {
@@ -70,10 +85,18 @@ void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
 	// @@todo copy DRAM using ioctl
 }
 
-void update_pm_callbacks(void)
+void acq400_PM::update_pm_callbacks(void)
 {
-	// @@todo ... create P_ first!
+	doCallbacksInt8Array(hold_cols.c_rownum, 	MAX_PM_BUFFERS, P_COL_ROWNUM, 0);
+	doCallbacksInt16Array(hold_cols.c_ib_live, 	MAX_PM_BUFFERS, P_COL_IBLIVE, 0);
+	doCallbacksInt16Array(hold_cols.c_ib_store, 	MAX_PM_BUFFERS, P_COL_IBSTORE, 0);
+	callParamCallbacks();
 }
+
+#define SSB		128
+#define TRANSLEN	1024
+#define BURST_LW 	(SSB*TRANSLEN/sizeof(int))
+
 void acq400_PM::task()
 {
 	asynStatus status = asynSuccess;
@@ -111,13 +134,20 @@ void acq400_PM::task()
 				hold_cols.c_ib_store[icol] = bpi.ib_store;
 				++icol;
 			}
-			// @@todo on stop actions: freeze
 			lock();
 			update_pm_callbacks();
 			unlock();
 		}
 		if (runstop == 0 && runstop0 == 1){
-			// update all PM buffers/
+			/* call P_RAWBUF callbacks on stop. This is HEAVY, but infrequent */
+			int baddr = 0;
+			lock();
+			for (auto&& bpi: filled){
+				int* bp = (int*)Buffer::the_buffers[bpi.ib_store]->getBase();
+				doCallbacksInt32Array(bp, BURST_LW, P_RAWBUF, baddr++);
+			}
+			unlock();
+
 		}
 	}
 

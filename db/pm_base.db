@@ -4,7 +4,7 @@ record(bo, "${UUT}:PM:RUNSTOP")
 {
 	field(PINI, "YES")
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))RUNSTOP")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))RUNSTOP")
 	field(SCAN, "Passive")
 	field(ZNAM, "STOP")
 	field(ONAM, "RUN")
@@ -14,7 +14,7 @@ record(longin, "${UUT}:PM:UPDATES")
 {
 	field(PINI, "NO")
 	field(DTYP, "asynInt32")
-	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))UPDATES")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))UPDATES")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
 }
@@ -23,10 +23,18 @@ record(int64in, "${UUT}:PM:TS_USEC")
 {
 	field(PINI, "NO")
 	field(DTYP, "asynInt64")
-	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TS_USEC")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))TS_USEC")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
 }
+
+record(longin, "${UUT}:PM:${PMB02}")
+{
+	 field(DTYP, "asynInt32ArrayIn")
+	 field(INP,  "@asyn($PORT),$(PMB),$(TIMEOUT),RAWBUF")
+	 field(SCAN, "I/O Intr")
+}
+
 
 
 

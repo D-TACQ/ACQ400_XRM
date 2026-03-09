@@ -36,7 +36,19 @@ struct BufferPair {
 #define PS_RUNSTOP	"RUNSTOP"	/* asynInt32, r/w */
 #define PS_UPDATES	"UPDATES"	/* asynInt32, r/c */
 #define PS_NBUF		"NBUF"		/* asynInt32, r, number of buffers */
-#define PS_RING		"RING"		/* show ringbuffer (diag) */
+
+#define PS_PM_COL_ROWNUM 	"PM_COL_ROWNUM"
+#define PS_PM_COL_IBLIVE 	"PM_COL_IBLIVE"
+#define PS_PM_COL_IBSTORE 	"PM_COL_IBSTORE"
+#define PS_PM_COL_TS		"PM_COL_TS"
+
+#define PS_PM_COL_SP0		"PM_COL_SP0"
+#define PS_PM_COL_SP1		"PM_COL_SP1"
+#define PS_PM_COL_SP2		"PM_COL_SP2"
+#define PS_PM_COL_WRVS		"PM_COL_WRVS"  // WR Vernier, seconds
+#define PS_PM_COL_WRVT  	"PM_COL_WRVT"  // WR Vernier, ticks
+#define PS_PM_COL_WRUS  	"PM_COL_WRUS"  // WR time, usec since epoch
+
 
 #define PS_RAWBUF	"RAWBUF"        /* addr 0..32 */
 
@@ -62,6 +74,7 @@ protected:
 
 	epicsEventId eventId;
 
+	virtual void update_pm_callbacks(void);
 
 	virtual void task();
 
@@ -72,6 +85,18 @@ protected:
 	int P_NBUF;
 	int P_RING;
 	int P_RAWBUF;
+
+	int P_COL_ROWNUM;
+	int P_COL_IBLIVE;
+	int P_COL_IBSTORE;
+	int P_COL_TS;
+
+	int P_COL_SP0;
+	int P_COL_SP1;
+	int P_COL_SP2;
+	int P_COL_WRVS;
+	int P_COL_WRVT;
+	int P_COL_WRUS;
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
 
