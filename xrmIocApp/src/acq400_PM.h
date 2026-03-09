@@ -73,6 +73,7 @@ protected:
 	} hold_cols;
 
 	epicsEventId eventId;
+	unsigned update;
 
 	virtual void update_pm_callbacks(void);
 

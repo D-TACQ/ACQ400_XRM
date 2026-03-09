@@ -63,11 +63,14 @@ int FIRST=2;   // @@todo SWAG. Make official.
 
 void acq400_PM::init_buffers(const unsigned nbuf)
 {
+	fprintf(stderr, "%s 01\n", FN);
 	filled.clear();
 	empties.clear();
 	for (short ii = FIRST; ii <= (short)nbuf; ++ii){
+		fprintf(stderr, "%s 50\n", FN);
 		empties.push_back({ii, 0});
 	}
+	fprintf(stderr, "%s 99\n", FN);
 }
 
 void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
@@ -80,6 +83,7 @@ void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
 		bp = empties.back(); empties.pop_back();
 	}
 	bp.ib_live = ib_live;
+	fprintf(stderr, "%s push %d.%d\n", FN, bp.ib_store, bp.ib_live);
 	filled.push_front(bp);
 
 	// @@todo copy DRAM using ioctl
@@ -90,6 +94,7 @@ void acq400_PM::update_pm_callbacks(void)
 	doCallbacksInt8Array(hold_cols.c_rownum, 	MAX_PM_BUFFERS, P_COL_ROWNUM, 0);
 	doCallbacksInt16Array(hold_cols.c_ib_live, 	MAX_PM_BUFFERS, P_COL_IBLIVE, 0);
 	doCallbacksInt16Array(hold_cols.c_ib_store, 	MAX_PM_BUFFERS, P_COL_IBSTORE, 0);
+	setIntegerParam(P_UPDATES, ++update);
 	callParamCallbacks();
 }
 
@@ -102,6 +107,7 @@ void acq400_PM::task()
 	asynStatus status = asynSuccess;
 	epicsEventWait(eventId);
 
+	fprintf(stderr, "%s LET's go\n", FN);
 	int fc = open("/dev/acq400.0.bq", O_RDONLY);
 	assert(fc >= 0);
 
