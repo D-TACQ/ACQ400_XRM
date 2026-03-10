@@ -8,12 +8,14 @@
 #include "acq400_asyn_common.h"
 #include "acq400_PM.h"
 #include <fcntl.h>                // open()
+#include <sys/ioctl.h>
 #include <unistd.h>
 #include <string.h>
 static const char *driverName="acq400_PM";
 
 using namespace std;
 #include "Buffer.h"
+#include "acq400_fs_ioctl.h"
 
 #define DN	driverName
 #define FN	__FUNCTION__
@@ -115,7 +117,16 @@ void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
 
 	filled.push_front(bp);
 
-	// @@todo copy DRAM using ioctl
+	Buffer* dst_bp = Buffer::the_buffers[bp.ib_store];
+	int rc = ioctl(dst_bp->getFD(), ACQ400_HB_COPYFROM, bp.ib_live);
+
+	if (rc != 0){
+		char msg[80];
+		snprintf(msg, 80, "ERROR dst:\"%s\" ioctl fail %d arg %d",
+				dst_bp->getName(), ACQ400_HB_COPYFROM, bp.ib_live);
+		perror(msg);
+		assert(rc != 0);
+	}
 }
 
 void acq400_PM::update_pm_callbacks(void)
