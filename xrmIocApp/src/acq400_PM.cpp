@@ -84,7 +84,7 @@ void acq400_PM::init_buffers(const unsigned nbuf)
 	empties.clear();
 	for (short ii = FIRST; ii <= (short)nbuf; ++ii){
 		fprintf(stderr, "%s 50\n", FN);
-		empties.push_back({ii, 0});
+		empties.push_back({-1, ii});
 	}
 	fprintf(stderr, "%s size empties %d\n", FN, empties.size());
 }
@@ -95,13 +95,19 @@ void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
 
 	fprintf(stderr, "%s 01\n", FN);
 
-	if (filled.size() >= nbuf){
+	const char* fill_from = "";
+	if (empties.empty()){
+		assert(!filled.empty());
 		bp = filled.back(); filled.pop_back();
+		fill_from = "filled";
 	}else{
-		bp = empties.back(); empties.pop_back();
+		bp = empties.front(); empties.pop_front();
+		fill_from = "empties";
 	}
 	bp.ib_live = ib_live;
-	fprintf(stderr, "%s push %d.%d\n", FN, bp.ib_store, bp.ib_live);
+	fprintf(stderr, "%s fill_from:%s push %d.%d\n",
+			FN, fill_from, bp.ib_store, bp.ib_live);
+
 	filled.push_front(bp);
 
 	// @@todo copy DRAM using ioctl
