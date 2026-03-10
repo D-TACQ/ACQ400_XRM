@@ -72,15 +72,7 @@
 #define PS_SOE_HLD_COL_WRVT     "SOE_HLD_COL_WRVT"  // WR Vernier, ticks
 #define PS_SOE_HLD_COL_WRUS     "SOE_HLD_COL_WRUS"  // WR time, usec since epoch
 
-#define SP0	0
-#define SP1	1
-#define SP2	2
-#define SP3	3
 
-typedef short AI16_t;
-typedef unsigned long DI32_t;
-typedef unsigned long DO32_t;
-typedef unsigned long SP32_t;
 
 /* define a column for each data type.
  * There will be up to 64 of these by asyn "address"

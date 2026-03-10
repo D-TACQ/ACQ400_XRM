@@ -123,17 +123,41 @@ void acq400_PM::update_pm_callbacks(void)
 	doCallbacksInt8Array(pm_cols.c_rownum, 		MAX_PM_BUFFERS, P_COL_ROWNUM, 0);
 	doCallbacksInt16Array(pm_cols.c_ib_live, 	MAX_PM_BUFFERS, P_COL_IBLIVE, 0);
 	doCallbacksInt16Array(pm_cols.c_ib_store, 	MAX_PM_BUFFERS, P_COL_IBSTORE, 0);
-	// ...
+	doCallbacksInt64Array(pm_cols.c_timestamp,      MAX_PM_BUFFERS, P_COL_TS, 0);
+	doCallbacksInt32Array(pm_cols.c_SP0,      	MAX_PM_BUFFERS, P_COL_SP0, 0);
+	doCallbacksInt32Array(pm_cols.c_SP1,      	MAX_PM_BUFFERS, P_COL_SP1, 0);
+	doCallbacksInt32Array(pm_cols.c_SP2,      	MAX_PM_BUFFERS, P_COL_SP1, 0);
+	doCallbacksInt8Array(pm_cols.c_WRVS,      	MAX_PM_BUFFERS, P_COL_WRVS, 0);
+	doCallbacksInt32Array(pm_cols.c_WRVT,      	MAX_PM_BUFFERS, P_COL_WRVT, 0);
 	doCallbacksInt64Array(pm_cols.c_WRUS,		MAX_PM_BUFFERS, P_COL_WRUS, 0);
 
 	setIntegerParam(P_UPDATES, ++update);
 	callParamCallbacks();
 }
 
+/* @@todo: FIXME. Common code with SOE. Refactor recommended. */
+#define SKIP_ES 1
 #define SSB		128
 #define TRANSLEN	1024
 #define BURST_LW 	(SSB*TRANSLEN/sizeof(int))
+#define SOE_SMPL_DI_INDEX	16
+#define SOE_SMPL_SP_INDEX	17
 
+void acq400_PM::update_pm_tab_row(int row, int ib)
+{
+	const int SSS = SSB/sizeof(short);
+	const int SSL = SSB/sizeof(long);
+	char* raw = Buffer::the_buffers[ib]->getBase() + SKIP_ES*SSB;
+	short* ai_raw = (short*)raw;
+	int * di_raw = (int*)raw + SOE_SMPL_DI_INDEX;
+	int * sp_raw = (int*)raw + SOE_SMPL_SP_INDEX;
+	const int srow = row*SSS;
+	const int lrow = row*SSL;
+
+	pm_cols.c_SP0[row] = sp_raw[lrow+SP0];
+	pm_cols.c_SP1[row] = sp_raw[lrow+SP1];
+	pm_cols.c_SP2[row] = sp_raw[lrow+SP2];
+}
 void acq400_PM::task()
 {
 	asynStatus status = asynSuccess;
@@ -168,11 +192,11 @@ void acq400_PM::task()
 			}
 			stash_buffer(ib, NBUF);
 
-			int icol = 0;
+			int irow = 0;
 			for (auto&& bpi: filled){
-				pm_cols.c_ib_live[icol] = bpi.ib_live;
-				pm_cols.c_ib_store[icol] = bpi.ib_store;
-				++icol;
+				pm_cols.c_ib_live[irow] = bpi.ib_live;
+				pm_cols.c_ib_store[irow] = bpi.ib_store;
+				update_pm_tab_row(irow++, bpi.ib_live);
 			}
 			lock();
 			update_pm_callbacks();

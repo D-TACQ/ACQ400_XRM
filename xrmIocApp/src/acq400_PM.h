@@ -68,6 +68,9 @@ protected:
 		epicsInt16   c_ib_live[MAX_PM_BUFFERS];
 		epicsInt16   c_ib_store[MAX_PM_BUFFERS];
 		epicsInt64  c_timestamp[MAX_PM_BUFFERS];		// really U64 but..
+		epicsInt32  c_SP0[MAX_PM_BUFFERS];
+		epicsInt32  c_SP1[MAX_PM_BUFFERS];
+		epicsInt32  c_SP2[MAX_PM_BUFFERS];
 		epicsInt8   c_WRVS[MAX_PM_BUFFERS];
 		epicsInt32  c_WRVT[MAX_PM_BUFFERS];
 		epicsInt64  c_WRUS[MAX_PM_BUFFERS];
@@ -76,6 +79,7 @@ protected:
 	epicsEventId eventId;
 	unsigned update;
 
+	virtual void update_pm_tab_row(int row, int ib);
 	virtual void update_pm_callbacks(void);
 
 	virtual void task();

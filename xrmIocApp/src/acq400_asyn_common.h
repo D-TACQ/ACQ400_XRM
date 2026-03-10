@@ -28,6 +28,16 @@
 #include <stdio.h>
 #include <string.h>
 
+#define SP0	0
+#define SP1	1
+#define SP2	2
+#define SP3	3
+
+typedef short AI16_t;
+typedef unsigned long DI32_t;
+typedef unsigned long DO32_t;
+typedef unsigned long SP32_t;
+
 static inline
 std::vector<int> csv2int(const char* csv) {
 	std::vector<std::string> strings;
