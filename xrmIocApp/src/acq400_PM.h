@@ -82,6 +82,7 @@ protected:
 
 	static void task_runner(void *drvPvt);
 	static int nice;
+	static int verbose;
 
 	int P_RUNSTOP;
 	int P_UPDATES;

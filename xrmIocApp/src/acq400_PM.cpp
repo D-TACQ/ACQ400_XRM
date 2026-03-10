@@ -19,7 +19,7 @@ using namespace std;
 #define FN	__FUNCTION__
 
 int acq400_PM::nice = ::getenv_default("acq400_PM_NICE", 0);
-
+int acq400_PM::verbose = ::getenv_default("acq400_PM_VERBOSE", 0);
 
 acq400_PM::acq400_PM(const char* portName):
 	acq400_asynPortDriver(portName,
@@ -80,21 +80,21 @@ int FIRST=2;   // @@todo SWAG. Make official.
 
 void acq400_PM::init_buffers(const unsigned nbuf)
 {
-	fprintf(stderr, "%s 01\n", FN);
+	if (verbose) fprintf(stderr, "%s 01\n", FN);
 	filled.clear();
 	empties.clear();
 	for (short ii = FIRST; ii <= (short)nbuf; ++ii){
-		fprintf(stderr, "%s 50\n", FN);
+		if (verbose>1) fprintf(stderr, "%s 50\n", FN);
 		empties.push_back({-1, ii});
 	}
-	fprintf(stderr, "%s size empties %lu\n", FN, empties.size());
+	if (verbose) fprintf(stderr, "%s size empties %lu\n", FN, empties.size());
 }
 
 void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
 {
 	BufferPair bp;
 
-	fprintf(stderr, "%s 01\n", FN);
+	if (verbose > 1) fprintf(stderr, "%s 01\n", FN);
 
 	const char* fill_from = "";
 	if (empties.empty()){
@@ -106,7 +106,7 @@ void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
 		fill_from = "empties";
 	}
 	bp.ib_live = ib_live;
-	fprintf(stderr, "%s fill_from:%s push %d.%d\n",
+	if (verbose > 1) fprintf(stderr, "%s fill_from:%s push %d.%d\n",
 			FN, fill_from, bp.ib_store, bp.ib_live);
 
 	filled.push_front(bp);
