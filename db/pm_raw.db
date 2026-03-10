@@ -1,0 +1,12 @@
+# pm_raw.db Post Mortem .. the actual PM RAW data
+
+# PMBUF02: buffer number, PMBUF02: %02d buffer number. 
+
+record(waveform, "${UUT}:PM:BUF:${PMBUF02}")
+{
+	 field(DTYP, "asynInt32ArrayIn")
+	 field(INP,  "@asyn($(PORT),$(PMBUF),$(TIMEOUT))RAWBUF")
+	 field(FTVL, "ULONG")
+	 field(NELM, "${NELM}")
+	 field(SCAN, "I/O Intr")
+}
