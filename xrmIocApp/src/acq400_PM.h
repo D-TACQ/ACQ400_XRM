@@ -71,7 +71,7 @@ protected:
 		epicsInt8   c_WRVS[MAX_PM_BUFFERS];
 		epicsInt32  c_WRVT[MAX_PM_BUFFERS];
 		epicsInt64  c_WRUS[MAX_PM_BUFFERS];
-	} hold_cols;
+	} pm_cols;
 
 	epicsEventId eventId;
 	unsigned update;

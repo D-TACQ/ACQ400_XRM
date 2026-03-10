@@ -40,6 +40,10 @@ acq400_PM::acq400_PM(const char* portName):
 
 	eventId = epicsEventCreate(epicsEventEmpty);
 
+	for (epicsInt8 row = 0; row < MAX_PM_BUFFERS; ++ row){
+		pm_cols.c_rownum[row] = row;
+	}
+
 	createParam(PS_RUNSTOP,		asynParamInt32,		&P_RUNSTOP);
 	createParam(PS_UPDATES,  	asynParamInt32,		&P_UPDATES);
 	createParam(PS_TS_USEC,  	asynParamInt64,		&P_TS_USEC);
@@ -87,7 +91,6 @@ void acq400_PM::init_buffers(const unsigned nbuf)
 		if (verbose>1) fprintf(stderr, "%s 50\n", FN);
 		empties.push_back({-1, ii});
 	}
-	if (verbose) fprintf(stderr, "%s size empties %lu\n", FN, empties.size());
 }
 
 void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
@@ -116,9 +119,9 @@ void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
 
 void acq400_PM::update_pm_callbacks(void)
 {
-	doCallbacksInt8Array(hold_cols.c_rownum, 	MAX_PM_BUFFERS, P_COL_ROWNUM, 0);
-	doCallbacksInt16Array(hold_cols.c_ib_live, 	MAX_PM_BUFFERS, P_COL_IBLIVE, 0);
-	doCallbacksInt16Array(hold_cols.c_ib_store, 	MAX_PM_BUFFERS, P_COL_IBSTORE, 0);
+	doCallbacksInt8Array(pm_cols.c_rownum, 	MAX_PM_BUFFERS, P_COL_ROWNUM, 0);
+	doCallbacksInt16Array(pm_cols.c_ib_live, 	MAX_PM_BUFFERS, P_COL_IBLIVE, 0);
+	doCallbacksInt16Array(pm_cols.c_ib_store, 	MAX_PM_BUFFERS, P_COL_IBSTORE, 0);
 	setIntegerParam(P_UPDATES, ++update);
 	callParamCallbacks();
 }
@@ -163,8 +166,8 @@ void acq400_PM::task()
 
 			int icol = 0;
 			for (auto&& bpi: filled){
-				hold_cols.c_ib_live[icol] = bpi.ib_live;
-				hold_cols.c_ib_store[icol] = bpi.ib_store;
+				pm_cols.c_ib_live[icol] = bpi.ib_live;
+				pm_cols.c_ib_store[icol] = bpi.ib_store;
 				++icol;
 			}
 			lock();
