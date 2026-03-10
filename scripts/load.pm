@@ -11,5 +11,7 @@ for PMB in $(seq 0 19); do
         PMB02=$(printf %02d $PMB)
         echo dbLoadRecords\(\"db/pm_base.db\",\"${PRAMS},PMB=${PMB},PMB02=${PMB02}\"\)
 done
-echo dbLoadRecords\(\"db/pm_tab.db\",\"${PRAMS},PMB=${PMB}\"\)
+
+[ -z $ACQ400_PM_NELM ] && ACQ400_PM_NELM=20
+echo dbLoadRecords\(\"db/pm_tab.db\",\"${PRAMS},PMB=${PMB},ROWS=${ACQ400_PM_NELM}\"\)
 

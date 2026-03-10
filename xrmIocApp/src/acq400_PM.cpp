@@ -37,6 +37,7 @@ acq400_PM::acq400_PM(const char* portName):
 {
 	asynStatus status = asynSuccess;
 	fprintf(stderr, "%s R1000 \n", FN);
+	memset(&pm_cols, 0, sizeof(pm_cols));
 
 	eventId = epicsEventCreate(epicsEventEmpty);
 
@@ -119,9 +120,12 @@ void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
 
 void acq400_PM::update_pm_callbacks(void)
 {
-	doCallbacksInt8Array(pm_cols.c_rownum, 	MAX_PM_BUFFERS, P_COL_ROWNUM, 0);
+	doCallbacksInt8Array(pm_cols.c_rownum, 		MAX_PM_BUFFERS, P_COL_ROWNUM, 0);
 	doCallbacksInt16Array(pm_cols.c_ib_live, 	MAX_PM_BUFFERS, P_COL_IBLIVE, 0);
 	doCallbacksInt16Array(pm_cols.c_ib_store, 	MAX_PM_BUFFERS, P_COL_IBSTORE, 0);
+	// ...
+	doCallbacksInt64Array(pm_cols.c_WRUS,		MAX_PM_BUFFERS, P_COL_WRUS, 0);
+
 	setIntegerParam(P_UPDATES, ++update);
 	callParamCallbacks();
 }

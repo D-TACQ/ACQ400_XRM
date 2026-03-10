@@ -17,7 +17,7 @@ record(waveform, "${UUT}:PM:TAB:ROWNUM")
 	field(DTYP, "asynInt8ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_ROWNUM")
 	field(FTVL, "UCHAR")
-	field(NELM, "32")
+	field(NELM, "${ROWS}")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
@@ -32,7 +32,7 @@ record(waveform, "${UUT}:PM:TAB:IBLIVE")
 	field(DTYP, "asynInt16ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_IBLIVE")
 	field(FTVL, "USHORT")
-	field(NELM, "32")
+	field(NELM, "${ROWS}")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
@@ -47,7 +47,7 @@ record(waveform, "${UUT}:PM:TAB:IBSTORE")
 	field(DTYP, "asynInt16ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_IBSTORE")
 	field(FTVL, "USHORT")
-	field(NELM, "32")
+	field(NELM, "${ROWS}")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
@@ -62,7 +62,7 @@ record(waveform, "${UUT}:PM:TAB:TS")
 	field(DTYP, "asynInt64ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_TS")
 	field(FTVL, "INT64")
-	field(NELM, "64")
+	field(NELM, "${ROWS}")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
@@ -77,7 +77,7 @@ record(waveform, "${UUT}:PM:TAB:SP0")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_SP0")
 	field(FTVL, "ULONG")
-	field(NELM, "64")
+	field(NELM, "${ROWS}")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
@@ -92,7 +92,7 @@ record(waveform, "${UUT}:PM:TAB:SP1")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_SP1")
 	field(FTVL, "ULONG")
-	field(NELM, "64")
+	field(NELM, "${ROWS}")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
@@ -107,7 +107,7 @@ record(waveform, "${UUT}:PM:TAB:SP2")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_SP2")
 	field(FTVL, "ULONG")
-	field(NELM, "64")
+	field(NELM, "${ROWS}")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
@@ -122,7 +122,7 @@ record(waveform, "${UUT}:PM:TAB:WRVS")
 	field(DTYP, "asynInt8ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_WRVS")
 	field(FTVL, "UCHAR")
-	field(NELM, "64")
+	field(NELM, "${ROWS}")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
@@ -137,12 +137,12 @@ record(waveform, "${UUT}:PM:TAB:WRVT")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_WRVT")
 	field(FTVL, "ULONG")
-	field(NELM, "64")
+	field(NELM, "${ROWS}")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
 			"value.WRVT": {+type:"plain",
-				      +channel:"VAL", +putorder:8, +trigger:"*" }
+				      +channel:"VAL", +putorder:8 }
 		}
 	})
 }
@@ -152,7 +152,7 @@ record(waveform, "${UUT}:PM:TAB:WRUS")
 	field(DTYP, "asynInt64ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_WRUS")
 	field(FTVL, "INT64")
-	field(NELM, "64")
+	field(NELM, "${ROWS}")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
