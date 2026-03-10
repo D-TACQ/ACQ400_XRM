@@ -42,6 +42,7 @@ acq400_PM::acq400_PM(const char* portName):
 
 	createParam(PS_RUNSTOP,		asynParamInt32,		&P_RUNSTOP);
 	createParam(PS_UPDATES,  	asynParamInt32,		&P_UPDATES);
+	createParam(PS_TS_USEC,  	asynParamInt64,		&P_TS_USEC);
 	createParam(PS_NBUF,  		asynParamInt32,		&P_NBUF);
 	createParam(PS_PM_COL_ROWNUM,	asynParamInt8Array,	&P_COL_ROWNUM);
 	createParam(PS_PM_COL_IBLIVE,	asynParamInt16Array,	&P_COL_IBLIVE);
@@ -86,7 +87,7 @@ void acq400_PM::init_buffers(const unsigned nbuf)
 		fprintf(stderr, "%s 50\n", FN);
 		empties.push_back({-1, ii});
 	}
-	fprintf(stderr, "%s size empties %d\n", FN, empties.size());
+	fprintf(stderr, "%s size empties %lu\n", FN, empties.size());
 }
 
 void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
