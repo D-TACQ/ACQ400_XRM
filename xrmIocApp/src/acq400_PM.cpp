@@ -20,8 +20,9 @@ using namespace std;
 #define DN	driverName
 #define FN	__FUNCTION__
 
-int acq400_PM::nice = ::getenv_default("acq400_PM_NICE", 0);
-int acq400_PM::verbose = ::getenv_default("acq400_PM_VERBOSE", 0);
+int acq400_PM::nice 		= ::getenv_default("acq400_PM_NICE", 0);
+int acq400_PM::verbose 		= ::getenv_default("acq400_PM_VERBOSE", 0);
+int acq400_PM::spX_from_live 	= ::getenv_default("acq400_PM_spX_from_live", 0);
 
 acq400_PM::acq400_PM(const char* portName):
 	acq400_asynPortDriver(portName,
@@ -154,6 +155,8 @@ void acq400_PM::update_pm_callbacks(void)
 #define SOE_SMPL_DI_INDEX	16
 #define SOE_SMPL_SP_INDEX	17
 
+
+
 void acq400_PM::update_pm_tab_row(int row, int ib)
 {
 	const int SSS = SSB/sizeof(short);
@@ -168,6 +171,9 @@ void acq400_PM::update_pm_tab_row(int row, int ib)
 	pm_cols.c_SP0[row] = sp_raw[lrow+SP0];
 	pm_cols.c_SP1[row] = sp_raw[lrow+SP1];
 	pm_cols.c_SP2[row] = sp_raw[lrow+SP2];
+	pm_cols.c_WRVS[row]= (sp_raw[lrow+SP2] >> 28)&0x07;
+	pm_cols.c_WRVT[row]= sp_raw[lrow+SP2]&0x0fffffff;
+	pm_cols.c_WRUS[row]= getWrTs(sp_raw[lrow+SP2]);
 }
 void acq400_PM::task()
 {
@@ -207,7 +213,7 @@ void acq400_PM::task()
 			for (auto&& bpi: filled){
 				pm_cols.c_ib_live[irow] = bpi.ib_live;
 				pm_cols.c_ib_store[irow] = bpi.ib_store;
-				update_pm_tab_row(irow++, bpi.ib_live);
+				update_pm_tab_row(irow++, spX_from_live? bpi.ib_live: bpi.ib_store);
 			}
 			lock();
 			update_pm_callbacks();

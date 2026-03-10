@@ -175,16 +175,8 @@ void acq400_SOE::update_hld_tab(bool first_time)
 
 #define SKIP_ES 1
 #define TRANSLEN	1024
-#define TICKSPERUS	40
 
-/* @@todo .. specialize time provider */
-static epicsInt64 getWrTs(unsigned wrv)
-{
-	int sec = wrv >> 28;
-	int usec = (wrv&0x0fffffff)/TICKSPERUS;
-	epicsInt64 ts = sec*1000000 + usec;
-	return ts;
-}
+
 static int SP1_SIM = 0;
 
 

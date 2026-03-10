@@ -87,6 +87,7 @@ protected:
 	static void task_runner(void *drvPvt);
 	static int nice;
 	static int verbose;
+	static int spX_from_live;
 
 	int P_RUNSTOP;
 	int P_UPDATES;

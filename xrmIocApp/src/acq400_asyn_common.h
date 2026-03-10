@@ -69,6 +69,15 @@ bool epicsTimeDiffGreaterThan(epicsTimeStamp& t1, epicsTimeStamp& t0, double tgt
 	return (et1 - et0) > tgts;
 }
 
+#define TICKSPERUS	40
 
+/* @@todo .. specialize time provider */
+static epicsInt64 getWrTs(unsigned wrv)
+{
+	int sec = wrv >> 28;
+	int usec = (wrv&0x0fffffff)/TICKSPERUS;
+	epicsInt64 ts = sec*1000000 + usec;
+	return ts;
+}
 
 #endif /* ACQ400IOCAPP_SRC_ACQ400_ASYN_COMMON_H_ */
