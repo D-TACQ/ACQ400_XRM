@@ -2,7 +2,7 @@ record(waveform, "${UUT}:PM:TAB:Labels_") {
 	field(FTVL, "STRING")
 	field(NELM, "11")
 	field(INP , {const:["Row", "Live Buf", "PM Buf", "TIMESTAMP",
-			    "SP0", "SP1", "SP2", "WRSE", "WRVS", "WRVT", "WRUS" ]})
+			    "SP0/SMPL", "SP1/US", "SP2/WRV", "SP3/WRSE", "WRVS", "WRVT", "WRUS" ]})
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl":{
 			+id:"epics:nt/NTTable:1.0",
