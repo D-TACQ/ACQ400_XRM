@@ -73,6 +73,9 @@ bool epicsTimeDiffGreaterThan(epicsTimeStamp& t1, epicsTimeStamp& t0, double tgt
 
 /* @@todo .. specialize time provider */
 static epicsInt64 getWrTs(unsigned wrse, unsigned wrv)
+/**< create full Timestamp from <wrse> White Rabbit Seconds from Epoch and
+ * <wrv> : White Rabbit Vernier, the coded output from the WR firmware.
+ */
 {
 	unsigned sec = (wrv >> 28)&0x07;
 	if ((wrse&7) == sec){
