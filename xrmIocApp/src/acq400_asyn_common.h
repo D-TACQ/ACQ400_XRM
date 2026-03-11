@@ -74,7 +74,7 @@ bool epicsTimeDiffGreaterThan(epicsTimeStamp& t1, epicsTimeStamp& t0, double tgt
 /* @@todo .. specialize time provider */
 static epicsInt64 getWrTs(unsigned wrse, unsigned wrv)
 {
-	unsigned sec = wrv >> 28;
+	unsigned sec = (wrv >> 28)&0x07;
 	if ((wrse&7) == sec){
 		sec = wrse;
 	}else if (((++wrse)&7) == sec){
