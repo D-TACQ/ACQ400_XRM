@@ -1,11 +1,7 @@
 # proxies for SSB records. Sample definition grouped as ${UUT}:SMPL
 
-record (longout, "${UUT}:${SITE}:SSB") {
-	field(DTYP, "asynInt32")
-	
-	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_SSB")
-	field(DOL, "${ACQ400IOC}:${SITE}:SSB CP")
-	field(OMSL, "closed_loop")
+record (longout, "${UUT}:0:SSB") {
+# all ${SITE}:SSB instantiated at the end, only :0: is in the GROUP
 	
 	info(Q:group, {
 		"${UUT}:SMPL": {
@@ -130,3 +126,14 @@ record (longin, "${UUT}:AGG:SPAD:N") {
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_COUNT")
 	field(DESC, "# SPAD entries")
 }
+
+record (longout, "${UUT}:${SITE}:SSB") {
+	field(DTYP, "asynInt32")
+
+	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_SSB")
+	field(DOL, "${ACQ400IOC}:${SITE}:SSB CP")
+	field(OMSL, "closed_loop")
+
+	field(DESC, "Sample Size in Bytes")
+}
+
