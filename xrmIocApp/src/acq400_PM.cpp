@@ -140,6 +140,7 @@ void acq400_PM::update_pm_callbacks(void)
 	doCallbacksInt32Array(pm_cols.c_SP0,      	MAX_PM_BUFFERS, P_COL_SP0, 0);
 	doCallbacksInt32Array(pm_cols.c_SP1,      	MAX_PM_BUFFERS, P_COL_SP1, 0);
 	doCallbacksInt32Array(pm_cols.c_SP2,      	MAX_PM_BUFFERS, P_COL_SP2, 0);
+	doCallbacksInt32Array(pm_cols.c_SP3,      	MAX_PM_BUFFERS, P_COL_SP3, 0);
 	doCallbacksInt8Array(pm_cols.c_WRVS,      	MAX_PM_BUFFERS, P_COL_WRVS, 0);
 	doCallbacksInt32Array(pm_cols.c_WRVT,      	MAX_PM_BUFFERS, P_COL_WRVT, 0);
 	doCallbacksInt64Array(pm_cols.c_WRUS,		MAX_PM_BUFFERS, P_COL_WRUS, 0);

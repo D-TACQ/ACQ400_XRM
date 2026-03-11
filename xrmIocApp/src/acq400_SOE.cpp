@@ -243,6 +243,7 @@ void acq400_SOE::update_hld_tab_callbacks(void)
 	doCallbacksInt32Array(hold_cols.c_SP0, 		SOE_HLD_ROWS, P_SOE_HLD_COL_SP0, 0);
 	doCallbacksInt32Array(hold_cols.c_SP1, 		SOE_HLD_ROWS, P_SOE_HLD_COL_SP1, 0);
 	doCallbacksInt32Array(hold_cols.c_SP2, 		SOE_HLD_ROWS, P_SOE_HLD_COL_SP2, 0);
+	doCallbacksInt32Array(hold_cols.c_SP3, 		SOE_HLD_ROWS, P_SOE_HLD_COL_SP3, 0);
 	doCallbacksInt8Array( hold_cols.c_WRVS, 	SOE_HLD_ROWS, P_SOE_HLD_COL_WRVS, 0);
 	doCallbacksInt32Array(hold_cols.c_WRVT, 	SOE_HLD_ROWS, P_SOE_HLD_COL_WRVT, 0);
 	doCallbacksInt64Array(hold_cols.c_WRUS, 	SOE_HLD_ROWS, P_SOE_HLD_COL_WRUS, 0);
