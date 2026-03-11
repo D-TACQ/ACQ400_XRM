@@ -72,11 +72,18 @@ bool epicsTimeDiffGreaterThan(epicsTimeStamp& t1, epicsTimeStamp& t0, double tgt
 #define TICKSPERUS	40
 
 /* @@todo .. specialize time provider */
-static epicsInt64 getWrTs(unsigned wrv)
+static epicsInt64 getWrTs(unsigned wrse, unsigned wrv)
 {
-	int sec = wrv >> 28;
+	unsigned sec = wrv >> 28;
+	if ((wrse&7) == sec){
+		sec = wrse;
+	}else if (((++wrse)&7) == sec){
+		sec = wrse;
+	}else{
+		// this is going to be REALLY obvious!
+	}
 	int usec = (wrv&0x0fffffff)/TICKSPERUS;
-	epicsInt64 ts = sec*1000000 + usec;
+	epicsInt64 ts = ((epicsInt64)sec)*1000000 + usec;
 	return ts;
 }
 

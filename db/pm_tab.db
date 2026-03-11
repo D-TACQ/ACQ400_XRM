@@ -1,8 +1,8 @@
 record(waveform, "${UUT}:PM:TAB:Labels_") {
 	field(FTVL, "STRING")
-	field(NELM, "10")
+	field(NELM, "11")
 	field(INP , {const:["Row", "Live Buf", "PM Buf", "TIMESTAMP",
-			    "SP0", "SP1", "SP2", "WRVS", "WRVT", "WRUS" ]})
+			    "SP0", "SP1", "SP2", "WRSE", "WRVS", "WRVT", "WRUS" ]})
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl":{
 			+id:"epics:nt/NTTable:1.0",
@@ -33,6 +33,7 @@ record(waveform, "${UUT}:PM:TAB:IBLIVE")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_IBLIVE")
 	field(FTVL, "USHORT")
 	field(NELM, "${ROWS}")
+	
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
@@ -116,6 +117,20 @@ record(waveform, "${UUT}:PM:TAB:SP2")
 		}
 	})
 }
+record(waveform, "${UUT}:PM:TAB:SP3")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_SP3")
+	field(FTVL, "ULONG")
+	field(NELM, "${ROWS}")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:PM:TAB:Tbl": {
+			"value.SP3": {+type:"plain",
+				      +channel:"VAL", +putorder:7 }
+		}
+	})
+}
 
 record(waveform, "${UUT}:PM:TAB:WRVS")
 {
@@ -127,7 +142,7 @@ record(waveform, "${UUT}:PM:TAB:WRVS")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
 			"value.WRVS": {+type:"plain", 
-				      +channel:"VAL", +putorder:7 }
+				      +channel:"VAL", +putorder:8 }
 		}
 	})
 }
@@ -142,7 +157,7 @@ record(waveform, "${UUT}:PM:TAB:WRVT")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
 			"value.WRVT": {+type:"plain",
-				      +channel:"VAL", +putorder:8 }
+				      +channel:"VAL", +putorder:9 }
 		}
 	})
 }
@@ -157,7 +172,7 @@ record(waveform, "${UUT}:PM:TAB:WRUS")
 	info(Q:group, {
 		"${UUT}:PM:TAB:Tbl": {
 			"value.WRUS": {+type:"plain", 
-				      +channel:"VAL", +putorder:9, +trigger:"*" }
+				      +channel:"VAL", +putorder:10, +trigger:"*" }
 		}
 	})
 }

@@ -101,6 +101,7 @@ acq400_SOE::acq400_SOE(const char* portName):
 	createParam(PS_SOE_HLD_COL_SP0,	asynParamInt32Array, &P_SOE_HLD_COL_SP0);
 	createParam(PS_SOE_HLD_COL_SP1,	asynParamInt32Array, &P_SOE_HLD_COL_SP1);
 	createParam(PS_SOE_HLD_COL_SP2, asynParamInt32Array, &P_SOE_HLD_COL_SP2);
+	createParam(PS_SOE_HLD_COL_SP3, asynParamInt32Array, &P_SOE_HLD_COL_SP3);
 	createParam(PS_SOE_HLD_COL_WRVS, asynParamInt8Array, &P_SOE_HLD_COL_WRVS);
 	createParam(PS_SOE_HLD_COL_WRVT, asynParamInt32Array, &P_SOE_HLD_COL_WRVT);
 	createParam(PS_SOE_HLD_COL_WRUS, asynParamInt64Array, &P_SOE_HLD_COL_WRUS);
@@ -203,6 +204,7 @@ void acq400_SOE::update_hld_tab_columns(
 	for (int row = 0; row < SOE_HLD_ROWS; ++row){
 		const int srow = row*SSS;
 		const int lrow = row*SSL;
+		unsigned wrs, wrv;
 
 		hold_cols.c_AI1[row] = ai_raw[srow+0]*10.0/32768;
 		hold_cols.c_AI2[row] = ai_raw[srow+1]*10.0/32768;
@@ -210,10 +212,11 @@ void acq400_SOE::update_hld_tab_columns(
 		hold_cols.c_DI2[row] = ++SP1_SIM;
 		hold_cols.c_SP0[row] = sp_raw[lrow+SP0];
 		hold_cols.c_SP1[row] = sp_raw[lrow+SP1];
-		hold_cols.c_SP2[row] = sp_raw[lrow+SP2];
+		hold_cols.c_SP2[row] = wrv = sp_raw[lrow+SP2];
+		hold_cols.c_SP3[row] = wrs = sp_raw[lrow+SP3];
 		hold_cols.c_WRVS[row]= (sp_raw[lrow+SP2] >> 28)&0x07;
 		hold_cols.c_WRVT[row]= sp_raw[lrow+SP2]&0x0fffffff;
-		hold_cols.c_WRUS[row]= getWrTs(sp_raw[lrow+SP2]);
+		hold_cols.c_WRUS[row]= getWrTs(wrs, wrv);
 	}
 }
 

@@ -20,7 +20,7 @@ using namespace std;
 #define DN	driverName
 #define FN	__FUNCTION__
 
-int acq400_PM::nice 		= ::getenv_default("acq400_PM_NICE", 0);
+int acq400_PM::nice 		= ::getenv_default("acq400_PM_NICE", 10);
 int acq400_PM::verbose 		= ::getenv_default("acq400_PM_VERBOSE", 0);
 int acq400_PM::spX_from_live 	= ::getenv_default("acq400_PM_spX_from_live", 0);
 
@@ -61,6 +61,7 @@ acq400_PM::acq400_PM(const char* portName):
 	createParam(PS_PM_COL_SP0,	asynParamInt32, &P_COL_SP0);
 	createParam(PS_PM_COL_SP1,	asynParamInt32, &P_COL_SP1);
 	createParam(PS_PM_COL_SP2,	asynParamInt32, &P_COL_SP2);
+	createParam(PS_PM_COL_SP3,	asynParamInt32, &P_COL_SP3);
 	createParam(PS_PM_COL_WRVS,	asynParamInt32, &P_COL_WRVS);
 	createParam(PS_PM_COL_WRVT,	asynParamInt32, &P_COL_WRVT);
 	createParam(PS_PM_COL_WRUS,	asynParamInt32, &P_COL_WRUS);
@@ -167,13 +168,15 @@ void acq400_PM::update_pm_tab_row(int row, int ib)
 	int * sp_raw = (int*)raw + SOE_SMPL_SP_INDEX;
 	const int srow = row*SSS;
 	const int lrow = row*SSL;
+	unsigned wrs, wrv;
 
 	pm_cols.c_SP0[row] = sp_raw[lrow+SP0];
 	pm_cols.c_SP1[row] = sp_raw[lrow+SP1];
-	pm_cols.c_SP2[row] = sp_raw[lrow+SP2];
+	pm_cols.c_SP2[row] = wrv = sp_raw[lrow+SP2];
+	pm_cols.c_SP3[row] = wrs = sp_raw[lrow+SP3];
 	pm_cols.c_WRVS[row]= (sp_raw[lrow+SP2] >> 28)&0x07;
 	pm_cols.c_WRVT[row]= sp_raw[lrow+SP2]&0x0fffffff;
-	pm_cols.c_WRUS[row]= getWrTs(sp_raw[lrow+SP2]);
+	pm_cols.c_WRUS[row]= getWrTs(wrs, wrv);
 }
 void acq400_PM::task()
 {

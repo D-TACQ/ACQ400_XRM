@@ -1,9 +1,9 @@
 record(waveform, "${UUT}:SOE_HLD:TAB:Labels_") {
 	field(FTVL, "STRING")
-	field(NELM, "14")
+	field(NELM, "15")
 	field(INP , {const:["Row", "PV_ID", "CLIDAT", "TIMESTAMP",
 	                    "AI1", "AI2", "DI1", "DI2",
-	                    "SP0", "SP1", "SP2", "WRVS", "WRVT", "WRUS" ]})
+	                    "SP0", "SP1", "SP2", "SP3", "WRVS", "WRVT", "WRUS" ]})
 	info(Q:group, {
 		"${UUT}:SOE_HLD:TAB:Tbl":{
 			+id:"epics:nt/NTTable:1.0",
@@ -180,6 +180,21 @@ record(waveform, "${UUT}:SOE_HLD:TAB:SP2")
 	})
 }
 
+record(waveform, "${UUT}:SOE_HLD:TAB:SP3")
+{
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_SP3")
+	field(FTVL, "ULONG")
+	field(NELM, "64")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SOE_HLD:TAB:Tbl": {
+			"value.SP2": {+type:"plain",
+				      +channel:"VAL", +putorder:11 }
+		}
+	})
+}
+
 record(waveform, "${UUT}:SOE_HLD:TAB:WRVS")
 {
 	field(DTYP, "asynInt8ArrayIn")
@@ -190,7 +205,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:WRVS")
 	info(Q:group, {
 		"${UUT}:SOE_HLD:TAB:Tbl": {
 			"value.WRVS": {+type:"plain", 
-				      +channel:"VAL", +putorder:11 }
+				      +channel:"VAL", +putorder:12 }
 		}
 	})
 }
@@ -205,7 +220,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:WRVT")
 	info(Q:group, {
 		"${UUT}:SOE_HLD:TAB:Tbl": {
 			"value.WRVT": {+type:"plain",
-				      +channel:"VAL", +putorder:12, +trigger:"*" }
+				      +channel:"VAL", +putorder:13, +trigger:"*" }
 		}
 	})
 }
@@ -220,7 +235,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:WRUS")
 	info(Q:group, {
 		"${UUT}:SOE_HLD:TAB:Tbl": {
 			"value.WRUS": {+type:"plain", 
-				      +channel:"VAL", +putorder:13, +trigger:"*" }
+				      +channel:"VAL", +putorder:14, +trigger:"*" }
 		}
 	})
 }
@@ -231,7 +246,7 @@ record(longout, "${UUT}:SOE_HLD:TAB:Save") {
 	"${UUT}:SOE_HLD:TAB:Tbl":{
 	    "_save":{+type:"proc",
 		     +channel:"VAL",
-		     +putorder:13,
+		     +putorder:15,
 		     +trigger:"*"}
 	}
     })

@@ -67,7 +67,8 @@
  */
 #define PS_SOE_HLD_COL_SP0	"SOE_HLD_COL_SP0"
 #define PS_SOE_HLD_COL_SP1	"SOE_HLD_COL_SP1"
-#define PS_SOE_HLD_COL_SP2	"SOE_HLD_COL_SP2"
+#define PS_SOE_HLD_COL_SP2	"SOE_HLD_COL_SP2"   // WRV
+#define PS_SOE_HLD_COL_SP3	"SOE_HLD_COL_SP3"   	    // WRS Seconds Since EPOCH, SP3
 #define PS_SOE_HLD_COL_WRVS	"SOE_HLD_COL_WRVS"  // WR Vernier, seconds
 #define PS_SOE_HLD_COL_WRVT     "SOE_HLD_COL_WRVT"  // WR Vernier, ticks
 #define PS_SOE_HLD_COL_WRUS     "SOE_HLD_COL_WRUS"  // WR time, usec since epoch
@@ -109,6 +110,7 @@ protected:
 		epicsInt32  c_SP0[SOE_HLD_ROWS];
 		epicsInt32  c_SP1[SOE_HLD_ROWS];
 		epicsInt32  c_SP2[SOE_HLD_ROWS];
+		epicsInt32  c_SP3[SOE_HLD_ROWS];
 		epicsInt8   c_WRVS[SOE_HLD_ROWS];
 		epicsInt32  c_WRVT[SOE_HLD_ROWS];
 		epicsInt64  c_WRUS[SOE_HLD_ROWS];
@@ -186,6 +188,7 @@ protected:
 	int P_SOE_HLD_COL_SP0;
 	int P_SOE_HLD_COL_SP1;
 	int P_SOE_HLD_COL_SP2;
+	int P_SOE_HLD_COL_SP3;
 	int P_SOE_HLD_COL_WRVS;
 	int P_SOE_HLD_COL_WRVT;
 	int P_SOE_HLD_COL_WRUS;
