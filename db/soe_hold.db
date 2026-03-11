@@ -189,7 +189,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:SP3")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:SOE_HLD:TAB:Tbl": {
-			"value.SP2": {+type:"plain",
+			"value.SP3": {+type:"plain",
 				      +channel:"VAL", +putorder:11 }
 		}
 	})
