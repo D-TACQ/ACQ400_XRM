@@ -1,18 +1,120 @@
-# proxies for SSB records.
+# proxies for SSB records. Sample definition grouped as ${UUT}:SMPL
+
+record (longout, "${UUT}:${SITE}:SSB") {
+	field(DTYP, "asynInt32")
+	
+	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_SSB")
+	field(DOL, "${ACQ400IOC}:${site}:SSB CP")
+	field(OMSL, "closed_loop")
+	
+	info(Q:group, {
+		"${UUT}:SMPL": {
+			"SSB": {+channel:"VAL"}
+		}
+	})
+	field(DESC, "Sample Size in Bytes")
+}
 
 
+record (longin, "${UUT}:SOE:SMPL_AI_COUNT") {
+	field(DTYP, "asynInt32")
+	
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_AI_COUNT")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SMPL": {
+			"AI_COUNT": {+channel:"VAL"}
+		}
+	})
+	field(DESC, "# AI16 elements in sample")
+}
+
+record (longout, "${UUT}:SOE:SMPL_AI_INDEX") {
+	field(DTYP, "Soft Channel")
+	field(VAL,  "0")
+	field(PINI, "YES")
+	
+	info(Q:group, {
+		"${UUT}:SMPL": {
+			"AI_INDEX": {+channel:"VAL"}
+		}
+	})
+	field(DESC, "index in LW to first AI16 in sample")
+}	
+# SMPL_AI_INDEX: ALWAYS ZERO!
+
+record (longin, "${UUT}:SOE:SMPL_DI_INDEX") {
+	field(DTYP, "asynInt32")
+	
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_DI_INDEX")
+	field(SCAN, "I/O Intr")
+	info(Q:group, {
+		"${UUT}:SMPL": {
+			"DI_INDEX": {+channel:"VAL"}
+		}
+	})
+	field(DESC, "index in LW to first DI in sample")
+}
+
+record (longin, "${UUT}:SOE:SMPL_DI_COUNT") {
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_DI_COUNT")
+	field(SCAN, "I/O Intr")
+	
+	info(Q:group, {
+		"${UUT}:SMPL": {
+			"DI_COUNT": {+channel:"VAL"}
+		}
+	})
+	field(DESC, "# DI32 elements in sample")	
+}
+
+record (longin, "${UUT}:SOE:SMPL_SP_INDEX") {
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_INDEX")
+	field(SCAN, "I/O Intr")
+	
+	info(Q:group, {
+		"${UUT}:SMPL": {
+			"SP_INDEX": {+channel:"VAL"}
+		}
+	})
+	field(DESC, "index in LW to first SP32 in sample")	
+}
+
+record (longin, "${UUT}:SOE:SMPL_SP_COUNT") {
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_COUNT")
+	field(SCAN, "I/O Intr")
+	
+	info(Q:group, {
+		"${UUT}:SMPL": {
+			"SP_COUNT": {+channel:"VAL"}
+		}
+	})
+	field(DESC, "# SP32 elements in sample")	
+}
+
+record (longout, "${UUT}:1:RTM_TRANSLEN") {
+	field(DTYP, "Soft Channel")
+	field(DOL, "${ACQ400IOC}:1:RTM_TRANSLEN CP")
+	field(OMSL, "closed_loop")
+	
+	info(Q:group, {
+		"${UUT}:SMPL": {
+			"NSAM": {+channel:"VAL"}
+		}
+	})
+	field(DESC, "# samples in burst")	
+}
+
+
+
+# intermediates: not in group, for local calc.
 record (stringout,  "${UUT}:0:AGGREGATOR:SITES") {
 	field(DTYP, "asynOctetWrite")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_AGG_SITES")
 	field(DOL,  "${ACQ400IOC}:0:AGGREGATOR:SITES CP")
-	field(OMSL, "closed_loop")
-}
-
-record (longout, "${UUT}:${SITE}:SSB") {
-	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_SSB")
-	field(DOL, "${SRPV} CP")
-
 	field(OMSL, "closed_loop")
 }
 
@@ -28,35 +130,3 @@ record (longin, "${UUT}:AGG:SPAD:N") {
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_COUNT")
 	field(DESC, "# SPAD entries")
 }
-
-record (longin, "${UUT}:SOE:SMPL_AI_COUNT") {
-	field(DTYP, "asynInt32")
-	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_AI_COUNT")
-	field(SCAN, "I/O Intr")
-}
-
-record (longin, "${UUT}:SOE:SMPL_DI_INDEX") {
-	field(DTYP, "asynInt32")
-	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_DI_INDEX")
-	field(SCAN, "I/O Intr")
-}
-
-record (longin, "${UUT}:SOE:SMPL_DI_COUNT") {
-	field(DTYP, "asynInt32")
-	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_DI_COUNT")
-	field(SCAN, "I/O Intr")
-}
-
-record (longin, "${UUT}:SOE:SMPL_SP_INDEX") {
-	field(DTYP, "asynInt32")
-	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_INDEX")
-	field(SCAN, "I/O Intr")
-}
-
-record (longin, "${UUT}:SOE:SMPL_SP_COUNT") {
-	field(DTYP, "asynInt32")
-	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_COUNT")
-	field(SCAN, "I/O Intr")
-}
-
-

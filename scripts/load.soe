@@ -22,7 +22,7 @@ load_acq400ioc_proxies() {
                 pv="${ACQ400IOC}:${site}:SSB"
                 inp=$(get_inp $site)
                 HNS="UUT=${HOST},ACQ400IOC=${ACQ400IOC},PORT=$SPORT,ADDR=0,TIMEOUT=0"
-                echo 'dbLoadRecords("db/ssb.db","'${HNS}',SRPV='${pv}',SITE='${site}',INP='${inp}'")'
+                echo 'dbLoadRecords("db/ssb.db","'${HNS}',SITE='${site}',INP='${inp}'")'
         done
 }
 
