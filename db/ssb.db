@@ -92,7 +92,8 @@ record (longin, "${UUT}:SOE:SMPL_SP_COUNT") {
 }
 
 record (longout, "${UUT}:1:RTM_TRANSLEN") {
-	field(DTYP, "Soft Channel")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_NSAM")
 	field(DOL, "${ACQ400IOC}:1:RTM_TRANSLEN CP")
 	field(OMSL, "closed_loop")
 	

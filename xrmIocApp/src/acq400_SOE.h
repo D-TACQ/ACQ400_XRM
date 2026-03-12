@@ -45,6 +45,7 @@
 
 #define PS_SOE_AGG_SITES	"SOE_AGG_SITES"
 #define PS_SOE_SITE_SSB		"SOE_SITE_SSB" /* addr per site */
+#define PS_SOE_SMPL_NSAM	"SOE_SMPL_NSAM"
 #define PS_SOE_SITE_IS_ADC	"SOE_SITE_IS_ADC"  /* addr per site */
 #define PS_SOE_SMPL_SS_U32	"SOE_SMPL_SS_U32"
 #define PS_SOE_SMPL_AI_COUNT 	"SOE_SMPL_AI_COUNT"
@@ -85,9 +86,30 @@
 #define PS_SOE_HLD_DATA_COL_DI  "SOE_HLD_DATA_COL_DI"
 #define PS_SOE_HLD_DATA_COL_SP  "SOE_HLD_DATA_COL_SP"
 
+struct SamplePrams {
+	int SSB;
+	int NSAM;
+	int AI_COUNT;
+	int AI_INDEX;
+	int DI_COUNT;
+	int DI_INDEX;
+	int SP_COUNT;
+	int SP_INDEX;
+};
+
+/** singleton */
+class acq400_SOE_Strategy {
+public:
+	virtual int operator() (char* raw, SamplePrams& sp, SOE_LUT soe_lut) = 0;
+
+	static acq400_SOE_Strategy& factory();
+};
+
 class acq400_SOE: public acq400_asynPortDriver {
 protected:
 	SOE_LUT soe_lut;
+
+	acq400_SOE_Strategy& strategy;
 
 	/* TABLE representation for Phoebus */
 	struct COLUMNS {
@@ -118,6 +140,7 @@ protected:
 	unsigned update;
 	static int nice;
 
+	SamplePrams samplePrams;
 	void get_sample_dimensions();
 
 
@@ -171,6 +194,7 @@ protected:
 
 	int P_SOE_AGG_SITES; // asynParamOctet
 	int P_SOE_SITE_SSB;
+	int P_SOE_SMPL_NSAM;
 	int P_SOE_SITE_IS_ADC;
 	int P_SOE_SMPL_SS_U32;
 	int P_SOE_SMPL_AI_COUNT;
@@ -195,7 +219,7 @@ protected:
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
 public:
-	acq400_SOE(const char *portName);
+	acq400_SOE(const char *portName, acq400_SOE_Strategy& strategy);
 	virtual ~acq400_SOE() {}
 
 	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);

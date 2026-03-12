@@ -25,7 +25,7 @@ static const char *driverName="acq400_SOE";
 
 int acq400_SOE::nice = ::getenv_default("acq400_SOE_NICE", 0);
 
-acq400_SOE::acq400_SOE(const char* portName):
+acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy& _strategy):
 	acq400_asynPortDriver(portName,
 	/* maxAddr */		SOE_HLD_ROWS,    /* nchan from 0 */
 	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
@@ -38,6 +38,7 @@ acq400_SOE::acq400_SOE(const char* portName):
 	/* Autoconnect */       1,
 	/* Default priority */  0,
 	/* Default stack size*/ 0),
+	strategy(_strategy),
 	update(0)
 {
 	fprintf(stderr, "%s R1001 SP2\n", FN);
@@ -73,6 +74,7 @@ acq400_SOE::acq400_SOE(const char* portName):
 	createParam(PS_SOE_SITE_SSB,		asynParamInt32,      &P_SOE_SITE_SSB);
 	createParam(PS_SOE_SITE_IS_ADC,		asynParamInt32,      &P_SOE_SITE_IS_ADC);
 	createParam(PS_SOE_SMPL_SS_U32,		asynParamInt32,      &P_SOE_SMPL_SS_U32);
+	createParam(PS_SOE_SMPL_NSAM,		asynParamInt32,      &P_SOE_SMPL_NSAM);
 	createParam(PS_SOE_SMPL_AI_COUNT,	asynParamInt32,	     &P_SOE_SMPL_AI_COUNT);
 	createParam(PS_SOE_SMPL_DI_COUNT,	asynParamInt32,	     &P_SOE_SMPL_DI_COUNT);
 	createParam(PS_SOE_SMPL_SP_COUNT,	asynParamInt32,	     &P_SOE_SMPL_SP_COUNT);
@@ -222,12 +224,8 @@ void acq400_SOE::update_hld_tab_columns(
 
 void acq400_SOE::update_hld_tab_columns(void)
 {
-	int ssb, di_index, sp_index;
 
-	gip(0, P_SOE_SITE_SSB, &ssb);
-	gip(0, P_SOE_SMPL_DI_INDEX, &di_index);
-	gip(0, P_SOE_SMPL_SP_INDEX, &sp_index);
-	update_hld_tab_columns(ssb, di_index, sp_index);
+	update_hld_tab_columns(samplePrams.SSB, samplePrams.DI_INDEX, samplePrams.SP_INDEX);
 }
 
 void acq400_SOE::update_hld_tab_callbacks(void)
@@ -293,16 +291,24 @@ void acq400_SOE::get_sample_dimensions()
 				DN, FN, site, ssb, is_adc, first_di_index, modules_ssb_total);
 	}
 	gip(0, P_SOE_SITE_SSB, &ssb);
+	samplePrams.SSB = ssb;
+	gip(0, P_SOE_SMPL_NSAM, &samplePrams.NSAM);
+
 
 	int modules_ssl = modules_ssb_total/sizeof(long);
 	int agg_ssl = ssb/sizeof(long);
 	assert(agg_ssl >= modules_ssl);
-	sip(0, P_SOE_SMPL_SP_COUNT, agg_ssl-modules_ssl);
-	sip(0, P_SOE_SMPL_SP_INDEX, modules_ssl);
-	sip(0, P_SOE_SMPL_DI_INDEX, modules_ai_ssb/sizeof(DI32_t));
 
-	sip(0, P_SOE_SMPL_AI_COUNT, modules_ai_ssb/sizeof(AI16_t));
-	sip(0, P_SOE_SMPL_DI_COUNT, modules_di_ssb/sizeof(DI32_t));
+
+	samplePrams.AI_INDEX = 0;
+	sip(0, P_SOE_SMPL_AI_COUNT, samplePrams.AI_COUNT = modules_ai_ssb/sizeof(AI16_t));
+
+	sip(0, P_SOE_SMPL_DI_INDEX, samplePrams.DI_INDEX = modules_ai_ssb/sizeof(DI32_t));
+	sip(0, P_SOE_SMPL_DI_COUNT, samplePrams.DI_COUNT = modules_di_ssb/sizeof(DI32_t));
+
+	sip(0, P_SOE_SMPL_SP_INDEX, samplePrams.SP_INDEX = modules_ssl);
+	sip(0, P_SOE_SMPL_SP_COUNT, agg_ssl-modules_ssl);
+
 	callParamCallbacks();
 }
 void acq400_SOE::task()
@@ -319,6 +325,10 @@ void acq400_SOE::task()
 		return;
 	}
 
+
+	get_sample_dimensions();
+	callParamCallbacks();
+
 	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0; runstop0 = runstop){
 		lock();
 		status = getIntegerParam(P_RUNSTOP, &runstop);
@@ -329,7 +339,7 @@ void acq400_SOE::task()
 		unlock();
 		if (runstop == 1){
 			if (runstop0 == 0){
-				get_sample_dimensions();
+				;   // onStart actions
 			}
 			/** @@todo SOE_LUT doesn't really update periodically, make it PASV, for now, period is good */
 			update_soe_lut_columns();
@@ -423,6 +433,35 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 }
 
 
+class NullStrategy : public acq400_SOE_Strategy
+{
+		virtual int operator() (char* raw, SamplePrams& sp, SOE_LUT soe_lut)
+		{
+			// @@todo fill the blanks
+			return 0;
+		}
+};
+
+class LutFmtStrategy1 : public acq400_SOE_Strategy
+{
+		virtual int operator() (char* raw, SamplePrams& sp, SOE_LUT soe_lut)
+		{
+			// @@todo fill the blanks
+			// acq400_FMT_RX::instance().waitFMT(10);
+			return 0;
+		}
+};
+acq400_SOE_Strategy& selectStrategy()
+{
+	const char* sel = ::getenv("acq400_SOE_Strategy");
+
+	if (sel != 0){
+		if (strcmp(sel, "LUT_FMT1") == 0){
+			return *new LutFmtStrategy1();
+		}
+	}
+	return *new NullStrategy();
+}
 
 extern "C" {
 	/** EPICS iocsh callable function to call constructor for the testAsynPortDriver class.
@@ -432,7 +471,7 @@ extern "C" {
 	{
 		printf("%s:%s R1001 %s\n", DN, FN, portName);
 
-		new acq400_SOE(portName);
+		new acq400_SOE(portName, selectStrategy());
 		return 0;
 	}
 
