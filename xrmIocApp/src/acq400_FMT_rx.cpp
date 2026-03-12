@@ -128,6 +128,20 @@ asynStatus acq400_FMT_rx::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    return status;
 }
 
+int acq400_FMT_rx::waitFMT(unsigned timeout_ms)
+/** @@todo: wait not implemented */
+{
+	return 0;
+}
+acq400_FMT_rx& acq400_FMT_rx::instance(const char* portName)
+{
+	static acq400_FMT_rx* _instance;
+	if (_instance == 0){
+		assert (portName != 0);
+		_instance = new acq400_FMT_rx(portName);
+	}
+	return *_instance;
+}
 
 extern "C" {
 
@@ -136,7 +150,7 @@ extern "C" {
 	  */
 	int acq400_FMT_rxConfigure(const char *portName)
 	{
-		new acq400_FMT_rx(portName);
+		acq400_FMT_rx::instance(portName);
 		return 0;
 	}
 

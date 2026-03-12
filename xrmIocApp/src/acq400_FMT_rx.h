@@ -10,6 +10,7 @@
 
 #include "acq400_FMT.h"
 
+/* singleton */
 class acq400_FMT_rx: public acq400_FMT_abc {
 
 	virtual void update_fmt(bool first_time = false);
@@ -22,12 +23,18 @@ protected:
 	virtual void process_fmt(bool first_time);
 	/**< main processing here (subclass?) */
 
-public:
 	acq400_FMT_rx(const char* portName);
+public:
+
 	virtual ~acq400_FMT_rx() {}
 
 
+	int waitFMT(unsigned timeout_ms);
+
 	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+
+	static acq400_FMT_rx& instance(const char* portName = 0);
+	/* first caller MUST set portName */
 };
 
 

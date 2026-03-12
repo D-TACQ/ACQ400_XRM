@@ -38,9 +38,8 @@ epicsUInt64 timestamp;
 
 class acq400_FMT_abc: public asynPortDriver {
 public:
-	FMT fmt;               /* consumed by acq400_SOE */
+	FMT fmt;
 protected:
-
 	/* EPICS NTTABLE is a convenient display mechanism,
 	 * but unfortunately it needs the data in columns.
 	 *
