@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ -z $1 ]; then
+	echo "USAGE pvget_value PV [PV]"
+	exit 1
+fi
+
+
+if [ "$1" = "-t"  ];then
+	shift
+	pvget $* | sed -n  '/epics:nt/N;s/\n//p' | awk '{ printf("%-10s %5s\n", $2, $5) }'
+else
+	pvget $* | sed -n  '/epics:nt/N;s/\n//p'
+fi
+
+
