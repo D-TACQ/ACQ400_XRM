@@ -100,7 +100,8 @@ struct SamplePrams {
 /** singleton */
 class acq400_SOE_Strategy {
 public:
-	virtual int operator() (char* raw, SamplePrams& sp, SOE_LUT soe_lut) = 0;
+	/** implements strategy, .. waitFMT, compare LUT, look up data in raw and build output <ht> */
+	virtual int operator() (const char* raw, const SamplePrams& sp, const SOE_LUT& soe_lut, SOE_HOLD_TABLE* ht) = 0;
 
 	static acq400_SOE_Strategy& factory();
 };
@@ -108,6 +109,7 @@ public:
 class acq400_SOE: public acq400_asynPortDriver {
 protected:
 	SOE_LUT soe_lut;
+	SOE_HOLD_TABLE* the_hold_table;   // preallocate the max possible size
 
 	acq400_SOE_Strategy& strategy;
 
@@ -143,17 +145,13 @@ protected:
 	SamplePrams samplePrams;
 	void get_sample_dimensions();
 
+	void init_the_hold_table();
 
 	void redit();
 	virtual void update_soe_lut(bool first_time = false);
 	virtual void update_soe_lut_columns(void);
 	virtual void update_soe_lut_callbacks(void);
 
-	virtual void update_hld_tab(bool first_time = false);
-	virtual void update_hld_tab_columns(
-			const int SSB,
-			const int SOE_SMPL_DI_INDEX,
-			const int SOE_SMPL_SP_INDEX);
 	virtual void update_hld_tab_columns(void);
 	virtual void update_hld_tab_callbacks(void);
 

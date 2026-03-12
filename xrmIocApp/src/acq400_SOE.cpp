@@ -167,65 +167,59 @@ void acq400_SOE::update_soe_lut_callbacks(void)
 	doCallbacksInt64Array(cols.c_offset_us, FMT_ROWS, P_SOE_LUT_COL_OFFSET_US, 0);
 }
 
-
-void acq400_SOE::update_hld_tab(bool first_time)
+void acq400_SOE::init_the_hold_table()
 {
-	/*
-	short* ai_raw = (short*)Buffer::the_buffers[ib];
-	int * di_raw = (int*)Buffer::the_buffers[ib];
-	*/
+	int maxb = sizeof(SOE_HOLD_TABLE)+samplePrams.SSB * SOE_HLD_ROWS;
+	the_hold_table = (SOE_HOLD_TABLE*)new unsigned[maxb/sizeof(unsigned)];
+
+	memset(the_hold_table, 0, maxb);
+
+	fprintf(stderr, "%s sizeof(SOE_HOLD_TABLE) %u ssb:%d maxb:%d\n",
+			FN, sizeof(SOE_HOLD_TABLE), samplePrams.SSB, maxb);
 }
 
+// @@todo replace with HAS_ES PV!
 #define SKIP_ES 1
-#define TRANSLEN	1024
-
 
 static int SP1_SIM = 0;
 
 
-void acq400_SOE::update_hld_tab_columns(
-		const int SSB,
-		const int SOE_SMPL_DI_INDEX,
-		const int SOE_SMPL_SP_INDEX)
+void acq400_SOE::update_hld_tab_columns()
 {
-
-	const int SSS = SSB/sizeof(short);
-	const int SSL = SSB/sizeof(long);
-	char* raw = Buffer::the_buffers[ib]->getBase() + SKIP_ES*SSB;
-	short* ai_raw = (short*)raw;
-	int * di_raw = (int*)raw + SOE_SMPL_DI_INDEX;
-	int * sp_raw = (int*)raw + SOE_SMPL_SP_INDEX;
-
-
-	/* first 10 rows c_client_data becomes ib history for diags.. */
-	for (int ii = 10; ii; --ii){
-		hold_cols.c_client_data[ii] = hold_cols.c_client_data[ii-1];
-	}
-	hold_cols.c_client_data[0] = ib;
+	const int SSL = samplePrams.SSB/sizeof(long);
 
 	for (int row = 0; row < SOE_HLD_ROWS; ++row){
-		const int srow = row*SSS;
-		const int lrow = row*SSL;
+		unsigned* raw = the_hold_table->data+row*SSL;
+		short* ai_raw = (short*)raw;
+		int * di_raw = (int*)raw + samplePrams.DI_INDEX;
+		int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
+
+		if (the_hold_table->entries[row].pv_id == 0){
+			break;
+		}
+		hold_cols.c_pv_id[row] = the_hold_table->entries[row].pv_id;
+		hold_cols.c_client_data[row] = the_hold_table->entries[row].client_data;
+		hold_cols.c_timestamp[row] = the_hold_table->entries[row].timestamp;
+
+		hold_cols.c_AI1[row] = ai_raw[0]*10.0/32768;
+		hold_cols.c_AI2[row] = ai_raw[1]*10.0/32768;
+		hold_cols.c_DI1[row] = di_raw[0];
+		if (samplePrams.DI_COUNT > 1){
+			hold_cols.c_DI2[row] = ++SP1_SIM;    // fake data
+		}else{
+			hold_cols.c_DI2[row] = di_raw[1];
+		}
+		hold_cols.c_SP0[row] = sp_raw[SP0];
+		hold_cols.c_SP1[row] = sp_raw[SP1];
+
 		unsigned wrs, wrv;
 
-		hold_cols.c_AI1[row] = ai_raw[srow+0]*10.0/32768;
-		hold_cols.c_AI2[row] = ai_raw[srow+1]*10.0/32768;
-		hold_cols.c_DI1[row] = di_raw[lrow+0];
-		hold_cols.c_DI2[row] = ++SP1_SIM;
-		hold_cols.c_SP0[row] = sp_raw[lrow+SP0];
-		hold_cols.c_SP1[row] = sp_raw[lrow+SP1];
-		hold_cols.c_SP2[row] = wrv = sp_raw[lrow+SP2];
-		hold_cols.c_SP3[row] = wrs = sp_raw[lrow+SP3];
-		hold_cols.c_WRVS[row]= (sp_raw[lrow+SP2] >> 28)&0x07;
-		hold_cols.c_WRVT[row]= sp_raw[lrow+SP2]&0x0fffffff;
+		hold_cols.c_SP2[row] = wrv = sp_raw[SP2];
+		hold_cols.c_SP3[row] = wrs = sp_raw[SP3];
+		hold_cols.c_WRVS[row]= (sp_raw[SP2] >> 28)&0x07;
+		hold_cols.c_WRVT[row]= sp_raw[SP2]&0x0fffffff;
 		hold_cols.c_WRUS[row]= getWrTs(wrs, wrv);
 	}
-}
-
-void acq400_SOE::update_hld_tab_columns(void)
-{
-
-	update_hld_tab_columns(samplePrams.SSB, samplePrams.DI_INDEX, samplePrams.SP_INDEX);
 }
 
 void acq400_SOE::update_hld_tab_callbacks(void)
@@ -327,6 +321,7 @@ void acq400_SOE::task()
 
 
 	get_sample_dimensions();
+	init_the_hold_table();
 	callParamCallbacks();
 
 	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0; runstop0 = runstop){
@@ -341,9 +336,12 @@ void acq400_SOE::task()
 			if (runstop0 == 0){
 				;   // onStart actions
 			}
-			/** @@todo SOE_LUT doesn't really update periodically, make it PASV, for now, period is good */
-			update_soe_lut_columns();
-			update_hld_tab_columns();
+			update_soe_lut_columns(); // cosmetic stuff in slack time.
+			char* raw = Buffer::the_buffers[ib]->getBase() +
+					SKIP_ES*samplePrams.SSB;
+
+			strategy(raw, samplePrams, soe_lut, the_hold_table);
+
 			lock();
 			update_soe_lut_callbacks();
 			update_hld_tab_callbacks();
@@ -432,24 +430,66 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    return status;
 }
 
-
+/* copy first 64 samples to output, together with first 64 SOE_LUT entries, no FMT matchup */
 class NullStrategy : public acq400_SOE_Strategy
 {
-		virtual int operator() (char* raw, SamplePrams& sp, SOE_LUT soe_lut)
-		{
-			// @@todo fill the blanks
-			return 0;
+	virtual int operator() (
+			const char* raw,
+			const SamplePrams& samplePrams,
+			const SOE_LUT& soe_lut,
+			SOE_HOLD_TABLE* ht)
+	{
+		const int SSB = samplePrams.SSB;
+		const int SSL = SSB/sizeof(long);
+		int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
+
+		assert(SOE_LUT_ROWS >= SOE_HLD_ROWS);
+
+		/* first 10 rows client_data becomes ib history for diags.. */
+		for (int ii = 10; ii; --ii){
+			ht->entries[ii].client_data = ht->entries[ii].client_data;
 		}
+		ht->entries[0].client_data = ((unsigned long)raw) >> 16; // proxy for ib
+
+		unsigned short ht_data_offset = offsetof(SOE_HOLD_TABLE, data)/sizeof(long);
+
+		for (int row = 0; row < SOE_HLD_ROWS; ++row,
+				ht_data_offset += SSL, sp_raw += SSL, raw+= SSB){
+			unsigned wrs, wrv;
+
+			ht->entries[row].pv_id = soe_lut[row].pv_id;
+			// From FMT! ht->entries[row].client_data = soe_lut[row].client_data;
+
+			wrv = sp_raw[SP2];
+			wrs = sp_raw[SP3];
+
+			ht->entries[row].timestamp = getWrTs(wrs, wrv);
+			ht->entries[row].data_offset = ht_data_offset;
+			memcpy(ht->data+row*SSL, raw, SSB);
+		}
+		return 0;
+	}
 };
 
 class LutFmtStrategy1 : public acq400_SOE_Strategy
 {
-		virtual int operator() (char* raw, SamplePrams& sp, SOE_LUT soe_lut)
-		{
-			// @@todo fill the blanks
-			// acq400_FMT_RX::instance().waitFMT(10);
-			return 0;
-		}
+	virtual int operator() (
+			const char* raw,
+			const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
+			SOE_HOLD_TABLE* ht)
+	{
+		/*
+		const int SSS = samplePrams.SSB/sizeof(short);
+		const int SSL = samplePrams.SSB/sizeof(long);
+		short* ai_raw = (short*)raw;
+		int * di_raw = (int*)raw + samplePrams.DI_INDEX;
+		int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
+		*/
+
+		// @@todo fill the blanks
+		// acq400_FMT_RX::instance().waitFMT(10);
+		return 0;
+	}
 };
 acq400_SOE_Strategy& selectStrategy()
 {
