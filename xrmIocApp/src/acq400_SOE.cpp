@@ -323,7 +323,7 @@ void acq400_SOE::update_kbuf_info(char* raw)
 	current_kb.wrt0 = getWrTsFromRaw(sp_raw);
 
 	const int SSL = samplePrams.SSB/sizeof(long);
-	sp_raw += SSL*(samplePrams.NSAM-SKIP_ES);
+	sp_raw += SSL*(samplePrams.NSAM-1-SKIP_ES);
 	current_kb.wrt1 = getWrTsFromRaw(sp_raw);
 
 	sip(0, P_SOE_KBUF_INDEX, current_kb.ib = ib);
