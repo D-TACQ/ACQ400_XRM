@@ -55,6 +55,10 @@
 #define PS_SOE_SMPL_DI_INDEX 	"SOE_SMPL_DI_INDEX"
 #define PS_SOE_SMPL_SP_INDEX 	"SOE_SMPL_SP_INDEX"
 
+#define PS_SOE_KBUF_INDEX		"SOE_KBUF_INDEX"
+#define PS_SOE_KBUF_WRT0		"SOE_KBUF_WRT0"
+#define PS_SOE_KBUF_WRT1		"SOE_KBUF_WRT1"
+
 /* 2 columns each data for show */
 #define PS_SOE_HLD_COL_AI1	"SOE_HLD_COL_AI1"
 #define PS_SOE_HLD_COL_AI2	"SOE_HLD_COL_AI2"
@@ -155,6 +159,14 @@ protected:
 	virtual void update_hld_tab_columns(void);
 	virtual void update_hld_tab_callbacks(void);
 
+	struct KBUF {
+		unsigned ib;
+		epicsInt64 wrt0;
+		epicsInt64 wrt1;
+	} current_kb;
+	void update_kbuf_info(char* raw);
+
+
 	epicsEventId eventId;
 
 	virtual void task();
@@ -214,6 +226,10 @@ protected:
 	int P_SOE_HLD_COL_WRVS;
 	int P_SOE_HLD_COL_WRVT;
 	int P_SOE_HLD_COL_WRUS;
+
+	int P_SOE_KBUF_INDEX;
+	int P_SOE_KBUF_WRT0;
+	int P_SOE_KBUF_WRT1;
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
 public:

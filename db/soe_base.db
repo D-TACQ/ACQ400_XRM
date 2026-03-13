@@ -28,6 +28,49 @@ record(int64in, "${UUT}:SOE:TS_USEC")
 	field(TSE,  "-2")
 }
 
+record(longin, "${UUT}:SOE:KBUF:INDEX")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt64")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_KBUF_INDEX")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+	info(Q:group, {
+		"${UUT}:SOE:KBUF": {
+			"INDEX": {+channel:"VAL"}
+		}
+	})
+	field(DESC, "current buffer number")
+}
+record(int64in, "${UUT}:SOE:KBUF:WRT0")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt64")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_KBUF_WRT0")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+	info(Q:group, {
+		"${UUT}:SOE:KBUF": {
+			"WRT0": {+channel:"VAL"}
+		}
+	})
+	field(DESC, "start time in buffer")
+}
+record(int64in, "${UUT}:SOE:KBUF:WRT1")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt64")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_KBUF_WRT1")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+	info(Q:group, {
+		"${UUT}:SOE:KBUF": {
+			"WRT1": {+channel:"VAL"}
+		}
+	})
+	field(DESC, "end time in buffer")
+}
+
 
 record(waveform, "${UUT}:SOE_LUT:TAB:Labels_") {
 	field(FTVL, "STRING")

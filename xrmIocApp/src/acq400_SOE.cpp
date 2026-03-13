@@ -88,6 +88,10 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy& _strategy):
 	createParam(PS_SOE_LUT_COL_PV_ID,	asynParamInt32Array, &P_SOE_LUT_COL_PV_ID);
 	createParam(PS_SOE_LUT_COL_OFFSET_US,	asynParamInt32Array, &P_SOE_LUT_COL_OFFSET_US);
 
+	createParam(PS_SOE_KBUF_INDEX,		asynParamInt32,	     &P_SOE_KBUF_INDEX);
+	createParam(PS_SOE_KBUF_WRT0,    	asynParamInt64,      &P_SOE_KBUF_WRT0);
+	createParam(PS_SOE_KBUF_WRT1,    	asynParamInt64,      &P_SOE_KBUF_WRT1);
+
 	createParam(PS_SOE_HLD_COL_ROWNUM,	asynParamInt8Array,  &P_SOE_HLD_COL_ROWNUM);
 	createParam(PS_SOE_HLD_COL_PV_ID,    	asynParamInt32Array, &P_SOE_HLD_COL_PV_ID);
 	createParam(PS_SOE_HLD_COL_CLIDAT,    	asynParamInt32Array, &P_SOE_HLD_COL_CLIDAT);
@@ -306,6 +310,26 @@ void acq400_SOE::get_sample_dimensions()
 
 	callParamCallbacks();
 }
+
+epicsInt64 getWrTsFromRaw(unsigned* sp_raw)
+{
+	unsigned wrv = sp_raw[SP2];
+	unsigned wrs = sp_raw[SP3];
+	return getWrTs(wrs, wrv);
+}
+void acq400_SOE::update_kbuf_info(char* raw)
+{
+
+	current_kb.ib = ib;
+
+	unsigned * sp_raw = (unsigned*)raw + samplePrams.SP_INDEX;
+	current_kb.wrt0 = getWrTsFromRaw(sp_raw);
+
+	const int SSL = samplePrams.SSB/sizeof(long);
+	sp_raw += SSL*samplePrams.NSAM;
+	current_kb.wrt1 = getWrTsFromRaw(sp_raw);
+}
+
 void acq400_SOE::task()
 {
 	asynStatus status = asynSuccess;
@@ -340,12 +364,14 @@ void acq400_SOE::task()
 			update_soe_lut_columns(); // cosmetic stuff in slack time.
 			char* raw = Buffer::the_buffers[ib]->getBase() +
 					SKIP_ES*samplePrams.SSB;
+			update_kbuf_info(raw);
 
 			strategy(raw, samplePrams, soe_lut, the_hold_table);
 
 			update_hld_tab_columns();
 
 			lock();
+			callParamCallbacks();
 			update_soe_lut_callbacks();
 			update_hld_tab_callbacks();
 			unlock();
