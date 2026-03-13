@@ -65,6 +65,7 @@ xrmIoc_SRCS += acq400_FMT_abc.cpp
 xrmIoc_SRCS += acq400_FMT_sim.cpp
 xrmIoc_SRCS += acq400_FMT_rx.cpp
 xrmIoc_SRCS += acq400_SOE.cpp
+xrmIoc_SRCS += acq400_SOE_Strategy.cpp
 xrmIoc_SRCS += acq400_PM.cpp
 # this should be a lib from ACQ400DRV, copy bodily for now..
 xrmIoc_SRCS += Multicast.cpp

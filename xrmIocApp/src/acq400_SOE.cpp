@@ -433,79 +433,6 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    return status;
 }
 
-/* copy first 64 samples to output, together with first 64 SOE_LUT entries, no FMT matchup */
-class NullStrategy : public acq400_SOE_Strategy
-{
-	virtual int operator() (
-			const char* raw,
-			const SamplePrams& samplePrams,
-			const SOE_LUT& soe_lut,
-			SOE_HOLD_TABLE* ht)
-	{
-		const int SSB = samplePrams.SSB;
-		const int SSL = SSB/sizeof(long);
-		int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
-
-		assert(SOE_LUT_ROWS >= SOE_HLD_ROWS);
-
-
-		/* first 10 rows client_data becomes ib history for diags.. */
-		for (int ii = 10; ii; --ii){
-			ht->entries[ii].client_data = ht->entries[ii].client_data;
-		}
-		ht->entries[0].client_data = ((unsigned long)raw) >> 16; // proxy for ib
-
-		unsigned short ht_data_offset = offsetof(SOE_HOLD_TABLE, data)/sizeof(long);
-
-		for (int row = 0; row < SOE_HLD_ROWS; ++row,
-				ht_data_offset += SSL, sp_raw += SSL, raw+= SSB){
-			unsigned wrs, wrv;
-
-			ht->entries[row].pv_id = soe_lut[row].pv_id;
-			// From FMT! ht->entries[row].client_data = soe_lut[row].client_data;
-
-			wrv = sp_raw[SP2];
-			wrs = sp_raw[SP3];
-
-			ht->entries[row].timestamp = getWrTs(wrs, wrv);
-			ht->entries[row].data_offset = ht_data_offset;
-			memcpy(ht->data+row*SSL, raw, SSB);
-		}
-		return 0;
-	}
-};
-
-class LutFmtStrategy1 : public acq400_SOE_Strategy
-{
-	virtual int operator() (
-			const char* raw,
-			const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
-			SOE_HOLD_TABLE* ht)
-	{
-		/*
-		const int SSS = samplePrams.SSB/sizeof(short);
-		const int SSL = samplePrams.SSB/sizeof(long);
-		short* ai_raw = (short*)raw;
-		int * di_raw = (int*)raw + samplePrams.DI_INDEX;
-		int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
-		*/
-
-		// @@todo fill the blanks
-		// acq400_FMT_RX::instance().waitFMT(10);
-		return 0;
-	}
-};
-acq400_SOE_Strategy& selectStrategy()
-{
-	const char* sel = ::getenv("acq400_SOE_Strategy");
-
-	if (sel != 0){
-		if (strcmp(sel, "LUT_FMT1") == 0){
-			return *new LutFmtStrategy1();
-		}
-	}
-	return *new NullStrategy();
-}
 
 extern "C" {
 	/** EPICS iocsh callable function to call constructor for the testAsynPortDriver class.
@@ -515,7 +442,7 @@ extern "C" {
 	{
 		printf("%s:%s R1001 %s\n", DN, FN, portName);
 
-		new acq400_SOE(portName, selectStrategy());
+		new acq400_SOE(portName, acq400_SOE_Strategy::factory());
 		return 0;
 	}
 
