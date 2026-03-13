@@ -22,6 +22,7 @@ static const char *driverName="acq400_SOE";
 #define DN	driverName
 #define FN	__FUNCTION__
 
+#define MARK	fprintf(stderr, "%s %d\n", FN, __LINE__)
 
 int acq400_SOE::nice = ::getenv_default("acq400_SOE_NICE", 0);
 
@@ -342,6 +343,8 @@ void acq400_SOE::task()
 
 			strategy(raw, samplePrams, soe_lut, the_hold_table);
 
+			update_hld_tab_columns();
+
 			lock();
 			update_soe_lut_callbacks();
 			update_hld_tab_callbacks();
@@ -444,6 +447,7 @@ class NullStrategy : public acq400_SOE_Strategy
 		int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
 
 		assert(SOE_LUT_ROWS >= SOE_HLD_ROWS);
+
 
 		/* first 10 rows client_data becomes ib history for diags.. */
 		for (int ii = 10; ii; --ii){
