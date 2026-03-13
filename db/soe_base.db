@@ -31,7 +31,7 @@ record(int64in, "${UUT}:SOE:TS_USEC")
 record(longin, "${UUT}:SOE:KBUF:INDEX")
 {
 	field(PINI, "NO")
-	field(DTYP, "asynInt64")
+	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_KBUF_INDEX")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")

@@ -14,6 +14,8 @@ protected:
 	asynStatus gip(int pnum, int* pram);
 	asynStatus gip(int addr, int pnum, int* pram);
 	asynStatus sip(int addr, int pnum, int pram);
+	asynStatus sip(int addr, int pnum, unsigned pram);
+	asynStatus sip(int addr, int pnum, epicsInt64 pram);
 	asynStatus gsp(int pnum, int maxchar, char* str);
 public:
 	acq400_asynPortDriver(const char *portName, int maxAddr, int interfaceMask, int interruptMask,

@@ -319,8 +319,6 @@ epicsInt64 getWrTsFromRaw(unsigned* sp_raw)
 }
 void acq400_SOE::update_kbuf_info(char* raw)
 {
-	current_kb.ib = ib;
-
 	unsigned * sp_raw = (unsigned*)raw + samplePrams.SP_INDEX;
 	current_kb.wrt0 = getWrTsFromRaw(sp_raw);
 
@@ -328,9 +326,9 @@ void acq400_SOE::update_kbuf_info(char* raw)
 	sp_raw += SSL*samplePrams.NSAM;
 	current_kb.wrt1 = getWrTsFromRaw(sp_raw);
 
-	sip(0, P_SOE_KBUF_INDEX, current_kb.ib);
+	sip(0, P_SOE_KBUF_INDEX, current_kb.ib = ib);
 	sip(0, P_SOE_KBUF_WRT0,  current_kb.wrt0);
-	sip(0, P_SOE_KBUF_WRT0,  current_kb.wrt1);
+	sip(0, P_SOE_KBUF_WRT1,  current_kb.wrt1);
 }
 
 void acq400_SOE::task()
