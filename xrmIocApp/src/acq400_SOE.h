@@ -148,6 +148,7 @@ protected:
 	} hold_cols;
 	unsigned update;
 	unsigned fmt_rx_timeouts;
+	unsigned fmt_rx_success;
 	static int nice;
 
 	SamplePrams samplePrams;

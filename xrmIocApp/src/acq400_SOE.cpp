@@ -41,7 +41,7 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy& _strategy):
 	/* Default stack size*/ 0),
 	strategy(_strategy),
 	update(0),
-	fmt_rx_timeouts(0)
+	fmt_rx_timeouts(0), fmt_rx_success(0)
 {
 	fprintf(stderr, "%s R1001 SP2\n", FN);
 	asynStatus status = asynSuccess;
@@ -372,7 +372,9 @@ void acq400_SOE::task()
 			update_kbuf_info(raw);
 
 			if (strategy(raw, samplePrams, soe_lut, the_hold_table) != 0){
-				++fmt_rx_timeouts;
+				sip(0, P_SOE_FMT_RX_TIMEOUTS, ++fmt_rx_timeouts);
+			}else{
+				sip(0, P_SOE_FMT_RX_SUCCESS, ++fmt_rx_success);
 			}
 
 			update_hld_tab_columns();

@@ -88,7 +88,6 @@ int LutFmtStrategy1::operator() (
 		SOE_HOLD_TABLE* ht)
 {
 	if (acq400_FMT_rx::instance().waitFMT(CYCLE_MS) == 0){
-
 		return 0;
 	} else {
 		return -1;
