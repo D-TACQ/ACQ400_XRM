@@ -75,10 +75,15 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 
 class LutFmtStrategy1 : public acq400_SOE_Strategy
 {
+	acq400_FMT_rx* FMT_rx;
 	acq400_SOE_Strategy::RC soe_lut_lookup (
 			const KBUF& kbuf,
 			const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 			SOE_HOLD_TABLE* ht);
+public:
+	LutFmtStrategy1() :
+		FMT_rx(0)
+	{}
 	virtual acq400_SOE_Strategy::RC operator() (
 			const KBUF& kbuf,
 			const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
@@ -92,6 +97,9 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 		const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 		SOE_HOLD_TABLE* ht)
 {
+	const epicsInt64 fmt_ts = FMT_rx->fmt[0].timestamp;
+	int events_processed = 0;
+
 	/*
 	const int SSS = samplePrams.SSB/sizeof(short);
 	const int SSL = samplePrams.SSB/sizeof(long);
@@ -100,7 +108,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 	int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
 	*/
 
-	return { 0, 0, 0 };
+	return { SOE_SUCCESS, events_processed, fmt_ts-kbuf.wrt0 };
 }
 
 #define MARK	fprintf(stderr, "%s %d\n", FN, __LINE__)
@@ -110,11 +118,12 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 		const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 		SOE_HOLD_TABLE* ht)
 {
-
-	acq400_FMT_rx* FMT_rx(acq400_FMT_rx::instance());
+	if (FMT_rx == 0){
+		FMT_rx = acq400_FMT_rx::instance();
+	}
 
 	if (FMT_rx->waitFMT(CYCLE_MS) == 0){
-		epicsInt64 fmt_ts = FMT_rx->fmt[0].timestamp;
+		const epicsInt64 fmt_ts = FMT_rx->fmt[0].timestamp;
 
 		if (fmt_ts < kbuf.wrt0-CYCLE_MS*1000){
 			return { E_FMT_TS_TOO_LATE, 0, kbuf.wrt0-fmt_ts };

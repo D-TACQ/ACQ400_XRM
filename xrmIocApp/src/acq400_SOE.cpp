@@ -381,18 +381,18 @@ void acq400_SOE::task()
 					strategy(current_kb, samplePrams,
 						 soe_lut, the_hold_table);
 
+			sip(0, P_SOE_FMT_RX_TIMEOUT_REASON, rc.status);
+			sip(0, P_SOE_FMT_DELTA_TS, rc.delta_us);
+
 			if (rc.status != 0){
 				sip(0, P_SOE_FMT_RX_TIMEOUTS, ++fmt_rx_timeouts);
 				sip(0, P_SOE_FMT_RX_TIMEOUT_REASON, rc.status);
-				sip(0, P_SOE_FMT_DELTA_TS, rc.delta_us);
 
 				lock();
 				callParamCallbacks();
 				unlock();
-
 			}else{
 				sip(0, P_SOE_FMT_RX_SUCCESS, ++fmt_rx_success);
-				sip(0, P_SOE_FMT_DELTA_TS, rc.delta_us);
 				update_hld_tab_columns();
 				lock();
 				callParamCallbacks();
