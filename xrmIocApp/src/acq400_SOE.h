@@ -90,6 +90,9 @@
 #define PS_SOE_HLD_DATA_COL_DI  "SOE_HLD_DATA_COL_DI"
 #define PS_SOE_HLD_DATA_COL_SP  "SOE_HLD_DATA_COL_SP"
 
+#define PS_SOE_FMT_RX_TIMEOUTS	"SOE_FMT_RX_TIMEOUTS"
+#define PS_SOE_FMT_RX_SUCCESS	"SOE_FMT_RX_SUCCESS"
+
 struct SamplePrams {
 	int SSB;
 	int NSAM;
@@ -144,6 +147,7 @@ protected:
 		epicsInt64  c_WRUS[SOE_HLD_ROWS];
 	} hold_cols;
 	unsigned update;
+	unsigned fmt_rx_timeouts;
 	static int nice;
 
 	SamplePrams samplePrams;
@@ -230,6 +234,9 @@ protected:
 	int P_SOE_KBUF_INDEX;
 	int P_SOE_KBUF_WRT0;
 	int P_SOE_KBUF_WRT1;
+
+	int P_SOE_FMT_RX_TIMEOUTS;
+	int P_SOE_FMT_RX_SUCCESS;
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
 public:

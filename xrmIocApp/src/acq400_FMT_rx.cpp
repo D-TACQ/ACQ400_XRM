@@ -32,6 +32,8 @@ acq400_FMT_rx::acq400_FMT_rx(const char* portName) :
 {
 	asynStatus status = asynSuccess;
 
+	rx_event = epicsEventCreate(epicsEventEmpty);
+
 	/* Create the thread that computes the waveforms in the background */
 	status = (asynStatus)(epicsThreadCreate("FMT_rxTask",
 			epicsThreadPriorityHigh - nice,
@@ -62,7 +64,7 @@ void acq400_FMT_rx::update_fmt(bool first_time)
 
 void acq400_FMT_rx::process_fmt(bool first_time)
 {
-
+	epicsEventSignal(rx_event);
 }
 
 void acq400_FMT_rx::task(void) {
@@ -131,7 +133,18 @@ asynStatus acq400_FMT_rx::writeInt32(asynUser *pasynUser, epicsInt32 value)
 int acq400_FMT_rx::waitFMT(unsigned timeout_ms)
 /** @@todo: wait not implemented */
 {
-	return 0;
+	double timeout = (double)timeout_ms/1000;
+	epicsEventStatus rx_wait_status =
+			epicsEventWaitWithTimeout(rx_event, timeout);
+	switch(rx_wait_status){
+	case epicsEventOK:
+		return 0;
+	case epicsEventWaitTimeout:
+		return -1;
+	default:
+		assert(rx_wait_status != epicsEventOK && rx_wait_status != epicsEventWaitTimeout);
+		return -1;		// doesn't happen0
+	}
 }
 acq400_FMT_rx& acq400_FMT_rx::instance(const char* portName)
 {

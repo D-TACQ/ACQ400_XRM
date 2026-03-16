@@ -24,6 +24,8 @@ protected:
 	/**< main processing here (subclass?) */
 
 	acq400_FMT_rx(const char* portName);
+
+	epicsEventId rx_event;
 public:
 
 	virtual ~acq400_FMT_rx() {}

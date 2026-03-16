@@ -7,6 +7,7 @@
 
 #include "acq400_asyn_common.h"
 #include "acq400_SOE.h"
+#include "acq400_FMT_rx.h"
 #include "acq-util.h"
 #include "split2.h"
 #include <fcntl.h>                // open()
@@ -79,11 +80,19 @@ class LutFmtStrategy1 : public acq400_SOE_Strategy
 			SOE_HOLD_TABLE* ht);
 };
 
+#define CYCLE_MS	50		// @@todo make me programmable
+
 int LutFmtStrategy1::operator() (
 		const char* raw,
 		const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 		SOE_HOLD_TABLE* ht)
 {
+	if (acq400_FMT_rx::instance().waitFMT(CYCLE_MS) == 0){
+
+		return 0;
+	} else {
+		return -1;
+	}
 	/*
 	const int SSS = samplePrams.SSB/sizeof(short);
 	const int SSL = samplePrams.SSB/sizeof(long);

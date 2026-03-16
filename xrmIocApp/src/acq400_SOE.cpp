@@ -40,7 +40,8 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy& _strategy):
 	/* Default priority */  0,
 	/* Default stack size*/ 0),
 	strategy(_strategy),
-	update(0)
+	update(0),
+	fmt_rx_timeouts(0)
 {
 	fprintf(stderr, "%s R1001 SP2\n", FN);
 	asynStatus status = asynSuccess;
@@ -127,6 +128,9 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy& _strategy):
 	createParam(PS_SOE_LUT_REDIT_OFFSET_US, asynParamInt32, &P_SOE_LUT_REDIT_OFFSET_US);
 	createParam(PS_SOE_LUT_REDIT_OFFSET_US_STEP,asynParamInt32, &P_SOE_LUT_REDIT_OFFSET_US_STEP);
 	createParam(PS_SOE_LUT_REDIT_COMMIT,	asynParamInt32, &P_SOE_LUT_REDIT_COMMIT);
+
+	createParam(PS_SOE_FMT_RX_TIMEOUTS,	asynParamInt32, &P_SOE_FMT_RX_TIMEOUTS);
+	createParam(PS_SOE_FMT_RX_SUCCESS,	asynParamInt32, &P_SOE_FMT_RX_SUCCESS);
 
 	/* Create the thread that computes the waveforms in the background */
 	status = (asynStatus)(epicsThreadCreate("SOE_task",
@@ -367,7 +371,9 @@ void acq400_SOE::task()
 					SKIP_ES*samplePrams.SSB;
 			update_kbuf_info(raw);
 
-			strategy(raw, samplePrams, soe_lut, the_hold_table);
+			if (strategy(raw, samplePrams, soe_lut, the_hold_table) != 0){
+				++fmt_rx_timeouts;
+			}
 
 			update_hld_tab_columns();
 
