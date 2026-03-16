@@ -30,6 +30,17 @@ record(longin, "${UUT}:SOE:FMT_RX_TIMEOUTS")
 	field(DESC, "Data buffer is waiting but FMT no show")
 }
 
+record(longin, "${UUT}:SOE:FMT_RX_TIMEOUT_REASON")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_RX_TIMEOUT_REASON")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+
+	field(DESC, "reason for last error")
+}
+
 record(longin, "${UUT}:SOE:FMT_RX_SUCCESS")
 {
 	field(PINI, "NO")

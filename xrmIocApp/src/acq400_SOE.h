@@ -80,7 +80,7 @@
 
 
 
-/* define a column for each data type.
+/* define a column for each data type.git
  * There will be up to 64 of these by asyn "address"
  * BUT: this is NOT going to play well with a table
  * Really, one row per event again, 32 AI cols, 2DI, 2SP ..
@@ -91,6 +91,8 @@
 #define PS_SOE_HLD_DATA_COL_SP  "SOE_HLD_DATA_COL_SP"
 
 #define PS_SOE_FMT_RX_TIMEOUTS	"SOE_FMT_RX_TIMEOUTS"
+#define PS_SOE_FMT_RX_TIMEOUT_REASON	\
+				"SOE_FMT_RX_TIMEOUT_REASON"
 #define PS_SOE_FMT_RX_SUCCESS	"SOE_FMT_RX_SUCCESS"
 
 struct SamplePrams {
@@ -104,13 +106,33 @@ struct SamplePrams {
 	int SP_INDEX;
 };
 
+
+struct KBUF {
+	unsigned ib;
+	epicsInt64 wrt0;
+	epicsInt64 wrt1;
+	const char* raw;
+};
+
 /** singleton */
 class acq400_SOE_Strategy {
+protected:
+	int last_error_code;
 public:
 	/** implements strategy, .. waitFMT, compare LUT, look up data in raw and build output <ht> */
-	virtual int operator() (const char* raw, const SamplePrams& sp, const SOE_LUT& soe_lut, SOE_HOLD_TABLE* ht) = 0;
+	virtual int operator() (const KBUF& kbuf, const SamplePrams& sp, const SOE_LUT& soe_lut, SOE_HOLD_TABLE* ht) = 0;
 
 	static acq400_SOE_Strategy& factory();
+
+	int getLastErrCode() const {
+		return last_error_code;
+	}
+
+	enum ERR_CODES {
+		E_TIMEOUT = 1,
+		E_FMT_TS_TOO_EARLY = 2,
+		E_FMT_TS_TOO_LATE = 3,
+	};
 };
 
 class acq400_SOE: public acq400_asynPortDriver {
@@ -164,11 +186,7 @@ protected:
 	virtual void update_hld_tab_columns(void);
 	virtual void update_hld_tab_callbacks(void);
 
-	struct KBUF {
-		unsigned ib;
-		epicsInt64 wrt0;
-		epicsInt64 wrt1;
-	} current_kb;
+	struct KBUF current_kb;
 	void update_kbuf_info(char* raw);
 
 
@@ -237,6 +255,7 @@ protected:
 	int P_SOE_KBUF_WRT1;
 
 	int P_SOE_FMT_RX_TIMEOUTS;
+	int P_SOE_FMT_RX_TIMEOUT_REASON;
 	int P_SOE_FMT_RX_SUCCESS;
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */

@@ -27,21 +27,22 @@ static const char *driverName="acq400_SOE";
 class NullStrategy : public acq400_SOE_Strategy
 {
 	virtual int operator() (
-			const char* raw,
+			const KBUF& kbuf,
 			const SamplePrams& samplePrams,
 			const SOE_LUT& soe_lut,
 			SOE_HOLD_TABLE* ht);
 };
 
 int NullStrategy::operator() (
-		const char* raw,
+		const KBUF& kbuf,
 		const SamplePrams& samplePrams,
 		const SOE_LUT& soe_lut,
 		SOE_HOLD_TABLE* ht)
 {
 	const int SSB = samplePrams.SSB;
 	const int SSL = SSB/sizeof(long);
-	int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
+	const char* raw = kbuf.raw;
+	const unsigned* sp_raw = (const unsigned*)kbuf.raw + samplePrams.SP_INDEX;;
 
 	assert(SOE_LUT_ROWS >= SOE_HLD_ROWS);
 
@@ -50,12 +51,12 @@ int NullStrategy::operator() (
 	for (int ii = 10; ii; --ii){
 		ht->entries[ii].client_data = ht->entries[ii].client_data;
 	}
-	ht->entries[0].client_data = ((unsigned long)raw) >> 16; // proxy for ib
+	ht->entries[0].client_data = kbuf.ib;
 
 	unsigned short ht_data_offset = offsetof(SOE_HOLD_TABLE, data)/sizeof(long);
 
 	for (int row = 0; row < SOE_HLD_ROWS; ++row,
-			ht_data_offset += SSL, sp_raw += SSL, raw+= SSB){
+			ht_data_offset += SSL, sp_raw += SSL, raw += SSB){
 		unsigned wrs, wrv;
 
 		ht->entries[row].pv_id = soe_lut[row].pv_id;
@@ -74,22 +75,44 @@ int NullStrategy::operator() (
 
 class LutFmtStrategy1 : public acq400_SOE_Strategy
 {
+	int soe_lut_lookup (
+			const KBUF& kbuf,
+			const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
+			SOE_HOLD_TABLE* ht);
 	virtual int operator() (
-			const char* raw,
+			const KBUF& kbuf,
 			const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 			SOE_HOLD_TABLE* ht);
 };
 
 #define CYCLE_MS	50		// @@todo make me programmable
 
-int LutFmtStrategy1::operator() (
-		const char* raw,
+int LutFmtStrategy1::soe_lut_lookup(
+		const KBUF& kbuf,
 		const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 		SOE_HOLD_TABLE* ht)
 {
-	if (acq400_FMT_rx::instance().waitFMT(CYCLE_MS) == 0){
-		return 0;
+	return -1;
+}
+
+int LutFmtStrategy1::operator() (
+		const KBUF& kbuf,
+		const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
+		SOE_HOLD_TABLE* ht)
+{
+	acq400_FMT_rx FMT_rx(acq400_FMT_rx::instance());
+	if (FMT_rx.waitFMT(CYCLE_MS) == 0){
+		epicsInt64 fmt_ts = FMT_rx.fmt[0].timestamp;
+		if (fmt_ts < kbuf.wrt0-CYCLE_MS*1000){
+			last_error_code = E_FMT_TS_TOO_EARLY;
+		}else if (fmt_ts > kbuf.wrt1+CYCLE_MS*1000){
+			last_error_code = E_FMT_TS_TOO_LATE;
+		}else{
+			return soe_lut_lookup(kbuf, samplePrams, soe_lut, ht);
+		}
+		return -1;
 	} else {
+		last_error_code = E_TIMEOUT;
 		return -1;
 	}
 	/*

@@ -130,6 +130,7 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy& _strategy):
 	createParam(PS_SOE_LUT_REDIT_COMMIT,	asynParamInt32, &P_SOE_LUT_REDIT_COMMIT);
 
 	createParam(PS_SOE_FMT_RX_TIMEOUTS,	asynParamInt32, &P_SOE_FMT_RX_TIMEOUTS);
+	createParam(PS_SOE_FMT_RX_TIMEOUT_REASON, asynParamInt32, &P_SOE_FMT_RX_TIMEOUT_REASON);
 	createParam(PS_SOE_FMT_RX_SUCCESS,	asynParamInt32, &P_SOE_FMT_RX_SUCCESS);
 
 	/* Create the thread that computes the waveforms in the background */
@@ -333,6 +334,8 @@ void acq400_SOE::update_kbuf_info(char* raw)
 	sip(0, P_SOE_KBUF_INDEX, current_kb.ib = ib);
 	sip(0, P_SOE_KBUF_WRT0,  current_kb.wrt0);
 	sip(0, P_SOE_KBUF_WRT1,  current_kb.wrt1);
+
+	current_kb.raw = raw;
 }
 
 void acq400_SOE::task()
@@ -371,8 +374,9 @@ void acq400_SOE::task()
 					SKIP_ES*samplePrams.SSB;
 			update_kbuf_info(raw);
 
-			if (strategy(raw, samplePrams, soe_lut, the_hold_table) != 0){
+			if (strategy(current_kb, samplePrams, soe_lut, the_hold_table) != 0){
 				sip(0, P_SOE_FMT_RX_TIMEOUTS, ++fmt_rx_timeouts);
+				sip(0, P_SOE_FMT_RX_TIMEOUT_REASON, strategy.getLastErrCode());
 			}else{
 				sip(0, P_SOE_FMT_RX_SUCCESS, ++fmt_rx_success);
 			}
