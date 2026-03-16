@@ -92,20 +92,36 @@ int LutFmtStrategy1::soe_lut_lookup(
 		const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 		SOE_HOLD_TABLE* ht)
 {
+	/*
+	const int SSS = samplePrams.SSB/sizeof(short);
+	const int SSL = samplePrams.SSB/sizeof(long);
+	short* ai_raw = (short*)raw;
+	int * di_raw = (int*)raw + samplePrams.DI_INDEX;
+	int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
+	*/
+
 	return -1;
 }
+
+#define MARK	fprintf(stderr, "%s %d\n", FN, __LINE__)
 
 int LutFmtStrategy1::operator() (
 		const KBUF& kbuf,
 		const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 		SOE_HOLD_TABLE* ht)
 {
-	acq400_FMT_rx FMT_rx(acq400_FMT_rx::instance());
-	if (FMT_rx.waitFMT(CYCLE_MS) == 0){
-		epicsInt64 fmt_ts = FMT_rx.fmt[0].timestamp;
+
+	acq400_FMT_rx* FMT_rx(acq400_FMT_rx::instance());
+
+	if (FMT_rx->waitFMT(CYCLE_MS) == 0){
+		epicsInt64 fmt_ts = FMT_rx->fmt[0].timestamp;
+
 		if (fmt_ts < kbuf.wrt0-CYCLE_MS*1000){
 			last_error_code = E_FMT_TS_TOO_EARLY;
 		}else if (fmt_ts > kbuf.wrt1+CYCLE_MS*1000){
+			fprintf(stderr, "TOO LATE %llu > %llu by %llu\n",
+					fmt_ts, kbuf.wrt1, fmt_ts-kbuf.wrt1);
+
 			last_error_code = E_FMT_TS_TOO_LATE;
 		}else{
 			return soe_lut_lookup(kbuf, samplePrams, soe_lut, ht);
@@ -115,16 +131,6 @@ int LutFmtStrategy1::operator() (
 		last_error_code = E_TIMEOUT;
 		return -1;
 	}
-	/*
-	const int SSS = samplePrams.SSB/sizeof(short);
-	const int SSL = samplePrams.SSB/sizeof(long);
-	short* ai_raw = (short*)raw;
-	int * di_raw = (int*)raw + samplePrams.DI_INDEX;
-	int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
-	*/
-
-	// @@todo fill the blanks
-	// acq400_FMT_RX::instance().waitFMT(10);
 	return 0;
 }
 

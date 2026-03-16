@@ -23,6 +23,7 @@ static const char *driverName="acq400_SOE";
 #define FN	__FUNCTION__
 
 #define MARK	fprintf(stderr, "%s %d\n", FN, __LINE__)
+#define MARKI(p) fprintf(stderr, "%s %d P_ %s:%d\n", FN, __LINE__, #p, p)
 
 int acq400_SOE::nice = ::getenv_default("acq400_SOE_NICE", 0);
 
@@ -322,6 +323,9 @@ epicsInt64 getWrTsFromRaw(unsigned* sp_raw)
 	unsigned wrs = sp_raw[SP3];
 	return getWrTs(wrs, wrv);
 }
+
+
+
 void acq400_SOE::update_kbuf_info(char* raw)
 {
 	unsigned * sp_raw = (unsigned*)raw + samplePrams.SP_INDEX;
@@ -357,14 +361,12 @@ void acq400_SOE::task()
 	init_the_hold_table();
 	callParamCallbacks();
 
-	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0; runstop0 = runstop){
+	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0;
+							runstop0 = runstop){
 		lock();
-		status = getIntegerParam(P_RUNSTOP, &runstop);
-		if (status){
-			fprintf(stderr, "%s:%s getIntegerParam P_FMT_MC_PORT fail\n", DN, FN);
-			return;
-		}
+		gip(P_RUNSTOP, &runstop);
 		unlock();
+
 		if (runstop == 1){
 			if (runstop0 == 0){
 				;   // onStart actions
@@ -372,22 +374,30 @@ void acq400_SOE::task()
 			update_soe_lut_columns(); // cosmetic stuff in slack time.
 			char* raw = Buffer::the_buffers[ib]->getBase() +
 					SKIP_ES*samplePrams.SSB;
+
 			update_kbuf_info(raw);
 
-			if (strategy(current_kb, samplePrams, soe_lut, the_hold_table) != 0){
+			if (strategy(current_kb, samplePrams,
+					soe_lut, the_hold_table) != 0){
 				sip(0, P_SOE_FMT_RX_TIMEOUTS, ++fmt_rx_timeouts);
-				sip(0, P_SOE_FMT_RX_TIMEOUT_REASON, strategy.getLastErrCode());
+				sip(0, P_SOE_FMT_RX_TIMEOUT_REASON,
+						strategy.getLastErrCode());
+
+
+				lock();
+				callParamCallbacks();
+				unlock();
+
 			}else{
 				sip(0, P_SOE_FMT_RX_SUCCESS, ++fmt_rx_success);
+
+				update_hld_tab_columns();
+				lock();
+				callParamCallbacks();
+				update_soe_lut_callbacks();
+				update_hld_tab_callbacks();
+				unlock();
 			}
-
-			update_hld_tab_columns();
-
-			lock();
-			callParamCallbacks();
-			update_soe_lut_callbacks();
-			update_hld_tab_callbacks();
-			unlock();
 		}
 	}
 
