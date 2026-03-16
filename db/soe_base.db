@@ -49,7 +49,19 @@ record(longin, "${UUT}:SOE:FMT_RX_SUCCESS")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
 
+	field(DESC, "Successful matchups")
+}
+
+record(int64in, "${UUT}:SOE:DELTA_TS")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt64")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_DELTA_TS")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+
 	field(DESC, "Data buffer is waiting but FMT no show")
+	field(EGU,  "usec")
 }
 
 record(int64in, "${UUT}:SOE:TS_USEC")
