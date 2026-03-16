@@ -28,14 +28,14 @@ protected:
 	epicsEventId rx_event;
 public:
 
-	virtual ~acq400_FMT_rx() {}
+	virtual ~acq400_FMT_rx();
 
 
 	int waitFMT(unsigned timeout_ms);
 
 	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
 
-	static acq400_FMT_rx& instance(const char* portName = 0);
+	static acq400_FMT_rx* instance(const char* portName = 0);
 	/* first caller MUST set portName */
 };
 

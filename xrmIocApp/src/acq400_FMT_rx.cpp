@@ -46,6 +46,11 @@ acq400_FMT_rx::acq400_FMT_rx(const char* portName) :
 	}
 }
 
+acq400_FMT_rx::~acq400_FMT_rx() {
+	fprintf(stderr, "%s SHOULD NOT HAPPEN\n", __FUNCTION__);
+	assert(0);
+}
+
 void acq400_FMT_rx::update_fmt(bool first_time)
 {
 	++packet_count;
@@ -146,14 +151,14 @@ int acq400_FMT_rx::waitFMT(unsigned timeout_ms)
 		return -1;		// doesn't happen0
 	}
 }
-acq400_FMT_rx& acq400_FMT_rx::instance(const char* portName)
+acq400_FMT_rx* acq400_FMT_rx::instance(const char* portName)
 {
 	static acq400_FMT_rx* _instance;
 	if (_instance == 0){
 		assert (portName != 0);
 		_instance = new acq400_FMT_rx(portName);
 	}
-	return *_instance;
+	return _instance;
 }
 
 extern "C" {
