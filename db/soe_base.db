@@ -52,7 +52,7 @@ record(longin, "${UUT}:SOE:FMT_RX_SUCCESS")
 	field(DESC, "Successful matchups")
 }
 
-record(int64in, "${UUT}:SOE:DELTA_TS")
+record(int64in, "${UUT}:SOE:FMT:DELTA_TS")
 {
 	field(PINI, "NO")
 	field(DTYP, "asynInt64")
@@ -60,9 +60,21 @@ record(int64in, "${UUT}:SOE:DELTA_TS")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
 
-	field(DESC, "Data buffer is waiting but FMT no show")
+	field(DESC, "Difference first Buf TS and FMT TS")
 	field(EGU,  "usec")
 }
+
+record(longin, "${UUT}:SOE:FMT:EV_MATCHES")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_EV_MATCHES")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+
+	field(DESC, "Number of Events matched this CYCLE")
+}
+
 
 record(int64in, "${UUT}:SOE:TS_USEC")
 {
@@ -71,6 +83,7 @@ record(int64in, "${UUT}:SOE:TS_USEC")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TS_USEC")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
+	field(EGU,  "usec")
 }
 
 record(longin, "${UUT}:SOE:KBUF:INDEX")

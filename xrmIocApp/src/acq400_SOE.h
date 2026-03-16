@@ -94,7 +94,8 @@
 #define PS_SOE_FMT_RX_TIMEOUT_REASON	\
 				"SOE_FMT_RX_TIMEOUT_REASON"
 #define PS_SOE_FMT_DELTA_TS	"SOE_FMT_DELTA_TS"
-#define PS_SOE_FMT_RX_SUCCESS	"SOE_FMT_RX_SUCCESS"
+#define PS_SOE_FMT_RX_SUCCESS   "SOE_FMT_RX_SUCCESS"
+#define PS_SOE_FMT_EV_MATCHES   "SOE_FMT_EV_MATCHES"
 
 struct SamplePrams {
 	int SSB;
@@ -260,6 +261,7 @@ protected:
 	int P_SOE_FMT_RX_TIMEOUT_REASON;
 	int P_SOE_FMT_DELTA_TS;
 	int P_SOE_FMT_RX_SUCCESS;
+	int P_SOE_FMT_EV_MATCHES;
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
 public:
