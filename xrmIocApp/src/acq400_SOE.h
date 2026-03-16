@@ -93,6 +93,7 @@
 #define PS_SOE_FMT_RX_TIMEOUTS	"SOE_FMT_RX_TIMEOUTS"
 #define PS_SOE_FMT_RX_TIMEOUT_REASON	\
 				"SOE_FMT_RX_TIMEOUT_REASON"
+#define PS_SOE_FMT_DELTA_TS	"SOE_FMT_DELTA_TS"
 #define PS_SOE_FMT_RX_SUCCESS	"SOE_FMT_RX_SUCCESS"
 
 struct SamplePrams {
@@ -116,19 +117,20 @@ struct KBUF {
 
 /** singleton */
 class acq400_SOE_Strategy {
-protected:
-	int last_error_code;
+
 public:
+	struct RC {
+		int status;
+		int events_accepted;
+		long long delta_us;
+	};
 	/** implements strategy, .. waitFMT, compare LUT, look up data in raw and build output <ht> */
-	virtual int operator() (const KBUF& kbuf, const SamplePrams& sp, const SOE_LUT& soe_lut, SOE_HOLD_TABLE* ht) = 0;
+	virtual RC operator() (const KBUF& kbuf, const SamplePrams& sp, const SOE_LUT& soe_lut, SOE_HOLD_TABLE* ht) = 0;
 
 	static acq400_SOE_Strategy& factory();
 
-	int getLastErrCode() const {
-		return last_error_code;
-	}
-
 	enum ERR_CODES {
+		SOE_SUCCESS = 0,
 		E_TIMEOUT = 1,
 		E_FMT_TS_TOO_EARLY = 2,
 		E_FMT_TS_TOO_LATE = 3,
@@ -256,6 +258,7 @@ protected:
 
 	int P_SOE_FMT_RX_TIMEOUTS;
 	int P_SOE_FMT_RX_TIMEOUT_REASON;
+	int P_SOE_FMT_DELTA_TS;
 	int P_SOE_FMT_RX_SUCCESS;
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */

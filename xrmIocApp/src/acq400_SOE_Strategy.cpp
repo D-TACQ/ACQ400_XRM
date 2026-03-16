@@ -26,14 +26,14 @@ static const char *driverName="acq400_SOE";
 /* copy first 64 samples to output, together with first 64 SOE_LUT entries, no FMT matchup */
 class NullStrategy : public acq400_SOE_Strategy
 {
-	virtual int operator() (
+	virtual acq400_SOE_Strategy::RC operator() (
 			const KBUF& kbuf,
 			const SamplePrams& samplePrams,
 			const SOE_LUT& soe_lut,
 			SOE_HOLD_TABLE* ht);
 };
 
-int NullStrategy::operator() (
+acq400_SOE_Strategy::RC NullStrategy::operator() (
 		const KBUF& kbuf,
 		const SamplePrams& samplePrams,
 		const SOE_LUT& soe_lut,
@@ -69,17 +69,17 @@ int NullStrategy::operator() (
 		ht->entries[row].data_offset = ht_data_offset;
 		memcpy(ht->data+row*SSL, raw, SSB);
 	}
-	return 0;
+	return { 0, 0 };
 }
 
 
 class LutFmtStrategy1 : public acq400_SOE_Strategy
 {
-	int soe_lut_lookup (
+	acq400_SOE_Strategy::RC soe_lut_lookup (
 			const KBUF& kbuf,
 			const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 			SOE_HOLD_TABLE* ht);
-	virtual int operator() (
+	virtual acq400_SOE_Strategy::RC operator() (
 			const KBUF& kbuf,
 			const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 			SOE_HOLD_TABLE* ht);
@@ -87,7 +87,7 @@ class LutFmtStrategy1 : public acq400_SOE_Strategy
 
 #define CYCLE_MS	50		// @@todo make me programmable
 
-int LutFmtStrategy1::soe_lut_lookup(
+acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 		const KBUF& kbuf,
 		const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 		SOE_HOLD_TABLE* ht)
@@ -100,12 +100,12 @@ int LutFmtStrategy1::soe_lut_lookup(
 	int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
 	*/
 
-	return -1;
+	return { 0, 0, 0 };
 }
 
 #define MARK	fprintf(stderr, "%s %d\n", FN, __LINE__)
 
-int LutFmtStrategy1::operator() (
+acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 		const KBUF& kbuf,
 		const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 		SOE_HOLD_TABLE* ht)
@@ -117,21 +117,17 @@ int LutFmtStrategy1::operator() (
 		epicsInt64 fmt_ts = FMT_rx->fmt[0].timestamp;
 
 		if (fmt_ts < kbuf.wrt0-CYCLE_MS*1000){
-			last_error_code = E_FMT_TS_TOO_EARLY;
+			return { E_FMT_TS_TOO_LATE, 0, kbuf.wrt0-fmt_ts };
 		}else if (fmt_ts > kbuf.wrt1+CYCLE_MS*1000){
-			fprintf(stderr, "TOO LATE %llu > %llu by %llu\n",
+			fprintf(stderr, "FMT TOO EARLY %llu > %llu by %llu\n",
 					fmt_ts, kbuf.wrt1, fmt_ts-kbuf.wrt1);
-
-			last_error_code = E_FMT_TS_TOO_LATE;
+			return { E_FMT_TS_TOO_EARLY, 0, fmt_ts-kbuf.wrt1};
 		}else{
 			return soe_lut_lookup(kbuf, samplePrams, soe_lut, ht);
 		}
-		return -1;
 	} else {
-		last_error_code = E_TIMEOUT;
-		return -1;
+		return { -E_TIMEOUT, 0, 0 };
 	}
-	return 0;
 }
 
 

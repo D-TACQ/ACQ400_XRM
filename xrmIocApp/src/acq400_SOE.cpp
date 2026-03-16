@@ -132,6 +132,7 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy& _strategy):
 
 	createParam(PS_SOE_FMT_RX_TIMEOUTS,	asynParamInt32, &P_SOE_FMT_RX_TIMEOUTS);
 	createParam(PS_SOE_FMT_RX_TIMEOUT_REASON, asynParamInt32, &P_SOE_FMT_RX_TIMEOUT_REASON);
+	createParam(PS_SOE_FMT_DELTA_TS,	asynParamInt64, &P_SOE_FMT_DELTA_TS);
 	createParam(PS_SOE_FMT_RX_SUCCESS,	asynParamInt32, &P_SOE_FMT_RX_SUCCESS);
 
 	/* Create the thread that computes the waveforms in the background */
@@ -344,7 +345,6 @@ void acq400_SOE::update_kbuf_info(char* raw)
 
 void acq400_SOE::task()
 {
-	asynStatus status = asynSuccess;
 	epicsEventWait(eventId);
 
 	int fc = open("/dev/acq400.0.bq", O_RDONLY);
@@ -377,12 +377,14 @@ void acq400_SOE::task()
 
 			update_kbuf_info(raw);
 
-			if (strategy(current_kb, samplePrams,
-					soe_lut, the_hold_table) != 0){
-				sip(0, P_SOE_FMT_RX_TIMEOUTS, ++fmt_rx_timeouts);
-				sip(0, P_SOE_FMT_RX_TIMEOUT_REASON,
-						strategy.getLastErrCode());
+			const acq400_SOE_Strategy::RC rc =
+					strategy(current_kb, samplePrams,
+						 soe_lut, the_hold_table);
 
+			if (rc.status != 0){
+				sip(0, P_SOE_FMT_RX_TIMEOUTS, ++fmt_rx_timeouts);
+				sip(0, P_SOE_FMT_RX_TIMEOUT_REASON, rc.status);
+				sip(0, P_SOE_FMT_DELTA_TS, rc.delta_us);
 
 				lock();
 				callParamCallbacks();
@@ -390,7 +392,7 @@ void acq400_SOE::task()
 
 			}else{
 				sip(0, P_SOE_FMT_RX_SUCCESS, ++fmt_rx_success);
-
+				sip(0, P_SOE_FMT_DELTA_TS, rc.delta_us);
 				update_hld_tab_columns();
 				lock();
 				callParamCallbacks();
