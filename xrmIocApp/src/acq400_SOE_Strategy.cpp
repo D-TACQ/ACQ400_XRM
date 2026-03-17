@@ -37,6 +37,7 @@ class NullStrategy : public acq400_SOE_Strategy
 		acq400_SOE_Strategy(),
 		stride(_stride)
 	{}
+friend class acq400_SOE_Strategy;
 };
 
 acq400_SOE_Strategy::RC NullStrategy::operator() (
@@ -118,6 +119,7 @@ public:
 			const KBUF& kbuf,
 			const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 			SOE_HOLD_TABLE* ht);
+friend class acq400_SOE_Strategy;
 };
 
 #define CYCLE_MS	50		// @@todo make me programmable
