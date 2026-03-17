@@ -42,9 +42,10 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy& _strategy):
 	/* Default stack size*/ 0),
 	strategy(_strategy),
 	update(0),
-	fmt_rx_timeouts(0), fmt_rx_success(0)
+	fmt_rx_timeouts(0), fmt_rx_success(0),
+	hold_row_limit(SOE_HLD_ROWS)
 {
-	fprintf(stderr, "%s R1010\n", FN);
+	fprintf(stderr, "%s R1020\n", FN);
 	asynStatus status = asynSuccess;
 	memset(soe_lut, 0, sizeof(soe_lut));
 
@@ -200,14 +201,16 @@ static int SP1_SIM = 0;
 void acq400_SOE::update_hld_tab_columns()
 {
 	const int SSL = samplePrams.SSB/sizeof(long);
+	int row;
 
-	for (int row = 0; row < SOE_HLD_ROWS; ++row){
+	for (row = 0; row < SOE_HLD_ROWS; ++row){
 		unsigned* raw = the_hold_table->data+row*SSL;
 		short* ai_raw = (short*)raw;
 		int * di_raw = (int*)raw + samplePrams.DI_INDEX;
 		int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
 
 		if (the_hold_table->entries[row].pv_id == 0){
+			++row;
 			break;
 		}
 		hold_cols.c_pv_id[row] = the_hold_table->entries[row].pv_id;
@@ -233,25 +236,26 @@ void acq400_SOE::update_hld_tab_columns()
 		hold_cols.c_WRVT[row]= sp_raw[SP2]&0x0fffffff;
 		hold_cols.c_WRUS[row]= getWrTs(wrs, wrv);
 	}
+	hold_row_limit = row;
 }
 
 void acq400_SOE::update_hld_tab_callbacks(void)
 {
-	doCallbacksInt8Array(hold_cols.c_rownum, 	SOE_HLD_ROWS, P_SOE_HLD_COL_ROWNUM, 0);
-	doCallbacksInt32Array(hold_cols.c_pv_id, 	SOE_HLD_ROWS, P_SOE_HLD_COL_PV_ID, 0);
-	doCallbacksInt32Array(hold_cols.c_client_data,  SOE_HLD_ROWS, P_SOE_HLD_COL_CLIDAT, 0);
-	doCallbacksInt64Array(hold_cols.c_timestamp, 	SOE_HLD_ROWS, P_SOE_HLD_COL_TS, 0);
-	doCallbacksFloat32Array(hold_cols.c_AI1, 	SOE_HLD_ROWS, P_SOE_HLD_COL_AI1, 0);
-	doCallbacksFloat32Array(hold_cols.c_AI2, 	SOE_HLD_ROWS, P_SOE_HLD_COL_AI2, 0);
-	doCallbacksInt32Array(hold_cols.c_DI1, 		SOE_HLD_ROWS, P_SOE_HLD_COL_DI1, 0);
-	doCallbacksInt32Array(hold_cols.c_DI2, 		SOE_HLD_ROWS, P_SOE_HLD_COL_DI2, 0);
-	doCallbacksInt32Array(hold_cols.c_SP0, 		SOE_HLD_ROWS, P_SOE_HLD_COL_SP0, 0);
-	doCallbacksInt32Array(hold_cols.c_SP1, 		SOE_HLD_ROWS, P_SOE_HLD_COL_SP1, 0);
-	doCallbacksInt32Array(hold_cols.c_SP2, 		SOE_HLD_ROWS, P_SOE_HLD_COL_SP2, 0);
-	doCallbacksInt32Array(hold_cols.c_SP3, 		SOE_HLD_ROWS, P_SOE_HLD_COL_SP3, 0);
-	doCallbacksInt8Array( hold_cols.c_WRVS, 	SOE_HLD_ROWS, P_SOE_HLD_COL_WRVS, 0);
-	doCallbacksInt32Array(hold_cols.c_WRVT, 	SOE_HLD_ROWS, P_SOE_HLD_COL_WRVT, 0);
-	doCallbacksInt64Array(hold_cols.c_WRUS, 	SOE_HLD_ROWS, P_SOE_HLD_COL_WRUS, 0);
+	doCallbacksInt8Array(hold_cols.c_rownum, 	hold_row_limit, P_SOE_HLD_COL_ROWNUM, 0);
+	doCallbacksInt32Array(hold_cols.c_pv_id, 	hold_row_limit, P_SOE_HLD_COL_PV_ID, 0);
+	doCallbacksInt32Array(hold_cols.c_client_data,  hold_row_limit, P_SOE_HLD_COL_CLIDAT, 0);
+	doCallbacksInt64Array(hold_cols.c_timestamp, 	hold_row_limit, P_SOE_HLD_COL_TS, 0);
+	doCallbacksFloat32Array(hold_cols.c_AI1, 	hold_row_limit, P_SOE_HLD_COL_AI1, 0);
+	doCallbacksFloat32Array(hold_cols.c_AI2, 	hold_row_limit, P_SOE_HLD_COL_AI2, 0);
+	doCallbacksInt32Array(hold_cols.c_DI1, 		hold_row_limit, P_SOE_HLD_COL_DI1, 0);
+	doCallbacksInt32Array(hold_cols.c_DI2, 		hold_row_limit, P_SOE_HLD_COL_DI2, 0);
+	doCallbacksInt32Array(hold_cols.c_SP0, 		hold_row_limit, P_SOE_HLD_COL_SP0, 0);
+	doCallbacksInt32Array(hold_cols.c_SP1, 		hold_row_limit, P_SOE_HLD_COL_SP1, 0);
+	doCallbacksInt32Array(hold_cols.c_SP2, 		hold_row_limit, P_SOE_HLD_COL_SP2, 0);
+	doCallbacksInt32Array(hold_cols.c_SP3, 		hold_row_limit, P_SOE_HLD_COL_SP3, 0);
+	doCallbacksInt8Array( hold_cols.c_WRVS, 	hold_row_limit, P_SOE_HLD_COL_WRVS, 0);
+	doCallbacksInt32Array(hold_cols.c_WRVT, 	hold_row_limit, P_SOE_HLD_COL_WRVT, 0);
+	doCallbacksInt64Array(hold_cols.c_WRUS, 	hold_row_limit, P_SOE_HLD_COL_WRUS, 0);
 }
 
 
@@ -372,6 +376,7 @@ void acq400_SOE::task()
 			if (runstop0 == 0){
 				;   // onStart actions
 			}
+			clearHold();
 			update_soe_lut_columns(); // cosmetic stuff in slack time.
 			char* raw = Buffer::the_buffers[ib]->getBase() +
 					SKIP_ES*samplePrams.SSB;
@@ -485,7 +490,6 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	              DN, FN, function, paramName, value);
 	    return status;
 }
-
 
 extern "C" {
 	/** EPICS iocsh callable function to call constructor for the testAsynPortDriver class.

@@ -69,13 +69,15 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 		ht->entries[row].data_offset = ht_data_offset;
 		memcpy(ht->data+row*SSL, raw, SSB);
 	}
-	return { 0, 0 };
+	return { 0, 0, 0 };
 }
 
 
 class LutFmtStrategy1 : public acq400_SOE_Strategy
 {
 	acq400_FMT_rx* FMT_rx;
+	unsigned short ht_data_offset;
+
 	acq400_SOE_Strategy::RC soe_lut_lookup (
 			const KBUF& kbuf,
 			const SamplePrams& sp, const SOE_LUT& soe_lut,
@@ -99,7 +101,9 @@ class LutFmtStrategy1 : public acq400_SOE_Strategy
 			const SamplePrams& samplePrams,
 			const FMT_ROW& fmt_row,
 			const SOE_LUT_ROW& lut_row,
-			int bsi);
+			int bsi,		// buffer sample index in samples
+			SOE_HOLD_TABLE* ht,
+			int ihold);
 public:
 	LutFmtStrategy1() :
 		FMT_rx(0)
@@ -118,9 +122,29 @@ int  LutFmtStrategy1::build_hold_entry(
 		const SamplePrams& samplePrams,
 		const FMT_ROW& fmt_row,
 		const SOE_LUT_ROW& lut_row,
-		int bsi)
+		int bsi,			// buffer sample index in samples
+		SOE_HOLD_TABLE* ht,
+		int ihold)
 /* return sample index to data in buffer */
 {
+	const int SSB = samplePrams.SSB;
+	const int SSL = SSB/sizeof(long);
+	const unsigned* sample_raw = (const unsigned*)kbuf.raw + bsi;
+	const unsigned* sample_sp0 = sample_raw + samplePrams.SP_INDEX;
+	struct SOE_HOLD_HEADER& entry(ht->entries[ihold]);
+
+	entry.pv_id = lut_row.pv_id;
+	entry.client_data = fmt_row.client_data;
+	entry.timestamp = fmt_row.timestamp;
+	entry.data_offset = ht_data_offset;
+	entry.ss_u32 = SSL;
+	entry.ai_count = samplePrams.AI_COUNT;
+	entry.di_count = samplePrams.DI_COUNT;
+	entry.sp_count = samplePrams.SP_COUNT;
+
+	memcpy(ht->data+ihold*SSL, sample_raw, SSB);
+
+	ht_data_offset += ihold*SSL;
 	return 0;
 }
 acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
@@ -145,35 +169,29 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 				break;
 			}else if (soe_lut_event > fmt_event){
 				break;
-			}else if (soe_lut_event == fmt_event){
-				const int NSAM = sp.NSAM;
-				const epicsUInt64 soe_ts = fmt_ts +
+			}else if (soe_lut_event != fmt_event){
+				continue;                        // keep searching
+			} // else MATCH!
+
+			const int NSAM = sp.NSAM;
+			const epicsUInt64 soe_ts = fmt_ts +
 						soe_lut[soe_row].offset_us;
-				int bsi =    // buffer sample index in samples
-					find_event_in_buf(kbuf, NSAM, soe_ts);
-				if (bsi >= 0){
-					build_hold_entry(kbuf, sp,
-							FMT_rx->fmt[fmt_row],
-							soe_lut[soe_row],
-							bsi);
-					rc.events_accepted++;
-				}else{
-					;
-				}
+
+			int bsi = find_event_in_buf(kbuf, NSAM, soe_ts);
+			if (bsi >= 0){
+				build_hold_entry(kbuf, sp,
+						FMT_rx->fmt[fmt_row],
+						soe_lut[soe_row],
+						bsi,
+						ht,
+						rc.events_accepted++);
 			}else{
-				;   // keep searching
+				;
 			}
 		}
 	}
 
 	return rc;
-	/*
-	const int SSS = samplePrams.SSB/sizeof(short);
-	const int SSL = samplePrams.SSB/sizeof(long);
-	short* ai_raw = (short*)raw;
-	int * di_raw = (int*)raw + samplePrams.DI_INDEX;
-	int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
-	*/
 }
 
 #define MARK	fprintf(stderr, "%s %d\n", FN, __LINE__)
@@ -189,6 +207,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 
 	if (FMT_rx->waitFMT(CYCLE_MS) == 0){
 		const epicsInt64 fmt_ts = FMT_rx->fmt[0].timestamp;
+		ht_data_offset = offsetof(SOE_HOLD_TABLE, data)/sizeof(long);
 
 		if (fmt_ts < kbuf.wrt0-CYCLE_MS*1000){
 			return { E_FMT_TS_TOO_LATE, 0, kbuf.wrt0-fmt_ts };

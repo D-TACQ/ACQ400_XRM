@@ -174,6 +174,7 @@ protected:
 	unsigned update;
 	unsigned fmt_rx_timeouts;
 	unsigned fmt_rx_success;
+	int hold_row_limit;
 	static int nice;
 
 	SamplePrams samplePrams;
@@ -267,6 +268,10 @@ protected:
 public:
 	acq400_SOE(const char *portName, acq400_SOE_Strategy& strategy);
 	virtual ~acq400_SOE() {}
+
+	void clearHold() {
+		the_hold_table->entries[0].pv_id = 0;
+	}
 
 	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
 
