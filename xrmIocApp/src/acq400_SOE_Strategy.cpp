@@ -129,7 +129,8 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 		SOE_HOLD_TABLE* ht)
 /* FMT, SOE_LUT assumed to be sorted by event */
 {
-	acq400_SOE_Strategy::RC rc = { SOE_SUCCESS, 0, kbuf.wrt0 };
+	/* always "SOE_SUCCESS" because the FMT and KBUF TS matched */
+	acq400_SOE_Strategy::RC rc = { SOE_SUCCESS, 0, FMT_rx->fmt[0].timestamp-kbuf.wrt0 };
 
 
 	for (int fmt_row = 0; fmt_row < FMT_ROWS; ++fmt_row){
@@ -156,6 +157,8 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 							soe_lut[soe_row],
 							bsi);
 					rc.events_accepted++;
+				}else{
+					;
 				}
 			}else{
 				;   // keep searching
