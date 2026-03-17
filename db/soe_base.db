@@ -25,6 +25,12 @@ record(mbbo, "${UUT}:SOE:STRATEGY")
 	field(THST, "Copy64(stride=5)")
 	field(FRST, "Copy64(stride=10)")
 	field(FVST, "Copy64(stride=20)")
+	field(ZRVL, "0")
+	field(ONVL, "1")
+	field(TWVL, "2")
+	field(THVL, "3")
+	field(FRVL, "4")
+	field(FVVL, "5")
 }
 record(longin, "${UUT}:SOE:UPDATES")
 {
