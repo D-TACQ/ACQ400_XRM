@@ -78,7 +78,7 @@ class LutFmtStrategy1 : public acq400_SOE_Strategy
 	acq400_FMT_rx* FMT_rx;
 	acq400_SOE_Strategy::RC soe_lut_lookup (
 			const KBUF& kbuf,
-			const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
+			const SamplePrams& sp, const SOE_LUT& soe_lut,
 			SOE_HOLD_TABLE* ht);
 
 	int find_event_in_buf(
@@ -125,7 +125,7 @@ int  LutFmtStrategy1::build_hold_entry(
 }
 acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 		const KBUF& kbuf,
-		const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
+		const SamplePrams& sp, const SOE_LUT& soe_lut,
 		SOE_HOLD_TABLE* ht)
 /* FMT, SOE_LUT assumed to be sorted by event */
 {
@@ -145,13 +145,13 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 			}else if (soe_lut_event > fmt_event){
 				break;
 			}else if (soe_lut_event == fmt_event){
-				const int NSAM = samplePrams.NSAM;
+				const int NSAM = sp.NSAM;
 				const epicsUInt64 soe_ts = fmt_ts +
 						soe_lut[soe_row].offset_us;
-				int bsi;    // buffer sample index in samples
-				if ((bsi = find_event_in_buf(
-						kbuf, NSAM, soe_ts)) >= 0){
-					build_hold_entry(kbuf, samplePrams,
+				int bsi =    // buffer sample index in samples
+					find_event_in_buf(kbuf, NSAM, soe_ts);
+				if (bsi >= 0){
+					build_hold_entry(kbuf, sp,
 							FMT_rx->fmt[fmt_row],
 							soe_lut[soe_row],
 							bsi);
