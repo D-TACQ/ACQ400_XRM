@@ -129,12 +129,13 @@ int  LutFmtStrategy1::build_hold_entry(
 {
 	const int SSB = samplePrams.SSB;
 	const int SSL = SSB/sizeof(long);
-	const unsigned* sample_raw = (const unsigned*)kbuf.raw + bsi;
+	const unsigned* sample_raw = (const unsigned*)kbuf.raw + bsi*SSL;
 	const unsigned* sample_sp0 = sample_raw + samplePrams.SP_INDEX;
 	struct SOE_HOLD_HEADER& entry(ht->entries[ihold]);
 
 	entry.pv_id = lut_row.pv_id;
-	entry.client_data = fmt_row.client_data;
+	//entry.client_data = fmt_row.client_data;
+	entry.client_data = bsi;
 	entry.timestamp = fmt_row.timestamp;
 	entry.data_offset = ht_data_offset;
 	entry.ss_u32 = SSL;
