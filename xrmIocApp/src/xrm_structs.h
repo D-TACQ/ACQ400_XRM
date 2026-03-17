@@ -13,12 +13,22 @@
 /* FMT : FNAL Multicast Table
  * input from plant: 20Hz
  */
+
 struct FMT_ROW {
 	epicsUInt16 event;           // FNAL Event number
 	epicsUInt16 pad;             // 32 bit alignment is best, available for future
 	epicsUInt32 client_data;     // opaque value to pass back
-	epicsUInt64 timestamp;       // WR usec from EPOCH
+	epicsInt64 timestamp;       // WR usec from EPOCH **
 };
+
+/* ** we're losing one bit here, but it's OK, we have time..
+ * >>> usec_per_year=365*24*3600*1000
+ * >>> max_int64 = 2**63
+ * max_int64//usec_per_year
+292471208
+ * this is probably why CERN has integer nsec :-)
+ */
+const epicsUInt16 EV99 = 65535U;	     // denotes last event in table.
 
 const int FMT_ROWS = 64;
 //#define FMT_ROWS 64
@@ -47,7 +57,7 @@ typedef struct SOE_LUT_ROW  SOE_LUT[SOE_LUT_ROWS];
 struct SOE_HOLD_HEADER {
 	epicsUInt32 pv_id;		// links Event and Offset
 	epicsUInt32 client_data;	// copied from FMT (if required)
-	epicsUInt64 timestamp;		// cross check: which FMT update this derives from.
+	epicsInt64 timestamp;		// cross check: which FMT update this derives from.
 	epicsUInt16 data_offset;	// offset in u32 in data array
 	/* description of raw sample from hardware
 	 * it's not totally raw because all AI are presented as calibrated V.

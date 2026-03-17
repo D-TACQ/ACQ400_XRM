@@ -80,6 +80,26 @@ class LutFmtStrategy1 : public acq400_SOE_Strategy
 			const KBUF& kbuf,
 			const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 			SOE_HOLD_TABLE* ht);
+
+	int find_event_in_buf(
+			const KBUF& kbuf,
+			const int ndata,
+			epicsInt64 ev_ts)
+	/* return sample index to data in buffer */
+	{
+		if (ev_ts >= kbuf.wrt0 && ev_ts <= kbuf.wrt1){
+			return ndata*(ev_ts - kbuf.wrt0)/
+					(kbuf.wrt1 - kbuf.wrt0);
+		}
+		return -1;
+	}
+
+	int build_hold_entry(
+			const KBUF& kbuf,
+			const SamplePrams& samplePrams,
+			const FMT_ROW& fmt_row,
+			const SOE_LUT_ROW& lut_row,
+			int bsi);
 public:
 	LutFmtStrategy1() :
 		FMT_rx(0)
@@ -92,14 +112,58 @@ public:
 
 #define CYCLE_MS	50		// @@todo make me programmable
 
+
+int  LutFmtStrategy1::build_hold_entry(
+		const KBUF& kbuf,
+		const SamplePrams& samplePrams,
+		const FMT_ROW& fmt_row,
+		const SOE_LUT_ROW& lut_row,
+		int bsi)
+/* return sample index to data in buffer */
+{
+	return 0;
+}
 acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 		const KBUF& kbuf,
 		const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
 		SOE_HOLD_TABLE* ht)
+/* FMT, SOE_LUT assumed to be sorted by event */
 {
-	const epicsInt64 fmt_ts = FMT_rx->fmt[0].timestamp;
-	int events_processed = 0;
+	acq400_SOE_Strategy::RC rc = { SOE_SUCCESS, 0, kbuf.wrt0 };
 
+
+	for (int fmt_row = 0; fmt_row < FMT_ROWS; ++fmt_row){
+		const epicsUInt64 fmt_ts = FMT_rx->fmt[fmt_row].timestamp;
+		const epicsUInt16 fmt_event = FMT_rx->fmt[fmt_row].event;
+		if (fmt_event == EV99){
+			break;
+		}
+		for (int soe_row = 0; soe_row < SOE_LUT_ROWS; ++soe_row){
+			const epicsUInt16 soe_lut_event = soe_lut[soe_row].event;
+			if (soe_lut_event == EV99){
+				break;
+			}else if (soe_lut_event > fmt_event){
+				break;
+			}else if (soe_lut_event == fmt_event){
+				const int NSAM = samplePrams.NSAM;
+				const epicsUInt64 soe_ts = fmt_ts +
+						soe_lut[soe_row].offset_us;
+				int bsi;    // buffer sample index in samples
+				if ((bsi = find_event_in_buf(
+						kbuf, NSAM, soe_ts)) >= 0){
+					build_hold_entry(kbuf, samplePrams,
+							FMT_rx->fmt[fmt_row],
+							soe_lut[soe_row],
+							bsi);
+					rc.events_accepted++;
+				}
+			}else{
+				;   // keep searching
+			}
+		}
+	}
+
+	return rc;
 	/*
 	const int SSS = samplePrams.SSB/sizeof(short);
 	const int SSL = samplePrams.SSB/sizeof(long);
@@ -107,8 +171,6 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 	int * di_raw = (int*)raw + samplePrams.DI_INDEX;
 	int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
 	*/
-
-	return { SOE_SUCCESS, events_processed, fmt_ts-kbuf.wrt0 };
 }
 
 #define MARK	fprintf(stderr, "%s %d\n", FN, __LINE__)

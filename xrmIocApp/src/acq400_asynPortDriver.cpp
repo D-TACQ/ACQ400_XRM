@@ -65,6 +65,7 @@ asynStatus acq400_asynPortDriver::sip(int addr, int pnum, epicsInt64 pram)
 	}
 	return status;
 }
+
 asynStatus acq400_asynPortDriver::gsp(int pnum, int maxchar, char* str)
 {
 	asynStatus status = getStringParam(pnum, 80, str);

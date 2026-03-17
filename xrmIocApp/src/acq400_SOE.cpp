@@ -187,7 +187,7 @@ void acq400_SOE::init_the_hold_table()
 
 	memset(the_hold_table, 0, maxb);
 
-	fprintf(stderr, "%s sizeof(SOE_HOLD_TABLE) %u ssb:%d maxb:%d\n",
+	fprintf(stderr, "%s sizeof(SOE_HOLD_TABLE) %lu ssb:%d maxb:%d\n",
 			FN, sizeof(SOE_HOLD_TABLE), samplePrams.SSB, maxb);
 }
 
