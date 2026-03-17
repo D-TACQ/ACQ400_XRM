@@ -18,6 +18,7 @@
 #include "xrm_structs.h"
 #include "acq400_FMT.h"
 
+#define PS_SOE_STRATEGY		 "SOE_STRATEGY"        /* select LUT strategy 0,1.. */
 
 #define PS_SOE_LUT_COL_ROWNUM	 "SOE_LUT_COL_ROWNUM"  /* cosmetic for display, NOT part of FMT */
 #define PS_SOE_LUT_COL_EVENT	 "SOE_LUT_COL_EVENT"  	/* asynInt16Array, ro */
@@ -128,7 +129,7 @@ public:
 	/** implements strategy, .. waitFMT, compare LUT, look up data in raw and build output <ht> */
 	virtual RC operator() (const KBUF& kbuf, const SamplePrams& sp, const SOE_LUT& soe_lut, SOE_HOLD_TABLE* ht) = 0;
 
-	static acq400_SOE_Strategy& factory();
+	static acq400_SOE_Strategy** factory();
 
 	enum ERR_CODES {
 		SOE_SUCCESS = 0,
@@ -143,7 +144,7 @@ protected:
 	SOE_LUT soe_lut;
 	SOE_HOLD_TABLE* the_hold_table;   // preallocate the max possible size
 
-	acq400_SOE_Strategy& strategy;
+	acq400_SOE_Strategy* strategy;
 
 	/* TABLE representation for Phoebus */
 	struct COLUMNS {
@@ -203,6 +204,8 @@ protected:
 	int P_RUNSTOP;
 	int P_UPDATES;
 	int P_TS_USEC;
+
+	int P_SOE_STRATEGY;
 
 
 	int P_SOE_LUT_COL_ROWNUM;
@@ -266,7 +269,7 @@ protected:
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
 public:
-	acq400_SOE(const char *portName, acq400_SOE_Strategy& strategy);
+	acq400_SOE(const char *portName, acq400_SOE_Strategy* strategy);
 	virtual ~acq400_SOE() {}
 
 	void clearHold() {

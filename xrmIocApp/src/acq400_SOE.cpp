@@ -27,7 +27,7 @@ static const char *driverName="acq400_SOE";
 
 int acq400_SOE::nice = ::getenv_default("acq400_SOE_NICE", 0);
 
-acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy& _strategy):
+acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	acq400_asynPortDriver(portName,
 	/* maxAddr */		SOE_HLD_ROWS,    /* nchan from 0 */
 	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
@@ -73,6 +73,8 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy& _strategy):
 	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
 	createParam(PS_UPDATES,  asynParamInt32,        &P_UPDATES);
 	createParam(PS_TS_USEC,  asynParamInt64,	&P_TS_USEC);
+
+	createParam(PS_SOE_STRATEGY, asynParamInt32,  &P_SOE_STRATEGY);
 
 	createParam(PS_SOE_AGG_SITES,		asynParamOctet,      &P_SOE_AGG_SITES);
 	createParam(PS_SOE_SITE_SSB,		asynParamInt32,      &P_SOE_SITE_SSB);
@@ -384,7 +386,7 @@ void acq400_SOE::task()
 			update_kbuf_info(raw);
 
 			const acq400_SOE_Strategy::RC rc =
-					strategy(current_kb, samplePrams,
+					(*strategy)(current_kb, samplePrams,
 						 soe_lut, the_hold_table);
 
 			sip(0, P_SOE_FMT_RX_TIMEOUT_REASON, rc.status);
@@ -475,6 +477,17 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	        if (value) epicsEventSignal(eventId);
 	    }else if (function == P_SOE_LUT_REDIT_COMMIT){
 		    redit();
+	    }else if (function == P_SOE_STRATEGY){
+		   acq400_SOE_Strategy** strategies = acq400_SOE_Strategy::factory();
+		   status = asynError;
+
+		   for (int ii = 0; strategies[ii] != 0; ++ii){
+			   if (value == ii){
+				   strategy = strategies[ii];
+				   status = asynSuccess;
+				   break;
+			   }
+		   }
 	    }
 
 	    /* Do callbacks so higher layers see any changes */
@@ -499,7 +512,7 @@ extern "C" {
 	{
 		printf("%s:%s R1001 %s\n", DN, FN, portName);
 
-		new acq400_SOE(portName, acq400_SOE_Strategy::factory());
+		new acq400_SOE(portName, acq400_SOE_Strategy::factory()[0]);
 		return 0;
 	}
 

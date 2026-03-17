@@ -26,11 +26,17 @@ static const char *driverName="acq400_SOE";
 /* copy first 64 samples to output, together with first 64 SOE_LUT entries, no FMT matchup */
 class NullStrategy : public acq400_SOE_Strategy
 {
+	const int stride;
+
 	virtual acq400_SOE_Strategy::RC operator() (
 			const KBUF& kbuf,
 			const SamplePrams& samplePrams,
 			const SOE_LUT& soe_lut,
 			SOE_HOLD_TABLE* ht);
+	NullStrategy(int _stride = 1):
+		acq400_SOE_Strategy(),
+		stride(_stride)
+	{}
 };
 
 acq400_SOE_Strategy::RC NullStrategy::operator() (
@@ -56,7 +62,7 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 	unsigned short ht_data_offset = offsetof(SOE_HOLD_TABLE, data)/sizeof(long);
 
 	for (int row = 0; row < SOE_HLD_ROWS; ++row,
-			ht_data_offset += SSL, sp_raw += SSL, raw += SSB){
+			ht_data_offset += SSL*stride, sp_raw += SSL*stride, raw += SSB*stride){
 		unsigned wrs, wrv;
 
 		ht->entries[row].pv_id = soe_lut[row].pv_id;
@@ -226,16 +232,18 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 
 
 
-acq400_SOE_Strategy& acq400_SOE_Strategy::factory()
+acq400_SOE_Strategy** acq400_SOE_Strategy::factory()
 {
-	const char* sel = ::getenv("acq400_SOE_Strategy");
-
-	if (sel != 0){
-		if (strcmp(sel, "LUT_FMT1") == 0){
-			return *new LutFmtStrategy1();
-		}
-		// else could be others ..
+	static acq400_SOE_Strategy* strategies[10] = { 0, };
+	if (strategies[0] == 0){
+		int is = 0;
+		strategies[is++] = new LutFmtStrategy1();
+		strategies[is++] = new NullStrategy(1);
+		strategies[is++] = new NullStrategy(2);
+		strategies[is++] = new NullStrategy(5);
+		strategies[is++] = new NullStrategy(10);
+		strategies[is++] = new NullStrategy(20);
 	}
-	return *new NullStrategy();
+	return strategies;
 }
 

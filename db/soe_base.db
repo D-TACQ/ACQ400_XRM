@@ -10,6 +10,22 @@ record(bo, "${UUT}:SOE:RUNSTOP")
 	field(ONAM, "RUN")
 	field(VAL,  "0")
 }
+
+record(mbbo, "${UUT}:SOE:STRATEGY")
+{
+	field(PINI, "YES")
+	field(VAL,  "0")
+	field(DTYP, "asynInt32")
+	#field(DTYP, "asynEnum")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_STRATEGY")
+	field(NOBT, "3")
+	field(ZRST, "LutFmtStrategy1")
+	field(ONST, "Copy64(stride=1)")
+	field(TWST, "Copy64(stride=2)")
+	field(THST, "Copy64(stride=5)")
+	field(FRST, "Copy64(stride=10)")
+	field(FVST, "Copy64(stride=20)")
+}
 record(longin, "${UUT}:SOE:UPDATES")
 {
 	field(PINI, "NO")
