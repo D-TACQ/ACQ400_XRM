@@ -45,7 +45,7 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	fmt_rx_timeouts(0), fmt_rx_success(0),
 	hold_row_limit(SOE_HLD_ROWS)
 {
-	fprintf(stderr, "%s R1020\n", FN);
+	fprintf(stderr, "%s R1021\n", FN);
 	asynStatus status = asynSuccess;
 	memset(soe_lut, 0, sizeof(soe_lut));
 
@@ -192,6 +192,12 @@ void acq400_SOE::init_the_hold_table()
 
 	fprintf(stderr, "%s sizeof(SOE_HOLD_TABLE) %lu ssb:%d maxb:%d\n",
 			FN, sizeof(SOE_HOLD_TABLE), samplePrams.SSB, maxb);
+}
+
+void acq400_SOE::clearHold() {
+	for (int row = 0; row < SOE_HLD_ROWS; ++row){
+		the_hold_table->entries[row].pv_id = 0;
+	}
 }
 
 // @@todo replace with HAS_ES PV!

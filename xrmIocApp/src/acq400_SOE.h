@@ -272,9 +272,7 @@ public:
 	acq400_SOE(const char *portName, acq400_SOE_Strategy* strategy);
 	virtual ~acq400_SOE() {}
 
-	void clearHold() {
-		the_hold_table->entries[0].pv_id = 0;
-	}
+	void clearHold();
 
 	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
 
