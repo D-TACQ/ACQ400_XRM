@@ -49,16 +49,35 @@ const int SOE_LUT_ROWS = 64;
 
 typedef struct SOE_LUT_ROW  SOE_LUT[SOE_LUT_ROWS];
 
-/* SOE HOLD TABLE
+/** SOE HOLD TABLE
  * This is the OUTPUT from each CYCLE
- * First, a max 64 element array of headers, then N fixed size rows of channel data.
+ * For N events, the OUTPUT comprises:
+ * N+1 SOE_HOLD_HEADER rows, headers for N events + 1 row of zeros
+ * N RAW SAMPLE rows.
+ * The RAW SAMPLE row varies per unit type, the fixed header includes info to access the RAW SAMPLE.
+ * We prefer to offer the RAW sample because
+ * 1. Blitting off a row of data is our most efficient transfer
+ * 2. No conversion to EGU's. User to do that thanks to $UUT:*:EOFF,ESLO
+ * 3. RAW sample includes METADATA for checking purposes.
+ *
+ * To interpret a received HOLD DATA:
+ * iterate the SOE_HOLD_HEADER rows until zero
+ * use data_offset to access the data.
+ *
+ * Actual wire protocol:
+ * We meet the letter of the requirement by sending as a PVA ARRAY of U32
+ * where NORD gives the overall size of the table, including DATA.
+ *
+ * We've attempted to meet the spirit of the requirement using the PVXS API
+ * to create an Array of Groups, but this has not been a success.
+ * Happy to revisit later when we have an example that works.
  */
 
 struct SOE_HOLD_HEADER {
 	epicsUInt32 pv_id;		// links Event and Offset
 	epicsUInt32 client_data;	// copied from FMT (if required)
 	epicsInt64 timestamp;		// cross check: which FMT update this derives from.
-	epicsUInt16 data_offset;	// offset in u32 in data array
+	epicsUInt16 data_offset;	// offset of RAW DATA in u32 from start of table.
 	/* description of raw sample from hardware
 	 * it's not totally raw because all AI are presented as calibrated V.
 	 * but after that a series of U32 representing DI, SPAD
@@ -77,11 +96,13 @@ const int SOE_HLD_ROWS = 64;
 
 
 
-
+/* @@REMOVE me: this doesn't reflect what happens on the wire. */
 typedef struct {
 	struct SOE_HOLD_HEADER entries[SOE_HLD_ROWS];
 	epicsUInt32 data[1];             // first data word. Many more to follow
 } SOE_HOLD_TABLE;
+
+
 
 /* actual sample data:
  */
