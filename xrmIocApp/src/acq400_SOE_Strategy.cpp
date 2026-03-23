@@ -23,6 +23,9 @@ static const char *driverName="acq400_SOE";
 #define DN	driverName
 #define FN	__FUNCTION__
 
+
+#define MARK	fprintf(stderr, "%s %d\n", FN, __LINE__)
+
 /* copy first 64 samples to output, together with first 64 SOE_LUT entries, no FMT matchup */
 class NullStrategy : public acq400_SOE_Strategy
 {
@@ -76,7 +79,7 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 		ht[row].data_offset = ht_data_offset;
 		memcpy((U32*)ht+ht_data_offset, raw, SSB);
 	}
-	return { 0, 0, 0 };
+	return { 0, 0, 0, ht_data_offset };
 }
 
 
@@ -163,6 +166,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 
 	int bsi_entries[SOE_HLD_ROWS];
 	int fmt_row = 0;
+	int imatch = 0;
 
 	for (; fmt_row < FMT_ROWS; ++fmt_row){
 		const epicsUInt64 fmt_ts = FMT_rx->fmt[fmt_row].timestamp;
@@ -192,17 +196,25 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 						bsi,
 						ht,
 						rc.events_accepted++);
-				bsi_entries[fmt_row] = bsi;
+				bsi_entries[imatch++] = bsi;
 			}else{
 				;
 			}
 		}
 	}
-	int ht_data_offset = ((char*)ht+fmt_row+1-(char*)ht)/sizeof(long);
-	for (int ii = 0; ii < fmt_row; ++ii, ht_data_offset += SSL){
+
+	int ht_data_offset = (imatch+1)*sizeof(SOE_HOLD_HEADER)/sizeof(U32);
+
+	for (int ii = 0; ii < imatch; ++ii, ht_data_offset += SSL){
+		const unsigned* sample_raw = (const U32*)kbuf.raw + bsi_entries[ii]*SSL;
+/*
+		fprintf(stderr, "%s raw:%p from %p + %d\n",
+				sample_raw, kbuf.raw, bsi_entries[ii]*SSL);
+		fprintf(stderr, "%s memcpy( %p, %p, %d)\n",
+				FN, (U32*)ht + ht_data_offset, sample_raw, SSB);
+*/
+		memcpy((U32*)ht + ht_data_offset, sample_raw, SSB);
 		ht[ii].data_offset = ht_data_offset;
-		const unsigned* sample_raw = (const unsigned*)kbuf.raw + bsi_entries[ii]*SSL;
-		memcpy((long*)ht + ht_data_offset, sample_raw, SSB);
 	}
 	rc.ht_size32 = ht_data_offset;
 	return rc;
