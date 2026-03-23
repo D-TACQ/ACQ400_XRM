@@ -106,14 +106,9 @@ typedef struct SOE_HOLD_HEADER* SOE_HOLD_TABLE;   // many more than 1 of course.
 
 /* For data allocation, what is the MAXIMUM size of table: */
 
-const int sizeof_AI = 2;
-const int sizeof_DI = 4;
-const int sizeof_SP = 4;
-const int HOLD_MAXRAW = (128*sizeof_AI + 2*sizeof_DI + 14*sizeof_SP);
-
-const int HOLD_DATA_OFF = ((SOE_HLD_ROWS+1)*sizeof(SOE_HOLD_HEADER));
-const int HOLD_MAXSIZE = (HOLD_DATA_OFF+SOE_HLD_ROWS*HOLD_MAXRAW);
-const int HOLD_MAX_NELM = HOLD_MAXSIZE/sizeof(long);
+static inline const int HOLD_DATA_OFF = ((SOE_HLD_ROWS+1)*sizeof(SOE_HOLD_HEADER));
+static inline const int HOLD_MAXSIZE(unsigned ssb) { return  HOLD_DATA_OFF + SOE_HLD_ROWS*ssb; }
+static inline const int HOLD_MAX_NELM(unsigned ssb) { return HOLD_MAXSIZE(ssb)/sizeof(long); }
 
 
 

@@ -45,7 +45,7 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	fmt_rx_timeouts(0), fmt_rx_success(0),
 	hold_row_limit(SOE_HLD_ROWS)
 {
-	fprintf(stderr, "%s R1030\n", FN);
+	fprintf(stderr, "%s R1031\n", FN);
 	asynStatus status = asynSuccess;
 	memset(soe_lut, 0, sizeof(soe_lut));
 
@@ -185,12 +185,13 @@ void acq400_SOE::update_soe_lut_callbacks(void)
 
 void acq400_SOE::init_the_hold_table()
 {
-	the_hold_table = (SOE_HOLD_TABLE)(new unsigned[HOLD_MAX_NELM]);
+	const int SSB = samplePrams.SSB;
+	the_hold_table = (SOE_HOLD_TABLE)(new unsigned[HOLD_MAX_NELM(SSB)]);
 
-	memset(the_hold_table, 0, HOLD_MAXSIZE);
+	memset(the_hold_table, 0, HOLD_MAXSIZE(SSB));
 
 	fprintf(stderr, "%s SOE_HLD_ROWS %d ssb:%d maxb:%d\n",
-			FN, SOE_HLD_ROWS, samplePrams.SSB, HOLD_MAXSIZE);
+			FN, SOE_HLD_ROWS, SSB, HOLD_MAXSIZE(SSB));
 }
 
 void acq400_SOE::clearHold() {
