@@ -45,7 +45,7 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	fmt_rx_timeouts(0), fmt_rx_success(0),
 	hold_row_limit(SOE_HLD_ROWS)
 {
-	fprintf(stderr, "%s R1032\n", FN);
+	fprintf(stderr, "%s R1033\n", FN);
 	asynStatus status = asynSuccess;
 	memset(soe_lut, 0, sizeof(soe_lut));
 
@@ -249,7 +249,7 @@ void acq400_SOE::update_hld_tab_columns()
 
 void acq400_SOE::update_hld_tab_callbacks(int n_u32)
 {
-	fprintf(stderr, "%s: NORD:%d\n", FN, n_u32);
+	//fprintf(stderr, "%s: NORD:%d\n", FN, n_u32);
 	doCallbacksInt32Array((epicsInt32*)the_hold_table, n_u32, P_SOE_HLD_TABLE_WF, 0);
 }
 void acq400_SOE::update_hld_tab_columns_callbacks(void)
@@ -411,16 +411,20 @@ void acq400_SOE::task()
 
 				lock();
 				callParamCallbacks();
+				update_soe_lut_callbacks();
 				unlock();
 			}else{
 				sip(0, P_SOE_FMT_RX_SUCCESS, ++fmt_rx_success);
-				update_hld_tab_columns();
+
 				lock();
 				callParamCallbacks();
-				update_hld_tab_callbacks(rc.ht_size32);
+				if (rc.events_accepted != 0){
+					update_hld_tab_callbacks(rc.ht_size32);
+				}
 				update_soe_lut_callbacks();
 				unlock();
 				/* now lower priority .. maybe at subrate? */
+				update_hld_tab_columns();
 				lock();
 				update_hld_tab_columns_callbacks();
 				unlock();

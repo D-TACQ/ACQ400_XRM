@@ -141,6 +141,7 @@ public:
 		E_TIMEOUT = 1,
 		E_FMT_TS_TOO_EARLY = 2,
 		E_FMT_TS_TOO_LATE = 3,
+		E_FMT_NO_EVENTS_FOUND = 4,
 	};
 };
 

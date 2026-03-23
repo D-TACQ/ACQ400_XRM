@@ -229,6 +229,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 		memcpy((U32*)ht + ht_data_offset, sample_raw, SSB);
 		ht[ii].data_offset = ht_data_offset;
 	}
+
 	rc.ht_size32 = ht_data_offset;
 	/*
 	fprintf(stderr, "%s returning STATUS:%d, ACCEPT:%d, EV_NIB:%d DUS:%lld, SZ:%d\n",
