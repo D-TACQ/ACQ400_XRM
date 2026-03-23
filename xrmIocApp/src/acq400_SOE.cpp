@@ -218,7 +218,6 @@ void acq400_SOE::update_hld_tab_columns()
 		int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
 
 		if (the_hold_table->entries[row].pv_id == 0){
-			++row;
 			break;
 		}
 		hold_cols.c_pv_id[row] = the_hold_table->entries[row].pv_id;
