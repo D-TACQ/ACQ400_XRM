@@ -63,7 +63,7 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 	}
 	ht[0].client_data = kbuf.ib;
 
-	unsigned short ht_data_offset = HOLD_DATA_OFF/sizeof(U32);
+	unsigned short ht_data_offset = HOLD_DATA_OFF()/sizeof(U32);
 
 	for (int row = 0; row < SOE_HLD_ROWS; ++row,
 			ht_data_offset += SSL*stride, sp_raw += SSL*stride, raw += SSB*stride){
@@ -79,7 +79,15 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 		ht[row].data_offset = ht_data_offset;
 		memcpy((U32*)ht+ht_data_offset, raw, SSB);
 	}
-	return { 0, 0, 0, ht_data_offset };
+	ht_data_offset += SSL*stride;
+
+	acq400_SOE_Strategy::RC rc = {
+			SOE_SUCCESS, 0LL, ht_data_offset, SOE_HLD_ROWS, 0
+	};
+	fprintf(stderr, "%s returning %d, %d, %lld, %d\n", FN,
+				rc.status, rc.events_accepted, rc.delta_us, rc.ht_size32);
+
+	return rc;
 }
 
 
@@ -162,7 +170,10 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 	const int SSB = sp.SSB;
 	const int SSL = SSB/sizeof(long);
 	/* always "SOE_SUCCESS" because the FMT and KBUF TS matched */
-	acq400_SOE_Strategy::RC rc = { SOE_SUCCESS, 0, FMT_rx->fmt[0].timestamp-kbuf.wrt0 };
+	acq400_SOE_Strategy::RC rc = {
+				SOE_SUCCESS,
+				FMT_rx->fmt[0].timestamp-kbuf.wrt0,
+			};
 
 	int bsi_entries[SOE_HLD_ROWS];
 	int fmt_row = 0;
@@ -195,10 +206,12 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 						soe_lut[soe_row],
 						bsi,
 						ht,
-						rc.events_accepted++);
-				bsi_entries[imatch++] = bsi;
+						imatch);
+				bsi_entries[imatch] = bsi;
+				imatch += 1;
+				rc.events_accepted++;
 			}else{
-				;
+				rc.events_not_in_buffer++;
 			}
 		}
 	}
@@ -217,6 +230,12 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 		ht[ii].data_offset = ht_data_offset;
 	}
 	rc.ht_size32 = ht_data_offset;
+	/*
+	fprintf(stderr, "%s returning STATUS:%d, ACCEPT:%d, EV_NIB:%d DUS:%lld, SZ:%d\n",
+			FN,
+			rc.status, rc.events_accepted,
+			rc.events_not_in_buffer, rc.delta_us, rc.ht_size32);
+	*/
 	return rc;
 }
 
@@ -235,16 +254,16 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 		const epicsInt64 fmt_ts = FMT_rx->fmt[0].timestamp;
 
 		if (fmt_ts < kbuf.wrt0-CYCLE_MS*1000){
-			return { E_FMT_TS_TOO_LATE, 0, kbuf.wrt0-fmt_ts };
+			return { E_FMT_TS_TOO_LATE, kbuf.wrt0-fmt_ts, };
 		}else if (fmt_ts > kbuf.wrt1+CYCLE_MS*1000){
 			fprintf(stderr, "FMT TOO EARLY %llu > %llu by %llu\n",
 					fmt_ts, kbuf.wrt1, fmt_ts-kbuf.wrt1);
-			return { E_FMT_TS_TOO_EARLY, 0, fmt_ts-kbuf.wrt1};
+			return { E_FMT_TS_TOO_EARLY, fmt_ts-kbuf.wrt1, };
 		}else{
 			return soe_lut_lookup(kbuf, samplePrams, soe_lut, ht);
 		}
 	} else {
-		return { -E_TIMEOUT, 0, 0 };
+		return { -E_TIMEOUT, };
 	}
 }
 

@@ -39,8 +39,6 @@ void print(SOE_LUT& lut, bool verbose)
 
 void print(SOE_HOLD_HEADER* ht, bool verbose)
 {
-	int row = 0;
-
 	for (int row = 0; row < SOE_HLD_ROWS; ++row){
 		if (!ht[row].pv_id){
 			break;

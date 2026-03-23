@@ -97,6 +97,17 @@ record(longin, "${UUT}:SOE:FMT:EV_MATCHES")
 	field(DESC, "Number of Events matched this CYCLE")
 }
 
+record(longin, "${UUT}:SOE:FMT:EV_NIB")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_EV_NOT_IN_BUFFER")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+
+	field(DESC, "Number of Events NOT IN BUFFER")
+}
+
 
 record(int64in, "${UUT}:SOE:TS_USEC")
 {

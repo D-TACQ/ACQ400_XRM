@@ -104,10 +104,12 @@ typedef epicsUInt32 	U32;
 typedef struct SOE_HOLD_HEADER* SOE_HOLD_TABLE;   // many more than 1 of course..
 
 
-/* For data allocation, what is the MAXIMUM size of table: */
+/* For data allocation, what is the MAXIMUM size of table:
+ * HOLD_MAXSIZE = 64*20+64*(128*2+16*4) =  21760B = 6400LW
+ * */
 
-static inline const int HOLD_DATA_OFF = ((SOE_HLD_ROWS+1)*sizeof(SOE_HOLD_HEADER));
-static inline const int HOLD_MAXSIZE(unsigned ssb) { return  HOLD_DATA_OFF + SOE_HLD_ROWS*ssb; }
+static inline const int HOLD_DATA_OFF() { return (SOE_HLD_ROWS+1)*sizeof(SOE_HOLD_HEADER); };
+static inline const int HOLD_MAXSIZE(unsigned ssb) { return  HOLD_DATA_OFF() + SOE_HLD_ROWS*ssb; }
 static inline const int HOLD_MAX_NELM(unsigned ssb) { return HOLD_MAXSIZE(ssb)/sizeof(long); }
 
 

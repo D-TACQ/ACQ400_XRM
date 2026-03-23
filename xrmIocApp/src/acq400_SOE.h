@@ -97,6 +97,9 @@
 #define PS_SOE_FMT_DELTA_TS	"SOE_FMT_DELTA_TS"
 #define PS_SOE_FMT_RX_SUCCESS   "SOE_FMT_RX_SUCCESS"
 #define PS_SOE_FMT_EV_MATCHES   "SOE_FMT_EV_MATCHES"
+#define PS_SOE_FMT_EV_NIB	"SOE_FMT_EV_NOT_IN_BUFFER"
+
+#define PS_SOE_HLD_TABLE_WF	"SOE_HLD_TABLE_WF" // raw event table.
 
 struct SamplePrams {
 	int SSB;
@@ -123,9 +126,10 @@ class acq400_SOE_Strategy {
 public:
 	struct RC {
 		int status;
-		int events_accepted;
 		long long delta_us;
 		int ht_size32;
+		short events_accepted;
+		short events_not_in_buffer;
 	};
 	/** implements strategy, .. waitFMT, compare LUT, look up data in raw and build output <ht> */
 	virtual RC operator() (const KBUF& kbuf, const SamplePrams& sp, const SOE_LUT& soe_lut, SOE_HOLD_TABLE ht) = 0;
@@ -268,6 +272,8 @@ protected:
 	int P_SOE_FMT_DELTA_TS;
 	int P_SOE_FMT_RX_SUCCESS;
 	int P_SOE_FMT_EV_MATCHES;
+	int P_SOE_FMT_EV_NIB;
+	int P_SOE_HLD_TABLE_WF;
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
 public:
