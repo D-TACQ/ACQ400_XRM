@@ -121,9 +121,11 @@ xrmIoc_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 PROD_SYS_LIBS_DEFAULT += stream asyn pcre fftw3f
 
-PROD += acq400_HT_server
-acq400_HT_server_SRCS += acq400_HT_server.cpp
-acq400_HT_server_LIBS += $(EPICS_BASE_IOC_LIBS)
+# next stanza: create a standalone test app.
+# currently this doesn't compile! so leave it out!
+#PROD += acq400_HT_server
+#acq400_HT_server_SRCS += acq400_HT_server.cpp
+#acq400_HT_server_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 include $(TOP)/configure/RULES
 #----------------------------------------
