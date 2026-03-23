@@ -54,6 +54,10 @@ typedef struct SOE_LUT_ROW  SOE_LUT[SOE_LUT_ROWS];
  * For N events, the OUTPUT comprises:
  * N+1 SOE_HOLD_HEADER rows, headers for N events + 1 row of zeros
  * N RAW SAMPLE rows.
+ *
+ * The data structure has N fixed format HEADER, a delimiter tow and N raw sample entries.
+ * The HEADER includes the geometry of the raw sample entries, so the data is self-describing.
+ *
  * The RAW SAMPLE row varies per unit type, the fixed header includes info to access the RAW SAMPLE.
  * We prefer to offer the RAW sample because
  * 1. Blitting off a row of data is our most efficient transfer
@@ -94,13 +98,22 @@ const int SPAD1_TS = 1;                   // SPAD[1] is WR TS 3 bit seconds, 28 
 
 const int SOE_HLD_ROWS = 64;
 
+typedef epicsUInt32 	U32;
 
 
-/* @@REMOVE me: this doesn't reflect what happens on the wire. */
-typedef struct {
-	struct SOE_HOLD_HEADER entries[SOE_HLD_ROWS];
-	epicsUInt32 data[1];             // first data word. Many more to follow
-} SOE_HOLD_TABLE;
+typedef struct SOE_HOLD_HEADER* SOE_HOLD_TABLE;   // many more than 1 of course..
+
+
+/* For data allocation, what is the MAXIMUM size of table: */
+
+const int sizeof_AI = 2;
+const int sizeof_DI = 4;
+const int sizeof_SP = 4;
+const int HOLD_MAXRAW = (128*sizeof_AI + 2*sizeof_DI + 14*sizeof_SP);
+
+const int HOLD_DATA_OFF = ((SOE_HLD_ROWS+1)*sizeof(SOE_HOLD_HEADER));
+const int HOLD_MAXSIZE = (HOLD_DATA_OFF+SOE_HLD_ROWS*HOLD_MAXRAW);
+const int HOLD_MAX_NELM = HOLD_MAXSIZE/sizeof(long);
 
 
 
@@ -151,7 +164,7 @@ struct XRM_INST_B_SAMPLE {
 
 void print(FMT& fmt, bool verbose = false);
 void print(SOE_LUT& lut, bool verbose = false);
-void print(SOE_HOLD_TABLE& hold, bool verbose = false);
+void print(SOE_HOLD_HEADER* ht, bool verbose = false);
 
 
 

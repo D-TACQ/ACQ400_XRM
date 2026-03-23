@@ -125,9 +125,10 @@ public:
 		int status;
 		int events_accepted;
 		long long delta_us;
+		int ht_size32;
 	};
 	/** implements strategy, .. waitFMT, compare LUT, look up data in raw and build output <ht> */
-	virtual RC operator() (const KBUF& kbuf, const SamplePrams& sp, const SOE_LUT& soe_lut, SOE_HOLD_TABLE* ht) = 0;
+	virtual RC operator() (const KBUF& kbuf, const SamplePrams& sp, const SOE_LUT& soe_lut, SOE_HOLD_TABLE ht) = 0;
 
 	static acq400_SOE_Strategy** factory();
 
@@ -142,7 +143,7 @@ public:
 class acq400_SOE: public acq400_asynPortDriver {
 protected:
 	SOE_LUT soe_lut;
-	SOE_HOLD_TABLE* the_hold_table;   // preallocate the max possible size
+	SOE_HOLD_HEADER* the_hold_table;   // preallocate the max possible size. do it once!
 
 	acq400_SOE_Strategy* strategy;
 
@@ -189,7 +190,8 @@ protected:
 	virtual void update_soe_lut_callbacks(void);
 
 	virtual void update_hld_tab_columns(void);
-	virtual void update_hld_tab_callbacks(void);
+	virtual void update_hld_tab_callbacks(int n_u32);
+	virtual void update_hld_tab_columns_callbacks(void);
 
 	struct KBUF current_kb;
 	void update_kbuf_info(char* raw);

@@ -37,33 +37,40 @@ void print(SOE_LUT& lut, bool verbose)
 
 #define SHOW_SP	3   // always show this many SP32 values
 
-void print(SOE_HOLD_TABLE& hold, bool verbose)
+void print(SOE_HOLD_HEADER* ht, bool verbose)
 {
+	int row = 0;
+
 	for (int row = 0; row < SOE_HLD_ROWS; ++row){
-		if (hold.entries[row].pv_id){
-			printf("%2d: %10d 0x%08x %3d %2d %2d %llu\n",
-				row,
-				hold.entries[row].pv_id,
-				hold.entries[row].client_data,
-				hold.entries[row].data_offset,
-				hold.entries[row].ai_count,
-				hold.entries[row].di_count,
-				hold.entries[row].timestamp);
+		if (!ht[row].pv_id){
+			break;
 		}
+
+		printf("%2d: %10d 0x%08x %3d %2d %2d %llu\n",
+			row,
+			ht[row].pv_id,
+			ht[row].client_data,
+			ht[row].data_offset,
+			ht[row].ai_count,
+			ht[row].di_count,
+			ht[row].timestamp);
 	}
+
 	for (int row = 0; row < SOE_HLD_ROWS; ++row){
-		if (hold.entries[row].pv_id){
-			printf("%2d: ", row);
-			float* ai = (float*)((char*)&hold+hold.entries[row].data_offset);
-			for (int ic = 0; ic < hold.entries[row].ai_count; ++ic){
-				printf("%6.4f ", *ai++);
-			}
-			epicsUInt32* di = (epicsUInt32*)ai;
-			for (int ix = 0; ix < hold.entries[row].di_count+SHOW_SP; ++ix){
-				printf("0x%08x ", *di++);
-			}
-			printf("\n");
+		if (!ht[row].pv_id){
+			break;
 		}
+
+		printf("%2d: ", row);
+		short* ai = (short*)((long*)ht + ht[row].data_offset);
+		for (int ic = 0; ic < ht[row].ai_count; ++ic){
+			printf("%6.4f ", *ai++ * 10.0/32768);
+		}
+		epicsUInt32* di = (epicsUInt32*)ai;
+		for (int ix = 0; ix < ht[row].di_count+SHOW_SP; ++ix){
+			printf("0x%08x ", *di++);
+		}
+		printf("\n");
 	}
 }
 

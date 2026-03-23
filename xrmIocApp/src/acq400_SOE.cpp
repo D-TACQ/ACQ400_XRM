@@ -45,7 +45,7 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	fmt_rx_timeouts(0), fmt_rx_success(0),
 	hold_row_limit(SOE_HLD_ROWS)
 {
-	fprintf(stderr, "%s R1021\n", FN);
+	fprintf(stderr, "%s R1030\n", FN);
 	asynStatus status = asynSuccess;
 	memset(soe_lut, 0, sizeof(soe_lut));
 
@@ -185,18 +185,17 @@ void acq400_SOE::update_soe_lut_callbacks(void)
 
 void acq400_SOE::init_the_hold_table()
 {
-	int maxb = sizeof(SOE_HOLD_TABLE)+samplePrams.SSB * SOE_HLD_ROWS;
-	the_hold_table = (SOE_HOLD_TABLE*)new unsigned[maxb/sizeof(unsigned)];
+	the_hold_table = (SOE_HOLD_TABLE)(new unsigned[HOLD_MAX_NELM]);
 
-	memset(the_hold_table, 0, maxb);
+	memset(the_hold_table, 0, HOLD_MAXSIZE);
 
-	fprintf(stderr, "%s sizeof(SOE_HOLD_TABLE) %lu ssb:%d maxb:%d\n",
-			FN, sizeof(SOE_HOLD_TABLE), samplePrams.SSB, maxb);
+	fprintf(stderr, "%s SOE_HLD_ROWS %d ssb:%d maxb:%d\n",
+			FN, SOE_HLD_ROWS, samplePrams.SSB, HOLD_MAXSIZE);
 }
 
 void acq400_SOE::clearHold() {
 	for (int row = 0; row < SOE_HLD_ROWS; ++row){
-		the_hold_table->entries[row].pv_id = 0;
+		the_hold_table[row].pv_id = 0;
 	}
 }
 
@@ -208,21 +207,20 @@ static int SP1_SIM = 0;
 
 void acq400_SOE::update_hld_tab_columns()
 {
-	const int SSL = samplePrams.SSB/sizeof(long);
 	int row;
 
 	for (row = 0; row < SOE_HLD_ROWS; ++row){
-		unsigned* raw = the_hold_table->data+row*SSL;
+		if (the_hold_table[row].pv_id == 0){
+			break;
+		}
+		U32* raw = (U32*)the_hold_table + the_hold_table[row].data_offset;
 		short* ai_raw = (short*)raw;
 		int * di_raw = (int*)raw + samplePrams.DI_INDEX;
 		int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
 
-		if (the_hold_table->entries[row].pv_id == 0){
-			break;
-		}
-		hold_cols.c_pv_id[row] = the_hold_table->entries[row].pv_id;
-		hold_cols.c_client_data[row] = the_hold_table->entries[row].client_data;
-		hold_cols.c_timestamp[row] = the_hold_table->entries[row].timestamp;
+		hold_cols.c_pv_id[row] = the_hold_table[row].pv_id;
+		hold_cols.c_client_data[row] = the_hold_table[row].client_data;
+		hold_cols.c_timestamp[row] = the_hold_table[row].timestamp;
 
 		hold_cols.c_AI1[row] = ai_raw[0]*10.0/32768;
 		hold_cols.c_AI2[row] = ai_raw[1]*10.0/32768;
@@ -246,7 +244,11 @@ void acq400_SOE::update_hld_tab_columns()
 	hold_row_limit = row;
 }
 
-void acq400_SOE::update_hld_tab_callbacks(void)
+void acq400_SOE::update_hld_tab_callbacks(int n_u32)
+{
+	fprintf(stderr, "%s: NORD:%d\n", FN, n_u32);
+}
+void acq400_SOE::update_hld_tab_columns_callbacks(void)
 {
 	doCallbacksInt8Array(hold_cols.c_rownum, 	hold_row_limit, P_SOE_HLD_COL_ROWNUM, 0);
 	doCallbacksInt32Array(hold_cols.c_pv_id, 	hold_row_limit, P_SOE_HLD_COL_PV_ID, 0);
@@ -410,8 +412,12 @@ void acq400_SOE::task()
 				update_hld_tab_columns();
 				lock();
 				callParamCallbacks();
+				update_hld_tab_callbacks(rc.ht_size32);
 				update_soe_lut_callbacks();
-				update_hld_tab_callbacks();
+				unlock();
+				/* now lower priority .. maybe at subrate? */
+				lock();
+				update_hld_tab_columns_callbacks();
 				unlock();
 			}
 		}

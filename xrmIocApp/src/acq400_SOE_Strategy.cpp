@@ -32,7 +32,7 @@ class NullStrategy : public acq400_SOE_Strategy
 			const KBUF& kbuf,
 			const SamplePrams& samplePrams,
 			const SOE_LUT& soe_lut,
-			SOE_HOLD_TABLE* ht);
+			SOE_HOLD_TABLE ht);
 	NullStrategy(int _stride = 1):
 		acq400_SOE_Strategy(),
 		stride(_stride)
@@ -44,7 +44,7 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 		const KBUF& kbuf,
 		const SamplePrams& samplePrams,
 		const SOE_LUT& soe_lut,
-		SOE_HOLD_TABLE* ht)
+		SOE_HOLD_TABLE ht)
 {
 	const int SSB = samplePrams.SSB;
 	const int SSL = SSB/sizeof(long);
@@ -56,25 +56,25 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 
 	/* first 10 rows client_data becomes ib history for diags.. */
 	for (int ii = 10; ii; --ii){
-		ht->entries[ii].client_data = ht->entries[ii].client_data;
+		ht[ii].client_data = ht[ii-1].client_data;
 	}
-	ht->entries[0].client_data = kbuf.ib;
+	ht[0].client_data = kbuf.ib;
 
-	unsigned short ht_data_offset = offsetof(SOE_HOLD_TABLE, data)/sizeof(long);
+	unsigned short ht_data_offset = HOLD_DATA_OFF/sizeof(U32);
 
 	for (int row = 0; row < SOE_HLD_ROWS; ++row,
 			ht_data_offset += SSL*stride, sp_raw += SSL*stride, raw += SSB*stride){
 		unsigned wrs, wrv;
 
-		ht->entries[row].pv_id = soe_lut[row].pv_id;
+		ht[row].pv_id = soe_lut[row].pv_id;
 		// From FMT! ht->entries[row].client_data = soe_lut[row].client_data;
 
 		wrv = sp_raw[SP2];
 		wrs = sp_raw[SP3];
 
-		ht->entries[row].timestamp = getWrTs(wrs, wrv);
-		ht->entries[row].data_offset = ht_data_offset;
-		memcpy(ht->data+row*SSL, raw, SSB);
+		ht[row].timestamp = getWrTs(wrs, wrv);
+		ht[row].data_offset = ht_data_offset;
+		memcpy((U32*)ht+ht_data_offset, raw, SSB);
 	}
 	return { 0, 0, 0 };
 }
@@ -83,12 +83,11 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 class LutFmtStrategy1 : public acq400_SOE_Strategy
 {
 	acq400_FMT_rx* FMT_rx;
-	unsigned short ht_data_offset;
 
 	acq400_SOE_Strategy::RC soe_lut_lookup (
 			const KBUF& kbuf,
 			const SamplePrams& sp, const SOE_LUT& soe_lut,
-			SOE_HOLD_TABLE* ht);
+			SOE_HOLD_TABLE ht);
 
 	int find_event_in_buf(
 			const KBUF& kbuf,
@@ -109,7 +108,7 @@ class LutFmtStrategy1 : public acq400_SOE_Strategy
 			const FMT_ROW& fmt_row,
 			const SOE_LUT_ROW& lut_row,
 			int bsi,		// buffer sample index in samples
-			SOE_HOLD_TABLE* ht,
+			SOE_HOLD_TABLE ht,
 			int ihold);
 public:
 	LutFmtStrategy1() :
@@ -118,7 +117,7 @@ public:
 	virtual acq400_SOE_Strategy::RC operator() (
 			const KBUF& kbuf,
 			const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
-			SOE_HOLD_TABLE* ht);
+			SOE_HOLD_TABLE ht);
 friend class acq400_SOE_Strategy;
 };
 
@@ -131,42 +130,41 @@ int  LutFmtStrategy1::build_hold_entry(
 		const FMT_ROW& fmt_row,
 		const SOE_LUT_ROW& lut_row,
 		int bsi,			// buffer sample index in samples
-		SOE_HOLD_TABLE* ht,
+		SOE_HOLD_TABLE ht,
 		int ihold)
 /* return sample index to data in buffer */
 {
 	const int SSB = samplePrams.SSB;
 	const int SSL = SSB/sizeof(long);
-	const unsigned* sample_raw = (const unsigned*)kbuf.raw + bsi*SSL;
-	const unsigned* sample_sp0 = sample_raw + samplePrams.SP_INDEX;
-	struct SOE_HOLD_HEADER& entry(ht->entries[ihold]);
+	struct SOE_HOLD_HEADER& entry(ht[ihold]);
 
 	entry.pv_id = lut_row.pv_id;
 	//entry.client_data = fmt_row.client_data;
 	entry.client_data = bsi;
 	entry.timestamp = fmt_row.timestamp;
-	entry.data_offset = ht_data_offset;
+	// entry.data_offset set later
 	entry.ss_u32 = SSL;
 	entry.ai_count = samplePrams.AI_COUNT;
 	entry.di_count = samplePrams.DI_COUNT;
 	entry.sp_count = samplePrams.SP_COUNT;
-
-	memcpy(ht->data+ihold*SSL, sample_raw, SSB);
-
-	ht_data_offset += ihold*SSL;
 	return 0;
 }
+
 acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 		const KBUF& kbuf,
 		const SamplePrams& sp, const SOE_LUT& soe_lut,
-		SOE_HOLD_TABLE* ht)
+		SOE_HOLD_TABLE ht)
 /* FMT, SOE_LUT assumed to be sorted by event */
 {
+	const int SSB = sp.SSB;
+	const int SSL = SSB/sizeof(long);
 	/* always "SOE_SUCCESS" because the FMT and KBUF TS matched */
 	acq400_SOE_Strategy::RC rc = { SOE_SUCCESS, 0, FMT_rx->fmt[0].timestamp-kbuf.wrt0 };
 
+	int bsi_entries[SOE_HLD_ROWS];
+	int fmt_row = 0;
 
-	for (int fmt_row = 0; fmt_row < FMT_ROWS; ++fmt_row){
+	for (; fmt_row < FMT_ROWS; ++fmt_row){
 		const epicsUInt64 fmt_ts = FMT_rx->fmt[fmt_row].timestamp;
 		const epicsUInt16 fmt_event = FMT_rx->fmt[fmt_row].event;
 		if (fmt_event == EV99){
@@ -194,12 +192,19 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 						bsi,
 						ht,
 						rc.events_accepted++);
+				bsi_entries[fmt_row] = bsi;
 			}else{
 				;
 			}
 		}
 	}
-
+	int ht_data_offset = ((char*)ht+fmt_row+1-(char*)ht)/sizeof(long);
+	for (int ii = 0; ii < fmt_row; ++ii, ht_data_offset += SSL){
+		ht[ii].data_offset = ht_data_offset;
+		const unsigned* sample_raw = (const unsigned*)kbuf.raw + bsi_entries[ii]*SSL;
+		memcpy((long*)ht + ht_data_offset, sample_raw, SSB);
+	}
+	rc.ht_size32 = ht_data_offset;
 	return rc;
 }
 
@@ -208,7 +213,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 		const KBUF& kbuf,
 		const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
-		SOE_HOLD_TABLE* ht)
+		SOE_HOLD_TABLE ht)
 {
 	if (FMT_rx == 0){
 		FMT_rx = acq400_FMT_rx::instance();
@@ -216,7 +221,6 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 
 	if (FMT_rx->waitFMT(CYCLE_MS) == 0){
 		const epicsInt64 fmt_ts = FMT_rx->fmt[0].timestamp;
-		ht_data_offset = offsetof(SOE_HOLD_TABLE, data)/sizeof(long);
 
 		if (fmt_ts < kbuf.wrt0-CYCLE_MS*1000){
 			return { E_FMT_TS_TOO_LATE, 0, kbuf.wrt0-fmt_ts };
