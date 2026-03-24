@@ -161,6 +161,8 @@ int  LutFmtStrategy1::build_hold_entry(
 	return 0;
 }
 
+int G_raw_dump = ::getenv_default("acq400_SOE_Strategy_dump", 0);
+
 acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 		const KBUF& kbuf,
 		const SamplePrams& sp, const SOE_LUT& soe_lut,
@@ -237,6 +239,12 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 			rc.status, rc.events_accepted,
 			rc.events_not_in_buffer, rc.delta_us, rc.ht_size32);
 	*/
+	if (G_raw_dump){
+		FILE *fp = fopen("/tmp/ht.dat", "w");
+		assert(fp != 0);
+		fwrite(ht, sizeof(U32), rc.ht_size32, fp);
+		fclose(fp);
+	}
 	return rc;
 }
 

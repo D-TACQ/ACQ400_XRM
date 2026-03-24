@@ -197,9 +197,7 @@ void acq400_SOE::init_the_hold_table()
 }
 
 void acq400_SOE::clearHold() {
-	for (int row = 0; row < SOE_HLD_ROWS; ++row){
-		the_hold_table[row].pv_id = 0;
-	}
+	memset(the_hold_table, 0, HOLD_DATA_OFF());
 }
 
 // @@todo replace with HAS_ES PV!
