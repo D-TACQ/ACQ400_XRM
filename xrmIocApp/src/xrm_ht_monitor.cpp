@@ -27,54 +27,104 @@ acq2206_588:SOE_HLD
 
 
 int G_verbose = ::getenv_default("VERBOSE", 0);
+int G_updates = ::getenv_default("UPDATES", 0);
 
 #define MAXSIZE 65536    // if pvxmonitor output ever greater than this per line, we're in trouble
 
+char* indent(int delta)
+{
+	static char str[80];
+	static int level;
 
+	while(strlen(str) < level){
+		strcat(str, "\t");   // post increment from previous delta==1
+	}
 
+	switch(delta){
+	case 1:
+		++level; /* incr level for next time, no change to str this time */
+		break;
+	case 0:
+		break;	/* no change */
+	case -1:	/* reduce before */
+		if (level){
+			--level;
+			if (strlen(str) >= 1){
+				str[strlen(str)-1] = '\0';
+			}
+		}
+		break;
+	}
+	return str;
+}
+
+void print_intro()
+{
+	printf("%s{ \"HT\": [\n", indent(1));
+}
+void print_outro()
+{
+	printf("%s] }\n", indent(-1));
+}
+
+void print_header_intro()
+{
+	printf("%s " "{\n", indent(1));
+}
+void print_header_outro(bool not_final)
+{
+	printf("%s " "}%c\n", indent(-1), not_final? ',': ' ');
+}
 void print(SOE_HOLD_HEADER& header)
 {
-	printf("pv_id:		%u,\n", header.pv_id);
-	printf("client_data:	%u,\n", header.client_data);
-	printf("timestamp:	%llu,\n", header.timestamp);
-	printf("data_offset:	%u,\n", header.data_offset);
-	printf("ss_u32:		%u,\n", header.ss_u32);
-	printf("ai_count:	%u,\n", header.ai_count);
-	printf("di_count:	%u,\n", header.di_count);
-	printf("sp_count:	%u\n", header.sp_count);
 
+	printf("%s" "\"HDR\": {\n", indent(1));
+	printf("%s" "\"pv_id\":		%u,\n", indent(0), header.pv_id);
+	printf("%s" "\"client_data\":	%u,\n", indent(0), header.client_data);
+	printf("%s" "\"timestamp\":	%llu,\n", 	indent(0), header.timestamp);
+	printf("%s" "\"data_offset\":	%u,\n", indent(0), header.data_offset);
+	printf("%s" "\"ss_u32\":		%u,\n", indent(0), header.ss_u32);
+	printf("%s" "\"ai_count\":	%u,\n", indent(0), header.ai_count);
+	printf("%s" "\"di_count\":	%u,\n", indent(0), header.di_count);
+	printf("%s" "\"sp_count\":	%u\n", indent(0), header.sp_count);
+	printf("%s" "},\n", indent(-1));
 }
 void print(SOE_HOLD_HEADER& header, int* ht_data)
 {
+	printf("%s" "\"RAW\": {\n", indent(1));
 	short* ai16 = (short*)ht_data;
-	printf("ai16: [ ");
+	printf("%s" "\"ai16\": [ ", indent(0));
 	for (int ic = 0; ic < header.ai_count; ++ic){
-		printf("%d,", ai16[ic]);
+		printf("%d%c", ai16[ic], ic+1 < header.ai_count? ',': ' ');
 	}
-	printf(" ],\n");
-	printf("di32: [ ");
+	printf("],\n");
+	printf("%s" "\"di32\": [ ", indent(0));
 	unsigned* di32 = (unsigned*)ht_data + header.ai_count/2;
 	for (int id = 0; id < header.di_count; ++id){
-		printf("0x%08x,", di32[id]);
+		printf("\"0x%08x\"%c", di32[id],  id+1 < header.di_count? ',': ' ');
 	}
-	printf(" ],\n");
-	printf("sp32: [ ");
+	printf("],\n");
+	printf("%s" "\"sp32\": [ ", indent(0));
 	unsigned* sp32 = di32 + header.di_count;
-	for (int isp = 0; isp < header.sp_count; ++isp){
-		printf("0x%08x,", sp32[isp]);
+	for (int isp = 0; isp < header.sp_count; isp++){
+		printf("\"0x%08x\"%c", sp32[isp], isp+1 < header.sp_count? ',': ' ');
 	}
-	printf(" ]\n");
+	printf("]\n");
+	printf("%s" "}\n", indent(-1));
 }
 void parse(int* ht_data, unsigned nelems)
 {
 	if (G_verbose > 1 ) fprintf(stderr, "parse: %p, %u\n",
 			ht_data, nelems);
+	print_intro();
 	for (SOE_HOLD_HEADER* header = (SOE_HOLD_HEADER*)ht_data;
 			header->pv_id != 0; ++header){
+		print_header_intro();
 		print(*header);
 		print(*header, ht_data+header->data_offset);
+		print_header_outro((header+1)->pv_id != 0);
 	}
-
+	print_outro();
 }
 
 #define NEEDLE "value int32_t[] = "
@@ -118,6 +168,7 @@ void parse(char* txt)
 int main(int argc, char* argv[]){
 	static char myline[MAXSIZE];
 	int lno = 0;
+	int update = 0;
 
 	FILE *pp = popen("unbuffer pvxmonitor -r value  acq2206_588:SOE_HLD", "r");
 	while (fgets(myline, MAXSIZE, pp) != 0){
@@ -126,6 +177,9 @@ int main(int argc, char* argv[]){
 		char* cursor = strstr(myline, NEEDLE);
 		if (cursor){
 			parse(cursor+strlen(NEEDLE));
+			if (++update >= G_updates && G_updates != 0){
+				break;
+			}
 		}
 	}
 	return 0;
