@@ -38,7 +38,7 @@ strip_all()
 	done
 ) }
 
-cp bin/linux-arm/xrmIoc opkg/usr/local/bin
+cp bin/linux-arm/* opkg/usr/local/bin
 cp bin-scripts/* opkg/usr/local/bin
 cp init/* opkg/usr/local/init/
 cp -r etc/* opkg/etc
