@@ -45,7 +45,7 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	fmt_rx_timeouts(0), fmt_rx_success(0),
 	hold_row_limit(SOE_HLD_ROWS)
 {
-	fprintf(stderr, "%s R1033\n", FN);
+	fprintf(stderr, "%s R1034\n", FN);
 	asynStatus status = asynSuccess;
 	memset(soe_lut, 0, sizeof(soe_lut));
 
@@ -329,7 +329,7 @@ void acq400_SOE::get_sample_dimensions()
 	sip(0, P_SOE_SMPL_DI_COUNT, samplePrams.DI_COUNT = modules_di_ssb/sizeof(DI32_t));
 
 	sip(0, P_SOE_SMPL_SP_INDEX, samplePrams.SP_INDEX = modules_ssl);
-	sip(0, P_SOE_SMPL_SP_COUNT, agg_ssl-modules_ssl);
+	sip(0, P_SOE_SMPL_SP_COUNT, samplePrams.SP_COUNT = agg_ssl-modules_ssl);
 
 	callParamCallbacks();
 }
