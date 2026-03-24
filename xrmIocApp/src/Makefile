@@ -128,7 +128,7 @@ PROD_SYS_LIBS_DEFAULT += stream asyn pcre fftw3f
 #acq400_HT_server_LIBS += $(EPICS_BASE_IOC_LIBS)
 PROD += xrm_ht_monitor
 xrm_ht_monitor_SRCS += xrm_ht_monitor.cpp
-xrm_ht_monitor_LIBS += $(EPICS_BASE_IOC_LIBS)
+xrm_ht_monitor_LIBS += acq $(EPICS_BASE_IOC_LIBS)
 
 include $(TOP)/configure/RULES
 #----------------------------------------
