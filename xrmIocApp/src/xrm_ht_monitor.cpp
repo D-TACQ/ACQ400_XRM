@@ -19,6 +19,9 @@ acq2206_588:SOE_HLD
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>    // getopt(3)
+
+#include <iostream>
 
 #include "acq-util.h"
 #include "split2.h"
@@ -29,12 +32,14 @@ acq2206_588:SOE_HLD
 int G_verbose = ::getenv_default("VERBOSE", 0);
 int G_updates = ::getenv_default("UPDATES", 0);
 
+const char* G_host;
+
 #define MAXSIZE 65536    // if pvxmonitor output ever greater than this per line, we're in trouble
 
 char* indent(int delta)
 {
 	static char str[80];
-	static int level;
+	static size_t level;
 
 	while(strlen(str) < level){
 		strcat(str, "\t");   // post increment from previous delta==1
@@ -165,12 +170,56 @@ void parse(char* txt)
 	parse(ht_data, nelems);
 	delete [] ht_data;
 }
+
+void usage(const char* argv0)
+{
+	std::cerr << "Usage: " << argv0 << " <opts> HOST\n"
+		"\n"
+		"monitors <HOST>:SOE_HLD and outputs selected format"
+		"-h 		Show this message\n"
+		"-f <file>      output to file\n"
+		"-F <format>	brief|json|bin|hexdump|hint\n"
+		"-U <updates>   update <updates> times, quit, default: forever\n"
+		"-# <max>       set maximum number of array elements to output"
+		"-e		AI output in egu\n"
+		;
+
+}
+void ui(int argc, char* argv[])
+{
+	int opt;
+	while((opt = getopt(argc, argv, "heU:#:F:f:")) != -1){
+		switch(opt){
+		case 'h':
+			usage(argv[0]);
+			exit(0);
+		case 'U':
+			G_updates = atol(optarg);
+			break;
+		default:
+			usage(argv[0]);
+			std::cerr << "\nUnknown Argument: " <<char(opt)<<"\n";
+			exit(1);
+		}
+	}
+	if (optind < argc){
+		G_host = argv[optind];
+	}else{
+		std::cerr << "ERROR HOST not defined\n";
+		exit(1);
+	}
+}
 int main(int argc, char* argv[]){
+
+	ui(argc, argv);
+
 	static char myline[MAXSIZE];
 	int lno = 0;
 	int update = 0;
+	char cmd[128];
+	snprintf(cmd, 128, "unbuffer pvxmonitor -r value  %s:SOE_HLD", G_host);
 
-	FILE *pp = popen("unbuffer pvxmonitor -r value  acq2206_588:SOE_HLD", "r");
+	FILE *pp = popen(cmd, "r");
 	while (fgets(myline, MAXSIZE, pp) != 0){
 		lno += 1;
 		if (G_verbose > 2 ) fprintf(stderr, "[%2d] %s\n", lno, myline);
