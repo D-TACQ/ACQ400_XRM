@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # UPDATES=1 ./bin/linux-x86_64/xrm_ht_monitor  > xrm_ht_monitor.json
 import json
+import sys
 
-with open("xrm_ht_monitor.json") as jdata:
+
+
+with open(sys.argv[1]) as jdata:
     data = json.load(jdata)
 
 #print(data)

@@ -81,33 +81,52 @@ public:
 class JSON_Formatter: public Formatter {
 	void print_intro()
 	{
-		printf("%s{ \"HT\": [\n", indent(1));
+		fprintf(fp, "%s" "{ \"HT\": [\n", indent(1));
 	}
 	void print_outro()
 	{
-		printf("%s] }\n", indent(-1));
+		fprintf(fp, "%s" "] }\n", indent(-1));
 	}
 
 	void print_header_intro()
 	{
-		printf("%s " "{\n", indent(1));
+		fprintf(fp, "%s" "{\n", indent(1));
 	}
 	void print_header_outro(bool not_final)
 	{
-		printf("%s " "}%c\n", indent(-1), not_final? ',': ' ');
+		fprintf(fp, "%s" "}%c\n", indent(-1), not_final? ',': ' ');
 	}
 	void print(SOE_HOLD_HEADER& header);
 	void print_wrus(unsigned* sp32);
 	void print_raw(SOE_HOLD_HEADER& header, int* ht_data);
 
+	FILE* fp;
+	int nelems;
+	int iheader;
+	int updates;
 protected:
-	JSON_Formatter() : Formatter() {}
+	JSON_Formatter() : Formatter(), updates(0) {}
 public:
-	virtual void start(int unused) {
+	virtual void start(int _nelems) {
+		nelems = _nelems;
+		iheader = 0;
+		++updates;
+		if (G_file_root != 0){
+			char fname[128];
+			snprintf(fname, 128, "%s.%d.json", G_file_root, updates);
+			fp = fopen(fname, "w");
+			if (fp == 0){
+				perror(fname);
+				exit(1);
+			}
+		}else{
+			fp = stdout;
+		}
 		print_intro();
 	}
 	virtual void finish() {
 		print_outro();
+		fclose(fp);
 	}
 	virtual void print(SOE_HOLD_HEADER* header,int* ht_data);
 
@@ -116,50 +135,50 @@ public:
 
 void JSON_Formatter::print(SOE_HOLD_HEADER& header)
 {
-	printf("%s" "\"HDR\": {\n", indent(1));
-	printf("%s" "\"pv_id\":		%u,\n", indent(0), header.pv_id);
-	printf("%s" "\"client_data\":	%u,\n", indent(0), header.client_data);
-	printf("%s" "\"timestamp\":	%llu,\n", 	indent(0), header.timestamp);
-	printf("%s" "\"data_offset\":	%u,\n", indent(0), header.data_offset);
-	printf("%s" "\"ss_u32\":		%u,\n", indent(0), header.ss_u32);
-	printf("%s" "\"ai_count\":	%u,\n", indent(0), header.ai_count);
-	printf("%s" "\"di_count\":	%u,\n", indent(0), header.di_count);
-	printf("%s" "\"sp_count\":	%u\n", indent(0), header.sp_count);
-	printf("%s" "},\n", indent(-1));
+	fprintf(fp, "%s" "\"HDR\": {\n", indent(1));
+	fprintf(fp, "%s" "\"pv_id\": %10u,\n", indent(0), header.pv_id);
+	fprintf(fp, "%s" "\"client_data\": %10u,\n", indent(0), header.client_data);
+	fprintf(fp, "%s" "\"timestamp\": %10llu,\n", 	indent(0), header.timestamp);
+	fprintf(fp, "%s" "\"data_offset\": %10u,\n", indent(0), header.data_offset);
+	fprintf(fp, "%s" "\"ss_u32\": %10u,\n", indent(0), header.ss_u32);
+	fprintf(fp, "%s" "\"ai_count\":	%10u,\n", indent(0), header.ai_count);
+	fprintf(fp, "%s" "\"di_count\":	%10u,\n", indent(0), header.di_count);
+	fprintf(fp, "%s" "\"sp_count\":	%10u\n", indent(0), header.sp_count);
+	fprintf(fp, "%s" "},\n", indent(-1));
 }
 
 void JSON_Formatter::print_wrus(unsigned* sp32) {
 	unsigned wrv = sp32[SP2];
 	unsigned wrs = sp32[SP3];
 
-	printf("%s " "\"WRVS\":		%u,\n", indent(0), (wrv>>28)&0x07);
-	printf("%s " "\"WRVT\":         %u,\n", indent(0), wrv&0x0fffffff);
-	printf("%s " "\"WRUS\":         %llu\n", indent(0), getWrTs(wrs, wrv));
+	fprintf(fp, "%s " "\"WRVS\":		%u,\n", indent(0), (wrv>>28)&0x07);
+	fprintf(fp, "%s " "\"WRVT\":         %u,\n", indent(0), wrv&0x0fffffff);
+	fprintf(fp, "%s " "\"WRUS\":         %llu\n", indent(0), getWrTs(wrs, wrv));
 }
 
 void JSON_Formatter::print_raw(SOE_HOLD_HEADER& header, int* ht_data)
 {
-	printf("%s" "\"RAW\": {\n", indent(1));
+	fprintf(fp, "%s" "\"RAW\": {\n", indent(1));
 	short* ai16 = (short*)ht_data;
-	printf("%s" "\"ai16\": [ ", indent(0));
+	fprintf(fp, "%s" "\"ai16\": [ ", indent(0));
 	for (int ic = 0; ic < header.ai_count; ++ic){
-		printf("%d%c", ai16[ic], ic+1 < header.ai_count? ',': ' ');
+		fprintf(fp, "%d%c", ai16[ic], ic+1 < header.ai_count? ',': ' ');
 	}
-	printf("],\n");
-	printf("%s" "\"di32\": [ ", indent(0));
+	fprintf(fp, "],\n");
+	fprintf(fp, "%s" "\"di32\": [ ", indent(0));
 	unsigned* di32 = (unsigned*)ht_data + header.ai_count/2;
 	for (int id = 0; id < header.di_count; ++id){
-		printf("\"0x%08x\"%c", di32[id],  id+1 < header.di_count? ',': ' ');
+		fprintf(fp, "\"0x%08x\"%c", di32[id],  id+1 < header.di_count? ',': ' ');
 	}
-	printf("],\n");
-	printf("%s" "\"sp32\": [ ", indent(0));
+	fprintf(fp, "],\n");
+	fprintf(fp, "%s" "\"sp32\": [ ", indent(0));
 	unsigned* sp32 = di32 + header.di_count;
 	for (int isp = 0; isp < header.sp_count; isp++){
-		printf("\"0x%08x\"%c", sp32[isp], isp+1 < header.sp_count? ',': ' ');
+		fprintf(fp, "\"0x%08x\"%c", sp32[isp], isp+1 < header.sp_count? ',': ' ');
 	}
-	printf("],\n");
+	fprintf(fp, "],\n");
 	print_wrus(sp32);
-	printf("%s" "}\n", indent(-1));
+	fprintf(fp, "%s" "}\n", indent(-1));
 }
 void JSON_Formatter::print(SOE_HOLD_HEADER* header, int* ht_data)
 {
@@ -181,7 +200,7 @@ protected:
 	BIN_Formatter(): Formatter(), updates(0){}
 public:
 	virtual void print(SOE_HOLD_HEADER* header, int* ht_data){
-		if (iheader == 0){
+		if (iheader++ == 0){
 			fwrite(header, sizeof(int), nelems, fp);
 		}
 	}
@@ -213,6 +232,27 @@ public:
 	friend class Formatter;
 };
 
+class HintFormatter: public Formatter {
+	int nelems;
+	int iheader;
+public:
+	virtual void start(int _nelems) {
+		nelems = _nelems;
+		iheader = 0;
+	}
+	virtual void print(SOE_HOLD_HEADER* hdr, int* ht_data){
+		if (iheader++ == 0){
+			printf("Hint: total lw:%d\n", nelems);
+			printf("ss_u32:%d ai_count:%d di_count:%d sp_count:%d\n",
+					hdr->ss_u32, hdr->ai_count,
+					hdr->di_count, hdr->sp_count);
+			printf("Offset first raw:%d lw\n", hdr->data_offset);
+		}
+	}
+	virtual void finish() {
+		printf("Header Count:%d\n", iheader);
+	}
+};
 void parse(int* ht_data, unsigned nelems)
 {
 	if (G_verbose > 1 ) fprintf(stderr, "parse: %p, %u\n",
@@ -295,6 +335,8 @@ Formatter* Formatter::instance(const char* mode)
 		return _instance = new JSON_Formatter;
 	}else if (strcmp(mode, "bin") == 0){
 		return _instance = new BIN_Formatter;
+	}else if (strcmp(mode, "hint") == 0){
+		return _instance = new HintFormatter;
 	}else{
 		std::cerr << "ERROR format " << mode << " unknown" << "\n";
 		exit(1);
