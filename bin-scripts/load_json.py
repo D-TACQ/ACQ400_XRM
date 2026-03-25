@@ -5,14 +5,18 @@ import json
 with open("xrm_ht_monitor.json") as jdata:
     data = json.load(jdata)
 
-print(data)
+#print(data)
 
 ht = data['HT']
 
-print(ht)
+#print(ht)
 
 for ix, hte in enumerate(ht):
 #    print(f'ROW{ix}\n{hte}')
-     print(f"{ix} timestamp:{hte['HDR']['timestamp']}")
+#    print(f"{ix} timestamp:{hte['HDR']['timestamp']} WRUS:")
+    pvid = hte['HDR']['pv_id']
+    ts = hte['HDR']['timestamp']
+    wrus = hte['RAW']['WRUS']
+    print(f"{ix} pv_id:{pvid} timestamp:{ts} WRUS:{wrus} delta:{wrus-ts}")
 
 

@@ -27,7 +27,7 @@ acq2206_588:SOE_HLD
 #include "split2.h"
 #include "xrm_structs.h"
 
-
+#include "acq400_asyn_common.h"
 
 int G_verbose = ::getenv_default("VERBOSE", 0);
 int G_updates = ::getenv_default("UPDATES", 0);
@@ -94,6 +94,15 @@ void print(SOE_HOLD_HEADER& header)
 	printf("%s" "\"sp_count\":	%u\n", indent(0), header.sp_count);
 	printf("%s" "},\n", indent(-1));
 }
+
+void print_wrus(unsigned* sp32) {
+	unsigned wrv = sp32[SP2];
+	unsigned wrs = sp32[SP3];
+
+	printf("%s " "\"WRVS\":		%u,\n", indent(0), (wrv>>28)&0x07);
+	printf("%s " "\"WRVT\":         %u,\n", indent(0), wrv&0x0fffffff);
+	printf("%s " "\"WRUS\":         %llu\n", indent(0), getWrTs(wrs, wrv));
+}
 void print(SOE_HOLD_HEADER& header, int* ht_data)
 {
 	printf("%s" "\"RAW\": {\n", indent(1));
@@ -114,7 +123,8 @@ void print(SOE_HOLD_HEADER& header, int* ht_data)
 	for (int isp = 0; isp < header.sp_count; isp++){
 		printf("\"0x%08x\"%c", sp32[isp], isp+1 < header.sp_count? ',': ' ');
 	}
-	printf("]\n");
+	printf("],\n");
+	print_wrus(sp32);
 	printf("%s" "}\n", indent(-1));
 }
 void parse(int* ht_data, unsigned nelems)
