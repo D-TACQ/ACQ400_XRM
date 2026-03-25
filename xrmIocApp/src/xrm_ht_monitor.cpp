@@ -33,6 +33,7 @@ int G_verbose = ::getenv_default("VERBOSE", 0);
 int G_updates = ::getenv_default("UPDATES", 0);
 
 const char* G_host;
+bool G_wait_first_change;	// force first update to wait for change
 
 #define MAXSIZE 65536    // if pvxmonitor output ever greater than this per line, we're in trouble
 
@@ -228,6 +229,7 @@ void usage(const char* argv0)
 		"\n"
 		"monitors <HOST>:SOE_HLD and outputs selected format"
 		"-h 		Show this message\n"
+		"-W             wait_change (skip initial value\n"
 		"-f <file>      output to file\n"
 		"-F <format>	brief|json|bin|hexdump|hint\n"
 		"-U <updates>   update <updates> times, quit, default: forever\n"
@@ -258,7 +260,7 @@ void ui(int argc, char* argv[])
 	int opt;
 	const char* format = "json";
 
-	while((opt = getopt(argc, argv, "heU:#:F:f:")) != -1){
+	while((opt = getopt(argc, argv, "heWU:#:F:f:")) != -1){
 		switch(opt){
 		case 'h':
 			usage(argv[0]);
@@ -268,6 +270,9 @@ void ui(int argc, char* argv[])
 			break;
 		case 'F':
 			format = optarg;
+			break;
+		case 'W':
+			G_wait_first_change = true;
 			break;
 		default:
 			usage(argv[0]);
@@ -295,7 +300,11 @@ int main(int argc, char* argv[]){
 
 	FILE *pp = popen(cmd, "r");
 	while (fgets(myline, MAXSIZE, pp) != 0){
-		lno += 1;
+		if (lno++ == 0 && G_wait_first_change){
+			fprintf(stderr, "skip initial value and wait_first change\n");
+			continue;
+		}
+
 		if (G_verbose > 2 ) fprintf(stderr, "[%2d] %s\n", lno, myline);
 		char* cursor = strstr(myline, NEEDLE);
 		if (cursor){
