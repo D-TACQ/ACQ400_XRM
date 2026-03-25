@@ -34,6 +34,7 @@ int G_updates = ::getenv_default("UPDATES", 0);
 
 const char* G_host;
 bool G_wait_first_change;	// force first update to wait for change
+const char* G_file_root;
 
 #define MAXSIZE 65536    // if pvxmonitor output ever greater than this per line, we're in trouble
 
@@ -70,7 +71,7 @@ protected:
 	Formatter() {}
 public:
 	virtual void print(SOE_HOLD_HEADER* header, int* ht_data) = 0;
-	virtual void start() {}
+	virtual void start(int nelems) {}
 	virtual void finish() {}
 
 	static Formatter* instance(const char* mode = 0);
@@ -102,7 +103,7 @@ class JSON_Formatter: public Formatter {
 protected:
 	JSON_Formatter() : Formatter() {}
 public:
-	virtual void start() {
+	virtual void start(int unused) {
 		print_intro();
 	}
 	virtual void finish() {
@@ -169,12 +170,55 @@ void JSON_Formatter::print(SOE_HOLD_HEADER* header, int* ht_data)
 }
 
 
+
+class BIN_Formatter: public Formatter {
+	int updates;
+	int iheader;
+	int nelems;
+	FILE *fp;
+
+protected:
+	BIN_Formatter(): Formatter(), updates(0){}
+public:
+	virtual void print(SOE_HOLD_HEADER* header, int* ht_data){
+		if (iheader == 0){
+			fwrite(header, sizeof(int), nelems, fp);
+		}
+	}
+	virtual void start(int _nelems) {
+		nelems = _nelems;
+		iheader = 0;
+		++updates;
+		if (G_file_root != 0){
+			char fname[128];
+			snprintf(fname, 128, "%s.%d.bin", G_file_root, updates);
+			fp = fopen(fname, "w");
+			if (fp == 0){
+				perror(fname);
+				exit(1);
+			}
+		}else{
+			fp = stdout;
+		}
+	}
+	virtual void finish() {
+		if (fp != stdout){
+			fclose(fp);
+		}
+	}
+
+	static Formatter* instance(const char* mode = 0);
+	/* call first time with mode != 0 to create, call with mode==0 to re-use */
+
+	friend class Formatter;
+};
+
 void parse(int* ht_data, unsigned nelems)
 {
 	if (G_verbose > 1 ) fprintf(stderr, "parse: %p, %u\n",
 			ht_data, nelems);
 
-	Formatter::instance()->start();
+	Formatter::instance()->start(nelems);
 
 	for (SOE_HOLD_HEADER* header = (SOE_HOLD_HEADER*)ht_data;
 			header->pv_id != 0; ++header){
@@ -249,6 +293,8 @@ Formatter* Formatter::instance(const char* mode)
 		return(_instance);
 	}else if (strcmp(mode, "json") == 0){
 		return _instance = new JSON_Formatter;
+	}else if (strcmp(mode, "bin") == 0){
+		return _instance = new BIN_Formatter;
 	}else{
 		std::cerr << "ERROR format " << mode << " unknown" << "\n";
 		exit(1);
@@ -265,6 +311,9 @@ void ui(int argc, char* argv[])
 		case 'h':
 			usage(argv[0]);
 			exit(0);
+		case 'f':
+			G_file_root = optarg;
+			break;
 		case 'U':
 			G_updates = atol(optarg);
 			break;
