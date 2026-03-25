@@ -63,26 +63,57 @@ char* indent(int delta)
 	return str;
 }
 
-void print_intro()
-{
-	printf("%s{ \"HT\": [\n", indent(1));
-}
-void print_outro()
-{
-	printf("%s] }\n", indent(-1));
-}
+class Formatter {
 
-void print_header_intro()
-{
-	printf("%s " "{\n", indent(1));
-}
-void print_header_outro(bool not_final)
-{
-	printf("%s " "}%c\n", indent(-1), not_final? ',': ' ');
-}
-void print(SOE_HOLD_HEADER& header)
-{
+protected:
+	Formatter() {}
+public:
+	virtual void print(SOE_HOLD_HEADER* header, int* ht_data) = 0;
+	virtual void start() {}
+	virtual void finish() {}
 
+	static Formatter* instance(const char* mode = 0);
+	/* call first time with mode != 0 to create, call with mode==0 to re-use */
+};
+
+class JSON_Formatter: public Formatter {
+	void print_intro()
+	{
+		printf("%s{ \"HT\": [\n", indent(1));
+	}
+	void print_outro()
+	{
+		printf("%s] }\n", indent(-1));
+	}
+
+	void print_header_intro()
+	{
+		printf("%s " "{\n", indent(1));
+	}
+	void print_header_outro(bool not_final)
+	{
+		printf("%s " "}%c\n", indent(-1), not_final? ',': ' ');
+	}
+	void print(SOE_HOLD_HEADER& header);
+	void print_wrus(unsigned* sp32);
+	void print_raw(SOE_HOLD_HEADER& header, int* ht_data);
+
+protected:
+	JSON_Formatter() : Formatter() {}
+public:
+	virtual void start() {
+		print_intro();
+	}
+	virtual void finish() {
+		print_outro();
+	}
+	virtual void print(SOE_HOLD_HEADER* header,int* ht_data);
+
+	friend class Formatter;
+};
+
+void JSON_Formatter::print(SOE_HOLD_HEADER& header)
+{
 	printf("%s" "\"HDR\": {\n", indent(1));
 	printf("%s" "\"pv_id\":		%u,\n", indent(0), header.pv_id);
 	printf("%s" "\"client_data\":	%u,\n", indent(0), header.client_data);
@@ -95,7 +126,7 @@ void print(SOE_HOLD_HEADER& header)
 	printf("%s" "},\n", indent(-1));
 }
 
-void print_wrus(unsigned* sp32) {
+void JSON_Formatter::print_wrus(unsigned* sp32) {
 	unsigned wrv = sp32[SP2];
 	unsigned wrs = sp32[SP3];
 
@@ -103,7 +134,8 @@ void print_wrus(unsigned* sp32) {
 	printf("%s " "\"WRVT\":         %u,\n", indent(0), wrv&0x0fffffff);
 	printf("%s " "\"WRUS\":         %llu\n", indent(0), getWrTs(wrs, wrv));
 }
-void print(SOE_HOLD_HEADER& header, int* ht_data)
+
+void JSON_Formatter::print_raw(SOE_HOLD_HEADER& header, int* ht_data)
 {
 	printf("%s" "\"RAW\": {\n", indent(1));
 	short* ai16 = (short*)ht_data;
@@ -127,19 +159,28 @@ void print(SOE_HOLD_HEADER& header, int* ht_data)
 	print_wrus(sp32);
 	printf("%s" "}\n", indent(-1));
 }
+void JSON_Formatter::print(SOE_HOLD_HEADER* header, int* ht_data)
+{
+	print_header_intro();
+	print(*header);
+	print_raw(*header, ht_data);
+	print_header_outro((header+1)->pv_id != 0);
+}
+
+
 void parse(int* ht_data, unsigned nelems)
 {
 	if (G_verbose > 1 ) fprintf(stderr, "parse: %p, %u\n",
 			ht_data, nelems);
-	print_intro();
+
+	Formatter::instance()->start();
+
 	for (SOE_HOLD_HEADER* header = (SOE_HOLD_HEADER*)ht_data;
 			header->pv_id != 0; ++header){
-		print_header_intro();
-		print(*header);
-		print(*header, ht_data+header->data_offset);
-		print_header_outro((header+1)->pv_id != 0);
+		Formatter::instance()->print(header, ht_data+header->data_offset);
 	}
-	print_outro();
+	Formatter::instance()->finish();
+
 }
 
 #define NEEDLE "value int32_t[] = "
@@ -195,9 +236,28 @@ void usage(const char* argv0)
 		;
 
 }
+
+
+Formatter* Formatter::instance(const char* mode)
+{
+	static Formatter* _instance;
+
+	if (mode == 0){
+		assert(_instance != 0);
+		return(_instance);
+	}else if (strcmp(mode, "json") == 0){
+		return _instance = new JSON_Formatter;
+	}else{
+		std::cerr << "ERROR format " << mode << " unknown" << "\n";
+		exit(1);
+	}
+}
+
 void ui(int argc, char* argv[])
 {
 	int opt;
+	const char* format = "json";
+
 	while((opt = getopt(argc, argv, "heU:#:F:f:")) != -1){
 		switch(opt){
 		case 'h':
@@ -205,6 +265,9 @@ void ui(int argc, char* argv[])
 			exit(0);
 		case 'U':
 			G_updates = atol(optarg);
+			break;
+		case 'F':
+			format = optarg;
 			break;
 		default:
 			usage(argv[0]);
@@ -218,6 +281,7 @@ void ui(int argc, char* argv[])
 		std::cerr << "ERROR HOST not defined\n";
 		exit(1);
 	}
+	Formatter::instance(format);
 }
 int main(int argc, char* argv[]){
 
