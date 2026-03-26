@@ -126,7 +126,9 @@ public:
 	}
 	virtual void finish() {
 		print_outro();
-		fclose(fp);
+		if (fp != stdout){
+			fclose(fp);
+		}
 	}
 	virtual void print(SOE_HOLD_HEADER* header,int* ht_data);
 
