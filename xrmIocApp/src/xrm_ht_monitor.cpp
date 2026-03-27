@@ -26,6 +26,7 @@ acq2206_588:SOE_HLD
 #include "acq-util.h"
 #include "split2.h"
 #include "xrm_structs.h"
+#include "pvxsWrapper.h"
 
 #include "acq400_asyn_common.h"
 
@@ -35,9 +36,21 @@ int G_updates = ::getenv_default("UPDATES", 0);
 const char* G_host;
 bool G_wait_first_change;	// force first update to wait for change
 const char* G_file_root;
+bool G_egu;
 
-#define MAXSIZE 65536    // if pvxmonitor output ever greater than this per line, we're in trouble
 
+#define AIMAX 	128
+
+const VDS* G_eslo;
+const VDS* G_eoff;
+
+#include "pvxsWrapper.cpp"
+
+void getEGU()
+{
+	G_eslo = PVX_getter<VDS>(G_host, ":0:AI:CAL:ESLO").pvx_get(new VDS);
+	G_eoff = PVX_getter<VDS>(G_host, ":0:AI:CAL:EOFF").pvx_get(new VDS);
+}
 char* indent(int delta)
 {
 	static char str[80];
@@ -179,8 +192,23 @@ void JSON_Formatter::print_raw(SOE_HOLD_HEADER& header, int* ht_data)
 		fprintf(fp, "\"0x%08x\"%c", sp32[isp], isp+1 < header.sp_count? ',': ' ');
 	}
 	fprintf(fp, "],\n");
+
 	print_wrus(sp32);
 	fprintf(fp, "%s" "}\n", indent(-1));
+
+	if (G_egu){
+		fprintf(fp, "%s" "\"EGU\": {\n", indent(1));
+		short* ai16 = (short*)ht_data;
+		fprintf(fp, "%s" "\"volts\": [ ", indent(0));
+		for (int ic = 0; ic < header.ai_count; ++ic){
+			double eslo = (*G_eslo)[ic+1];
+			double eoff = (*G_eoff)[ic+1];
+			double v = ai16[ic]*eslo + eoff;
+			fprintf(fp, "%3.4f%c", v, ic+1 < header.ai_count? ',': ' ');
+		}
+		fprintf(fp, "],\n");
+		fprintf(fp, "%s" "}\n", indent(-1));
+	}
 }
 void JSON_Formatter::print(SOE_HOLD_HEADER* header, int* ht_data)
 {
@@ -274,7 +302,7 @@ void parse(int* ht_data, unsigned nelems)
 
 void parse(char* txt)
 {
-	unsigned nelems;
+	int nelems;
 	if (G_verbose > 1 ) fprintf(stderr, "parse: \"%s\"\n", txt);
 
 	if (sscanf(txt, "{%u}", &nelems) != 1){
@@ -291,16 +319,16 @@ void parse(char* txt)
 	split2(++start, value_ints, ',');
 	if (G_verbose > 1 )
 		fprintf(stderr, "parse: value_ints.size %u nelems %u\n",
-				value_ints.size(), nelems);
+				(unsigned)(value_ints.size()), nelems);
 
-	assert(value_ints.size() == nelems);
+	assert(value_ints.size() == (size_t)nelems);
 
 	int* ht_data = new int[nelems];
 	int* cursor = ht_data;
 	for (int ii: value_ints){
 		if (G_verbose > 2 ){
 			fprintf(stderr, "idx:%d ii:%d\n",
-					cursor - ht_data, ii);
+					(int)(cursor - ht_data), ii);
 		}
 		*cursor++ = ii;
 		assert(cursor-ht_data <= nelems);
@@ -367,6 +395,9 @@ void ui(int argc, char* argv[])
 		case 'W':
 			G_wait_first_change = true;
 			break;
+		case 'e':
+			G_egu = true;
+			break;
 		default:
 			usage(argv[0]);
 			std::cerr << "\nUnknown Argument: " <<char(opt)<<"\n";
@@ -380,6 +411,9 @@ void ui(int argc, char* argv[])
 		exit(1);
 	}
 	Formatter::instance(format);
+	if (G_egu){
+		getEGU();
+	}
 }
 int main(int argc, char* argv[]){
 
