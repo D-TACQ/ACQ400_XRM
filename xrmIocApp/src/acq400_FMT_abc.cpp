@@ -90,9 +90,6 @@ void acq400_FMT_abc::init_mc_url(char* group, int maxgroup, int *port)
 
 MultiCast& acq400_FMT_abc::mc_factory(MultiCast::MC txrx)
 {
-	char mc_group[80];
-	int mc_port;
-
 	init_mc_url(mc_group, 80, &mc_port);
 
 	return MultiCast::factory(mc_group, mc_port, txrx);
