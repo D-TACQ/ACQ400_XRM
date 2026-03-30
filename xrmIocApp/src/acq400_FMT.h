@@ -54,6 +54,9 @@ protected:
 		epicsInt64 c_timestamp[FMT_ROWS];
 	} cols;
 
+	char mc_group[80];
+	int mc_port;
+
 	asynStatus gip(int pnum, int* pram);
 	virtual void update_fmt(bool first_time = false) = 0;
 	virtual void update_fmt_columns(void);

@@ -18,7 +18,8 @@
 #include <unistd.h>
 #include <strings.h>
 
-
+#include "acq-util.h"
+#define FN	__FUNCTION__
 
 class MultiCastImpl : public MultiCast {
 
@@ -32,33 +33,35 @@ protected:
 
 public:
 	MultiCastImpl(const char* _group, int _port):
-		group(_group), port(_port), verbose(0)
+		group(_group), port(_port), verbose(getenv_default("MultiCastVerbose"))
 	{
+
+		if (verbose){
+			fprintf(stderr, "%s group:%s port:%d\n", FN, group, port);
+		}
 		  /* set up socket */
-		   sock = socket(AF_INET, SOCK_DGRAM, 0);
-		   if (sock < 0) {
-		     perror("socket");
-		     exit(1);
-		   }
+		sock = socket(AF_INET, SOCK_DGRAM, 0);
+		if (sock < 0) {
+			perror("socket");
+			exit(1);
+		}
 
-		   bzero((char *)&addr, sizeof(addr));
-		   addr.sin_family = AF_INET;
-		   addr.sin_addr.s_addr = htonl(INADDR_ANY);
-		   addr.sin_port = htons(port);
-		   addrlen = sizeof(addr);
-		   if (getenv("MultiCastVerbose")){
-			   verbose = atoi(getenv("MultiCastVerbose"));
-		   }
-		   if (multicast_if){
-			   struct in_addr localInterface;
-			   localInterface.s_addr = inet_addr(multicast_if);
+		bzero((char *)&addr, sizeof(addr));
+		addr.sin_family = AF_INET;
+		addr.sin_addr.s_addr = htonl(INADDR_ANY);
+		addr.sin_port = htons(port);
+		addrlen = sizeof(addr);
 
-			   if (setsockopt(sock, IPPROTO_IP, IP_MULTICAST_IF, (char *)&localInterface, sizeof(localInterface)) < 0) {
-				   perror("ERROR setting local interface");
-				   exit(1);
-			   }else{
-				   fprintf(stderr, "MultiCastImpl set IP_MULTICAST_IF %s\n", multicast_if);
-			   }
+		if (multicast_if){
+			struct in_addr localInterface;
+			localInterface.s_addr = inet_addr(multicast_if);
+
+			if (setsockopt(sock, IPPROTO_IP, IP_MULTICAST_IF, (char *)&localInterface, sizeof(localInterface)) < 0) {
+				perror("ERROR setting local interface");
+				exit(1);
+			}else{
+				fprintf(stderr, "MultiCastImpl set IP_MULTICAST_IF %s\n", multicast_if);
+			}
 		   }
 	}
 	virtual int sendto(const void* message, int len) {
@@ -77,6 +80,10 @@ public:
 		MultiCastImpl(_group, _port)
 	{}
 	virtual int sendto(const void* message, int len) {
+		if (verbose){
+			fprintf(stderr, "%s group:%s port:%d sock:%d msg:%p len:%d\n",
+					FN, group, port, sock, message, len);
+		}
 		addr.sin_addr.s_addr = inet_addr(group);
 		int rc = ::sendto(sock, message, len, 0, (struct sockaddr *) &addr, addrlen);
 		if (rc < 0) {
