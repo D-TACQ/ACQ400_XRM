@@ -33,9 +33,6 @@ struct BufferPair {
 
 #define MAX_PM_BUFFERS	32
 
-#define PS_RUNSTOP	"RUNSTOP"	/* asynInt32, r/w */
-#define PS_UPDATES	"UPDATES"	/* asynInt32, r/c */
-#define PS_TS_USEC	"TS_USEC"
 #define PS_NBUF		"NBUF"		/* asynInt32, r, number of buffers */
 
 #define PS_PM_COL_ROWNUM 	"PM_COL_ROWNUM"
@@ -91,9 +88,6 @@ protected:
 	static int verbose;
 	static int spX_from_live;
 
-	int P_RUNSTOP;
-	int P_UPDATES;
-	int P_TS_USEC;
 	int P_NBUF;
 	int P_RING;
 	int P_RAWBUF;

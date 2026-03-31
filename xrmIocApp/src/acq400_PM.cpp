@@ -5,7 +5,6 @@
  *      Author: pgm
  */
 
-#include "acq400_asyn_common.h"
 #include "acq400_PM.h"
 #include <fcntl.h>                // open()
 #include <sys/ioctl.h>
@@ -48,9 +47,6 @@ acq400_PM::acq400_PM(const char* portName):
 		pm_cols.c_rownum[row] = row;
 	}
 
-	createParam(PS_RUNSTOP,		asynParamInt32,		&P_RUNSTOP);
-	createParam(PS_UPDATES,  	asynParamInt32,		&P_UPDATES);
-	createParam(PS_TS_USEC,  	asynParamInt64,		&P_TS_USEC);
 	createParam(PS_NBUF,  		asynParamInt32,		&P_NBUF);
 	createParam(PS_PM_COL_ROWNUM,	asynParamInt8Array,	&P_COL_ROWNUM);
 	createParam(PS_PM_COL_IBLIVE,	asynParamInt16Array,	&P_COL_IBLIVE);

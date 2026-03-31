@@ -8,13 +8,11 @@
 #ifndef XRMIOCAPP_SRC_ACQ400_FMT_H_
 #define XRMIOCAPP_SRC_ACQ400_FMT_H_
 
-#include "asynPortDriver.h"
+#include "acq400_asynPortDriver.h"
+
 #include "xrm_structs.h"
 #include "Multicast.h"
 
-#define PS_RUNSTOP	"RUNSTOP"	/* asynInt32, r/w */
-#define PS_UPDATES	"UPDATES"	/* asynInt32, r/c */
-#define PS_TS_USEC	"TS_USEC"       /* asynInt32, ro  */
 #define PS_FMT_MC_GRP	"FMT_MC_GRP"    /* string, r/set on PINI */
 #define PS_FMT_MC_PORT  "FMT_MC_PORT"   /* asynInt32, r/set on PINI */
 
@@ -36,7 +34,7 @@ epicsUInt64 timestamp;
 #define PS_FMT_COL_TS 		"FMT_COL_TS"	/* asynInt64Array, ro */
 
 
-class acq400_FMT_abc: public asynPortDriver {
+class acq400_FMT_abc: public acq400_asynPortDriver {
 public:
 	FMT fmt;
 protected:
@@ -75,9 +73,6 @@ protected:
 	unsigned update;
 	epicsInt64 now_us;
 
-	int P_RUNSTOP;
-	int P_UPDATES;
-	int P_TS_USEC;
 	int P_FMT_MC_GRP;
 	int P_FMT_MC_PORT;
 	int P_FMT_COL_ROWNUM;

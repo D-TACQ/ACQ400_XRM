@@ -27,7 +27,7 @@ int acq400_FMT_abc::nice = ::getenv_default("acq400_FMT_NICE", 0);
 acq400_FMT_abc::acq400_FMT_abc(
 	const char *portName, int maxAddr, int interfaceMask, int interruptMask,
 	                   int asynFlags, int autoConnect, int priority, int stackSize) :
-	asynPortDriver(portName, maxAddr, interfaceMask, interruptMask,
+	acq400_asynPortDriver(portName, maxAddr, interfaceMask, interruptMask,
 			   asynFlags, autoConnect, priority, stackSize),
 	update(0)
 {
@@ -40,9 +40,6 @@ acq400_FMT_abc::acq400_FMT_abc(
 	//update_fmt(true);
 
 	eventId = epicsEventCreate(epicsEventEmpty);
-	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
-	createParam(PS_UPDATES,  asynParamInt32,        &P_UPDATES);
-	createParam(PS_TS_USEC,  asynParamInt64,	&P_TS_USEC);
 	createParam(PS_FMT_MC_GRP,  asynParamOctet,	&P_FMT_MC_GRP);
 	createParam(PS_FMT_MC_PORT,  asynParamInt32,	&P_FMT_MC_PORT);
 

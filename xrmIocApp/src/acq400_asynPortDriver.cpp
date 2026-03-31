@@ -12,6 +12,17 @@ static const char *driverName="acq400_asynPortDriver";
 #define DN	driverName
 #define FN	__FUNCTION__
 
+
+acq400_asynPortDriver::acq400_asynPortDriver(const char *portName, int maxAddr, int interfaceMask, int interruptMask,
+		int asynFlags, int autoConnect, int priority, int stackSize):
+        asynPortDriver(portName, maxAddr, interfaceMask, interruptMask,
+                   asynFlags, autoConnect, priority, stackSize)
+{
+	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
+	createParam(PS_UPDATES,  	asynParamInt32,		&P_UPDATES);
+	createParam(PS_TS_USEC,  	asynParamInt64,		&P_TS_USEC);
+}
+
 asynStatus acq400_asynPortDriver::gip(int pnum, int* pram)
 {
 	asynStatus status = getIntegerParam(pnum, pram);

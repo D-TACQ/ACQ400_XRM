@@ -208,12 +208,7 @@ protected:
 
 	static void task_runner(void *drvPvt);
 
-	int P_RUNSTOP;
-	int P_UPDATES;
-	int P_TS_USEC;
-
 	int P_SOE_STRATEGY;
-
 
 	int P_SOE_LUT_COL_ROWNUM;
 	int P_SOE_LUT_COL_EVENT;
