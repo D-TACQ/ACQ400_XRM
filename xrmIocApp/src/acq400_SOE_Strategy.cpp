@@ -18,7 +18,7 @@ using namespace std;
 #include "Buffer.h"
 #include "ES.h"
 
-static const char *driverName="acq400_SOE";
+//static const char *driverName="acq400_SOE";
 
 #define DN	driverName
 #define FN	__FUNCTION__

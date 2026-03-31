@@ -157,13 +157,9 @@ void acq400_PM::update_pm_callbacks(void)
 
 void acq400_PM::update_pm_tab_row(int row, int ib)
 {
-	const int SSS = SSB/sizeof(short);
 	const int SSL = SSB/sizeof(long);
 	char* raw = Buffer::the_buffers[ib]->getBase() + SKIP_ES*SSB;
-	short* ai_raw = (short*)raw;
-	int * di_raw = (int*)raw + SOE_SMPL_DI_INDEX;
 	int * sp_raw = (int*)raw + SOE_SMPL_SP_INDEX;
-	const int srow = row*SSS;
 	const int lrow = row*SSL;
 	unsigned wrs, wrv;
 
