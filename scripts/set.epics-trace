@@ -1,0 +1,9 @@
+#!/bin/sh
+HN=${IOC_HOST}
+SX=${1:-S0}
+EN=${2:-1}
+
+PV=${HN}:${SX}
+
+caput ${PV}.TB3 ${EN}
+caput ${PV}.TIB0 ${EN}
