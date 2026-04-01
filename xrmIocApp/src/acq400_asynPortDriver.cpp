@@ -16,11 +16,13 @@ static const char *driverName="acq400_asynPortDriver";
 acq400_asynPortDriver::acq400_asynPortDriver(const char *portName, int maxAddr, int interfaceMask, int interruptMask,
 		int asynFlags, int autoConnect, int priority, int stackSize):
         asynPortDriver(portName, maxAddr, interfaceMask, interruptMask,
-                   asynFlags, autoConnect, priority, stackSize)
+                   asynFlags, autoConnect, priority, stackSize),
+		   mrl_param(MonitorRateLimit::LIM_NOLIM)
 {
-	createParam(PS_RUNSTOP,  asynParamInt32,        &P_RUNSTOP);
-	createParam(PS_UPDATES,  	asynParamInt32,		&P_UPDATES);
-	createParam(PS_TS_USEC,  	asynParamInt64,		&P_TS_USEC);
+	createParam(PS_RUNSTOP, asynParamInt32, &P_RUNSTOP);
+	createParam(PS_UPDATES, asynParamInt32,	&P_UPDATES);
+	createParam(PS_TS_USEC, asynParamInt64,	&P_TS_USEC);
+	createParam(PS_MON_RL,	asynParamInt32, &P_MON_RL);
 }
 
 asynStatus acq400_asynPortDriver::gip(int pnum, int* pram)
@@ -85,5 +87,42 @@ asynStatus acq400_asynPortDriver::gsp(int pnum, int maxchar, char* str)
 		assert(status==0);
 	}
 	return status;
+}
+
+acq400_asynPortDriver::MonitorRateLimit::MonitorRateLimit(): go_ahead(false) {
+	epicsTimeGetCurrent(&et0);
+}
+
+//
+void acq400_asynPortDriver::MonitorRateLimit::newData(int mrl) {
+	double throttle_s = 0;
+
+	switch (mrl){
+	case DIS_MON:
+		go_ahead = false;
+		return;
+	case LIM_NOLIM:
+		go_ahead = true;
+		return;
+	case LIM_1Hz:
+		throttle_s = 1.0; break;
+	case LIM_2Hz:
+		throttle_s = 0.5; break;
+	case LIM_5Hz:
+		throttle_s = 0.2; break;
+	case LIM_10Hz:
+		throttle_s = 0.1; break;
+	default:
+		assert(mrl != mrl);
+	}
+
+	epicsTimeStamp et1;
+	epicsTimeGetCurrent(&et1);
+	if (epicsTimeDiffGreaterThan(et1, et0, throttle_s)){
+		go_ahead = true;
+		et0 = et1;
+	}else{
+		go_ahead = false;
+	}
 }
 

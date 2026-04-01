@@ -192,7 +192,7 @@ protected:
 	void redit();
 	virtual void update_soe_lut(bool first_time = false);
 	virtual void update_soe_lut_columns(void);
-	virtual void update_soe_lut_callbacks(void);
+	virtual void update_soe_lut_callbacks(bool call_array_callbacks);
 
 	virtual void update_hld_tab_columns(void);
 	virtual void update_hld_tab_callbacks(int n_u32);

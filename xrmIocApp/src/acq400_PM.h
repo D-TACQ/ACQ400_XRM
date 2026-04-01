@@ -79,7 +79,7 @@ protected:
 	unsigned update;
 
 	virtual void update_pm_tab_row(int row, int ib);
-	virtual void update_pm_callbacks(void);
+	virtual void update_pm_callbacks(bool call_array_callbacks);
 
 	virtual void task();
 

@@ -58,7 +58,7 @@ protected:
 	asynStatus gip(int pnum, int* pram);
 	virtual void update_fmt(bool first_time = false) = 0;
 	virtual void update_fmt_columns(void);
-	virtual void update_fmt_callbacks(void);
+	virtual void update_fmt_callbacks(bool call_array_callbacks);
 	void init_mc_url(char* group, int maxgroup, int* port);
 	MultiCast& mc_factory(MultiCast::MC txrx);
 

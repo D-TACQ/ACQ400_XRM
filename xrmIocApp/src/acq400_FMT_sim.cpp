@@ -189,6 +189,7 @@ void acq400_FMT_Sim::task(void) {
 	epicsEventWait(eventId);
 
 	MultiCast& multicast = acq400_FMT_abc::mc_factory(MultiCast::MC_SENDER);
+	MonitorRateLimit rateLimit;
 
 	while(1){
 		int runstop;
@@ -202,10 +203,13 @@ void acq400_FMT_Sim::task(void) {
 		if (runstop == 1){
 			update_fmt();
 			multicast.sendto(fmt, sizeof(fmt));
-			update_fmt_columns();
+			rateLimit.newData(mrl_param);
+			if (rateLimit.goAhead()){
+				update_fmt_columns();
+			}
 			lock();
 			updateTimeStamp();
-			update_fmt_callbacks();
+			update_fmt_callbacks(rateLimit.goAhead());
 			unlock();
 		}else{
 			usleep(50000);

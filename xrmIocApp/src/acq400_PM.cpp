@@ -127,22 +127,26 @@ void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
 	}
 }
 
-void acq400_PM::update_pm_callbacks(void)
+void acq400_PM::update_pm_callbacks(bool call_array_callbacks )
 {
-	doCallbacksInt8Array(pm_cols.c_rownum, 		MAX_PM_BUFFERS, P_COL_ROWNUM, 0);
-	doCallbacksInt16Array(pm_cols.c_ib_live, 	MAX_PM_BUFFERS, P_COL_IBLIVE, 0);
-	doCallbacksInt16Array(pm_cols.c_ib_store, 	MAX_PM_BUFFERS, P_COL_IBSTORE, 0);
-	doCallbacksInt64Array(pm_cols.c_timestamp,      MAX_PM_BUFFERS, P_COL_TS, 0);
-	doCallbacksInt32Array(pm_cols.c_SP0,      	MAX_PM_BUFFERS, P_COL_SP0, 0);
-	doCallbacksInt32Array(pm_cols.c_SP1,      	MAX_PM_BUFFERS, P_COL_SP1, 0);
-	doCallbacksInt32Array(pm_cols.c_SP2,      	MAX_PM_BUFFERS, P_COL_SP2, 0);
-	doCallbacksInt32Array(pm_cols.c_SP3,      	MAX_PM_BUFFERS, P_COL_SP3, 0);
-	doCallbacksInt8Array(pm_cols.c_WRVS,      	MAX_PM_BUFFERS, P_COL_WRVS, 0);
-	doCallbacksInt32Array(pm_cols.c_WRVT,      	MAX_PM_BUFFERS, P_COL_WRVT, 0);
-	doCallbacksInt64Array(pm_cols.c_WRUS,		MAX_PM_BUFFERS, P_COL_WRUS, 0);
-
 	setIntegerParam(P_UPDATES, ++update);
 	callParamCallbacks();
+
+	if (call_array_callbacks){
+		doCallbacksInt8Array(pm_cols.c_rownum, 		MAX_PM_BUFFERS, P_COL_ROWNUM, 0);
+		doCallbacksInt16Array(pm_cols.c_ib_live, 	MAX_PM_BUFFERS, P_COL_IBLIVE, 0);
+		doCallbacksInt16Array(pm_cols.c_ib_store, 	MAX_PM_BUFFERS, P_COL_IBSTORE, 0);
+		doCallbacksInt64Array(pm_cols.c_timestamp,      MAX_PM_BUFFERS, P_COL_TS, 0);
+		doCallbacksInt32Array(pm_cols.c_SP0,      	MAX_PM_BUFFERS, P_COL_SP0, 0);
+		doCallbacksInt32Array(pm_cols.c_SP1,      	MAX_PM_BUFFERS, P_COL_SP1, 0);
+		doCallbacksInt32Array(pm_cols.c_SP2,      	MAX_PM_BUFFERS, P_COL_SP2, 0);
+		doCallbacksInt32Array(pm_cols.c_SP3,      	MAX_PM_BUFFERS, P_COL_SP3, 0);
+		doCallbacksInt8Array(pm_cols.c_WRVS,      	MAX_PM_BUFFERS, P_COL_WRVS, 0);
+		doCallbacksInt32Array(pm_cols.c_WRVT,      	MAX_PM_BUFFERS, P_COL_WRVT, 0);
+		doCallbacksInt64Array(pm_cols.c_WRUS,		MAX_PM_BUFFERS, P_COL_WRUS, 0);
+	}
+
+
 }
 
 /* @@todo: FIXME. Common code with SOE. Refactor recommended. */
@@ -173,8 +177,6 @@ void acq400_PM::update_pm_tab_row(int row, int ib)
 }
 void acq400_PM::task()
 {
-	asynStatus status = asynSuccess;
-
 	fprintf(stderr, "%s 01\n", FN);
 	epicsEventWait(eventId);
 
@@ -185,20 +187,19 @@ void acq400_PM::task()
 	int nbuf;
 	gip(P_NBUF, &nbuf);
 	const unsigned NBUF = (unsigned)nbuf;
+	MonitorRateLimit rateLimit;
 
 	if ((ib = getBufferId(fc)) < 0){
 		fprintf(stderr, "ERROR: getBufferId() fail");
 		return;
 	}
 
+
 	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0; runstop0 = runstop){
 		lock();
-		status = getIntegerParam(P_RUNSTOP, &runstop);
-		if (status){
-			fprintf(stderr, "%s:%s getIntegerParam P_FMT_MC_PORT fail\n", DN, FN);
-			return;
-		}
+		gip(P_RUNSTOP, &runstop);
 		unlock();
+		rateLimit.newData(mrl_param);
 		if (runstop == 1 || runstop0 == 1){
 			if (runstop0 == 0){
 				init_buffers(NBUF);
@@ -209,10 +210,12 @@ void acq400_PM::task()
 			for (auto&& bpi: filled){
 				pm_cols.c_ib_live[irow] = bpi.ib_live;
 				pm_cols.c_ib_store[irow] = bpi.ib_store;
-				update_pm_tab_row(irow++, spX_from_live? bpi.ib_live: bpi.ib_store);
+				if (rateLimit.goAhead()){
+					update_pm_tab_row(irow++, spX_from_live? bpi.ib_live: bpi.ib_store);
+				}
 			}
 			lock();
-			update_pm_callbacks();
+			update_pm_callbacks(rateLimit.goAhead());
 			unlock();
 		}
 		if (runstop == 0 && runstop0 == 1){

@@ -102,16 +102,18 @@ void acq400_FMT_abc::update_fmt_columns()
 	}
 }
 
-void acq400_FMT_abc::update_fmt_callbacks()
+void acq400_FMT_abc::update_fmt_callbacks(bool call_array_callbacks)
 {
 	setIntegerParam(P_UPDATES, ++update);
 	setInteger64Param(P_TS_USEC, now_us);
 	callParamCallbacks();
-	doCallbacksInt8Array(cols.c_rownum, FMT_ROWS, P_FMT_COL_ROWNUM, 0);
-	doCallbacksInt16Array(cols.c_event, FMT_ROWS, P_FMT_COL_EVENT, 0);
-	doCallbacksInt16Array(cols.c_pad, FMT_ROWS, P_FMT_COL_PAD, 0);
-	doCallbacksInt32Array(cols.c_client_data, FMT_ROWS, P_FMT_COL_CLIDAT, 0);
-	doCallbacksInt64Array(cols.c_timestamp, FMT_ROWS, P_FMT_COL_TS, 0);
+	if (call_array_callbacks){
+		doCallbacksInt8Array(cols.c_rownum, FMT_ROWS, P_FMT_COL_ROWNUM, 0);
+		doCallbacksInt16Array(cols.c_event, FMT_ROWS, P_FMT_COL_EVENT, 0);
+		doCallbacksInt16Array(cols.c_pad, FMT_ROWS, P_FMT_COL_PAD, 0);
+		doCallbacksInt32Array(cols.c_client_data, FMT_ROWS, P_FMT_COL_CLIDAT, 0);
+		doCallbacksInt64Array(cols.c_timestamp, FMT_ROWS, P_FMT_COL_TS, 0);
+	}
 }
 
 void acq400_FMT_abc::task_runner(void *drvPvt)

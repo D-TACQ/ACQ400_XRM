@@ -79,6 +79,7 @@ void acq400_FMT_rx::task(void) {
 	epicsEventWait(eventId);
 
 	MultiCast& multicast = acq400_FMT_abc::mc_factory(MultiCast::MC_RECEIVER);
+	MonitorRateLimit rateLimit;
 
 	while(1){
 		int runstop;
@@ -91,12 +92,15 @@ void acq400_FMT_rx::task(void) {
 		unlock();
 		if (runstop == 1){
 			multicast.recvfrom(fmt, sizeof(fmt));
+			rateLimit.newData(mrl_param);
 			update_fmt(first_time);
 			process_fmt(first_time);
-			update_fmt_columns();
+			if (rateLimit.goAhead()){
+				update_fmt_columns();
+			}
 			lock();
 			updateTimeStamp();
-			update_fmt_callbacks();
+			update_fmt_callbacks(rateLimit.goAhead());
 			unlock();
 			first_time = false;
 		}else{
@@ -119,6 +123,8 @@ asynStatus acq400_FMT_rx::writeInt32(asynUser *pasynUser, epicsInt32 value)
 
 	    if (function == P_RUNSTOP) {
 	        if (value) epicsEventSignal(eventId);
+	    }else if (function == P_MON_RL){
+		    mrl_param = value;
 	    }
 
 	    /* Do callbacks so higher layers see any changes */

@@ -5,4 +5,5 @@ SPORT=FMTR
 
 echo acq400_FMT_rxConfigure\($SPORT,$SRC\)
 PRAMS="UUT=${IOC_HOST},PORT=FMTR,ADDR=0,TIMEOUT=0"
+echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},FUN=FMT\"\)
 echo dbLoadRecords\(\"db/fmt_base.db\",\"${PRAMS}\"\)

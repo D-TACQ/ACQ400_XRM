@@ -168,17 +168,19 @@ void acq400_SOE::update_soe_lut_columns(void)
 		cols.c_offset_us[row] = soe_lut[row].offset_us;
 	};
 }
-void acq400_SOE::update_soe_lut_callbacks(void)
+void acq400_SOE::update_soe_lut_callbacks(bool call_array_callbacks)
 {
 	setIntegerParam(P_UPDATES, ++update);
 	//setInteger64Param(P_TS_USEC, now_us);
-
 	callParamCallbacks();
-	doCallbacksInt8Array(cols.c_rownum, FMT_ROWS, P_SOE_LUT_COL_ROWNUM, 0);
-	doCallbacksInt16Array(cols.c_event, FMT_ROWS, P_SOE_LUT_COL_EVENT, 0);
-	doCallbacksInt16Array(cols.c_pad, FMT_ROWS, P_SOE_LUT_COL_PAD, 0);
-	doCallbacksInt32Array(cols.c_pv_id, FMT_ROWS, P_SOE_LUT_COL_PV_ID, 0);
-	doCallbacksInt64Array(cols.c_offset_us, FMT_ROWS, P_SOE_LUT_COL_OFFSET_US, 0);
+
+	if (call_array_callbacks){
+		doCallbacksInt8Array(cols.c_rownum, FMT_ROWS, P_SOE_LUT_COL_ROWNUM, 0);
+		doCallbacksInt16Array(cols.c_event, FMT_ROWS, P_SOE_LUT_COL_EVENT, 0);
+		doCallbacksInt16Array(cols.c_pad, FMT_ROWS, P_SOE_LUT_COL_PAD, 0);
+		doCallbacksInt32Array(cols.c_pv_id, FMT_ROWS, P_SOE_LUT_COL_PV_ID, 0);
+		doCallbacksInt64Array(cols.c_offset_us, FMT_ROWS, P_SOE_LUT_COL_OFFSET_US, 0);
+	}
 }
 
 void acq400_SOE::init_the_hold_table()
@@ -367,7 +369,7 @@ void acq400_SOE::task()
 		fprintf(stderr, "ERROR: getBufferId() fail");
 		return;
 	}
-
+	MonitorRateLimit rateLimit;
 
 	get_sample_dimensions();
 	init_the_hold_table();
@@ -378,6 +380,7 @@ void acq400_SOE::task()
 		lock();
 		gip(P_RUNSTOP, &runstop);
 		unlock();
+		rateLimit.newData(mrl_param);
 
 		if (runstop == 1){
 			if (runstop0 == 0){
@@ -405,7 +408,7 @@ void acq400_SOE::task()
 
 				lock();
 				callParamCallbacks();
-				update_soe_lut_callbacks();
+				update_soe_lut_callbacks(rateLimit.goAhead());
 				unlock();
 			}else{
 				sip(0, P_SOE_FMT_RX_SUCCESS, ++fmt_rx_success);
@@ -415,13 +418,15 @@ void acq400_SOE::task()
 				if (rc.events_accepted != 0){
 					update_hld_tab_callbacks(rc.ht_size32);
 				}
-				update_soe_lut_callbacks();
+				update_soe_lut_callbacks(rateLimit.goAhead());
 				unlock();
 				/* now lower priority .. maybe at subrate? */
-				update_hld_tab_columns();
-				lock();
-				update_hld_tab_columns_callbacks();
-				unlock();
+				if (rateLimit.goAhead()){
+					update_hld_tab_columns();
+					lock();
+					update_hld_tab_columns_callbacks();
+					unlock();
+				}
 			}
 		}
 	}
