@@ -70,10 +70,11 @@ bool epicsTimeDiffGreaterThan(epicsTimeStamp& t1, epicsTimeStamp& t0, double tgt
 }
 
 #define TICKSPERUS	40
+#define USPS		1000000
 
 
 static inline
-epicsInt64 getWrTs(unsigned wrse, unsigned wrv)
+epicsInt64 getWrTsUs(unsigned wrse, unsigned wrv)
 /**< create full Timestamp from <wrse> White Rabbit Seconds from Epoch and
  * <wrv> : White Rabbit Vernier, the coded output from the WR firmware.
  */
@@ -87,8 +88,38 @@ epicsInt64 getWrTs(unsigned wrse, unsigned wrv)
 		// this is going to be REALLY obvious!
 	}
 	int usec = (wrv&0x0fffffff)/TICKSPERUS;
-	epicsInt64 ts = ((epicsInt64)sec)*1000000 + usec;
+	epicsInt64 ts = ((epicsInt64)sec)*USPS + usec;
 	return ts;
+}
+
+#define NSPERTICK	25
+#define NSPS		1000000000
+
+static inline
+epicsInt64 getWrTsNs(unsigned wrse, unsigned wrv)
+/**< create full Timestamp from <wrse> White Rabbit Seconds from Epoch and
+ * <wrv> : White Rabbit Vernier, the coded output from the WR firmware.
+ * wrv max = 40e6. 40e6 * 25 = 0x369aca00 -> fits a u32
+ * .. our 28 bit vernier is good to 250MHz.
+ */
+{
+	unsigned sec = (wrv >> 28)&0x07;
+	if ((wrse&7) == sec){
+		sec = wrse;
+	}else if (((++wrse)&7) == sec){
+		sec = wrse;
+	}else{
+		// this is going to be REALLY obvious!
+	}
+	unsigned nsec = (wrv&0x0fffffff)*NSPERTICK;
+	epicsInt64 ts = ((epicsInt64)sec)*NSPS + nsec;
+	return ts;
+}
+
+static inline
+epicsInt64 getWrTs(unsigned wrse, unsigned wrv)
+{
+	return getWrTsUs(wrse, wrv);
 }
 
 #endif /* ACQ400IOCAPP_SRC_ACQ400_ASYN_COMMON_H_ */
