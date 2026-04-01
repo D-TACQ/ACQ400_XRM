@@ -25,3 +25,18 @@ record(int64in, "${UUT}:${FUN}:TS_USEC")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
 }
+
+record(mbbo, "${UUT}:${FUN}:MON_RL")
+{
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MON_RL")
+	field(ZRST, "DIS_MON")
+	field(ONST, "LIM_1Hz")
+	field(TWST, "LIM_2Hz")
+	field(THST, "LIM_5Hz")
+	field(FRST, "LIM_10Hz")
+	field(FVST, "LIM_NOLIM")
+	field(DESC, "${FUN}MONITOR RATE LIMIT")
+	field(PINI, "YES")
+	field(VAL,  "5")
+}
