@@ -1,4 +1,5 @@
 #!/bin/sh
+[ -e /mnt/local/sysconfig/xrm_epics.sh ] && source /mnt/local/sysconfig/xrm_epics.sh
 HN=${IOC_HOST}
 SX=${1:-S0}
 EN=${2:-1}

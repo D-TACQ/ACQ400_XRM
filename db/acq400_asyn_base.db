@@ -30,6 +30,7 @@ record(mbbo, "${UUT}:${FUN}:MON_RL")
 {
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MON_RL")
+	field(NOBT, "3")
 	field(ZRST, "DIS_MON")
 	field(ONST, "LIM_1Hz")
 	field(TWST, "LIM_2Hz")
