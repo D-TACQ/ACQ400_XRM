@@ -256,6 +256,8 @@ asynStatus acq400_PM::writeInt32(asynUser *pasynUser, epicsInt32 value)
 
     if (function == P_RUNSTOP) {
 	if (value) epicsEventSignal(eventId);
+    }else if (function == P_MON_RL){
+	    mrl_param = value;
     }
 
     /* Do callbacks so higher layers see any changes */
