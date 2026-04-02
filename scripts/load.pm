@@ -7,8 +7,12 @@ ACQ400_PM_NBUF=${ACQ400_PM_NBUF:-20}
 ACQ400_PM_NLW=${ACQ400_PM_NLW:-32768}
 
 echo acq400_PM_Configure\($SPORT,$SRC\)
-PRAMS="UUT=${IOC_HOST},PORT=$SPORT,ADDR=0,TIMEOUT=0"
 
+ARP="P=${IOC_HOST}:,R=${SPORT},PORT=${SPORT},ADDR=0,IMAX=100,OMAX=100,TB3=0,TIB0=0"
+echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
+
+PRAMS="UUT=${IOC_HOST},PORT=$SPORT,ADDR=0,TIMEOUT=0"
+echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},FUN=PM\"\)
 echo dbLoadRecords\(\"db/pm_base.db\",\"${PRAMS},NBUF=${ACQ400_PM_NBUF}\"\)
 
 NBM1=$((ACQ400_PM_NBUF-1))

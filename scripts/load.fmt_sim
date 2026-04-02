@@ -3,6 +3,10 @@
 SPORT=FMTS
 SRC=WRTS
 echo acq400_FMT_SimConfigure\($SPORT,$SRC\)
+
+ARP="P=${IOC_HOST}:,R=${SPORT},PORT=${SPORT},ADDR=0,IMAX=100,OMAX=100,TB3=0,TIB0=0"
+echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
+
 PRAMS="UUT=${IOC_HOST},PORT=$SPORT,ADDR=0,TIMEOUT=0"
 echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},FUN=FMT\"\)
 echo dbLoadRecords\(\"db/fmt_base.db\",\"${PRAMS}\"\)
