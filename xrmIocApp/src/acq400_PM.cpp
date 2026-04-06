@@ -41,8 +41,6 @@ acq400_PM::acq400_PM(const char* portName):
 	fprintf(stderr, "%s R1000 \n", FN);
 	memset(&pm_cols, 0, sizeof(pm_cols));
 
-	eventId = epicsEventCreate(epicsEventEmpty);
-
 	for (epicsInt8 row = 0; row < MAX_PM_BUFFERS; ++ row){
 		pm_cols.c_rownum[row] = row;
 	}

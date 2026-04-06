@@ -201,9 +201,6 @@ protected:
 	struct KBUF current_kb;
 	void update_kbuf_info(char* raw);
 
-
-	epicsEventId eventId;
-
 	virtual void task();
 
 	static void task_runner(void *drvPvt);

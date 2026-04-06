@@ -55,7 +55,6 @@ protected:
 	char mc_group[80];
 	int mc_port;
 
-	asynStatus gip(int pnum, int* pram);
 	virtual void update_fmt(bool first_time = false) = 0;
 	virtual void update_fmt_columns(void);
 	virtual void update_fmt_callbacks(bool call_array_callbacks);
@@ -63,8 +62,6 @@ protected:
 	MultiCast& mc_factory(MultiCast::MC txrx);
 
 	static int nice;
-
-	epicsEventId eventId;
 
 	virtual void task() = 0;
 

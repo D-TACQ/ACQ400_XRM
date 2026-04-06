@@ -25,6 +25,8 @@ protected:
 
 	asynStatus gsp(int pnum, int maxchar, char* str);
 
+	epicsEventId eventId;
+
 	int P_RUNSTOP;
 	int P_UPDATES;
 	int P_TS_USEC;
@@ -47,10 +49,9 @@ protected:
 		bool goAhead() {
 			return go_ahead;
 		}
-		//gip(P_MON_RL, &mrl);
 		void newData(int mrl);
 	};
-	int mrl_param;
+	int mrl_param;                    // MUST be explicitly set by client ::writeInt32()
 public:
 	acq400_asynPortDriver(const char *portName, int maxAddr, int interfaceMask, int interruptMask,
 			int asynFlags, int autoConnect, int priority, int stackSize);

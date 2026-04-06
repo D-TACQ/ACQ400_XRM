@@ -67,9 +67,6 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 		hold_cols.c_SP1[row] = 0x12345678;
 	}
 
-
-	eventId = epicsEventCreate(epicsEventEmpty);
-
 	createParam(PS_SOE_STRATEGY, asynParamInt32,  &P_SOE_STRATEGY);
 
 	createParam(PS_SOE_AGG_SITES,		asynParamOctet,      &P_SOE_AGG_SITES);

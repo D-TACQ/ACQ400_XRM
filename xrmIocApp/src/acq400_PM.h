@@ -75,7 +75,6 @@ protected:
 		epicsInt64  c_WRUS[MAX_PM_BUFFERS];
 	} pm_cols;
 
-	epicsEventId eventId;
 	unsigned update;
 
 	virtual void update_pm_tab_row(int row, int ib);

@@ -39,7 +39,7 @@ acq400_FMT_abc::acq400_FMT_abc(
 	}
 	//update_fmt(true);
 
-	eventId = epicsEventCreate(epicsEventEmpty);
+
 	createParam(PS_FMT_MC_GRP,  asynParamOctet,	&P_FMT_MC_GRP);
 	createParam(PS_FMT_MC_PORT,  asynParamInt32,	&P_FMT_MC_PORT);
 
@@ -51,16 +51,6 @@ acq400_FMT_abc::acq400_FMT_abc(
 
 	setStringParam(P_FMT_MC_GRP, G::fmt_mc_group);
 	setIntegerParam(P_FMT_MC_PORT, G::fmt_mc_port);
-}
-
-asynStatus acq400_FMT_abc::gip(int pnum, int* pram)
-{
-	asynStatus status = getIntegerParam(pnum, pram);
-	if (status){
-		fprintf(stderr, "%s:%s getIntegerParam %d fail\n",
-				DN, FN, pnum);
-	}
-	return status;
 }
 
 void acq400_FMT_abc::init_mc_url(char* group, int maxgroup, int *port)
