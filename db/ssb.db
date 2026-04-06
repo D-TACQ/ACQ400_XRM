@@ -12,10 +12,10 @@ record (longout, "${UUT}:0:SSB") {
 }
 
 
-record (longin, "${UUT}:SOE:SMPL_AI_COUNT") {
+record (longin, "${UUT}:SMPL_AI_COUNT") {
 	field(DTYP, "asynInt32")
 	
-	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_AI_COUNT")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SMPL_AI_COUNT")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:SMPL": {
@@ -25,7 +25,7 @@ record (longin, "${UUT}:SOE:SMPL_AI_COUNT") {
 	field(DESC, "# AI16 elements in sample")
 }
 
-record (longout, "${UUT}:SOE:SMPL_AI_INDEX") {
+record (longout, "${UUT}:SMPL_AI_INDEX") {
 	field(DTYP, "Soft Channel")
 	field(VAL,  "0")
 	field(PINI, "YES")
@@ -39,10 +39,10 @@ record (longout, "${UUT}:SOE:SMPL_AI_INDEX") {
 }	
 # SMPL_AI_INDEX: ALWAYS ZERO!
 
-record (longin, "${UUT}:SOE:SMPL_DI_INDEX") {
+record (longin, "${UUT}:SMPL_DI_INDEX") {
 	field(DTYP, "asynInt32")
 	
-	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_DI_INDEX")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SMPL_DI_INDEX")
 	field(SCAN, "I/O Intr")
 	info(Q:group, {
 		"${UUT}:SMPL": {
@@ -52,9 +52,9 @@ record (longin, "${UUT}:SOE:SMPL_DI_INDEX") {
 	field(DESC, "index in LW to first DI in sample")
 }
 
-record (longin, "${UUT}:SOE:SMPL_DI_COUNT") {
+record (longin, "${UUT}:SMPL_DI_COUNT") {
 	field(DTYP, "asynInt32")
-	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_DI_COUNT")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SMPL_DI_COUNT")
 	field(SCAN, "I/O Intr")
 	
 	info(Q:group, {
@@ -65,9 +65,9 @@ record (longin, "${UUT}:SOE:SMPL_DI_COUNT") {
 	field(DESC, "# DI32 elements in sample")	
 }
 
-record (longin, "${UUT}:SOE:SMPL_SP_INDEX") {
+record (longin, "${UUT}:SMPL_SP_INDEX") {
 	field(DTYP, "asynInt32")
-	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_INDEX")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SMPL_SP_INDEX")
 	field(SCAN, "I/O Intr")
 	
 	info(Q:group, {
@@ -78,9 +78,9 @@ record (longin, "${UUT}:SOE:SMPL_SP_INDEX") {
 	field(DESC, "index in LW to first SP32 in sample")	
 }
 
-record (longin, "${UUT}:SOE:SMPL_SP_COUNT") {
+record (longin, "${UUT}:SMPL_SP_COUNT") {
 	field(DTYP, "asynInt32")
-	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_COUNT")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SMPL_SP_COUNT")
 	field(SCAN, "I/O Intr")
 	
 	info(Q:group, {
@@ -93,7 +93,7 @@ record (longin, "${UUT}:SOE:SMPL_SP_COUNT") {
 
 record (longout, "${UUT}:1:RTM_TRANSLEN") {
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_NSAM")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SMPL_NSAM")
 	field(DOL, "${ACQ400IOC}:1:RTM_TRANSLEN CP")
 	field(OMSL, "closed_loop")
 	
@@ -110,28 +110,28 @@ record (longout, "${UUT}:1:RTM_TRANSLEN") {
 # intermediates: not in group, for local calc.
 record (stringout,  "${UUT}:0:AGGREGATOR:SITES") {
 	field(DTYP, "asynOctetWrite")
-	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_AGG_SITES")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))AGG_SITES")
 	field(DOL,  "${ACQ400IOC}:0:AGGREGATOR:SITES CP")
 	field(OMSL, "closed_loop")
 }
 
 record (longout, "${UUT}:${SITE}:IS_ADC") {
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_IS_ADC")
+	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SITE_IS_ADC")
 	field(DOL, "${ACQ400IOC}:${SITE}:IS_ADC CP")
 	field(OMSL, "closed_loop")
 }
 
 record (longin, "${UUT}:AGG:SPAD:N") {
 	field(DTYP, "asynInt32")
-	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_SP_COUNT")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SMPL_SP_COUNT")
 	field(DESC, "# SPAD entries")
 }
 
 record (longout, "${UUT}:${SITE}:SSB") {
 	field(DTYP, "asynInt32")
 
-	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_SSB")
+	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SITE_SSB")
 	field(DOL, "${ACQ400IOC}:${SITE}:SSB CP")
 	field(OMSL, "closed_loop")
 

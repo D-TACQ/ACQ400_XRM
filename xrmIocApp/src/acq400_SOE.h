@@ -17,6 +17,7 @@
 #include "acq400_asyn_common.h"
 #include "xrm_structs.h"
 #include "acq400_FMT.h"
+#include "SamplePrams.h"
 
 #define PS_SOE_STRATEGY		 "SOE_STRATEGY"        /* select LUT strategy 0,1.. */
 
@@ -44,17 +45,6 @@
 #define PS_SOE_HLD_COL_TS        "SOE_HLD_COL_TS"
 #define PS_SOE_HLD_COL_DATA_OFFSET "SOE_HLD_COL_DATA_OFFSET"
 
-#define PS_SOE_AGG_SITES	"SOE_AGG_SITES"
-#define PS_SOE_SITE_SSB		"SOE_SITE_SSB" /* addr per site */
-#define PS_SOE_SMPL_NSAM	"SOE_SMPL_NSAM"
-#define PS_SOE_SITE_IS_ADC	"SOE_SITE_IS_ADC"  /* addr per site */
-#define PS_SOE_SMPL_SS_U32	"SOE_SMPL_SS_U32"
-#define PS_SOE_SMPL_AI_COUNT 	"SOE_SMPL_AI_COUNT"
-#define PS_SOE_SMPL_DI_COUNT 	"SOE_SMPL_DI_COUNT"
-#define PS_SOE_SMPL_SP_COUNT 	"SOE_SMPL_SP_COUNT"
-
-#define PS_SOE_SMPL_DI_INDEX 	"SOE_SMPL_DI_INDEX"
-#define PS_SOE_SMPL_SP_INDEX 	"SOE_SMPL_SP_INDEX"
 
 #define PS_SOE_KBUF_INDEX		"SOE_KBUF_INDEX"
 #define PS_SOE_KBUF_WRT0		"SOE_KBUF_WRT0"
@@ -81,7 +71,7 @@
 
 
 
-/* define a column for each data type.git
+/* define a column for each data type
  * There will be up to 64 of these by asyn "address"
  * BUT: this is NOT going to play well with a table
  * Really, one row per event again, 32 AI cols, 2DI, 2SP ..
@@ -100,18 +90,6 @@
 #define PS_SOE_FMT_EV_NIB	"SOE_FMT_EV_NOT_IN_BUFFER"
 
 #define PS_SOE_HLD_TABLE_WF	"SOE_HLD_TABLE_WF" // raw event table.
-
-struct SamplePrams {
-	int SSB;
-	int NSAM;
-	int AI_COUNT;
-	int AI_INDEX;
-	int DI_COUNT;
-	int DI_INDEX;
-	int SP_COUNT;
-	int SP_INDEX;
-};
-
 
 struct KBUF {
 	unsigned ib;
@@ -151,6 +129,7 @@ protected:
 	SOE_HOLD_HEADER* the_hold_table;   // preallocate the max possible size. do it once!
 
 	acq400_SOE_Strategy* strategy;
+	SamplePrams samplePrams;
 
 	/* TABLE representation for Phoebus */
 	struct COLUMNS {
@@ -183,9 +162,6 @@ protected:
 	unsigned fmt_rx_success;
 	int hold_row_limit;
 	static int nice;
-
-	SamplePrams samplePrams;
-	void get_sample_dimensions();
 
 	void init_the_hold_table();
 
@@ -230,17 +206,6 @@ protected:
 	int P_SOE_HLD_COL_CLIDAT;
 	int P_SOE_HLD_COL_TS;
 	int P_SOE_HLD_COL_DATA_OFFSET;
-
-	int P_SOE_AGG_SITES; // asynParamOctet
-	int P_SOE_SITE_SSB;
-	int P_SOE_SMPL_NSAM;
-	int P_SOE_SITE_IS_ADC;
-	int P_SOE_SMPL_SS_U32;
-	int P_SOE_SMPL_AI_COUNT;
-	int P_SOE_SMPL_DI_COUNT;
-	int P_SOE_SMPL_SP_COUNT;
-	int P_SOE_SMPL_DI_INDEX;
-	int P_SOE_SMPL_SP_INDEX;
 
 	int P_SOE_HLD_COL_AI1;
 	int P_SOE_HLD_COL_AI2;

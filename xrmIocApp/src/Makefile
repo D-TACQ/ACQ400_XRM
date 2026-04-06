@@ -52,6 +52,7 @@ xrmIoc_DBD += xrmIocHello.dbd
 xrmIoc_DBD += initTrace.dbd
 xrmIoc_DBD += acq400_FMT_sim.dbd
 xrmIoc_DBD += acq400_FMT_rx.dbd
+xrmIoc_DBD += acq400_SMPL.dbd
 xrmIoc_DBD += acq400_SOE.dbd
 xrmIoc_DBD += acq400_PM.dbd
 
@@ -61,6 +62,7 @@ xrmIoc_SRCS += xrm_struct_support.cpp
 #xrmIoc_SRCS += xrm_struct_test.cpp
 xrmIoc_SRCS += acq400_common.cpp
 xrmIoc_SRCS += acq400_asynPortDriver.cpp
+xrmIoc_SRCS += acq400_SMPL.cpp SamplePrams.cpp
 xrmIoc_SRCS += acq400_FMT_abc.cpp
 xrmIoc_SRCS += acq400_FMT_sim.cpp
 xrmIoc_SRCS += acq400_FMT_rx.cpp

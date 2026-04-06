@@ -69,17 +69,6 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 
 	createParam(PS_SOE_STRATEGY, asynParamInt32,  &P_SOE_STRATEGY);
 
-	createParam(PS_SOE_AGG_SITES,		asynParamOctet,      &P_SOE_AGG_SITES);
-	createParam(PS_SOE_SITE_SSB,		asynParamInt32,      &P_SOE_SITE_SSB);
-	createParam(PS_SOE_SITE_IS_ADC,		asynParamInt32,      &P_SOE_SITE_IS_ADC);
-	createParam(PS_SOE_SMPL_SS_U32,		asynParamInt32,      &P_SOE_SMPL_SS_U32);
-	createParam(PS_SOE_SMPL_NSAM,		asynParamInt32,      &P_SOE_SMPL_NSAM);
-	createParam(PS_SOE_SMPL_AI_COUNT,	asynParamInt32,	     &P_SOE_SMPL_AI_COUNT);
-	createParam(PS_SOE_SMPL_DI_COUNT,	asynParamInt32,	     &P_SOE_SMPL_DI_COUNT);
-	createParam(PS_SOE_SMPL_SP_COUNT,	asynParamInt32,	     &P_SOE_SMPL_SP_COUNT);
-	createParam(PS_SOE_SMPL_DI_INDEX, 	asynParamInt32,	     &P_SOE_SMPL_DI_INDEX);
-	createParam(PS_SOE_SMPL_SP_INDEX, 	asynParamInt32,	     &P_SOE_SMPL_SP_INDEX);
-
 	createParam(PS_SOE_LUT_COL_ROWNUM,	asynParamInt8Array,  &P_SOE_LUT_COL_ROWNUM);
 	createParam(PS_SOE_LUT_COL_EVENT,	asynParamInt16Array, &P_SOE_LUT_COL_EVENT);
 	createParam(PS_SOE_LUT_COL_PAD,		asynParamInt16Array, &P_SOE_LUT_COL_PAD);
@@ -265,69 +254,6 @@ void acq400_SOE::update_hld_tab_columns_callbacks(void)
 }
 
 
-typedef std::vector<std::string> VS;
-
-
-void acq400_SOE::get_sample_dimensions()
-{
-	char site_list[80] = {};
-	gsp(P_SOE_AGG_SITES, 80, site_list);
-	fprintf(stderr, "SOE_AGG_SITES \"%s\"\n", site_list);
-
-	int modules_ssb_total = 0;
-	int first_di_index = 0;
-	int ssb;
-	bool first_di = true;
-	int modules_ai_ssb = 0;
-	int modules_di_ssb = 0;
-
-	VIS agg_sites;
-	split2(site_list, agg_sites, ',');
-
-	for (int site: agg_sites){
-		int is_adc;
-
-		gip(site, P_SOE_SITE_IS_ADC, &is_adc);
-
-		if (!is_adc && first_di){
-			first_di_index = modules_ssb_total/sizeof(short);
-			sip(0, P_SOE_SMPL_DI_INDEX, first_di_index);
-			first_di = false;
-		}
-
-
-		gip(site, P_SOE_SITE_SSB, &ssb);
-		modules_ssb_total += ssb;
-		if (is_adc){
-			modules_ai_ssb += ssb;
-		}else{
-			modules_di_ssb += ssb;
-		}
-
-		fprintf(stderr, "%s:%s %d ssb:%d is_adc?:%d first_di_index:%d modules_ssb_total:%d\n",
-				DN, FN, site, ssb, is_adc, first_di_index, modules_ssb_total);
-	}
-	gip(0, P_SOE_SITE_SSB, &ssb);
-	samplePrams.SSB = ssb;
-	gip(0, P_SOE_SMPL_NSAM, &samplePrams.NSAM);
-
-
-	int modules_ssl = modules_ssb_total/sizeof(long);
-	int agg_ssl = ssb/sizeof(long);
-	assert(agg_ssl >= modules_ssl);
-
-
-	samplePrams.AI_INDEX = 0;
-	sip(0, P_SOE_SMPL_AI_COUNT, samplePrams.AI_COUNT = modules_ai_ssb/sizeof(AI16_t));
-
-	sip(0, P_SOE_SMPL_DI_INDEX, samplePrams.DI_INDEX = modules_ai_ssb/sizeof(DI32_t));
-	sip(0, P_SOE_SMPL_DI_COUNT, samplePrams.DI_COUNT = modules_di_ssb/sizeof(DI32_t));
-
-	sip(0, P_SOE_SMPL_SP_INDEX, samplePrams.SP_INDEX = modules_ssl);
-	sip(0, P_SOE_SMPL_SP_COUNT, samplePrams.SP_COUNT = agg_ssl-modules_ssl);
-
-	callParamCallbacks();
-}
 
 epicsInt64 getWrTsFromRaw(unsigned* sp_raw)
 {
@@ -368,7 +294,7 @@ void acq400_SOE::task()
 	}
 	MonitorRateLimit rateLimit;
 
-	get_sample_dimensions();
+	samplePrams = SamplePrams::get_instance();
 	init_the_hold_table();
 	callParamCallbacks();
 
