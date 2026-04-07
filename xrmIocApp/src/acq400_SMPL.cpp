@@ -24,13 +24,9 @@ typedef std::vector<std::string> VS;
 
 acq400_SMPL::acq400_SMPL(const char* portName):
 	acq400_asynPortDriver(portName,
-	/* maxAddr */		1,
-	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
-				asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
-				asynFloat32ArrayMask|asynInt64ArrayMask|asynDrvUserMask,
-	/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
-				asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
-				asynFloat32ArrayMask|asynInt64ArrayMask,
+	/* maxAddr */		7,  /* SITE_SSB forces: MB + 6 sites */
+	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask,
+	/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask,
 	/* asynFlags no block*/ 0,
 	/* Autoconnect */       1,
 	/* Default priority */  0,
