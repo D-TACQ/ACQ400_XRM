@@ -294,21 +294,25 @@ void acq400_SOE::task()
 	}
 	MonitorRateLimit rateLimit;
 
+	MARK;
 	samplePrams = SamplePrams::get_instance();
 	init_the_hold_table();
 	callParamCallbacks();
-
+	MARK;
 	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0;
 							runstop0 = runstop){
+		MARK;
 		lock();
 		gip(P_RUNSTOP, &runstop);
 		unlock();
+		MARK;
 		rateLimit.newData(mrl_param);
 
 		if (runstop == 1){
 			if (runstop0 == 0){
 				;   // onStart actions
 			}
+			MARK;
 			clearHold();
 			update_soe_lut_columns(); // cosmetic stuff in slack time.
 			char* raw = Buffer::the_buffers[ib]->getBase() +
@@ -351,7 +355,9 @@ void acq400_SOE::task()
 					unlock();
 				}
 			}
+			MARK;
 		}
+		MARK;
 	}
 
 	close(fc);

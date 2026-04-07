@@ -83,9 +83,10 @@ asynStatus acq400_asynPortDriver::sip(int addr, int pnum, epicsInt64 pram)
 
 asynStatus acq400_asynPortDriver::gsp(int pnum, int maxchar, char* str)
 {
-	asynStatus status = getStringParam(pnum, 80, str);
+	asynStatus status = getStringParam(pnum, maxchar, str);
 	if (status){
-		fprintf(stderr, "%s:%s SOE_AGG_SITES fail\n", DN, FN);
+		fprintf(stderr, "%s:%s getStringParam pnum:%d fail\n",
+				DN, FN, pnum);
 		assert(status==0);
 	}
 	return status;
