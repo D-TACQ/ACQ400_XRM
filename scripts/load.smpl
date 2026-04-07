@@ -1,7 +1,6 @@
 #!/bin/sh
 
 SPORT=SMPL_P
-# ACQ400_FMT_SIM_SOURCE=WRTS
 
 
 get_inp() {
@@ -31,5 +30,7 @@ echo acq400_SMPL_Configure\($SPORT\)
 
 ARP="P=${IOC_HOST}:,R=${SPORT},PORT=${SPORT},ADDR=0,IMAX=100,OMAX=100,TB3=0,TIB0=0"
 echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
+PRAMS="UUT=${IOC_HOST},PORT=$SPORT,ADDR=0,TIMEOUT=0"
+echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},FUN=SMPL\"\)
 
 load_acq400ioc_proxies
