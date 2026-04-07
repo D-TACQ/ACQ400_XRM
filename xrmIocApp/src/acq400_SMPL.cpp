@@ -110,6 +110,50 @@ void acq400_SMPL::get_sample_dimensions()
 	callParamCallbacks();
 }
 
+asynStatus acq400_SMPL::writeInt32(asynUser *pasynUser, epicsInt32 value)
+{
+	int function = pasynUser->reason;
+	asynStatus status = asynSuccess;
+	const char *paramName;
+	int addr;
+
+	/* Fetch the parameter string name for possible use in debugging */
+	getParamName(function, &paramName);
+
+	status = pasynManager->getAddr(pasynUser, &addr);
+	if(status!=asynSuccess) return status;
+
+	/* Set the parameter in the parameter library. */
+	status = (asynStatus) setIntegerParam(addr, function, value);
+
+	fprintf(stderr,
+			      "%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
+			      DN, FN, function, addr, paramName, value);
+
+	if (function == P_RUNSTOP) {
+	    if (value) epicsEventSignal(eventId);
+	}
+
+	/* make sure our model is up to date
+	 * hmm, this meant to be VERY infrequent .. check that..
+	 */
+	get_sample_dimensions();
+
+	/* Do callbacks so higher layers see any changes */
+	status = (asynStatus) callParamCallbacks();
+
+	if (status)
+	    epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
+		      "%s:%s: status=%d, function=%d, name=%s, value=%d",
+		      DN, FN, status, function, paramName, value);
+	else
+	    asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+		  "%s:%s: function=%d, name=%s, value=%d\n",
+		  DN, FN, function, paramName, value);
+	return status;
+}
+
+
 acq400_SMPL* acq400_SMPL::_instance;
 
 acq400_SMPL* acq400_SMPL::instance()

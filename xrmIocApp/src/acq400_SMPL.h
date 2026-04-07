@@ -47,6 +47,8 @@ protected:
 	static acq400_SMPL* _instance;
 public:
 	SamplePrams samplePrams;
+	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+
 
 	static void create_instance(const char *portName);
 	static acq400_SMPL* instance();
