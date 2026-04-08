@@ -127,13 +127,11 @@ asynStatus acq400_SMPL::writeInt32(asynUser *pasynUser, epicsInt32 value)
 			      DN, FN, function, addr, paramName, value);
 
 	if (function == P_RUNSTOP) {
-	    if (value) epicsEventSignal(eventId);
+	    if (value == 1){
+		    get_sample_dimensions();     // single thread
+		    epicsEventSignal(eventId);   // if worker thread
+	    }
 	}
-
-	/* make sure our model is up to date
-	 * hmm, this meant to be VERY infrequent .. check that..
-	 */
-	get_sample_dimensions();
 
 	/* Do callbacks so higher layers see any changes */
 	status = (asynStatus) callParamCallbacks();

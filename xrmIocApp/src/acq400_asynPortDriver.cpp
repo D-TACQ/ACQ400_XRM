@@ -31,9 +31,8 @@ asynStatus acq400_asynPortDriver::gip(int pnum, int* pram)
 {
 	asynStatus status = getIntegerParam(pnum, pram);
 	if (status){
-		fprintf(stderr, "%s:%s getIntegerParam %d fail\n",
-				DN, FN, pnum);
-		assert(status == 0);
+		fprintf(stderr, "%s:%s getIntegerParam %d fail %d\n",
+				DN, FN, pnum, status);
 	}
 	return status;
 }
@@ -41,9 +40,9 @@ asynStatus acq400_asynPortDriver::gip(int addr, int pnum, int* pram)
 {
 	asynStatus status = getIntegerParam(addr, pnum, pram);
 	if (status){
-		fprintf(stderr, "%s:%s:%d getIntegerParam %d fail\n",
-				DN, FN, addr, pnum);
-		assert(status == 0);
+		fprintf(stderr, "%s:%s:%d getIntegerParam %d fail %d\n",
+				DN, FN, addr, pnum, status);
+		//assert(status == 0);
 	}
 	return status;
 }
@@ -52,9 +51,9 @@ asynStatus acq400_asynPortDriver::sip(int addr, int pnum, int pram)
 {
 	asynStatus status = setIntegerParam(addr, pnum, pram);
 	if (status){
-		fprintf(stderr, "%s:%s:%d setIntegerParam %d fail\n",
-				DN, FN, addr, pnum);
-		assert(status == 0);
+		fprintf(stderr, "%s:%s:%d setIntegerParam %d fail %d\n",
+				DN, FN, addr, pnum, status);
+		//assert(status == 0);
 	}
 	return status;
 }
@@ -63,9 +62,9 @@ asynStatus acq400_asynPortDriver::sip(int addr, int pnum, unsigned pram)
 {
 	asynStatus status = setIntegerParam(addr, pnum, pram);
 	if (status){
-		fprintf(stderr, "%s:%s:%d setIntegerParam %d fail\n",
-				DN, FN, addr, pnum);
-		assert(status == 0);
+		fprintf(stderr, "%s:%s:%d setIntegerParam %d fail %d\n",
+				DN, FN, addr, pnum, status);
+		//assert(status == 0);
 	}
 	return status;
 }
@@ -74,9 +73,9 @@ asynStatus acq400_asynPortDriver::sip(int addr, int pnum, epicsInt64 pram)
 {
 	asynStatus status = setInteger64Param(addr, pnum, pram);
 	if (status){
-		fprintf(stderr, "%s:%s:%d setInteger64Param %d fail\n",
-				DN, FN, addr, pnum);
-		assert(status == 0);
+		fprintf(stderr, "%s:%s:%d setInteger64Param %d fail %d\n",
+				DN, FN, addr, pnum, status);
+		//assert(status == 0);
 	}
 	return status;
 }
@@ -85,9 +84,9 @@ asynStatus acq400_asynPortDriver::gsp(int pnum, int maxchar, char* str)
 {
 	asynStatus status = getStringParam(pnum, maxchar, str);
 	if (status){
-		fprintf(stderr, "%s:%s getStringParam pnum:%d fail\n",
-				DN, FN, pnum);
-		assert(status==0);
+		fprintf(stderr, "%s:%s getStringParam pnum:%d fail %d\n",
+				DN, FN, pnum, status);
+		//assert(status==0);
 	}
 	return status;
 }
