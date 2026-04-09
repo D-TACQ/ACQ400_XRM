@@ -34,3 +34,20 @@ export XRM_SOE=1
 export MultiCastVerbose=1
 
 
+'# 20260409: SamplePrams available as a BLOB and an PV Table
+
+acq2206_088> hexdump  /dev/shm/SamplePrams 
+0000000 504c 534d 0080 0000 0400 0000 0020 0000
+0000010 0000 0000 0001 0000 0010 0000 000f 0000
+0000020 0011 0000                              
+0000024
+acq2206_088> pvget_value acq2206_588:SMPL
+    epics:nt/NTScalar:1.0 AI_COUNT        int value 32
+    epics:nt/NTScalar:1.0 AI_INDEX        int value 0
+    epics:nt/NTScalar:1.0 DI_COUNT        int value 1
+    epics:nt/NTScalar:1.0 DI_INDEX        int value 16
+    epics:nt/NTScalar:1.0 NSAM        int value 1024
+    epics:nt/NTScalar:1.0 SP_COUNT        int value 15
+    epics:nt/NTScalar:1.0 SP_INDEX        int value 17
+    epics:nt/NTScalar:1.0 SSB        int value 128
+
