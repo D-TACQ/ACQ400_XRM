@@ -52,6 +52,7 @@ protected:
 		void newData(int mrl);
 	};
 	int mrl_param;                    // MUST be explicitly set by client ::writeInt32()
+	int updates;
 public:
 	acq400_asynPortDriver(const char *portName, int maxAddr, int interfaceMask, int interruptMask,
 			int asynFlags, int autoConnect, int priority, int stackSize);

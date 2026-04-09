@@ -28,6 +28,9 @@
 class acq400_SMPL: public acq400_asynPortDriver {
 
 protected:
+	virtual void task();
+
+	static void task_runner(void *drvPvt);
 
 	void get_sample_dimensions();
 
@@ -42,14 +45,17 @@ protected:
 	int P_SMPL_DI_INDEX;
 	int P_SMPL_SP_INDEX;
 
-	acq400_SMPL(const char *portName);
+
 
 	static acq400_SMPL* _instance;
 public:
+	acq400_SMPL(const char *portName);
 	SamplePrams samplePrams;
+#ifdef PGMCOMOUT
 	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
-
-
+	asynStatus writeOctet(asynUser *pasynUser, const char *value,
+	                                    size_t nChars, size_t *nActual);
+#endif
 	static void create_instance(const char *portName);
 	static acq400_SMPL* instance();
 };

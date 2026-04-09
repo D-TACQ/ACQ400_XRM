@@ -24,7 +24,7 @@ typedef std::vector<std::string> VS;
 
 acq400_SMPL::acq400_SMPL(const char* portName):
 	acq400_asynPortDriver(portName,
-	/* maxAddr */		7,  /* SITE_SSB forces: MB + 6 sites */
+	/* maxAddr */		1,  /* SITE_SSB forces: MB + 6 sites */
 	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask,
 	/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask,
 	/* asynFlags no block*/ 0,
@@ -32,7 +32,8 @@ acq400_SMPL::acq400_SMPL(const char* portName):
 	/* Default priority */  0,
 	/* Default stack size*/ 0)
 {
-	createParam(PS_SOE_AGG_SITES,		asynParamOctet,      &P_AGG_SITES);
+	fprintf(stderr, "acq400_SMPL::acq400_SMPL v1001 %s PGMCOMOUT\n", portName);
+	/*
 	createParam(PS_SOE_SITE_SSB,		asynParamInt32,      &P_SITE_SSB);
 	createParam(PS_SOE_SITE_IS_ADC,		asynParamInt32,      &P_SITE_IS_ADC);
 	createParam(PS_SOE_SMPL_SS_U32,		asynParamInt32,      &P_SMPL_SS_U32);
@@ -42,14 +43,43 @@ acq400_SMPL::acq400_SMPL(const char* portName):
 	createParam(PS_SOE_SMPL_SP_COUNT,	asynParamInt32,	     &P_SMPL_SP_COUNT);
 	createParam(PS_SOE_SMPL_DI_INDEX, 	asynParamInt32,	     &P_SMPL_DI_INDEX);
 	createParam(PS_SOE_SMPL_SP_INDEX, 	asynParamInt32,	     &P_SMPL_SP_INDEX);
-
+	createParam(PS_SOE_AGG_SITES,		asynParamOctet,      &P_AGG_SITES);
+	setStringParam(P_AGG_SITES, "0000");
+	*/
+	/* Create the thread that computes the waveforms in the background */
+	asynStatus status = (asynStatus)(epicsThreadCreate("SMPL_task",
+			epicsThreadPriorityLow,
+			epicsThreadGetStackSize(epicsThreadStackMedium),
+			(EPICSTHREADFUNC)task_runner,
+			this) == NULL);
+	if (status) {
+		printf("%s:%s: epicsThreadCreate failure\n", DN, FN);
+		return;
+	}
 }
+
+void acq400_SMPL::task_runner(void *drvPvt)
+{
+	((acq400_SMPL *)drvPvt)->task();
+}
+
+void acq400_SMPL::task()
+{
+	fprintf(stderr, "acq400_SMPL::task 01\n");
+	epicsEventWait(eventId);
+	fprintf(stderr, "acq400_SMPL::task 02\n");
+	while(1){
+		epicsEventWait(eventId);
+		fprintf(stderr, "acq400_SMPL::task 03\n");
+	}
+}
+
 
 void acq400_SMPL::get_sample_dimensions()
 {
-	char site_list[80] = {};
-	gsp(P_AGG_SITES, 80, site_list);
-	fprintf(stderr, "P_AGG_SITES \"%s\"\n", site_list);
+	char site_list[80] = { "1,2"};
+	//gsp(P_AGG_SITES, 80, site_list);
+//	fprintf(stderr, "P_AGG_SITES \"%s\"\n", site_list);
 
 	int modules_ssb_total = 0;
 	int first_di_index = 0;
@@ -104,8 +134,9 @@ void acq400_SMPL::get_sample_dimensions()
 	sip(0, P_SMPL_SP_COUNT, samplePrams.SP_COUNT = agg_ssl-modules_ssl);
 
 	callParamCallbacks();
+	SamplePrams::store(samplePrams);
 }
-
+#ifdef PGMCOMOUT
 asynStatus acq400_SMPL::writeInt32(asynUser *pasynUser, epicsInt32 value)
 {
 	int function = pasynUser->reason;
@@ -123,15 +154,18 @@ asynStatus acq400_SMPL::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	status = (asynStatus) setIntegerParam(addr, function, value);
 
 	fprintf(stderr,
-			      "%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
-			      DN, FN, function, addr, paramName, value);
+		"%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
+		DN, FN, function, addr, paramName, value);
 
 	if (function == P_RUNSTOP) {
 	    if (value == 1){
+		    fprintf(stderr, "STUB call to get_sample_dimensions()\n");
 		    get_sample_dimensions();     // single thread
 		    epicsEventSignal(eventId);   // if worker thread
 	    }
 	}
+
+	sip(0, P_UPDATES, ++updates);
 
 	/* Do callbacks so higher layers see any changes */
 	status = (asynStatus) callParamCallbacks();
@@ -147,6 +181,40 @@ asynStatus acq400_SMPL::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	return status;
 }
 
+asynStatus acq400_SMPL::writeOctet(asynUser *pasynUser, const char *value,
+                                    size_t nChars, size_t *nActual)
+{
+    int addr;
+    int function;
+    const char *paramName;
+    asynStatus status = asynSuccess;
+    static const char *functionName = "writeOctet";
+
+    status = parseAsynUser(pasynUser, &function, &addr, &paramName);
+    if (status != asynSuccess) return status;
+
+    /* Set the parameter in the parameter library. */
+    status = (asynStatus)setStringParam(addr, function, (char *)value);
+
+     /* Do callbacks so higher layers see any changes */
+    status = (asynStatus)callParamCallbacks(addr, addr);
+
+    if (status)
+        epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
+                  "%s:%s: status=%d, function=%d, name=%s, value=%s",
+                  driverName, functionName, status, function, paramName, value);
+    else
+        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+              "%s:%s: function=%d, name=%s, value=%s\n",
+              driverName, functionName, function, paramName, value);
+    *nActual = nChars;
+
+    fprintf(stderr,
+                  "%s:%s: function=%d, name=%s, value=%s\n",
+                  driverName, functionName, function, paramName, value);
+    return status;
+}
+#endif
 
 acq400_SMPL* acq400_SMPL::_instance;
 
@@ -161,11 +229,13 @@ acq400_SMPL* acq400_SMPL::instance()
 
 void acq400_SMPL::create_instance(const char *portName)
 {
+	fprintf(stderr, "SamplePrams::create_instance() 01\n");
 	assert(_instance == 0);
 	_instance = new acq400_SMPL(portName);
 }
 
 SamplePrams& SamplePrams::get_instance() {
+	fprintf(stderr, "SamplePrams::get_instance() 01\n");
 	assert(acq400_SMPL::instance()->samplePrams.isValid());
 	return acq400_SMPL::instance()->samplePrams;
 }
@@ -176,9 +246,9 @@ extern "C" {
 	  */
 	int acq400_SMPL_Configure(const char *portName)
 	{
-		printf("%s:%s R1001 %s\n", DN, FN, portName);
-
-		acq400_SMPL::create_instance(portName);
+		printf("%s:%s R1002 %s\n", DN, FN, portName);
+		new acq400_SMPL(portName);
+		//acq400_SMPL::create_instance(portName);
 		return 0;
 	}
 

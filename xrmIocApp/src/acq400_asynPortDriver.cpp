@@ -17,7 +17,8 @@ acq400_asynPortDriver::acq400_asynPortDriver(const char *portName, int maxAddr, 
 		int asynFlags, int autoConnect, int priority, int stackSize):
         asynPortDriver(portName, maxAddr, interfaceMask, interruptMask,
                    asynFlags, autoConnect, priority, stackSize),
-		   mrl_param(MonitorRateLimit::LIM_NOLIM)
+		   mrl_param(MonitorRateLimit::LIM_NOLIM),
+		   updates(0)
 {
 	createParam(PS_RUNSTOP, asynParamInt32, &P_RUNSTOP);
 	createParam(PS_UPDATES, asynParamInt32,	&P_UPDATES);

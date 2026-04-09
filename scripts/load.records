@@ -75,6 +75,7 @@ cat - <<EOF
 dbLoadRecords("db/local-aliases.db","UUT=acq2206_088")
 iocInit()
 dbl > ${RL}
+dbpf ${HOST}:SMPL:RUNSTOP 1
 dbpf ${HOST}:IOC_READY 1
 EOF
 
