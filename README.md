@@ -31,8 +31,9 @@ export EPICS_PVA_ADDR_LIST="$ETH0_IP $ETH00_IP"
 export XRM_FMT_RX=1
 export XRM_SOE=1
 
-export XRM_INST=STRATEGY={STR|SPY},REDIS_HOST={a.b.c.d},REDIS_PORT=nnn,REDIS_MKEY=string
-export XRM_INST22=STRATEGY={STR|SPY},REDIS_HOST={a.b.c.d},REDIS_PORT=nnn,REDIS_MKEY=string
+# only ONE can be STR. Both could be SPY ..
+export XRM_INST="STRATEGY={STR|SPY};REDIS_HOST={a.b.c.d};REDIS_PORT=nnn;REDIS_MKEY=string"
+export XRM_INST2="STRATEGY={STR|SPY};REDIS_HOST={a.b.c.d};REDIS_PORT=nnn;REDIS_MKEY=string"
 
 export MultiCastVerbose=1
 
