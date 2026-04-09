@@ -69,8 +69,8 @@ fi
 [ ! -z $XRM_FMT_RX ] && ./scripts/load.fmt_rx $XRM_FMT_RX
 [ ! -z $XRM_SOE ] && ./scripts/load.soe $XRM_SOE
 [ ! -z $XRM_PM ] && ./scripts/load.pm $XRM_PM
-[ ! -z $XRM_INST ] && ./scripts/load.inst $XRM_INST
-[ ! -z $XRM_INST2 ] && ./scripts/load.inst $XRM_INST2
+[ ! -z $XRM_INST ] && ./scripts/load.inst 1 $XRM_INST
+[ ! -z $XRM_INST2 ] && ./scripts/load.inst 2 $XRM_INST2
 
 cat - <<EOF
 dbLoadRecords("db/local-aliases.db","UUT=acq2206_088")

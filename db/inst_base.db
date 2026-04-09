@@ -1,43 +1,43 @@
 # Base records for INST
 
 # intermediates: not in group, for local calc.
-record (stringin,  "${UUT}:INST:STRATEGY") {
+record (stringin,  "${UUT}:INST:${FUN}:STRATEGY") {
 	field(DTYP, "asynOctetRead")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))INST_STRATEGY")
 	field(SCAN, "I/O Intr")
 	field(DESC, "strategy: master or spy")
 	info(Q:group, {
-		"${UUT}:INST:REDIS:SET": {
+		"${UUT}:INST:REDIS:${FUN}:SET": {
 			"STRATEGY": {+channel:"VAL"}
 		}
 	})	
 }
 
-record (stringout,  "${UUT}:INST:REDIS_HOST") {
+record (stringout,  "${UUT}:INST:${FUN}:REDIS_HOST") {
 	field(DTYP, "asynOctetWrite")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_HOST")
 	field(PINI, "YES")
 	field(VAL,  "${REDIS_HOST}")
 	info(Q:group, {
-		"${UUT}:INST:REDIS:SET": {
+		"${UUT}:INST:REDIS:${FUN}:SET": {
 			"HOST": {+channel:"VAL"}
 		}
 	})	
 }
 
-record (stringout,  "${UUT}:INST:REDIS_PORT") {
+record (stringout,  "${UUT}:INST:${FUN}:REDIS_PORT") {
 	field(DTYP, "asynOctetWrite")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_PORT")
 	field(PINI, "YES")
 	field(VAL,  "${REDIS_PORT}")
 	info(Q:group, {
-		"${UUT}:INST:REDIS:SET": {
+		"${UUT}:INST:${FUN}:REDIS:SET": {
 			"PORT": {+channel:"VAL"}
 		}
 	})	
 }
 
-record (stringout,  "${UUT}:INST:REDIS_MKEY") {
+record (stringout,  "${UUT}:INST:${FUN}:REDIS_MKEY") {
 	field(DTYP, "asynOctetWrite")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_MKEY")
 	field(DESC, "Major (UUT) key")
@@ -45,46 +45,46 @@ record (stringout,  "${UUT}:INST:REDIS_MKEY") {
 	field(VAL,  "${REDIS_MKEY}")
 	
 	info(Q:group, {
-		"${UUT}:INST:REDIS:SET": {
+		"${UUT}:INST:${FUN}:REDIS:SET": {
 			"MKEY": {+channel:"VAL"}
 		}
 	})	
 }
 
-record (longin, "${UUT}:INST:REDIS_BCOUNT") {
+record (longin, "${UUT}:INST:${FUN}:REDIS_BCOUNT") {
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_BCOUNT")
 	field(SCAN, "I/O Intr")
 	
 	info(Q:group, {
-		"${UUT}:INST:REDIS:STA": {
+		"${UUT}:INST:${FUN}:REDIS:STA": {
 			"BCOUNT": {+channel:"VAL"}
 		}
 	})
 	field(DESC, "# buffers (cycles) so far")	
 }
 
-record (longin, "${UUT}:INST:REDIS_STATUS") {
+record (longin, "${UUT}:INST:${FUN}:REDIS_STATUS") {
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_STATUS")
 	field(SCAN, "I/O Intr")
 	
 	info(Q:group, {
-		"${UUT}:INST:REDIS:STA": {
+		"${UUT}:INST:${FUN}:REDIS:STA": {
 			"STATUS": {+channel:"VAL"}
 		}
 	})
 	field(DESC, "status value")	
 }
 
-record (stringin,  "${UUT}:INST:REDIS_MMKEY") {
+record (stringin,  "${UUT}:INST:${FUN}:REDIS_MMKEY") {
 	field(DTYP, "asynOctetRead")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_MMKEY")
 	field(SCAN, "I/O Intr")
 	field(DESC, "Latest Major/Minor (UUT/Timestamp) key")
 	
 	info(Q:group, {
-		"${UUT}:INST:REDIS:STA": {
+		"${UUT}:INST:${FUN}:REDIS:STA": {
 			"MMKEY": {+channel:"VAL"}
 		}
 	})

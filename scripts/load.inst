@@ -1,7 +1,8 @@
 #!/bin/sh
 
 
-eval $1
+CH=$1
+eval $2
 
 STRATEGY=${STRATEGY:-STR}   # alt: SPY
 REDIS_HOST=${REDIS_HOST:-redishost}
@@ -23,8 +24,8 @@ echo acq400_INST_Configure\($SPORT,$STRATEGY\)
 ARP="P=${IOC_HOST}:,R=${SPORT},PORT=${SPORT},ADDR=0,IMAX=100,OMAX=100,TB3=0,TIB0=0"
 echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
 
-PRAMS="UUT=${IOC_HOST},PORT=$SPORT,ADDR=0,TIMEOUT=0"
-echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},FUN=INST:${STRATEGY}\"\)
+PRAMS="UUT=${IOC_HOST},PORT=$SPORT,ADDR=0,TIMEOUT=0,FUN=INST:${CH}"
+echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS}\"\)
 RPRAMS="REDIS_HOST=${REDIS_HOST},REDIS_PORT=${REDIS_PORT},REDIS_MKEY=${REDIS_MKEY}"
 echo dbLoadRecords\(\"db/inst_base.db\",\"${PRAMS},${RPRAMS}\"\)
 
