@@ -64,16 +64,16 @@ extern "C" {
 	/** EPICS iocsh callable function to call constructor for the testAsynPortDriver class.
 	  * \param[in] portName The name of the asyn port driver to be created.
 	  */
-	int acq400_INST_Configure(const char *portName, const char* masterspy)
+	int acq400_INST_Configure(const char *portName, const char* stream_or_spy)
 	{
 		printf("%s:%s R1001 %s\n", DN, FN, portName);
 
-		if (strcmp(masterspy, "master") == 0){
+		if (strcmp(stream_or_spy, "STR") == 0){
 			new acq400_INST_MASTER(portName);
-		}else if (strcmp(masterspy, "spy") == 0){
+		}else if (strcmp(stream_or_spy, "SPY") == 0){
 			new acq400_INST_SPY(portName);
 		}else{
-			fprintf(stderr, "ERROR: arg \"%s\" not \"master\" or \"spy\"\n");
+			fprintf(stderr, "ERROR: arg \"%s\" not \"STR\" or \"SPY\"\n");
 			return -1;
 		}
 		return 0;
@@ -82,7 +82,7 @@ extern "C" {
 	/* EPICS iocsh shell commands */
 
 	static const iocshArg initArg0 = { "port", iocshArgString };
-	static const iocshArg initArg1 = { "masterspy", iocshArgString };
+	static const iocshArg initArg1 = { "STR", iocshArgString };
 	static const iocshArg * const initArgs[] = { &initArg0, &initArg1 };
 	static const iocshFuncDef initFuncDef = { "acq400_INST_Configure", 2, initArgs };
 	static void initCallFunc(const iocshArgBuf *args)

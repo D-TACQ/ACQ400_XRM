@@ -1,4 +1,4 @@
-
+```
  1071  makeBaseApp.pl -t example xrmIoc
  1072  makeBaseApp.pl -t example -i xrmIoc
 enter: linux-arm
@@ -31,8 +31,8 @@ export EPICS_PVA_ADDR_LIST="$ETH0_IP $ETH00_IP"
 export XRM_FMT_RX=1
 export XRM_SOE=1
 
-export XRM_INST=STRATEGY={master|spy},REDIS_HOST={a.b.c.d},REDIS_PORT=nnn,REDIS_MKEY=string
-export XRM_INST22=STRATEGY={master|spy},REDIS_HOST={a.b.c.d},REDIS_PORT=nnn,REDIS_MKEY=string
+export XRM_INST=STRATEGY={STR|SPY},REDIS_HOST={a.b.c.d},REDIS_PORT=nnn,REDIS_MKEY=string
+export XRM_INST22=STRATEGY={STR|SPY},REDIS_HOST={a.b.c.d},REDIS_PORT=nnn,REDIS_MKEY=string
 
 export MultiCastVerbose=1
 
@@ -54,3 +54,4 @@ acq2206_088> pvget_value acq2206_588:SMPL
     epics:nt/NTScalar:1.0 SP_INDEX        int value 17
     epics:nt/NTScalar:1.0 SSB        int value 128
 
+```

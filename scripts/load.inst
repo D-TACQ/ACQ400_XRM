@@ -3,18 +3,22 @@
 
 eval $1
 
-STRATEGY=${STRATEGY:-master}   # alt: spy
+STRATEGY=${STRATEGY:-STR}   # alt: SPY
 REDIS_HOST=${REDIS_HOST:-redishost}
 REDIS_PORT=${REDIS_PORT:-1234}
 REDIS_MKEY=${REDIS_MKEY:-${IOC_HOST}}
 
-if [ "$STRATEGY" = "master" ]; then
-	SPORT=INSTm
-else
-	SPORT=INSTs
-fi
+case $STRATEGY in
+STR)
+	SPORT=INSTR;;
+SPY)
+	SPORT=INSPY;;
+*)
+	echo '# Sorry bad STRATEGY $STRATEGY, MUST be STR or SPY'
+	exit 1;;
+esac
 
-echo acq400_SOE_Configure\($SPORT,$STRATEGY\)
+echo acq400_INST_Configure\($SPORT,$STRATEGY\)
 
 ARP="P=${IOC_HOST}:,R=${SPORT},PORT=${SPORT},ADDR=0,IMAX=100,OMAX=100,TB3=0,TIB0=0"
 echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
