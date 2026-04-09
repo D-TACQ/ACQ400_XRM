@@ -17,6 +17,7 @@
 #include "acq400_asyn_common.h"
 #include "xrm_structs.h"
 #include "acq400_FMT.h"
+#include "SamplePrams.h"
 
 #define PS_SOE_STRATEGY		 "SOE_STRATEGY"        /* select LUT strategy 0,1.. */
 
@@ -100,17 +101,6 @@
 #define PS_SOE_FMT_EV_NIB	"SOE_FMT_EV_NOT_IN_BUFFER"
 
 #define PS_SOE_HLD_TABLE_WF	"SOE_HLD_TABLE_WF" // raw event table.
-
-struct SamplePrams {
-	int SSB;
-	int NSAM;
-	int AI_COUNT;
-	int AI_INDEX;
-	int DI_COUNT;
-	int DI_INDEX;
-	int SP_COUNT;
-	int SP_INDEX;
-};
 
 
 struct KBUF {
@@ -269,14 +259,20 @@ protected:
 	int P_SOE_HLD_TABLE_WF;
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
-public:
 	acq400_SOE(const char *portName, acq400_SOE_Strategy* strategy);
+
+	static acq400_SOE* _instance;
+public:
+	static void create_instance(const char *portName, acq400_SOE_Strategy* strategy);
+	static const SamplePrams *getSamplePrams() {
+		assert(_instance != 0);
+		return &_instance->samplePrams;
+	}
 	virtual ~acq400_SOE() {}
 
 	void clearHold();
 
 	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
-
 };
 
 #endif /* XRMIOCAPP_SRC_ACQ400_SOE_H_ */

@@ -45,7 +45,7 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	fmt_rx_timeouts(0), fmt_rx_success(0),
 	hold_row_limit(SOE_HLD_ROWS)
 {
-	fprintf(stderr, "%s R1034\n", FN);
+	fprintf(stderr, "%s R1040\n", FN);
 	asynStatus status = asynSuccess;
 	memset(soe_lut, 0, sizeof(soe_lut));
 
@@ -327,6 +327,7 @@ void acq400_SOE::get_sample_dimensions()
 	sip(0, P_SOE_SMPL_SP_COUNT, samplePrams.SP_COUNT = agg_ssl-modules_ssl);
 
 	callParamCallbacks();
+	SamplePrams::store(samplePrams);
 }
 
 epicsInt64 getWrTsFromRaw(unsigned* sp_raw)
@@ -490,7 +491,10 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    	              DN, FN, function, addr, paramName, value);
 
 	    if (function == P_RUNSTOP) {
-	        if (value) epicsEventSignal(eventId);
+	        if (value == 1){
+	        	get_sample_dimensions();
+	        	epicsEventSignal(eventId);
+	        }
 	    }else if (function == P_SOE_LUT_REDIT_COMMIT){
 		    redit();
 	    }else if (function == P_SOE_STRATEGY){
@@ -522,15 +526,27 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    return status;
 }
 
+acq400_SOE* acq400_SOE::_instance;
+
+void acq400_SOE::create_instance(const char *portName, acq400_SOE_Strategy* strategy)
+{
+	assert(_instance == 0);
+	_instance = new acq400_SOE(portName, strategy);
+}
+
+const SamplePrams* get_acq400_SamplePrams() {
+	return acq400_SOE::getSamplePrams();
+}
+
 extern "C" {
 	/** EPICS iocsh callable function to call constructor for the testAsynPortDriver class.
 	  * \param[in] portName The name of the asyn port driver to be created.
 	  */
 	int acq400_SOE_Configure(const char *portName)
 	{
-		printf("%s:%s R1001 %s\n", DN, FN, portName);
+		printf("%s:%s R1002 %s\n", DN, FN, portName);
 
-		new acq400_SOE(portName, acq400_SOE_Strategy::factory()[0]);
+		acq400_SOE::create_instance(portName, acq400_SOE_Strategy::factory()[0]);
 		return 0;
 	}
 
