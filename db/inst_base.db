@@ -1,0 +1,91 @@
+# Base records for INST
+
+# intermediates: not in group, for local calc.
+record (stringin,  "${UUT}:INST:STRATEGY") {
+	field(DTYP, "asynOctetWrite")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))INST_STRATEGY")
+	field(SCAN, "I/O Intr")
+	field(DESC, "strategy: master or spy")
+	info(Q:group, {
+		"${UUT}:INST:REDIS:SET": {
+			"STRATEGY": {+channel:"VAL"}
+		}
+	})	
+}
+
+record (stringout,  "${UUT}:INST:REDIS_HOST") {
+	field(DTYP, "asynOctetWrite")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_HOST")
+	field(PINI, "YES")
+	field(VAL,  "${REDIS_HOST}")
+	info(Q:group, {
+		"${UUT}:INST:REDIS:SET": {
+			"HOST": {+channel:"VAL"}
+		}
+	})	
+}
+
+record (stringout,  "${UUT}:INST:REDIS_PORT") {
+	field(DTYP, "asynOctetWrite")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_PORT")
+	field(PINI, "YES")
+	field(VAL,  "${REDIS_PORT}")
+	info(Q:group, {
+		"${UUT}:INST:REDIS:SET": {
+			"PORT": {+channel:"VAL"}
+		}
+	})	
+}
+
+record (stringout,  "${UUT}:INST:REDIS_MKEY") {
+	field(DTYP, "asynOctetWrite")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_MKEY")
+	field(DESC, "Major (UUT) key")
+	field(PINI, "YES")
+	field(VAL,  "${REDIS_MKEY}")
+	
+	info(Q:group, {
+		"${UUT}:INST:REDIS:SET": {
+			"MKEY": {+channel:"VAL"}
+		}
+	})	
+}
+
+record (longin, "${UUT}:INST:REDIS_BCOUNT") {
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_BCOUNT")
+	field(SCAN, "I/O Intr")
+	
+	info(Q:group, {
+		"${UUT}:INST:REDIS:STA": {
+			"BCOUNT": {+channel:"VAL"}
+		}
+	})
+	field(DESC, "# buffers (cycles) so far")	
+}
+
+record (longin, "${UUT}:INST:REDIS_STATUS") {
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_STATUS")
+	field(SCAN, "I/O Intr")
+	
+	info(Q:group, {
+		"${UUT}:INST:REDIS:STA": {
+			"STATUS": {+channel:"VAL"}
+		}
+	})
+	field(DESC, "status value")	
+}
+
+record (stringin,  "${UUT}:INST:REDIS_MMKEY") {
+	field(DTYP, "asynOctetWrite")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_MMKEY")
+	field(SCAN, "I/O Intr")
+	field(DESC, "Latest Major/Minor (UUT/Timestamp) key")
+	
+	info(Q:group, {
+		"${UUT}:INST:REDIS:STA": {
+			"MMKEY": {+channel:"VAL"}
+		}
+	})
+}
