@@ -2,7 +2,7 @@
 
 # intermediates: not in group, for local calc.
 record (stringin,  "${UUT}:INST:STRATEGY") {
-	field(DTYP, "asynOctetWrite")
+	field(DTYP, "asynOctetRead")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))INST_STRATEGY")
 	field(SCAN, "I/O Intr")
 	field(DESC, "strategy: master or spy")
@@ -78,7 +78,7 @@ record (longin, "${UUT}:INST:REDIS_STATUS") {
 }
 
 record (stringin,  "${UUT}:INST:REDIS_MMKEY") {
-	field(DTYP, "asynOctetWrite")
+	field(DTYP, "asynOctetRead")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_MMKEY")
 	field(SCAN, "I/O Intr")
 	field(DESC, "Latest Major/Minor (UUT/Timestamp) key")

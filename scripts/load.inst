@@ -25,5 +25,6 @@ echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
 
 PRAMS="UUT=${IOC_HOST},PORT=$SPORT,ADDR=0,TIMEOUT=0"
 echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},FUN=INST\"\)
-echo dbLoadRecords\(\"db/inst_base.db\",\"${PRAMS}\"\)
+RPRAMS="REDIS_HOST=${REDIS_HOST},REDIS_PORT=${REDIS_PORT},REDIS_MKEY=${REDIS_MKEY}"
+echo dbLoadRecords\(\"db/inst_base.db\",\"${PRAMS},${RPRAMS}\"\)
 
