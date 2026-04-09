@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export IOCSH_PS1="acq400_xrm-epics>"
+export IOCSH_PS1="xrmioc>"
 ETOP=/usr/local/xrm/epics
 STCMD=/tmp/xrm_st.cmd
 PIDF=/var/run/acq400_xrm_ioc.pid
