@@ -11,9 +11,9 @@ REDIS_MKEY=${REDIS_MKEY:-${IOC_HOST}}
 
 case $STRATEGY in
 STR)
-	SPORT=INSTR;;
+	SPORT=IN${CH}STR;;
 SPY)
-	SPORT=INSPY;;
+	SPORT=IN${CH}SPY;;
 *)
 	echo '# Sorry bad STRATEGY $STRATEGY, MUST be STR or SPY'
 	exit 1;;
