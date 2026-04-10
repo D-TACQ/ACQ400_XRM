@@ -42,7 +42,7 @@ acq400_INST::acq400_INST(const char* portName):
 {
 	fprintf(stderr, "%s R1040\n", FN);
 
-	createParam(PS_INST_STRATEGY, asynParamInt32,   &P_INST_STRATEGY);
+	createParam(PS_INST_STRATEGY, asynParamOctet,   &P_INST_STRATEGY);
 	createParam(PS_REDIS_HOST,    asynParamOctet,   &P_REDIS_HOST);
 	createParam(PS_REDIS_PORT,    asynParamOctet,   &P_REDIS_PORT);
 	createParam(PS_REDIS_MKEY,    asynParamOctet,	&P_REDIS_MKEY);
@@ -61,7 +61,7 @@ public:
 class acq400_INST_SPY: public acq400_INST {
 public:
 	acq400_INST_SPY(const char* portName): acq400_INST(portName) {
-		ssp(P_INST_STRATEGY, "STR");
+		ssp(P_INST_STRATEGY, "SPY");
 	}
 };
 extern "C" {

@@ -93,7 +93,7 @@ asynStatus acq400_asynPortDriver::gsp(int pnum, int maxchar, char* str)
 
 asynStatus acq400_asynPortDriver::ssp(int pnum, const char* str)
 {
-	asynStatus status = setStringParam(pnum, 80, str);
+	asynStatus status = setStringParam(pnum, str);
 	if (status){
 		fprintf(stderr, "%s:%s setStringParam fail %d\n", DN, FN, pnum);
 		assert(status==0);
