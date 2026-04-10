@@ -24,6 +24,7 @@ protected:
 	asynStatus sip(int addr, int pnum, epicsInt64 pram);
 
 	asynStatus gsp(int pnum, int maxchar, char* str);
+	asynStatus ssp(int pnum, const char* str);
 
 	epicsEventId eventId;
 

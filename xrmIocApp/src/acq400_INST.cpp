@@ -51,14 +51,18 @@ acq400_INST::acq400_INST(const char* portName):
 	createParam(PS_REDIS_MMKEY,   asynParamOctet,   &P_REDIS_MMKEY);
 }
 
-class acq400_INST_MASTER: public acq400_INST {
+class acq400_INST_STR: public acq400_INST {
 public:
-	acq400_INST_MASTER(const char* portName): acq400_INST(portName) {}
+	acq400_INST_STR(const char* portName): acq400_INST(portName) {
+		ssp(P_INST_STRATEGY, "STR");
+	}
 };
 
 class acq400_INST_SPY: public acq400_INST {
 public:
-	acq400_INST_SPY(const char* portName): acq400_INST(portName) {}
+	acq400_INST_SPY(const char* portName): acq400_INST(portName) {
+		ssp(P_INST_STRATEGY, "STR");
+	}
 };
 extern "C" {
 	/** EPICS iocsh callable function to call constructor for the testAsynPortDriver class.
@@ -69,7 +73,7 @@ extern "C" {
 		printf("%s:%s R1001 %s\n", DN, FN, portName);
 
 		if (strcmp(stream_or_spy, "STR") == 0){
-			new acq400_INST_MASTER(portName);
+			new acq400_INST_STR(portName);
 		}else if (strcmp(stream_or_spy, "SPY") == 0){
 			new acq400_INST_SPY(portName);
 		}else{

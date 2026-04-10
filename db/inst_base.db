@@ -25,7 +25,7 @@ record (stringout,  "${UUT}:${FUN}:REDIS_HOST") {
 	})	
 }
 
-record (stringout,  "${UUT}:INST:${FUN}:REDIS_PORT") {
+record (stringout,  "${UUT}:${FUN}:REDIS_PORT") {
 	field(DTYP, "asynOctetWrite")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_PORT")
 	field(PINI, "YES")
