@@ -127,7 +127,6 @@ void socketfork() {
 
 void acq400_INST::task()
 {
-#ifdef PGMCOMOUT
 	fprintf(stderr, "%s 01\n", FN);
 	epicsEventWait(eventId);
 
@@ -170,17 +169,6 @@ void acq400_INST::task()
 	}
 
 	close(fc);
-#else
-	int bcount = 0;
-
-	while (1) {
-		sip(0, P_REDIS_BCOUNT, ++bcount);
-		lock();
-		callParamCallbacks();
-		unlock();
-		sleep(1);
-	}
-#endif
 }
 
 class acq400_INST_STR: public acq400_INST {
