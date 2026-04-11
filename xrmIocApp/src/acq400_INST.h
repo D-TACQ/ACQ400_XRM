@@ -23,9 +23,17 @@
 #define PS_REDIS_STATUS	 "REDIS_STATUS"     // status good/bad
 #define PS_REDIS_MMKEY   "REDIS_MMKEY"      // Major+Minor key (INPUT)
 
+#define FAKE_SPY	"/usr/local/xrm/epics/scripts/inst-spy-fake"
+
+
 class acq400_INST: public acq400_asynPortDriver {
 protected:
 	static int nice;
+	const char* strategy;
+	const char* cmd;
+
+	virtual void task();
+	static void task_runner(void *drvPvt);
 
 	int P_INST_STRATEGY;
 	int P_REDIS_HOST;
@@ -35,7 +43,7 @@ protected:
 	int P_REDIS_STATUS;
 	int P_REDIS_MMKEY;
 public:
-	acq400_INST(const char* portName);
+	acq400_INST(const char* portName, const char* _strategy);
 };
 
 
