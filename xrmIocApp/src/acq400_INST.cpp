@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <libgen.h>
 
 using namespace std;
 #include "Buffer.h"
@@ -88,20 +89,18 @@ void acq400_INST::task_runner(void *drvPvt)
 // Posted by Useless, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-04-11, License - CC BY-SA 3.0
 
-void child(int socket) {
-    const char hello[] = "hello parent, I am child";
-    write(socket, hello, sizeof(hello)); /* NB. this includes nul */
-    /* go forth and do childish things with this end of the pipe */
-}
+struct child_process_info {
+	pid_t pid;
+	int fd;
+};
 
-void parent(int socket) {
-	/* do parental things with this end, like reading the child's message */
-	char buf[1024];
-	int n = read(socket, buf, sizeof(buf));
-	fprintf(stderr, "parent received '%.*s'\n", n, buf);
-}
 
-void socketfork() {
+
+child_process_info socket_fork_exec(const char *file, char *const argv[], char *const envp[])
+/* create a bi-di socket. Fork child, exec cmd, output child pd and parent fd.
+ * return 0 on success.
+ */
+{
 	int fd[2];
 	static const int parentsocket = 0;
 	static const int childsocket = 1;
@@ -113,17 +112,59 @@ void socketfork() {
 	pid = fork();
 	if (pid == 0){
 		close(fd[parentsocket]);
-		fprintf(stderr, "call child\n");
-		child(fd[childsocket]);
-		fprintf(stderr, "child done\n");
+		dup2(fd[childsocket], 0);
+		dup2(fd[childsocket], 1);
+		int rc = execvpe(file, argv, envp);
+		assert(rc);
 	}else{
 		close(fd[childsocket]);
-		fprintf(stderr, "call parent\n");
-		parent(fd[parentsocket]);
-		fprintf(stderr, "parent done\n");
+		return { pid, fd[parentsocket] };
 	}
 }
 
+extern char **environ;
+
+int env_count()
+/* returns number of environment entries, not including terminator */
+{
+	int ii;
+	for (ii = 0; environ[ii]; ++ii){
+		;
+	}
+	return ii;
+}
+
+int copy_env(char** envp)
+{
+	int ii;
+	for (ii = 0; environ[ii]; ++ii){
+		envp[ii] = environ[ii];
+	}
+	return ii;
+}
+
+child_process_info run_socket_fork_exec()
+{
+#ifdef WORKINPROGRESS
+	char key[80];
+
+	snprintf(key, 80, "%s_cmd", portName);
+	cmd = getenv_default(key, FAKE_SPY);
+
+	cmd_buf = new char[strlen(cmd)+1];
+	strcpy(cmd_buf, cmd);
+	char* child_argv[2] = { basename(cmd), 0 };
+	parent_env_count = env_count()
+	char* child_envp = new char* [parent_env_count+6];
+	copy_env(child_envp);
+
+	//char *host = new char[   @@todo
+
+	fprintf(stderr, "let\'s go socketfork() \"%s\"\n", cmd);
+	socket_fork_exec(cmd, child_argv, child_envp);
+#endif
+
+}
 
 void acq400_INST::task()
 {
@@ -136,6 +177,7 @@ void acq400_INST::task()
 
 	MonitorRateLimit rateLimit;
 	int ib;
+	child_process_info cpi = {};
 
 	if ((ib = getBufferId(fc)) < 0){
 		fprintf(stderr, "ERROR: getBufferId() fail");
@@ -149,12 +191,9 @@ void acq400_INST::task()
 		rateLimit.newData(mrl_param);
 		if (runstop == 1 || runstop0 == 1){
 			if (runstop0 == 0){
-				char key[80];
-				snprintf(key, 80, "%s_cmd", portName);
-				cmd = getenv_default(key, FAKE_SPY);
+				cpi = run_socket_fork_exec();
 			}
-			fprintf(stderr, "let\'s go socketfork() \"%s\"\n", cmd);
-			socketfork();
+
 			lock();
 			//update_pm_callbacks(rateLimit.goAhead());
 			unlock();
