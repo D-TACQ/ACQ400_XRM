@@ -44,6 +44,8 @@ protected:
 	int P_REDIS_MMKEY;
 public:
 	acq400_INST(const char* portName, const char* _strategy);
+
+	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
 };
 
 

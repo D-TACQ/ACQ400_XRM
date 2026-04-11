@@ -29,11 +29,11 @@ static const char *driverName="acq400_INST";
 
 int acq400_INST::nice = ::getenv_default("acq400_INST_NICE", 0);
 
-const char* getenv_default(const char* key, const char* def = "undefined")
+const char* getenv_default(const char* key, const char* def = "echo undefined")
 {
 	const char *value = getenv(key);
 	if (value == 0){
-		value = getenv(def);
+		value = def;
 	}
 	return value;
 }
@@ -169,6 +169,50 @@ void acq400_INST::task()
 	}
 
 	close(fc);
+}
+
+
+asynStatus acq400_INST::writeInt32(asynUser *pasynUser, epicsInt32 value)
+{
+	    int function = pasynUser->reason;
+	    asynStatus status = asynSuccess;
+	    const char *paramName;
+	    int addr = 0;
+
+	    /* Fetch the parameter string name for possible use in debugging */
+	    getParamName(function, &paramName);
+
+#if 0
+	    status = pasynManager->getAddr(pasynUser, &addr);
+	    if(status!=asynSuccess) return status;
+#endif
+	    /* Set the parameter in the parameter library. */
+	    status = (asynStatus) setIntegerParam(addr, function, value);
+
+	    fprintf(stderr,
+			"%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
+				DN, FN, function, addr, paramName, value);
+
+	    if (function == P_RUNSTOP) {
+	        if (value == 1){
+	        	epicsEventSignal(eventId);
+	        }
+	    }else if (function == P_MON_RL){
+		    mrl_param = value;
+	    }
+
+	    /* Do callbacks so higher layers see any changes */
+	    status = (asynStatus) callParamCallbacks();
+
+	    if (status)
+	        epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
+	                  "%s:%s: status=%d, function=%d, name=%s, value=%d",
+	                  DN, FN, status, function, paramName, value);
+	    else
+	        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+	              "%s:%s: function=%d, name=%s, value=%d\n",
+	              DN, FN, function, paramName, value);
+	    return status;
 }
 
 class acq400_INST_STR: public acq400_INST {
