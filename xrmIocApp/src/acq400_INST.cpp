@@ -154,7 +154,7 @@ void acq400_INST::task()
 				cmd = getenv_default(key, FAKE_SPY);
 			}
 			fprintf(stderr, "let\'s go socketfork() \"%s\"\n", cmd);
-			//socketfork();
+			socketfork();
 			lock();
 			//update_pm_callbacks(rateLimit.goAhead());
 			unlock();
@@ -182,10 +182,6 @@ asynStatus acq400_INST::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    /* Fetch the parameter string name for possible use in debugging */
 	    getParamName(function, &paramName);
 
-#if 0
-	    status = pasynManager->getAddr(pasynUser, &addr);
-	    if(status!=asynSuccess) return status;
-#endif
 	    /* Set the parameter in the parameter library. */
 	    status = (asynStatus) setIntegerParam(addr, function, value);
 
