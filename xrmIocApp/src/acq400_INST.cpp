@@ -89,10 +89,6 @@ void acq400_INST::task_runner(void *drvPvt)
 // Posted by Useless, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-04-11, License - CC BY-SA 3.0
 
-struct child_process_info {
-	pid_t pid;
-	int fd;
-};
 
 
 
@@ -143,25 +139,31 @@ int copy_env(char** envp)
 	return ii;
 }
 
-child_process_info run_socket_fork_exec()
+child_process_info acq400_INST::run_socket_fork_exec()
 {
-#ifdef WORKINPROGRESS
+#ifndef WORKINPROGRESS
 	char key[80];
 
 	snprintf(key, 80, "%s_cmd", portName);
 	cmd = getenv_default(key, FAKE_SPY);
 
-	cmd_buf = new char[strlen(cmd)+1];
+	char* cmd_buf = new char[strlen(cmd)+1];
 	strcpy(cmd_buf, cmd);
-	char* child_argv[2] = { basename(cmd), 0 };
-	parent_env_count = env_count()
-	char* child_envp = new char* [parent_env_count+6];
+	char* child_argv[2] = { basename(cmd_buf), 0 };
+	const int parent_env_count = env_count();
+	const int MAXPEV = parent_env_count+6;
+	char** child_envp = new char* [MAXPEV];
 	copy_env(child_envp);
+	int ice = parent_env_count;
 
-	//char *host = new char[   @@todo
+	char *host = new char[128];
+	gsp(P_REDIS_HOST, 128, host);
+	child_envp[ice++] = host;
 
+	child_envp[ice++] = 0;
+	assert(ice < MAXPEV);
 	fprintf(stderr, "let\'s go socketfork() \"%s\"\n", cmd);
-	socket_fork_exec(cmd, child_argv, child_envp);
+	return socket_fork_exec(cmd, child_argv, child_envp);
 #endif
 
 }

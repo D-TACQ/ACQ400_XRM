@@ -25,6 +25,11 @@
 
 #define FAKE_SPY	"/usr/local/xrm/epics/scripts/inst-spy-fake"
 
+struct child_process_info {
+	pid_t pid;
+	int fd;
+};
+
 
 class acq400_INST: public acq400_asynPortDriver {
 protected:
@@ -34,6 +39,8 @@ protected:
 
 	virtual void task();
 	static void task_runner(void *drvPvt);
+
+	child_process_info run_socket_fork_exec();
 
 	int P_INST_STRATEGY;
 	int P_REDIS_HOST;
