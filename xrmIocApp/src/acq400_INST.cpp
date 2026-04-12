@@ -7,7 +7,7 @@
 
 #include "acq400_asyn_common.h"
 #include "acq400_INST.h"
-
+#include "acq400_SOE.h"		//@@todo split .. static const SamplePrams *getSamplePrams()
 #include "acq-util.h"
 #include "split2.h"
 #include <fcntl.h>                // open()
@@ -222,6 +222,24 @@ char* acq400_INST::make_kev_from_sp(const char* ps_name, int p_key){
 	sprintf(kev, "%s=%s",ps_name, value_buf);
 	return kev;
 }
+
+char* make_kev_from_kvs(const char* key, const char* value)
+{
+	const int buffer_len = strlen(key)+1+strlen(value)+1;
+	char* kev = new char[buffer_len];
+	snprintf(kev, buffer_len, "%s=%s", key, value);
+	return kev;
+
+}
+
+char* make_kev_from_kvi(const char* key, int value)
+{
+	const int buffer_len = strlen(key)+1+23+1;
+	char* kev = new char[buffer_len];
+	sprintf(kev, "%s=%d", key, value);
+	return kev;
+
+}
 child_process_info acq400_INST::run_socket_fork_exec()
 {
 	char key[80];
@@ -246,8 +264,12 @@ child_process_info acq400_INST::run_socket_fork_exec()
 	env_builder.add(make_kev_from_sp(PS_REDIS_HOST, P_REDIS_HOST));
 	env_builder.add(make_kev_from_sp(PS_REDIS_PORT, P_REDIS_PORT));
 	env_builder.add(make_kev_from_sp(PS_REDIS_MKEY, P_REDIS_MKEY));
-	//env_builder.print("env_builder");
-	//fprintf(stderr, "let\'s go socketfork() \"%s\"\n", cmd);
+
+	const SamplePrams* sp = acq400_SOE::getSamplePrams();
+
+	env_builder.add(make_kev_from_kvi("REDIS_SSB", sp->SSB));
+	env_builder.add(make_kev_from_kvi("REDIS_NSAM", sp->NSAM));
+	env_builder.add(make_kev_from_kvi("REDIS_SPIX", sp->SP_INDEX));
 
 	return socket_fork_exec(cmd, argv_builder.env, env_builder.env);
 }
@@ -257,8 +279,8 @@ void acq400_INST::task()
 	fprintf(stderr, "%s 01\n", FN);
 	epicsEventWait(eventId);
 	char ipc_buffer[128];
-	int bcount;
-	int redis_bcount;
+	int bcount = 0;
+	int redis_bcount = 0;
 
 
 	fprintf(stderr, "%s LET's go\n", FN);
