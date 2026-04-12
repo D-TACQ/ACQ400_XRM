@@ -6,14 +6,15 @@ set log [open $LOGFILE  w]
 foreach name [array names ::env] {
 	puts $log "$name $::env($name)"
 }
+close $log
 
 set mkey $::env(REDIS_MKEY)
-set count 1
+# count is a proxy for timestamp
+set count 1     
 while { 1 } {
-	gets stdin value
-	set rsp "$mkey:[format "%08d" $count] $value"
+	gets stdin ib
+	set rsp "$mkey:[format "%08d" $count] $ib"
 	puts $rsp
 	flush stdout
-#	puts $log $rsp
 	incr count
 }
