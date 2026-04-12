@@ -1,9 +1,16 @@
 #!/usr/bin/expect
 
+set log [open /var/log/inst-spy-fake.log w]
+foreach name [array names ::env] {
+	puts $log "$name $::env($name)"
+}
+
 set count 1
 while { 1 } {
 	gets stdin value
-	puts "$value:[format "%08d" $count]"
+	set rsp "$value:[format "%08d" $count]"	
+	puts $rsp
+	puts $log $rsp
 	flush stdout
 	incr count
 }

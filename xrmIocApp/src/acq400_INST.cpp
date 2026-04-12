@@ -15,6 +15,8 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <libgen.h>
+#include <signal.h>
+#include <sys/wait.h>
 
 using namespace std;
 #include "Buffer.h"
@@ -112,18 +114,21 @@ public:
 		new_cursor(new_start)
 	{
 		env = new char* [max_elements];
-		copy_env(env, copy_this);
+		if (copy_this != 0){
+			copy_env(env, copy_this);
+		}
 	}
 	void add(char* deleteable_kev){
 		/* deleteable_key : key=value string allocated by new char [] */
 		assert(new_cursor+1 < max_elements);
 		env[new_cursor++] = deleteable_kev;
+		env[new_cursor] = 0;
 	}
 	void print(const char* name) {
 		fprintf(stderr, "EnvBuilder instance %s\n", name);
 		for (int ii = 0; env[ii]; ++ii){
-			fprintf(stderr, "[%2d] %c \"%s\"\n",
-					ii, ii >= new_start? 'N':'c', env[ii]);
+			fprintf(stderr, "[%2d] %c %p \"%s\"\n",
+					ii, ii >= new_start? 'N':'c', env+ii, env[ii]);
 		}
 	}
 	~EnvBuilder() {
@@ -135,7 +140,7 @@ public:
 		delete [] env;
 
 		fprintf(stderr, "~EnvBuilder() deleted %d new, and env with %d entries\n",
-				cursor, max_elements);
+				cursor-new_start, max_elements);
 	}
 	static int env_count(char** envp = environ);
 	static int copy_env(char** new_env, char** old_env);
@@ -220,25 +225,33 @@ child_process_info acq400_INST::run_socket_fork_exec()
 #ifndef WORKINPROGRESS
 	char key[80];
 
+	MARK;
 	snprintf(key, 80, "%s_cmd", portName);
 	cmd = getenv_default(key, FAKE_SPY);
+MARK;
+	fprintf(stderr, "%s cmd: %s\n", FN, cmd);
 
 	char* cmd_buf = new char[strlen(cmd)+1];
 	strcpy(cmd_buf, cmd);
 
+MARK;
 	EnvBuilder argv_builder(2);
-	char* pname = new char[strlen(basename(cmd_buf))+1];
+	int argv0_len = strlen(basename(cmd_buf))+1;
+	fprintf(stderr, "%s argv0_len: %d\n", FN, argv0_len);
+	char* pname = new char[argv0_len];
 	strcpy(pname, basename(cmd_buf));
+	fprintf(stderr, "%s argv0: %s\n", FN, pname);
 	argv_builder.add(pname);
 	argv_builder.print("argv_builder");
-
+MARK;
 	EnvBuilder env_builder(10, environ);
 
 	env_builder.add(make_kev_from_sp(PS_REDIS_HOST, P_REDIS_HOST));
-	env_builder.add(make_kev_from_ip(PS_REDIS_PORT, P_REDIS_PORT));
+	env_builder.add(make_kev_from_sp(PS_REDIS_PORT, P_REDIS_PORT));
 	env_builder.add(make_kev_from_sp(PS_REDIS_MKEY, P_REDIS_MKEY));
 	env_builder.print("env_builder");
 	fprintf(stderr, "let\'s go socketfork() \"%s\"\n", cmd);
+MARK;
 	return socket_fork_exec(cmd, argv_builder.env, env_builder.env);
 #endif
 
@@ -271,13 +284,22 @@ void acq400_INST::task()
 			if (runstop0 == 0){
 				cpi = run_socket_fork_exec();
 			}
-
+			char tx_message[80];
+			snprintf(tx_message, 80, "%d\n", ib);
+			write(cpi.fd, tx_message, strlen(tx_message));
 			lock();
 			//update_pm_callbacks(rateLimit.goAhead());
 			unlock();
 		}
 		if (runstop == 0 && runstop0 == 1){
 			// kill the spawned task
+			shutdown(cpi.fd, SHUT_WR);
+			sleep(1);
+			assert(cpi.pid > 0);
+			kill(cpi.pid, SIGABRT);
+			int wstatus;
+			waitpid(cpi.pid, &wstatus, 0);
+			cpi = { 0, 0 };
 			lock();
 			// do callbacks
 			unlock();
