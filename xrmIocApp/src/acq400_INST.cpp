@@ -17,6 +17,8 @@
 #include <libgen.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <asm/termbits.h>  /* Definition of constants */
+#include <sys/ioctl.h>
 
 using namespace std;
 #include "Buffer.h"
@@ -222,45 +224,42 @@ char* acq400_INST::make_kev_from_sp(const char* ps_name, int p_key){
 }
 child_process_info acq400_INST::run_socket_fork_exec()
 {
-#ifndef WORKINPROGRESS
 	char key[80];
 
-	MARK;
 	snprintf(key, 80, "%s_cmd", portName);
 	cmd = getenv_default(key, FAKE_SPY);
-MARK;
 	fprintf(stderr, "%s cmd: %s\n", FN, cmd);
 
 	char* cmd_buf = new char[strlen(cmd)+1];
 	strcpy(cmd_buf, cmd);
 
-MARK;
 	EnvBuilder argv_builder(2);
 	int argv0_len = strlen(basename(cmd_buf))+1;
-	fprintf(stderr, "%s argv0_len: %d\n", FN, argv0_len);
+	//fprintf(stderr, "%s argv0_len: %d\n", FN, argv0_len);
 	char* pname = new char[argv0_len];
 	strcpy(pname, basename(cmd_buf));
-	fprintf(stderr, "%s argv0: %s\n", FN, pname);
+	//fprintf(stderr, "%s argv0: %s\n", FN, pname);
 	argv_builder.add(pname);
-	argv_builder.print("argv_builder");
-MARK;
-	EnvBuilder env_builder(10, environ);
+	//argv_builder.print("argv_builder");
 
+	EnvBuilder env_builder(10, environ);
 	env_builder.add(make_kev_from_sp(PS_REDIS_HOST, P_REDIS_HOST));
 	env_builder.add(make_kev_from_sp(PS_REDIS_PORT, P_REDIS_PORT));
 	env_builder.add(make_kev_from_sp(PS_REDIS_MKEY, P_REDIS_MKEY));
-	env_builder.print("env_builder");
-	fprintf(stderr, "let\'s go socketfork() \"%s\"\n", cmd);
-MARK;
-	return socket_fork_exec(cmd, argv_builder.env, env_builder.env);
-#endif
+	//env_builder.print("env_builder");
+	//fprintf(stderr, "let\'s go socketfork() \"%s\"\n", cmd);
 
+	return socket_fork_exec(cmd, argv_builder.env, env_builder.env);
 }
 
 void acq400_INST::task()
 {
 	fprintf(stderr, "%s 01\n", FN);
 	epicsEventWait(eventId);
+	char ipc_buffer[128];
+	int bcount;
+	int redis_bcount;
+
 
 	fprintf(stderr, "%s LET's go\n", FN);
 	int fc = open("/dev/acq400.0.bq", O_RDONLY);
@@ -277,33 +276,79 @@ void acq400_INST::task()
 
 	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0; runstop0 = runstop){
 		lock();
+		sip(0, P_UPDATES, bcount++);
 		gip(P_RUNSTOP, &runstop);
 		unlock();
 		rateLimit.newData(mrl_param);
 		if (runstop == 1 || runstop0 == 1){
 			if (runstop0 == 0){
+				bcount = redis_bcount = 0;
 				cpi = run_socket_fork_exec();
+				lock();
+				ssp(P_REDIS_STATUS, "RUN");
+				unlock();
 			}
 			char tx_message[80];
 			snprintf(tx_message, 80, "%d\n", ib);
 			write(cpi.fd, tx_message, strlen(tx_message));
+		}
+		if (cpi.fd != 0){
+			int nbytes = 0;
+			if (ioctl(cpi.fd, FIONREAD, &nbytes) == 0 && nbytes!= 0){
+				int nread = read(cpi.fd, ipc_buffer, nbytes);
+				if (nread > 0){
+					if (ipc_buffer[nread-1] == '\n'){
+						ipc_buffer[nread-1] = '\0';
+					}else{
+						ipc_buffer[nread] = '\0';
+					}
+					if (nread != nbytes){
+						fprintf(stderr, "ipc:\"%s\" nread:%d/%d\n", ipc_buffer, nread, nbytes);
+					}
+					lock();
+					char *space = strchr(ipc_buffer, ' ');
+					if (space){
+						*space = '\0';
+					}
+					ssp(P_REDIS_MMKEY, ipc_buffer);
+					ssp(P_REDIS_STATUS, space+1);
+					sip(0, P_REDIS_BCOUNT, ++redis_bcount);
+					unlock();
+				}else{
+					fprintf(stderr, "ipc: read returned %d\n", nread);
+				}
+			}else{
+				fprintf(stderr, "nothing to read..\n");
+			}
+		}
+
+		if (rateLimit.goAhead()){
 			lock();
-			//update_pm_callbacks(rateLimit.goAhead());
+			callParamCallbacks();
 			unlock();
 		}
+
+
 		if (runstop == 0 && runstop0 == 1){
 			// kill the spawned task
+			fprintf(stderr, "shutdown: pid:%d fd:%d\n", cpi.pid, cpi.fd);
 			shutdown(cpi.fd, SHUT_WR);
 			sleep(1);
 			assert(cpi.pid > 0);
-			kill(cpi.pid, SIGABRT);
-			int wstatus;
-			waitpid(cpi.pid, &wstatus, 0);
+			fprintf(stderr, "kill: pid:%d fd:%d\n", cpi.pid, cpi.fd);
+			kill(cpi.pid, SIGKILL);
+			int wstatus = 0;
+			int rc = waitpid(cpi.pid, &wstatus, 0);
+			if (rc == -1){
+				perror("waitpid");
+			}
+			fprintf(stderr, "waitpid rc:%d status: %d\n", rc, wstatus);
 			cpi = { 0, 0 };
-			lock();
-			// do callbacks
-			unlock();
 
+			lock();
+			ssp(P_REDIS_STATUS, "STOP");
+			callParamCallbacks();
+			unlock();
 		}
 	}
 

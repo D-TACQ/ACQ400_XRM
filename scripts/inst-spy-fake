@@ -1,16 +1,19 @@
 #!/usr/bin/expect
 
-set log [open /var/log/inst-spy-fake.log w]
+set LOGFILE /var/log/inst-spy-fake.log
+#set LOGFILE /var/log/xrm_epics.log
+set log [open $LOGFILE  w]
 foreach name [array names ::env] {
 	puts $log "$name $::env($name)"
 }
 
+set mkey $::env(REDIS_MKEY)
 set count 1
 while { 1 } {
 	gets stdin value
-	set rsp "$value:[format "%08d" $count]"	
+	set rsp "$mkey:[format "%08d" $count] $value"
 	puts $rsp
-	puts $log $rsp
 	flush stdout
+#	puts $log $rsp
 	incr count
 }
