@@ -49,6 +49,18 @@ protected:
 	int P_REDIS_BCOUNT;
 	int P_REDIS_STATUS;
 	int P_REDIS_MMKEY;
+
+	char* make_kev_from_ip(const char* ps_name, int p_key);
+	/**< returns new char[] key-equals-value string from INTEGER param.
+	 * conventionally ps_name is the PS_xxx def from above, but it doesn't _have_ to be.
+	 * client to delete
+	 */
+
+	char* make_kev_from_sp(const char* ps_name, int p_key);
+	/**< returns new char[] key-equals-value string from STRING param.
+	 * conventionally ps_name is the PS_xxx def from above, but it doesn't _have_ to be.
+	 * client to delete
+	 */
 public:
 	acq400_INST(const char* portName, const char* _strategy);
 

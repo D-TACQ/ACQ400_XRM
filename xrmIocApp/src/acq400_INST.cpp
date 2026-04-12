@@ -85,12 +85,92 @@ void acq400_INST::task_runner(void *drvPvt)
  *
  */
 
+
+
+extern char **environ;
+
+
+
+
+
+
+
+/* builds a new environment. deletes all new entries on going out of scope .. */
+class EnvBuilder {
+	const int new_start;
+	const int max_elements;
+
+
+        int new_cursor;
+
+public:
+	char** env;
+
+	EnvBuilder(int max_new, /* const */ char** copy_this = 0):
+		new_start(env_count(copy_this)),
+		max_elements(max_new+1 + new_start),
+		new_cursor(new_start)
+	{
+		env = new char* [max_elements];
+		copy_env(env, copy_this);
+	}
+	void add(char* deleteable_kev){
+		/* deleteable_key : key=value string allocated by new char [] */
+		assert(new_cursor+1 < max_elements);
+		env[new_cursor++] = deleteable_kev;
+	}
+	void print(const char* name) {
+		fprintf(stderr, "EnvBuilder instance %s\n", name);
+		for (int ii = 0; env[ii]; ++ii){
+			fprintf(stderr, "[%2d] %c \"%s\"\n",
+					ii, ii >= new_start? 'N':'c', env[ii]);
+		}
+	}
+	~EnvBuilder() {
+		int cursor;
+		// delete all the new stuff
+		for (cursor = new_start; cursor < new_cursor; ++ cursor){
+			delete [] env[cursor];
+		}
+		delete [] env;
+
+		fprintf(stderr, "~EnvBuilder() deleted %d new, and env with %d entries\n",
+				cursor, max_elements);
+	}
+	static int env_count(char** envp = environ);
+	static int copy_env(char** new_env, char** old_env);
+};
+
+
+int EnvBuilder::env_count(char** envp)
+/* returns number of environment entries, not including terminator */
+{
+	if (envp == 0){
+		return 0;
+	}else{
+		int ii;
+		for (ii = 0; envp[ii]; ++ii){
+			;
+		}
+		return ii;
+	}
+}
+
+int EnvBuilder::copy_env(char** new_env, char** old_env)
+{
+	int ii;
+	for (ii = 0; old_env[ii]; ++ii){
+		new_env[ii] = old_env[ii];
+	}
+	return ii;
+}
+
+
+
+
 // Source - https://stackoverflow.com/a/11461302/socketpair-in-c-unix
 // Posted by Useless, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-04-11, License - CC BY-SA 3.0
-
-
-
 
 child_process_info socket_fork_exec(const char *file, char *const argv[], char *const envp[])
 /* create a bi-di socket. Fork child, exec cmd, output child pd and parent fd.
@@ -112,33 +192,29 @@ child_process_info socket_fork_exec(const char *file, char *const argv[], char *
 		dup2(fd[childsocket], 1);
 		int rc = execvpe(file, argv, envp);
 		assert(rc);
+		return { 0, 0 };   // not going to happen
 	}else{
 		close(fd[childsocket]);
 		return { pid, fd[parentsocket] };
 	}
 }
 
-extern char **environ;
-
-int env_count()
-/* returns number of environment entries, not including terminator */
-{
-	int ii;
-	for (ii = 0; environ[ii]; ++ii){
-		;
-	}
-	return ii;
+char* acq400_INST::make_kev_from_ip(const char* ps_name, int p_key){
+	int value;
+	gip(p_key, &value);
+	const int kev_len = strlen(ps_name)+1+23+1; // math.log(2**32) = 22.2
+	char* kev = new char[kev_len];
+	assert(sprintf(kev, "%s=%d",ps_name, value) < kev_len);
+	return kev;
 }
 
-int copy_env(char** envp)
-{
-	int ii;
-	for (ii = 0; environ[ii]; ++ii){
-		envp[ii] = environ[ii];
-	}
-	return ii;
+char* acq400_INST::make_kev_from_sp(const char* ps_name, int p_key){
+	char value_buf[128];
+	gsp(p_key, 128, value_buf);
+	char* kev = new char[strlen(ps_name)+1+strlen(value_buf)+1];
+	sprintf(kev, "%s=%s",ps_name, value_buf);
+	return kev;
 }
-
 child_process_info acq400_INST::run_socket_fork_exec()
 {
 #ifndef WORKINPROGRESS
@@ -149,21 +225,21 @@ child_process_info acq400_INST::run_socket_fork_exec()
 
 	char* cmd_buf = new char[strlen(cmd)+1];
 	strcpy(cmd_buf, cmd);
-	char* child_argv[2] = { basename(cmd_buf), 0 };
-	const int parent_env_count = env_count();
-	const int MAXPEV = parent_env_count+6;
-	char** child_envp = new char* [MAXPEV];
-	copy_env(child_envp);
-	int ice = parent_env_count;
 
-	char *host = new char[128];
-	gsp(P_REDIS_HOST, 128, host);
-	child_envp[ice++] = host;
+	EnvBuilder argv_builder(2);
+	char* pname = new char[strlen(basename(cmd_buf))+1];
+	strcpy(pname, basename(cmd_buf));
+	argv_builder.add(pname);
+	argv_builder.print("argv_builder");
 
-	child_envp[ice++] = 0;
-	assert(ice < MAXPEV);
+	EnvBuilder env_builder(10, environ);
+
+	env_builder.add(make_kev_from_sp(PS_REDIS_HOST, P_REDIS_HOST));
+	env_builder.add(make_kev_from_ip(PS_REDIS_PORT, P_REDIS_PORT));
+	env_builder.add(make_kev_from_sp(PS_REDIS_MKEY, P_REDIS_MKEY));
+	env_builder.print("env_builder");
 	fprintf(stderr, "let\'s go socketfork() \"%s\"\n", cmd);
-	return socket_fork_exec(cmd, child_argv, child_envp);
+	return socket_fork_exec(cmd, argv_builder.env, env_builder.env);
 #endif
 
 }
