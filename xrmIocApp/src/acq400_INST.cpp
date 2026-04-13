@@ -341,7 +341,7 @@ void acq400_INST::task()
 						}
 						lock();
 						ssp(P_REDIS_MMKEY, ipc_buffer);
-						ssp(P_REDIS_STATUS, space+1);
+						ssp(P_REDIS_STATUS, space==0? "xx": space+1);
 						sip(0, P_REDIS_BCOUNT, ++redis_bcount);
 						unlock();
 						++number_of_reads;
