@@ -31,12 +31,14 @@ struct child_process_info {
 	int fd;
 };
 
+#define MAXREAD_BACKLOG 2
 
 class acq400_INST: public acq400_asynPortDriver {
 protected:
 	static int nice;
 	const char* cmd;
 	bool send_buffer_numbers;
+	int read_backlog[MAXREAD_BACKLOG+1];
 
 	virtual void task();
 	static void task_runner(void *drvPvt);

@@ -307,6 +307,7 @@ void acq400_INST::task()
 		rateLimit.newData(mrl_param);
 		if (runstop == 1 || runstop0 == 1){
 			if (runstop0 == 0){
+				memset(read_backlog, 0, sizeof(read_backlog));
 				bcount = redis_bcount = 0;
 				cpi = run_socket_fork_exec();
 				lock();
@@ -320,33 +321,36 @@ void acq400_INST::task()
 			}
 		}
 		if (cpi.fd != 0){
-			int nbytes = 0;
-			if (ioctl(cpi.fd, FIONREAD, &nbytes) == 0 && nbytes!= 0){
-				int nread = read(cpi.fd, ipc_buffer, nbytes);
-				if (nread > 0){
-					if (ipc_buffer[nread-1] == '\n'){
-						ipc_buffer[nread-1] = '\0';
+			int number_of_reads = 0;
+			for (int nbytes = 0, retry = 0; retry < MAXREAD_BACKLOG; ++retry, nbytes=0){
+				if (ioctl(cpi.fd, FIONREAD, &nbytes) == 0 && nbytes!= 0){
+					int nread = read(cpi.fd, ipc_buffer, nbytes);
+					if (nread > 0){
+						if (ipc_buffer[nread-1] == '\n'){
+							ipc_buffer[nread-1] = '\0';
+						}else{
+							ipc_buffer[nread] = '\0';
+						}
+						if (nread != nbytes){
+							fprintf(stderr, "ipc:\"%s\" nread:%d/%d\n", ipc_buffer, nread, nbytes);
+						}
+
+						char *space = strchr(ipc_buffer, ' ');
+						if (space){
+							*space = '\0';
+						}
+						lock();
+						ssp(P_REDIS_MMKEY, ipc_buffer);
+						ssp(P_REDIS_STATUS, space+1);
+						sip(0, P_REDIS_BCOUNT, ++redis_bcount);
+						unlock();
+						++number_of_reads;
 					}else{
-						ipc_buffer[nread] = '\0';
+						fprintf(stderr, "ipc: read returned %d\n", nread);
 					}
-					if (nread != nbytes){
-						fprintf(stderr, "ipc:\"%s\" nread:%d/%d\n", ipc_buffer, nread, nbytes);
-					}
-					lock();
-					char *space = strchr(ipc_buffer, ' ');
-					if (space){
-						*space = '\0';
-					}
-					ssp(P_REDIS_MMKEY, ipc_buffer);
-					ssp(P_REDIS_STATUS, space+1);
-					sip(0, P_REDIS_BCOUNT, ++redis_bcount);
-					unlock();
-				}else{
-					fprintf(stderr, "ipc: read returned %d\n", nread);
 				}
-			}else{
-				fprintf(stderr, "nothing to read..\n");
 			}
+			read_backlog[number_of_reads] += 1;
 		}
 
 		if (rateLimit.goAhead()){
@@ -376,6 +380,8 @@ void acq400_INST::task()
 			ssp(P_REDIS_STATUS, "STOP");
 			callParamCallbacks();
 			unlock();
+			fprintf(stderr, "readbacklog: %d,%d,%d\n",
+					read_backlog[0], read_backlog[1], read_backlog[2]);
 		}
 	}
 
