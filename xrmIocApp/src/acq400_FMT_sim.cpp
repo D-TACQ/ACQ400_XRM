@@ -121,6 +121,7 @@ public:
 
 
 void acq400_FMT_Sim::update_fmt(bool first_time)
+/* first_time: set now_us; else first use previous now_us then set now_us; */
 {
 	if (first_time){
 		assert(FMT_ROWS < 0xffU);
@@ -128,15 +129,16 @@ void acq400_FMT_Sim::update_fmt(bool first_time)
 			fmt[row].event = 0x100 + row;
 			fmt[row].client_data = row;
 		}
+	}else{
+		for (int row = 0; row < FMT_ROWS; ++row){
+			fmt[row].timestamp = now_us + row*10;
+		}
+
+		fmt[0].pad = update >> 16;
+		fmt[1].pad = update;
 	}
 	now_us = timeProvider.time_now();
 
-	for (int row = 0; row < FMT_ROWS; ++row){
-		fmt[row].timestamp = now_us + row*10;
-	}
-
-	fmt[0].pad = update >> 16;
-	fmt[1].pad = update;
 }
 
 acq400_FMT_Sim::acq400_FMT_Sim(
@@ -156,7 +158,7 @@ acq400_FMT_Sim::acq400_FMT_Sim(
 	timeProvider(_timeProvider)
 {
 	asynStatus status = asynSuccess;
-	update_fmt(true);
+
 
 	createParam(PS_FMT_REDIT_ROW, 		asynParamInt32, &P_FMT_REDIT_ROW);
 	createParam(PS_FMT_REDIT_ROWCOUNT, 	asynParamInt32, &P_FMT_REDIT_ROWCOUNT);
@@ -184,15 +186,13 @@ acq400_FMT_Sim::acq400_FMT_Sim(
 
 void acq400_FMT_Sim::task(void) {
 	asynStatus status = asynSuccess;
-	update_fmt();
 
 	epicsEventWait(eventId);
 
 	MultiCast& multicast = acq400_FMT_abc::mc_factory(MultiCast::MC_SENDER);
 	MonitorRateLimit rateLimit;
 
-	while(1){
-		int runstop;
+	for (int runstop, runstop0 = 0; ; runstop0 = runstop){
 		lock();
 		status = getIntegerParam(P_RUNSTOP, &runstop);
 		if (status){
@@ -201,16 +201,21 @@ void acq400_FMT_Sim::task(void) {
 		}
 		unlock();
 		if (runstop == 1){
-			update_fmt();
-			multicast.sendto(fmt, sizeof(fmt));
-			rateLimit.newData(mrl_param);
-			if (rateLimit.goAhead()){
-				update_fmt_columns();
+			if (runstop0 == 0){
+				update_fmt(true);
+			}else{
+				update_fmt(false);
+				multicast.sendto(fmt, sizeof(fmt));
+				rateLimit.newData(mrl_param);
+				if (rateLimit.goAhead()){
+					update_fmt_columns();
+				}
+				lock();
+				updateTimeStamp();
+				update_fmt_callbacks(rateLimit.goAhead());
+				unlock();
 			}
-			lock();
-			updateTimeStamp();
-			update_fmt_callbacks(rateLimit.goAhead());
-			unlock();
+
 		}else{
 			usleep(50000);
 		}
