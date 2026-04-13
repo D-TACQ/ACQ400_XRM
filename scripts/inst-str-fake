@@ -1,0 +1,21 @@
+#!/usr/bin/expect
+
+set CYCLE_MS 50
+set LOGFILE /var/log/inst-str-fake.log
+#set LOGFILE /var/log/xrm_epics.log
+set log [open $LOGFILE  w]
+foreach name [array names ::env] {
+	puts $log "$name $::env($name)"
+}
+close $log
+
+set mkey $::env(REDIS_MKEY)
+# count is a proxy for timestamp
+set count 1     
+while { 1 } {
+	after $CYCLE_MS
+	set rsp "$mkey:[format "%08d" $count] $ib"
+	puts $rsp
+	flush stdout
+	incr count
+}

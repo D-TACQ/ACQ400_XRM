@@ -32,8 +32,14 @@ export XRM_FMT_RX=1
 export XRM_SOE=1
 
 # only ONE can be STR. Both could be SPY ..
+# STRSPY also supported : SPY, but through a socket rather than memory
+# SPY: IOC sends buffer numbers, spy-cmd is assumed to have a Buffers mapping
+# STR: IOC sends NOTHING, str-cmd is assumed to use a socket
+# ALL: IOC reads ONE line of input from stdin, and shows this as status.
 export XRM_INST1="STRATEGY={STR|SPY};REDIS_HOST={a.b.c.d};REDIS_PORT=nnn;REDIS_MKEY=string"
 export XRM_INST2="STRATEGY={STR|SPY};REDIS_HOST={a.b.c.d};REDIS_PORT=nnn;REDIS_MKEY=string"
+IN1STR_cmd=command for IN1STR
+IN2STR_cmd=command for IN2STR
 
 export MultiCastVerbose=1
 
