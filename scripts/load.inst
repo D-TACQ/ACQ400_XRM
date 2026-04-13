@@ -8,9 +8,10 @@ STRATEGY=${STRATEGY:-STR}   # alt: SPY
 REDIS_HOST=${REDIS_HOST:-redishost}
 REDIS_PORT=${REDIS_PORT:-1234}
 REDIS_MKEY=${REDIS_MKEY:-${IOC_HOST}}
+ACQ_PORT=${ACQ_PORT:-53667}
 
 case $STRATEGY in
-STR)
+STR*)
 	SPORT=IN${CH}STR;;
 SPY)
 	SPORT=IN${CH}SPY;;
@@ -26,6 +27,6 @@ echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
 
 PRAMS="UUT=${IOC_HOST},PORT=$SPORT,ADDR=0,TIMEOUT=0,FUN=INST:${CH}"
 echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS}\"\)
-RPRAMS="REDIS_HOST=${REDIS_HOST},REDIS_PORT=${REDIS_PORT},REDIS_MKEY=${REDIS_MKEY}"
+RPRAMS="REDIS_HOST=${REDIS_HOST},REDIS_PORT=${REDIS_PORT},REDIS_MKEY=${REDIS_MKEY},ACQ_PORT=${ACQ_PORT}"
 echo dbLoadRecords\(\"db/inst_base.db\",\"${PRAMS},${RPRAMS}\"\)
 

@@ -37,6 +37,17 @@ record (stringout,  "${UUT}:${FUN}:REDIS_PORT") {
 	})	
 }
 
+record (stringout,  "${UUT}:${FUN}:ACQ_PORT") {
+	field(DTYP, "asynOctetWrite")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))ACQ_PORT")
+	field(PINI, "YES")
+	field(VAL,  "${ACQ_PORT}")
+	info(Q:group, {
+		"${UUT}:${FUN}:REDIS:SET": {
+			"ACQ_PORT": {+channel:"VAL"}
+		}
+	})
+}
 record (stringout,  "${UUT}:${FUN}:REDIS_MKEY") {
 	field(DTYP, "asynOctetWrite")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_MKEY")

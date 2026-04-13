@@ -52,7 +52,8 @@ acq400_INST::acq400_INST(const char* portName, const char* _strategy):
 	/* asynFlags no block*/ 0,
 	/* Autoconnect */       1,
 	/* Default priority */  0,
-	/* Default stack size*/ 0)
+	/* Default stack size*/ 0),
+	send_buffer_numbers(true)
 {
 	fprintf(stderr, "%s R1041\n", FN);
 
@@ -63,6 +64,7 @@ acq400_INST::acq400_INST(const char* portName, const char* _strategy):
 	createParam(PS_REDIS_BCOUNT,  asynParamInt32,   &P_REDIS_BCOUNT);
 	createParam(PS_REDIS_STATUS,  asynParamOctet,   &P_REDIS_STATUS);
 	createParam(PS_REDIS_MMKEY,   asynParamOctet,   &P_REDIS_MMKEY);
+	createParam(PS_ACQ_PORT,      asynParamOctet,   &P_ACQ_PORT);
 
 
 	ssp(P_INST_STRATEGY, _strategy);
@@ -264,6 +266,7 @@ child_process_info acq400_INST::run_socket_fork_exec()
 	env_builder.add(make_kev_from_sp(PS_REDIS_HOST, P_REDIS_HOST));
 	env_builder.add(make_kev_from_sp(PS_REDIS_PORT, P_REDIS_PORT));
 	env_builder.add(make_kev_from_sp(PS_REDIS_MKEY, P_REDIS_MKEY));
+	env_builder.add(make_kev_from_sp(PS_ACQ_PORT, P_ACQ_PORT));
 
 	const SamplePrams* sp = acq400_SOE::getSamplePrams();
 
@@ -310,9 +313,11 @@ void acq400_INST::task()
 				ssp(P_REDIS_STATUS, "RUN");
 				unlock();
 			}
-			char tx_message[80];
-			snprintf(tx_message, 80, "%d\n", ib);
-			write(cpi.fd, tx_message, strlen(tx_message));
+			if (send_buffer_numbers){
+				char tx_message[80];
+				snprintf(tx_message, 80, "%d\n", ib);
+				write(cpi.fd, tx_message, strlen(tx_message));
+			}
 		}
 		if (cpi.fd != 0){
 			int nbytes = 0;
@@ -419,15 +424,16 @@ asynStatus acq400_INST::writeInt32(asynUser *pasynUser, epicsInt32 value)
 
 class acq400_INST_STR: public acq400_INST {
 public:
-	acq400_INST_STR(const char* portName): acq400_INST(portName, "STR") {
-
+	acq400_INST_STR(const char* portName, const char* _strategy):
+		acq400_INST(portName, _strategy) {
+		send_buffer_numbers = false;
 	}
 };
 
 class acq400_INST_SPY: public acq400_INST {
 public:
 	acq400_INST_SPY(const char* portName): acq400_INST(portName, "SPY") {
-
+		send_buffer_numbers = true;
 	}
 };
 extern "C" {
@@ -438,8 +444,8 @@ extern "C" {
 	{
 		printf("%s:%s R1001 %s\n", DN, FN, portName);
 
-		if (strcmp(stream_or_spy, "STR") == 0){
-			new acq400_INST_STR(portName);
+		if (strncmp(stream_or_spy, "STR", 3) == 0){
+			new acq400_INST_STR(portName, stream_or_spy);
 		}else if (strcmp(stream_or_spy, "SPY") == 0){
 			new acq400_INST_SPY(portName);
 		}else{

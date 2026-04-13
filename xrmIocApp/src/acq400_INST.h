@@ -22,6 +22,7 @@
 #define PS_REDIS_BCOUNT	 "REDIS_BCOUNT"     // buffers (cycles) processed
 #define PS_REDIS_STATUS	 "REDIS_STATUS"     // status good/bad
 #define PS_REDIS_MMKEY   "REDIS_MMKEY"      // Major+Minor key (INPUT)
+#define PS_ACQ_PORT	 "ACQ_PORT"         // source port for spawned app (if used)
 
 #define FAKE_SPY	"/usr/local/xrm/epics/scripts/inst-spy-fake"
 
@@ -34,8 +35,8 @@ struct child_process_info {
 class acq400_INST: public acq400_asynPortDriver {
 protected:
 	static int nice;
-	const char* strategy;
 	const char* cmd;
+	bool send_buffer_numbers;
 
 	virtual void task();
 	static void task_runner(void *drvPvt);
@@ -49,6 +50,7 @@ protected:
 	int P_REDIS_BCOUNT;
 	int P_REDIS_STATUS;
 	int P_REDIS_MMKEY;
+	int P_ACQ_PORT;
 
 	char* make_kev_from_ip(const char* ps_name, int p_key);
 	/**< returns new char[] key-equals-value string from INTEGER param.
