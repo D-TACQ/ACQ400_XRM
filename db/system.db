@@ -100,3 +100,13 @@ record(waveform, "${UUT}:0:AI:CAL:EOFF")
   field(SCAN, "1 second")
 }
 
+record (stringin, "${UUT}:0:MODEL") {
+	field(DTYP, "Soft Channel")
+	field(VAL,  "${MODEL}")
+	field(PINI, "YES")
+}
+record (stringin, "${UUT}:0:PART") {
+	field(DTYP, "Soft Channel")
+	field(VAL,  "${PART}")
+	field(PINI, "YES")
+}
