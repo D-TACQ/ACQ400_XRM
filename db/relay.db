@@ -1,0 +1,27 @@
+# relay records from UUT
+
+record(mbbo, "${UUT}:MODE:CONTINUOUS:STATE") {
+	field(DTYP, "Soft Channel")
+	field(DOL, "${ACQ400IOC}:MODE:CONTINUOUS:STATE CP")
+	field(OMSL, "closed_loop")             
+	field(NOBT, "3")
+	field(ZRST, "IDLE")
+	field(ONST, "ARM")
+	field(TWST, "RUN")
+	field(THST, "RUN2")
+	field(FRST, "POST_PROCESS")    
+	field(FVST, "CLEANUP")
+}
+
+record(longout, "${UUT}:1:SIG:sample_count:nzcount") {
+	field(DTYP, "Soft Channel")
+	field(DOL, "${ACQ400IOC}:1:SIG:sample_count:nzcount CP")
+	field(OMSL, "closed_loop")
+}
+
+record(longout, "${UUT}:1:SHOT") {
+	field(DTYP, "Soft Channel")
+	field(DOL, "${ACQ400IOC}:1:SHOT CP")
+	field(OMSL, "closed_loop")
+}
+

@@ -1,0 +1,9 @@
+# relay records from UUT
+
+record (stringout, "${UUT}:${SUFFIX}") {
+	field(DTYP, "Soft Channel")
+	field(DOL, "${ACQ400IOC}:${SUFFIX} CP")
+	field(OMSL, "closed_loop")
+}
+
+

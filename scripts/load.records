@@ -44,7 +44,15 @@ xrmIoc_registerRecordDeviceDriver(pdbbase)
 #- Run this to trace the stages of iocInit
 traceIocInit
 dbLoadRecords("db/system.db","UUT=${HOST},ACQ400IOC=${ACQ400IOC},MODEL=${XRM_MODEL},PART=${XRM_PART},$dba")
+dbLoadRecords("db/relay.db","UUT=${HOST},ACQ400IOC=${ACQ400IOC}")
 EOF
+# not 0:MODEL!	
+for model in $(grep [1-6]:MODEL /tmp/records.dbl); do
+	suffix=${model#*:}
+cat - <<EOF
+dbLoadRecords("db/relay_suffix.db","UUT=${HOST},ACQ400IOC=${ACQ400IOC},SUFFIX=${suffix}")
+EOF
+done
 }
 
 
