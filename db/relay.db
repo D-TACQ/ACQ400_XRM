@@ -2,7 +2,7 @@
 
 record(mbbo, "${UUT}:MODE:CONTINUOUS:STATE") {
 	field(DTYP, "Soft Channel")
-	field(DOL, "${ACQ400IOC}:MODE:CONTINUOUS:STATE CP")
+	field(DOL,  {pva: {pv:"${ACQ400IOC}:MODE:CONTINUOUS:STATE", "proc":"CPP"}})
 	field(OMSL, "closed_loop")             
 	field(NOBT, "3")
 	field(ZRST, "IDLE")
@@ -15,7 +15,7 @@ record(mbbo, "${UUT}:MODE:CONTINUOUS:STATE") {
 
 record(mbbo, "${UUT}:MODE:TRANS_ACT:STATE") {
 	field(DTYP, "Soft Channel")
-	field(DOL, "${ACQ400IOC}:MODE:TRANS_ACT:STATE CP")
+	field(DOL,  {pva: {pv:"${ACQ400IOC}:MODE:TRANS_ACT:STATE", "proc":"CPP"}})
 	field(OMSL, "closed_loop")
 	field(NOBT, "3")
 	field(ZRST, "IDLE")
@@ -28,13 +28,13 @@ record(mbbo, "${UUT}:MODE:TRANS_ACT:STATE") {
 
 record(longout, "${UUT}:1:SIG:sample_count:nzcount") {
 	field(DTYP, "Soft Channel")
-	field(DOL, "${ACQ400IOC}:1:SIG:sample_count:nzcount CP")
+	field(DOL,  {pva: {pv:"${ACQ400IOC}:1:SIG:sample_count:nzcount", "proc":"CPP"}})
 	field(OMSL, "closed_loop")
 }
 
 record(longout, "${UUT}:1:SHOT") {
 	field(DTYP, "Soft Channel")
-	field(DOL, "${ACQ400IOC}:1:SHOT CP")
+	field(DOL,  {pva: {pv:"${ACQ400IOC}:1:SHOT", "proc":"CPP"}})
 	field(OMSL, "closed_loop")
 }
 

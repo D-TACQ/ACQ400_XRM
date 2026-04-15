@@ -94,7 +94,7 @@ record (longin, "${UUT}:SOE:SMPL_SP_COUNT") {
 record (longout, "${UUT}:1:RTM_TRANSLEN") {
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_SMPL_NSAM")
-	field(DOL, "${ACQ400IOC}:1:RTM_TRANSLEN CP")
+	field(DOL,  {pva: {pv:"${ACQ400IOC}:1:RTM_TRANSLEN", "proc":"CPP"}})
 	field(OMSL, "closed_loop")
 	
 	info(Q:group, {
@@ -111,14 +111,14 @@ record (longout, "${UUT}:1:RTM_TRANSLEN") {
 record (stringout,  "${UUT}:0:AGGREGATOR:SITES") {
 	field(DTYP, "asynOctetWrite")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))SOE_AGG_SITES")
-	field(DOL,  "${ACQ400IOC}:0:AGGREGATOR:SITES CP")
+	field(DOL,  {pva: {pv:"${ACQ400IOC}:0:AGGREGATOR:SITES", "proc":"CPP"}})
 	field(OMSL, "closed_loop")
 }
 
 record (longout, "${UUT}:${SITE}:IS_ADC") {
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_IS_ADC")
-	field(DOL, "${ACQ400IOC}:${SITE}:IS_ADC CP")
+	field(DOL,  {pva: {pv:"${ACQ400IOC}:${SITE}:IS_ADC", "proc":"CPP"}})
 	field(OMSL, "closed_loop")
 }
 
@@ -132,7 +132,7 @@ record (longout, "${UUT}:${SITE}:SSB") {
 	field(DTYP, "asynInt32")
 
 	field(OUT,  "@asyn($(PORT),${SITE},$(TIMEOUT))SOE_SITE_SSB")
-	field(DOL, "${ACQ400IOC}:${SITE}:SSB CP")
+	field(DOL,  {pva: {pv:"${ACQ400IOC}:${SITE}:SSB", "proc":"CPP"}})
 	field(OMSL, "closed_loop")
 
 	field(DESC, "Sample Size in Bytes")

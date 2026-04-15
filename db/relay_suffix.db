@@ -2,7 +2,7 @@
 
 record (stringout, "${UUT}:${SUFFIX}") {
 	field(DTYP, "Soft Channel")
-	field(DOL, "${ACQ400IOC}:${SUFFIX} CP")
+	field(DOL,  {pva: {pv:"${ACQ400IOC}:${SUFFIX}", "proc":"CPP"}})	
 	field(OMSL, "closed_loop")
 }
 
