@@ -11,6 +11,11 @@ RL_ACQ400=/tmp/records.dbl
 CP=2322                        # @@todo /etc/services
 XRM_EPICS_SH=/mnt/local/sysconfig/xrm_epics.sh
 
+if [ ! -e $XRM_EPICS_SH ]; then
+	echo ACQ400_XRM: unable to continue without $XRM_EPICS_SH. GOODBYE!
+	exit 1
+fi
+
 
 wait_ioc_ready
 
