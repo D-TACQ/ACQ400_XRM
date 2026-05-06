@@ -68,6 +68,32 @@ typedef struct SOE_LUT_ROW  SOE_LUT[SOE_LUT_ROWS];
  * iterate the SOE_HOLD_HEADER rows until zero
  * use data_offset to access the data.
  *
+ * In summary, the memory layout looks like this:
+ * Example 4 entries
+ * sizeof(SOE_HOLD_HEADER==22)
+ * XRMMAGPS: SSB=128 ruler in byte*2:
+ * 00000111112222233333444445555566666777778888899999AAAAABBBBBCCCC
+ * 0246802468024680246802468024680246802468024680246802468024680246
+ *|SOE HOLD 1 |
+ *|SOE HOLD 2 |
+ *|SOE HOLD 3 |
+ *|SOE HOLD 4 |
+ *|00000000000|
+ *|RAW SMPL 1 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
+ *|RAW SMPL 2 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
+ *|RAW SMPL 3 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
+ *|RAW SMPL 4 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
+
+
+ * showing the SOE HOLD struct on a line of bytes
+ * 0123456789012345678901|24680246802468024680246802468024680246802468024680246
+ * PVID                  |    epicsUInt32 pv_id;
+ * ____CLID______________|    epicsUInt32 client_data;
+ * ________TIMSTAMP______|    epicsInt64 timestamp;
+ * ________________DO____|    epicsUInt16 data_offset;
+ * __________________SADP|    epicsUInt8  ss_u32, ai_count, di_count, sp_count;
+ *
+ *
  * Actual wire protocol:
  * We meet the letter of the requirement by sending as a PVA ARRAY of U32
  * where NORD gives the overall size of the table, including DATA.
