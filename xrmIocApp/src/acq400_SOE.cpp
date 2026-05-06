@@ -475,13 +475,15 @@ asynStatus acq400_SOE::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    int function = pasynUser->reason;
 	    asynStatus status = asynSuccess;
 	    const char *paramName;
-	    int addr;
+	    int addr = 0;
 
 	    /* Fetch the parameter string name for possible use in debugging */
 	    getParamName(function, &paramName);
 
-	    status = pasynManager->getAddr(pasynUser, &addr);
-	    if(status!=asynSuccess) return status;
+	    if (maxAddr > 1){
+		    status = pasynManager->getAddr(pasynUser, &addr);
+		    if(status!=asynSuccess) return status;
+	    }
 
 	    /* Set the parameter in the parameter library. */
 	    status = (asynStatus) setIntegerParam(addr, function, value);
