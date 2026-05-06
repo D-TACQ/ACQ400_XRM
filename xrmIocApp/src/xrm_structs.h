@@ -98,6 +98,11 @@ typedef struct SOE_LUT_ROW  SOE_LUT[SOE_LUT_ROWS];
  * We meet the letter of the requirement by sending as a PVA ARRAY of U32
  * where NORD gives the overall size of the table, including DATA.
  *
+ * In the above example, MAGPS with 4 EVENTS,
+ * NORD = (5 * sizeof(SOE_HOLD_HEADER))/sizeof(int32) + 4*SSB/sizeof(int32)
+ * NORD = (5 * 22)/4 + 128
+ * NORD = 156 @@todo 22 is not a good size for the structure..
+ *
  * We've attempted to meet the spirit of the requirement using the PVXS API
  * to create an Array of Groups, but this has not been a success.
  * Happy to revisit later when we have an example that works.
@@ -143,45 +148,45 @@ static inline const int HOLD_MAX_NELM(unsigned ssb) { return HOLD_MAXSIZE(ssb)/s
 /* actual sample data:
  */
 
-const int XRM_MAGPS_AI32 = 32;
+const int XRM_MAGPS_AI16 = 32;
 const int XRM_MAGPS_DI32 =  2;
 const int XRM_MAGPS_SP32 =  6;   // pad to round number
 
 struct XRM_MAGPS_SAMPLE {
-	epicsFloat32 ai[XRM_MAGPS_AI32];
-	epicsUInt32  di[XRM_MAGPS_DI32];
-	epicsUInt32  sp[XRM_MAGPS_SP32];
+	epicsInt16  ai[XRM_MAGPS_AI16];
+	epicsUInt32 di[XRM_MAGPS_DI32];
+	epicsUInt32 sp[XRM_MAGPS_SP32];
 };
 
 
-const int XRM_QPMS_AI32 = 128;
+const int XRM_QPMS_AI16 = 128;
 const int XRM_QPMS_DI32 =   0;
 const int XRM_QPMS_SP32 =   8;
 
 struct XRM_QPMS_SAMPLE{
-	epicsFloat32 ai[XRM_MAGPS_AI32];
-	epicsUInt32  di[XRM_MAGPS_DI32];
-	epicsUInt32  sp[XRM_MAGPS_SP32];
+	epicsInt16  ai[XRM_MAGPS_AI16];
+	epicsUInt32 di[XRM_MAGPS_DI32];
+	epicsUInt32 sp[XRM_MAGPS_SP32];
 };
 
-const int XRM_INST_A_AI32 = 32;
+const int XRM_INST_A_AI16 = 32;
 const int XRM_INST_A_DI32 =  0;
 const int XRM_INST_A_SP32 =  4;
 
 struct XRM_INST_A_SAMPLE {
-	epicsFloat32 ai[XRM_INST_A_AI32];
-	epicsUInt32  di[XRM_INST_A_DI32];
-	epicsUInt32  sp[XRM_INST_A_SP32];
+	epicsInt16  ai[XRM_INST_A_AI16];
+	epicsUInt32 di[XRM_INST_A_DI32];
+	epicsUInt32 sp[XRM_INST_A_SP32];
 };
 
-const int XRM_INST_B_AI32 = 32;
+const int XRM_INST_B_AI16 = 32;
 const int XRM_INST_B_DI32 =  1;
 const int XRM_INST_B_SP32 =  3;
 
 struct XRM_INST_B_SAMPLE {
-	epicsFloat32 ai[XRM_INST_A_AI32];
-	epicsUInt32  di[XRM_INST_A_DI32];
-	epicsUInt32  sp[XRM_INST_A_SP32];
+	epicsInt16  ai[XRM_INST_A_AI16];
+	epicsUInt32 di[XRM_INST_A_DI32];
+	epicsUInt32 sp[XRM_INST_A_SP32];
 };
 
 
