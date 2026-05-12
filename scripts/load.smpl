@@ -17,23 +17,34 @@ get_inp() {
 	esac
 }
 
+pvget_value() {
+	pvget $1 | awk '{print $4}'
+}
+
 load_acq400ioc_proxies() {
 	TOTAL_AI_NCHAN=0
-	for site in $(pvget ${ACQ400IOC}:0:AGGREGATOR:SITES | awk '{ print "0,"$4 }' | sed 's/,/ /g'); do
+#	for site in $(pvget ${ACQ400IOC}:0:AGGREGATOR:SITES | awk '{ print "0,"$4 }' | sed 's/,/ /g'); do
+	ASITES="$(pvget_value ${ACQ400IOC}:0:AGGREGATOR:SITES | sed 's/,/ /g')"
+	for site in 0 $ASITES; do  
 		pv="${ACQ400IOC}:${site}:SSB"
 		inp=$(get_inp $site)
 		HNS="UUT=${HOST},ACQ400IOC=${ACQ400IOC},PORT=$SPORT,TIMEOUT=0"
 		echo 'dbLoadRecords("db/proxy_ssb.db","'${HNS}',ADDR=0,SITE='${site}',INP='${inp}'")'
-		model=$(pvget ${ACQ400IOC}:${site}:MODEL | awk '{ print $4 }')
-		NCHAN=$(pvget ${ACQ400IOC}:${site}:NCHAN)
-		TOTAL_AI_NCHAN=$((TOTAL_AI_NCHAN+NCHAN))
-		NCHANP1=$((NCHAN+1))
+	done
+	for site in $ASITES; do
+		MODEL=$(pvget_value ${ACQ400IOC}:${site}:MODEL)
+
 		if echo $MODEL | grep -q ACQ; then
-			echo 'dbLoadRecords("db/proxy_cal.db",'${HNS}',ADDR=${site},SITE='${site},nchanp1=${NCHANP1}'")'
+			NCHAN=$(pvget_value ${ACQ400IOC}:${site}:NCHAN)
+			TOTAL_AI_NCHAN=$((TOTAL_AI_NCHAN+NCHAN))
+			NCHANP1=$((NCHAN+1))
+			pca="${HNS},ADDR=${site},SITE=${site},nchanp1=${NCHANP1}"
+			echo 'dbLoadRecords("db/proxy_cal.db","'${pca}'")'
 		fi
 	done
+
 	NCHANP1=$((TOTAL_AI_NCHAN+1))
-	echo 'dbLoadRecords("db/proxy_cal.db",'${HNS}',ADDR=0,SITE='0,nchanp1=${NCHANP1}'")'
+	echo 'dbLoadRecords("db/proxy_cal.db","'${HNS}',ADDR=0,SITE='0,nchanp1=${NCHANP1}'")'
 }
 
 
