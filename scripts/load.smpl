@@ -23,17 +23,17 @@ load_acq400ioc_proxies() {
 		pv="${ACQ400IOC}:${site}:SSB"
 		inp=$(get_inp $site)
 		HNS="UUT=${HOST},ACQ400IOC=${ACQ400IOC},PORT=$SPORT,TIMEOUT=0"
-		echo 'dbLoadRecords("db/ssb.db","'${HNS}',ADDR=0,SITE='${site}',INP='${inp}'")'
+		echo 'dbLoadRecords("db/proxy_ssb.db","'${HNS}',ADDR=0,SITE='${site}',INP='${inp}'")'
 		model=$(pvget ${ACQ400IOC}:${site}:MODEL | awk '{ print $4 }')
 		NCHAN=$(pvget ${ACQ400IOC}:${site}:NCHAN)
 		TOTAL_AI_NCHAN=$((TOTAL_AI_NCHAN+NCHAN))
 		NCHANP1=$((NCHAN+1))
 		if echo $MODEL | grep -q ACQ; then
-			echo 'dbLoadRecords("db/cal.db",'${HNS}',ADDR=${site},SITE='${site},nchanp1=${NCHANP1}'")'
+			echo 'dbLoadRecords("db/proxy_cal.db",'${HNS}',ADDR=${site},SITE='${site},nchanp1=${NCHANP1}'")'
 		fi
 	done
 	NCHANP1=$((TOTAL_AI_NCHAN+1))
-	echo 'dbLoadRecords("db/cal.db",'${HNS}',ADDR=0,SITE='0,nchanp1=${NCHANP1}'")'
+	echo 'dbLoadRecords("db/proxy_cal.db",'${HNS}',ADDR=0,SITE='0,nchanp1=${NCHANP1}'")'
 }
 
 
