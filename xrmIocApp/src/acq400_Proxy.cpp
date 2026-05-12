@@ -141,12 +141,14 @@ void acq400_Proxy::get_cal()
 }
 void acq400_Proxy::task()
 {
+	printf("INFO: %s:%s wait Event\n", DN, FN);
 	epicsEventWait(eventId);
+	printf("INFO: %s:%s wait done\n", DN, FN);
 	get_sample_dimensions();
 	get_cal();
 }
 
-asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value)
+asynStatus acq400_Proxy::writeInt32(asynUser *pasynUser, epicsInt32 value)
 {
 	int function = pasynUser->reason;
 	asynStatus status = asynSuccess;
