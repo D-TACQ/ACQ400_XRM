@@ -93,6 +93,8 @@ iocInit()
 dbl > ${RL}
 dbpf ${HOST}:IOC_READY 1
 EOF
+[ ! -z $XRM_PROXY ] && echo "dbpf ${HOST}:PROXY:RUNSTOP 1"
+
 
 
 

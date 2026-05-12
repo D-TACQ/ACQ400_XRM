@@ -64,5 +64,8 @@ public:
 		return &_instance->samplePrams;
 	}
 	virtual ~acq400_Proxy() {}
+
+	virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+
 };
 #endif /* XRMIOCAPP_SRC_ACQ400_PROXY_H_ */

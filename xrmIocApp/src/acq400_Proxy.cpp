@@ -141,9 +141,53 @@ void acq400_Proxy::get_cal()
 }
 void acq400_Proxy::task()
 {
+	epicsEventWait(eventId);
 	get_sample_dimensions();
 	get_cal();
 }
+
+asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value)
+{
+	int function = pasynUser->reason;
+	asynStatus status = asynSuccess;
+	const char *paramName;
+	int addr = 0;
+
+	/* Fetch the parameter string name for possible use in debugging */
+	getParamName(function, &paramName);
+
+	if (maxAddr > 1){
+		status = pasynManager->getAddr(pasynUser, &addr);
+		if(status!=asynSuccess) return status;
+	}
+
+	/* Set the parameter in the parameter library. */
+	status = (asynStatus) setIntegerParam(addr, function, value);
+
+	fprintf(stderr,
+			"%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
+			DN, FN, function, addr, paramName, value);
+
+	if (function == P_RUNSTOP) {
+		if (value == 1){
+			epicsEventSignal(eventId);
+		}
+	}
+
+	/* Do callbacks so higher layers see any changes */
+	status = (asynStatus) callParamCallbacks();
+
+	if (status)
+		epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
+				"%s:%s: status=%d, function=%d, name=%s, value=%d",
+				DN, FN, status, function, paramName, value);
+	else
+		asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+				"%s:%s: function=%d, name=%s, value=%d\n",
+				DN, FN, function, paramName, value);
+	return status;
+}
+
 
 acq400_Proxy* acq400_Proxy::_instance;
 
