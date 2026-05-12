@@ -19,6 +19,9 @@
 SamplePrams::SamplePrams()
 {
 	memset(this, 0, sizeof(SamplePrams));
+}
+void SamplePrams::validate()
+{
 	MAGIC = SP_MAGIC;
 }
 

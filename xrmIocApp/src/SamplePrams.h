@@ -20,6 +20,7 @@ struct SamplePrams {
 	int SP_INDEX;
 	SamplePrams();
 	bool isValid() const;
+	void validate();
 	static int store(const SamplePrams& samplePrams);
 	static int load(SamplePrams& samplePrams);
 };

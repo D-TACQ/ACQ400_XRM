@@ -1,0 +1,47 @@
+#!/bin/sh
+
+SPORT=SMP
+# ACQ400_FMT_SIM_SOURCE=WRTS
+
+
+get_inp() {
+	case $1 in
+	0)      echo INPH;;
+	1)      echo INPA;;
+	2)      echo INPB;;
+	3)      echo INPC;;
+	4)      echo INPD;;
+	5)      echo INPE;;
+	6)      echo INPF;;
+	*)      echo ERROR $1; exit 1;;
+	esac
+}
+
+load_acq400ioc_proxies() {
+	TOTAL_AI_NCHAN=0
+	for site in $(pvget ${ACQ400IOC}:0:AGGREGATOR:SITES | awk '{ print "0,"$4 }' | sed 's/,/ /g'); do
+		pv="${ACQ400IOC}:${site}:SSB"
+		inp=$(get_inp $site)
+		HNS="UUT=${HOST},ACQ400IOC=${ACQ400IOC},PORT=$SPORT,TIMEOUT=0"
+		echo 'dbLoadRecords("db/ssb.db","'${HNS}',ADDR=0,SITE='${site}',INP='${inp}'")'
+		model=$(pvget ${ACQ400IOC}:${site}:MODEL | awk '{ print $4 }')
+		NCHAN=$(pvget ${ACQ400IOC}:${site}:NCHAN)
+		TOTAL_AI_NCHAN=$((TOTAL_AI_NCHAN+NCHAN))
+		NCHANP1=$((NCHAN+1))
+		if echo $MODEL | grep -q ACQ; then
+			echo 'dbLoadRecords("db/cal.db",'${HNS}',ADDR=${site},SITE='${site},nchanp1=${NCHANP1}'")'
+		fi
+	done
+	NCHANP1=$((TOTAL_AI_NCHAN+1))
+	echo 'dbLoadRecords("db/cal.db",'${HNS}',ADDR=0,SITE='0,nchanp1=${NCHANP1}'")'
+}
+
+
+echo acq400_Proxy_Configure\($SPORT\)
+
+ARP="P=${IOC_HOST}:,R=${SPORT},PORT=${SPORT},ADDR=0,IMAX=100,OMAX=100,TB3=0,TIB0=0"
+echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
+
+PRAMS="UUT=${IOC_HOST},PORT=$SPORT,ADDR=0,TIMEOUT=0"
+#echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},FUN=PRO\"\)
+load_acq400ioc_proxies

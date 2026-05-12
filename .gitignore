@@ -20,4 +20,4 @@ include/
 SAFE/
 iocBoot/iocxrmIoc/envPaths
 dbd/xrmIoc.dbd
-
+notes/

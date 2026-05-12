@@ -36,4 +36,4 @@ PRAMS="UUT=${IOC_HOST},PORT=$SPORT,ADDR=0,TIMEOUT=0"
 echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},FUN=SOE\"\)
 echo dbLoadRecords\(\"db/soe_base.db\",\"${PRAMS}\"\)
 echo dbLoadRecords\(\"db/soe_hold.db\",\"${PRAMS}\"\)
-load_acq400ioc_proxies
+#load_acq400ioc_proxies

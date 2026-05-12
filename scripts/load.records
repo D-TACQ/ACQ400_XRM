@@ -73,8 +73,15 @@ dbLoadGroup("$ACQ400XRM_GROUP","UUT=$HOST")
 EOF
 fi
 
+# XRM_FMT_SIM is normally exclusive to the other options below
 [ ! -z $XRM_FMT_SIM ] && ./scripts/load.fmt_sim $XRM_FMT_SIM
+
+# XRM_PROXY is always needed if not XRM_FMT_SIM
+[ ! -z $XRM_PROXY ] && ./scripts/load.smpl $XRM_PROXY
+
+# XRM_FMT_RX is required is XRM_SOE is set.
 [ ! -z $XRM_FMT_RX ] && ./scripts/load.fmt_rx $XRM_FMT_RX
+
 [ ! -z $XRM_SOE ] && ./scripts/load.soe $XRM_SOE
 [ ! -z $XRM_PM ] && ./scripts/load.pm $XRM_PM
 [ ! -z $XRM_INST1 ] && ./scripts/load.inst 1 $XRM_INST1

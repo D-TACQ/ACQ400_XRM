@@ -53,6 +53,7 @@ xrmIoc_DBD += initTrace.dbd
 xrmIoc_DBD += acq400_FMT_sim.dbd
 xrmIoc_DBD += acq400_FMT_rx.dbd
 xrmIoc_DBD += acq400_SOE.dbd
+xrmIoc_DBD += acq400_Proxy.dbd
 xrmIoc_DBD += acq400_PM.dbd
 xrmIoc_DBD += acq400_INST.dbd
 
@@ -66,6 +67,7 @@ xrmIoc_SRCS += acq400_asynPortDriver.cpp
 xrmIoc_SRCS += acq400_FMT_abc.cpp
 xrmIoc_SRCS += acq400_FMT_sim.cpp
 xrmIoc_SRCS += acq400_FMT_rx.cpp
+xrmIoc_SRCS += acq400_Proxy.cpp
 xrmIoc_SRCS += acq400_SOE.cpp
 xrmIoc_SRCS += acq400_SOE_Strategy.cpp
 xrmIoc_SRCS += acq400_PM.cpp
