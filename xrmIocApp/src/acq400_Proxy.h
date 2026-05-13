@@ -48,6 +48,8 @@ class acq400_Proxy: public acq400_asynPortDriver {
 	epicsFloat32* eslo_dst;         // eslo_dst[AGG_NCHAN+1] copy data from ACQ400IOC
 	epicsFloat32* eoff_dst;	        // eoff_dst[AGG_NCHAN+1] copy data from ACQ400IOC
 
+	static int verbose;
+
 	void get_sample_dimensions();
 	void get_cal();
 
