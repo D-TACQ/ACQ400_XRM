@@ -173,14 +173,16 @@ void acq400_Proxy::get_cal()
 void acq400_Proxy::task()
 {
 	while(1){
-		lock();
 		printf("INFO: %s:%s wait Event\n", DN, FN);
 		epicsEventWait(eventId);
 		printf("INFO: %s:%s wait done\n", DN, FN);
+
+		lock();
 		get_sample_dimensions();
 		get_cal();
-		printf("INFO: %s:%s cal done\n", DN, FN);
 		unlock();
+
+		printf("INFO: %s:%s cal done\n", DN, FN);
 	}
 }
 

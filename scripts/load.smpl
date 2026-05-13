@@ -23,7 +23,7 @@ load_acq400ioc_proxies() {
 			TOTAL_AI_NCHAN=$((TOTAL_AI_NCHAN+NCHAN))
 			NCHANP1=$((NCHAN+1))
 			pca="${HNS},ADDR=${site},SITE=${site},NCHANP1=${NCHANP1}"
-			echo 'dbLoadRecords("db/proxy_cal.db","'${pca}'")'
+			echo 'dbLoadRecords("db/proxy_cal_src.db","'${pca}'")'
 		fi
 	done
 
