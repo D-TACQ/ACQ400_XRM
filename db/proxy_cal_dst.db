@@ -8,6 +8,7 @@ record(waveform, "${UUT}:${SITE}:AI:CAL:ESLO") {
 	field(NELM, "${NCHANP1}")
 	field(FTVL, "FLOAT")
 	field(DESC, "Slope each channel 1..N, index from 0")
+	field(SCAN, "I/O Intr")
 }
 
 record(waveform, "${UUT}:${SITE}:AI:CAL:EOFF") {
@@ -16,5 +17,6 @@ record(waveform, "${UUT}:${SITE}:AI:CAL:EOFF") {
 	field(NELM, "${NCHANP1}")
 	field(FTVL, "FLOAT")
 	field(DESC, "Offset each channel 1..N, index from 0")	
+	field(SCAN, "I/O Intr")
 }
 

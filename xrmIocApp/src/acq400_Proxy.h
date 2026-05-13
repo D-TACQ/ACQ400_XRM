@@ -84,8 +84,6 @@ public:
 
 	virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
 
-	virtual asynStatus readFloat32Array(asynUser *pasynUser, epicsFloat32 *value,
-	                                       size_t nElements, size_t *nIn);
 	virtual asynStatus writeFloat32Array(asynUser *pasynUser, epicsFloat32 *value,
 	                                       size_t nElements);
 

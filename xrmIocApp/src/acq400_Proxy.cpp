@@ -275,68 +275,7 @@ asynStatus acq400_Proxy::writeInt32(asynUser *pasynUser, epicsInt32 value)
 }
 
 
-asynStatus acq400_Proxy::readFloat32Array(asynUser *pasynUser, epicsFloat32 *value,
-                                       size_t nElements, size_t *nIn)
-{
-	int function = pasynUser->reason;
-	asynStatus status = asynSuccess;
-	const char *paramName;
-	int addr = 0;
 
-	/* Fetch the parameter string name for possible use in debugging */
-	getParamName(function, &paramName);
-
-	if (maxAddr > 1){
-		status = pasynManager->getAddr(pasynUser, &addr);
-		if(status!=asynSuccess) return status;
-	}
-
-	printf("INFO: %s:%s() function:%d addr:%d  nElements:%u\n",
-			DN, FN, function, addr, nElements);
-
-	if (addr == 0){
-		lock();
-		epicsFloat32** local_dst = 0;
-		epicsFloat32 nominal;
-
-		if (function == P_AI_CAL_ESLO){
-			local_dst = &eslo_dst;
-			nominal = 10/32768;
-		}else if (function == P_AI_CAL_EOFF){
-			local_dst = &eoff_dst;
-			nominal = 0;
-		}else{
-			assert(function == P_AI_CAL_ESLO || function == P_AI_CAL_EOFF);
-		}
-		if (*local_dst == 0){
-			// lazy init. first time will report zero
-			epicsFloat32* pa = new epicsFloat32[nElements];
-			for (size_t ii = 0; ii != nElements; ++ii){
-				pa[ii] = nominal;
-			}
-			assert(ai_site_lengths[addr] == 0 || ai_site_lengths[addr] == nElements);
-			ai_site_lengths[addr] = nElements;
-			*local_dst = pa;
-
-			printf("INFO: %s:%s() function:%d addr:%d lazy init: %p:%u nElements:%u\n",
-						DN, FN, function, addr, pa, ai_site_lengths[addr], nElements);
-
-		}
-		//doCallbacksFloat32Array(*local_dst, nElements, function, addr);
-		unlock();
-		epicsEventSignal(eventId);
-	}
-
-	if (status)
-		epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
-				"%s:%s: status=%d, function=%d, name=%s, value=%p",
-				DN, FN, status, function, paramName, value);
-	else
-		asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
-				"%s:%s: function=%d, name=%s, value=%p\n",
-				DN, FN, function, paramName, value);
-	return status;
-}
 asynStatus acq400_Proxy::writeFloat32Array(asynUser *pasynUser, epicsFloat32 *value,
                                        size_t nElements)
 {
