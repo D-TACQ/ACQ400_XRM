@@ -1,7 +1,11 @@
+# proxy_cal_dst: DESTINATION: full aggregator record for bulk data, 
+# SITE=ADDR=0
+# INP from acq400Proxy channel SMP
+
 record(waveform, "${UUT}:${SITE}:AI:CAL:ESLO") {
 	field(DTYP, "asynFloat32ArrayIn")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AI_CAL_ESLO")
-	field(NELM, "${nchanp1}")
+	field(NELM, "${NCHANP1}")
 	field(FTVL, "FLOAT")
 	field(DESC, "Slope each channel 1..N, index from 0")
 }
@@ -9,7 +13,7 @@ record(waveform, "${UUT}:${SITE}:AI:CAL:ESLO") {
 record(waveform, "${UUT}:${SITE}:AI:CAL:EOFF") {
 	field(DTYP, "asynFloat32ArrayIn")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AI_CAL_EOFF")
-	field(NELM, "${nchanp1}")
+	field(NELM, "${NCHANP1}")
 	field(FTVL, "FLOAT")
 	field(DESC, "Offset each channel 1..N, index from 0")	
 }

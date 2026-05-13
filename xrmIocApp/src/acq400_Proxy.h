@@ -14,6 +14,13 @@
 #include "xrm_structs.h"
 #include "SamplePrams.h"
 
+#define FIRST_SITE 1
+#define LAST_SITE  6
+
+#define MAX_SITES 6
+#define MAX_ADDR  (MAX_SITES+1)    // site 0 and selection of 1..6
+
+
 /* @@todo later .. */
 #define PS_SMPL_AGG_SITES	"SMPL_AGG_SITES"
 #define PS_SMPL_SITE_SSB	"SMPL_SITE_SSB" /* addr per site */
@@ -33,6 +40,14 @@
 class acq400_Proxy: public acq400_asynPortDriver {
 
 	SamplePrams samplePrams;
+
+	size_t ai_site_lengths[MAX_SITES+1];
+	epicsFloat32** eslo_src;        // eslo_src[1..6][NCHAN+1] copy data from ACQ400IOC
+	epicsFloat32** eoff_src;	// eoff_src[1..6][NCHAN+1] copy data from ACQ400IOC
+
+	epicsFloat32* eslo_dst;         // eslo_dst[AGG_NCHAN+1] copy data from ACQ400IOC
+	epicsFloat32* eoff_dst;	        // eoff_dst[AGG_NCHAN+1] copy data from ACQ400IOC
+
 	void get_sample_dimensions();
 	void get_cal();
 
@@ -66,6 +81,12 @@ public:
 	virtual ~acq400_Proxy() {}
 
 	virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+
+	virtual asynStatus readFloat32Array(asynUser *pasynUser, epicsFloat32 *value,
+	                                       size_t nElements, size_t *nIn);
+	virtual asynStatus writeFloat32Array(asynUser *pasynUser, epicsFloat32 *value,
+	                                       size_t nElements);
+
 
 };
 #endif /* XRMIOCAPP_SRC_ACQ400_PROXY_H_ */

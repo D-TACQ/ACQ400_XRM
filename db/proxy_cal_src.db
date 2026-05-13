@@ -1,0 +1,24 @@
+# proxy_cal_src.db : SOURCE: proxy copy of each site on the ACQ400IOC
+# SITE == ADDR : {1,2,3,4,5,6}
+# OUT to acq400Proxy channel SMP
+
+record(aao, "${UUT}:${SITE}:AI:CAL:ESLO") {
+	field(DTYP, "asynFloat32ArrayOut")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AI_CAL_ESLO")
+	field(OMSL, "closed_loop")
+	field(DOL,  {pva: {pv:"${ACQ400IOC}:${SITE}:AI:CAL:ESLO", "proc":"CPP"}})
+	field(NELM, "$(NCHANP1)")
+	field(FTVL, "FLOAT")
+	field(DESC, "Slope each channel 1..N, index from 0")
+}
+
+record(aao, "${UUT}:${SITE}:AI:CAL:EOFF") {
+	field(DTYP, "asynFloat32ArrayOut")
+	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AI_CAL_EOFF")
+	field(OMSL, "closed_loop")
+	field(DOL,  {pva: {pv:"${ACQ400IOC}:${SITE}:AI:CAL:EOFF", "proc":"CPP"}})
+	field(NELM, "$(NCHANP1)")
+	field(FTVL, "FLOAT")
+	field(DESC, "Offset each channel 1..N, index from 0")	
+}
+

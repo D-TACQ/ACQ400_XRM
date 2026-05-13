@@ -18,9 +18,14 @@
 #define MARK	fprintf(stderr, "%s %d\n", FN, __LINE__)
 #define MARKI(p) fprintf(stderr, "%s %d P_ %s:%d\n", FN, __LINE__, #p, p)
 
-#define MAX_SITES 6
-#define MAX_ADDR  (MAX_SITES+1)    // site 0 and selection of 1..6
 
+epicsFloat32** init_ecal_src() {
+	epicsFloat32** ecal_src = new epicsFloat32*[MAX_ADDR]; // site index from 1
+	for (int site = 0; site < MAX_ADDR; ++site){
+		ecal_src[site] = 0;  // prep for lazy init
+	}
+	return ecal_src;
+}
 acq400_Proxy::acq400_Proxy(const char* portName):
 	acq400_asynPortDriver(portName,
 	/* maxAddr */		MAX_ADDR,
@@ -33,9 +38,15 @@ acq400_Proxy::acq400_Proxy(const char* portName):
 	/* asynFlags no block*/ 0,
 	/* Autoconnect */       1,
 	/* Default priority */  0,
-	/* Default stack size*/ 0)
+	/* Default stack size*/ 0),
+	eslo_src(init_ecal_src()),
+	eoff_src(init_ecal_src()),
+	eslo_dst(0),
+	eoff_dst(0)
 {
 	asynStatus status = asynSuccess;
+
+	memset(ai_site_lengths, 0, sizeof(ai_site_lengths));
 
 	createParam(PS_SMPL_AGG_SITES,	asynParamOctet,      &P_SMPL_AGG_SITES);
 	createParam(PS_SMPL_SITE_SSB,	asynParamInt32,      &P_SMPL_SITE_SSB);
@@ -50,6 +61,7 @@ acq400_Proxy::acq400_Proxy(const char* portName):
 
 	createParam(PS_AI_CAL_ESLO,     asynParamFloat32Array, &P_AI_CAL_ESLO);
 	createParam(PS_AI_CAL_EOFF,     asynParamFloat32Array, &P_AI_CAL_EOFF);
+
 
 	/* Create the thread that computes the waveforms in the background */
 	status = (asynStatus)(epicsThreadCreate("acq400_Proxy_task",
@@ -138,14 +150,38 @@ void acq400_Proxy::get_sample_dimensions()
 void acq400_Proxy::get_cal()
 {
 	printf("INFO: %s:%s STUB\n", DN, FN);
+	const int max_dst = ai_site_lengths[0];
+	int ito = 1;    // skip first element. CH index from 1..
+
+	for (int site = FIRST_SITE; site <= LAST_SITE; ++site){
+		const int site_n = ai_site_lengths[site] - 1;
+		const int site_bytes = site_n*sizeof(epicsFloat32);
+		if (site_bytes == 0){
+			continue;
+		}
+		assert(ito+site_n < max_dst);
+
+		memcpy(eslo_dst+ito, eslo_src[site]+1, site_bytes);
+		memcpy(eoff_dst+ito, eoff_src[site]+1, site_bytes);
+		ito += site_n;
+	}
+	if (ito > 1){
+		doCallbacksFloat32Array(eslo_dst, ito, P_AI_CAL_ESLO, 0);
+		doCallbacksFloat32Array(eoff_dst, ito, P_AI_CAL_EOFF, 0);
+	}
 }
 void acq400_Proxy::task()
 {
-	printf("INFO: %s:%s wait Event\n", DN, FN);
-	epicsEventWait(eventId);
-	printf("INFO: %s:%s wait done\n", DN, FN);
-	get_sample_dimensions();
-	get_cal();
+	while(1){
+		lock();
+		printf("INFO: %s:%s wait Event\n", DN, FN);
+		epicsEventWait(eventId);
+		printf("INFO: %s:%s wait done\n", DN, FN);
+		get_sample_dimensions();
+		get_cal();
+		printf("INFO: %s:%s cal done\n", DN, FN);
+		unlock();
+	}
 }
 
 asynStatus acq400_Proxy::writeInt32(asynUser *pasynUser, epicsInt32 value)
@@ -186,6 +222,114 @@ asynStatus acq400_Proxy::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	else
 		asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
 				"%s:%s: function=%d, name=%s, value=%d\n",
+				DN, FN, function, paramName, value);
+	return status;
+}
+
+
+asynStatus acq400_Proxy::readFloat32Array(asynUser *pasynUser, epicsFloat32 *value,
+                                       size_t nElements, size_t *nIn)
+{
+	int function = pasynUser->reason;
+	asynStatus status = asynSuccess;
+	const char *paramName;
+	int addr = 0;
+
+	/* Fetch the parameter string name for possible use in debugging */
+	getParamName(function, &paramName);
+
+	if (maxAddr > 1){
+		status = pasynManager->getAddr(pasynUser, &addr);
+		if(status!=asynSuccess) return status;
+	}
+	if (addr == 0){
+		lock();
+		epicsFloat32** local_dst = 0;
+		epicsFloat32 nominal;
+
+		if (function == P_AI_CAL_ESLO){
+			local_dst = &eslo_dst;
+			nominal = 10/32768;
+		}else if (function == P_AI_CAL_EOFF){
+			local_dst = &eoff_dst;
+			nominal = 0;
+		}else{
+			assert(function == P_AI_CAL_ESLO || function == P_AI_CAL_EOFF);
+		}
+		if (local_dst == 0){
+			// lazy init. first time will report zero
+			epicsFloat32* pa = new epicsFloat32[nElements];
+			for (size_t ii = 0; ii != nElements; ++ii){
+				pa[ii] = nominal;
+			}
+			assert(ai_site_lengths[addr] == 0 || ai_site_lengths[addr] == nElements);
+			ai_site_lengths[addr] = nElements;
+			*local_dst = pa;
+
+		}
+		doCallbacksFloat32Array(*local_dst, nElements, function, addr);
+		unlock();
+	}
+
+	if (status)
+		epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
+				"%s:%s: status=%d, function=%d, name=%s, value=%p",
+				DN, FN, status, function, paramName, value);
+	else
+		asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+				"%s:%s: function=%d, name=%s, value=%p\n",
+				DN, FN, function, paramName, value);
+	return status;
+}
+asynStatus acq400_Proxy::writeFloat32Array(asynUser *pasynUser, epicsFloat32 *value,
+                                       size_t nElements)
+{
+	int function = pasynUser->reason;
+	asynStatus status = asynSuccess;
+	const char *paramName;
+	int addr = 0;
+
+	/* Fetch the parameter string name for possible use in debugging */
+	getParamName(function, &paramName);
+
+
+	if (maxAddr > 1){
+		status = pasynManager->getAddr(pasynUser, &addr);
+		if(status!=asynSuccess) return status;
+	}
+
+	if (function == P_AI_CAL_ESLO || function == P_AI_CAL_EOFF){
+		lock();
+		assert(addr >= FIRST_SITE && addr <= LAST_SITE);
+		epicsFloat32* copy_to;
+
+		if (function == P_AI_CAL_ESLO){
+			if (eslo_src[addr] == 0){
+				eslo_src[addr] = new epicsFloat32[nElements];
+				assert(ai_site_lengths[addr] == 0 || ai_site_lengths[addr] == nElements);
+				ai_site_lengths[addr] = nElements;
+			}
+			copy_to = eslo_src[addr];
+		}else{
+			if (eoff_src[addr] == 0){
+				eoff_src[addr] = new epicsFloat32[nElements];
+				assert(ai_site_lengths[addr] == 0 || ai_site_lengths[addr] == nElements);
+				ai_site_lengths[addr] = nElements;
+			}
+			copy_to = eoff_src[addr];
+		}
+		memcpy(copy_to, value, nElements*sizeof(epicsFloat32));
+		unlock();
+	}
+
+
+	if (status)
+		epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
+				"%s:%s: status=%d, function=%d, name=%s, value=%p",
+				DN, FN, status, function, paramName, value);
+	else
+		asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+				"%s:%s: function=%d, name=%s, value=%p\n",
 				DN, FN, function, paramName, value);
 	return status;
 }
