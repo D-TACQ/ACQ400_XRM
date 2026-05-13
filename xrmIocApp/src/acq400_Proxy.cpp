@@ -19,6 +19,9 @@
 #define MARKI(p) fprintf(stderr, "%s %d P_ %s:%d\n", FN, __LINE__, #p, p)
 
 
+
+int acq400_Proxy::verbose 		= ::getenv_default("acq400_PROXY_VERBOSE", 0);
+
 epicsFloat32** init_ecal_src() {
 	epicsFloat32** ecal_src = new epicsFloat32*[MAX_ADDR]; // site index from 1
 	for (int site = 0; site < MAX_ADDR; ++site){
@@ -26,6 +29,8 @@ epicsFloat32** init_ecal_src() {
 	}
 	return ecal_src;
 }
+
+
 acq400_Proxy::acq400_Proxy(const char* portName):
 	acq400_asynPortDriver(portName,
 	/* maxAddr */		MAX_ADDR,
@@ -119,7 +124,7 @@ void acq400_Proxy::get_sample_dimensions()
 			modules_di_ssb += ssb;
 		}
 
-		fprintf(stderr, "%s:%s %d ssb:%d is_adc?:%d first_di_index:%d modules_ssb_total:%d\n",
+		if (verbose) fprintf(stderr, "%s:%s %d ssb:%d is_adc?:%d first_di_index:%d modules_ssb_total:%d\n",
 				DN, FN, site, ssb, is_adc, first_di_index, modules_ssb_total);
 	}
 	gip(0, P_SMPL_SITE_SSB, &ssb);
@@ -149,7 +154,7 @@ void acq400_Proxy::get_sample_dimensions()
 
 void acq400_Proxy::get_cal()
 {
-	printf("INFO: %s:%s 01\n", DN, FN);
+	if (verbose) printf("INFO: %s:%s 01\n", DN, FN);
 
 	size_t agglen = 0;
 
@@ -169,7 +174,7 @@ void acq400_Proxy::get_cal()
 		assert(eslo_dst == 0);
 		assert(eoff_dst == 0);
 
-		//fprintf(stderr, "%s:%s() lazy init agglen:%u\n", DN, FN, agglen);
+		if (verbose) fprintf(stderr, "%s:%s() lazy init agglen:%u\n", DN, FN, agglen);
 
 		eslo_dst = new epicsFloat32[agglen];
 		eoff_dst = new epicsFloat32[agglen];
@@ -195,7 +200,7 @@ void acq400_Proxy::get_cal()
 		if (site_bytes == 0){
 			continue;
 		}
-		fprintf(stderr, "%s:%s() site:%d ito:%d  site_n:%d max_dst:%d\n",
+		if (verbose) fprintf(stderr, "%s:%s() site:%d ito:%d  site_n:%d max_dst:%d\n",
 				DN, FN, site, ito, site_n, max_dst);
 
 		if (!(ito+site_n <= max_dst)){
@@ -213,21 +218,21 @@ void acq400_Proxy::get_cal()
 		doCallbacksFloat32Array(eslo_dst, ito, P_AI_CAL_ESLO, 0);
 		doCallbacksFloat32Array(eoff_dst, ito, P_AI_CAL_EOFF, 0);
 	}
-	printf("INFO: %s:%s 99\n", DN, FN);
+	if (verbose) printf("INFO: %s:%s 99\n", DN, FN);
 }
 void acq400_Proxy::task()
 {
 	while(1){
-		printf("INFO: %s:%s wait Event\n", DN, FN);
+		if (verbose) printf("INFO: %s:%s wait Event\n", DN, FN);
 		epicsEventWait(eventId);
-		printf("INFO: %s:%s wait done\n", DN, FN);
+		if (verbose) printf("INFO: %s:%s wait done\n", DN, FN);
 
 		lock();
 		get_sample_dimensions();
 		get_cal();
 		unlock();
 
-		printf("INFO: %s:%s cal done\n", DN, FN);
+		if (verbose) printf("INFO: %s:%s cal done\n", DN, FN);
 	}
 }
 
@@ -248,10 +253,6 @@ asynStatus acq400_Proxy::writeInt32(asynUser *pasynUser, epicsInt32 value)
 
 	/* Set the parameter in the parameter library. */
 	status = (asynStatus) setIntegerParam(addr, function, value);
-
-	fprintf(stderr,
-			"%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
-			DN, FN, function, addr, paramName, value);
 
 	if (function == P_RUNSTOP) {
 		if (value == 1){
