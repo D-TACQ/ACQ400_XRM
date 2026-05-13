@@ -159,7 +159,7 @@ void acq400_Proxy::get_cal()
 		if (site_bytes == 0){
 			continue;
 		}
-		assert(ito+site_n < max_dst);
+		assert(ito+site_n <= max_dst);
 
 		memcpy(eslo_dst+ito, eslo_src[site]+1, site_bytes);
 		memcpy(eoff_dst+ito, eoff_src[site]+1, site_bytes);
