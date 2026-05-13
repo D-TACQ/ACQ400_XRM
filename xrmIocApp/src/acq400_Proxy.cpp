@@ -149,15 +149,59 @@ void acq400_Proxy::get_sample_dimensions()
 
 void acq400_Proxy::get_cal()
 {
-	printf("INFO: %s:%s STUB\n", DN, FN);
+	printf("INFO: %s:%s 01\n", DN, FN);
+
+	size_t agglen = 0;
+
+	for (int site = FIRST_SITE; site <= LAST_SITE; ++site){
+		if (ai_site_lengths[site] > 1){
+			agglen += ai_site_lengths[site] -1;
+		}
+	}
+	if (!agglen){
+		return;
+	}
+	agglen += 1;
+
+	//fprintf(stderr, "%s:%s() computed agglen:%u\n", DN, FN, agglen);
+
+	if (ai_site_lengths[0] == 0){
+		assert(eslo_dst == 0);
+		assert(eoff_dst == 0);
+
+		//fprintf(stderr, "%s:%s() lazy init agglen:%u\n", DN, FN, agglen);
+
+		eslo_dst = new epicsFloat32[agglen];
+		eoff_dst = new epicsFloat32[agglen];
+		ai_site_lengths[0] = agglen;
+
+		eslo_dst[0] = agglen*1.0;                    // a good use for [0]
+		eoff_dst[0] = agglen*1.0;
+	}else if (ai_site_lengths[0] != agglen){
+		fprintf(stderr, "WARNING: ai_site_lengths mismatch %u %u\n",
+				ai_site_lengths[0], agglen);
+		return;
+	}
+
 	const int max_dst = ai_site_lengths[0];
 	int ito = 1;    // skip first element. CH index from 1..
 
 	for (int site = FIRST_SITE; site <= LAST_SITE; ++site){
+		if (ai_site_lengths[site] == 0){
+			continue;
+		}
 		const int site_n = ai_site_lengths[site] - 1;
 		const int site_bytes = site_n*sizeof(epicsFloat32);
 		if (site_bytes == 0){
 			continue;
+		}
+		fprintf(stderr, "%s:%s() site:%d ito:%d  site_n:%d max_dst:%d\n",
+				DN, FN, site, ito, site_n, max_dst);
+
+		if (!(ito+site_n <= max_dst)){
+			fprintf(stderr, "%s:%s() ito:%d + site_n:%d <= max_dst:%d, avoid assert but skip\n",
+					DN, FN, ito, site_n, max_dst);
+			return;
 		}
 		assert(ito+site_n <= max_dst);
 
@@ -169,6 +213,7 @@ void acq400_Proxy::get_cal()
 		doCallbacksFloat32Array(eslo_dst, ito, P_AI_CAL_ESLO, 0);
 		doCallbacksFloat32Array(eoff_dst, ito, P_AI_CAL_EOFF, 0);
 	}
+	printf("INFO: %s:%s 99\n", DN, FN);
 }
 void acq400_Proxy::task()
 {
@@ -244,6 +289,10 @@ asynStatus acq400_Proxy::readFloat32Array(asynUser *pasynUser, epicsFloat32 *val
 		status = pasynManager->getAddr(pasynUser, &addr);
 		if(status!=asynSuccess) return status;
 	}
+
+	printf("INFO: %s:%s() function:%d addr:%d  nElements:%u\n",
+			DN, FN, function, addr, nElements);
+
 	if (addr == 0){
 		lock();
 		epicsFloat32** local_dst = 0;
@@ -258,7 +307,7 @@ asynStatus acq400_Proxy::readFloat32Array(asynUser *pasynUser, epicsFloat32 *val
 		}else{
 			assert(function == P_AI_CAL_ESLO || function == P_AI_CAL_EOFF);
 		}
-		if (local_dst == 0){
+		if (*local_dst == 0){
 			// lazy init. first time will report zero
 			epicsFloat32* pa = new epicsFloat32[nElements];
 			for (size_t ii = 0; ii != nElements; ++ii){
@@ -268,9 +317,13 @@ asynStatus acq400_Proxy::readFloat32Array(asynUser *pasynUser, epicsFloat32 *val
 			ai_site_lengths[addr] = nElements;
 			*local_dst = pa;
 
+			printf("INFO: %s:%s() function:%d addr:%d lazy init: %p:%u nElements:%u\n",
+						DN, FN, function, addr, pa, ai_site_lengths[addr], nElements);
+
 		}
-		doCallbacksFloat32Array(*local_dst, nElements, function, addr);
+		//doCallbacksFloat32Array(*local_dst, nElements, function, addr);
 		unlock();
+		epicsEventSignal(eventId);
 	}
 
 	if (status)
@@ -310,6 +363,9 @@ asynStatus acq400_Proxy::writeFloat32Array(asynUser *pasynUser, epicsFloat32 *va
 				eslo_src[addr] = new epicsFloat32[nElements];
 				assert(ai_site_lengths[addr] == 0 || ai_site_lengths[addr] == nElements);
 				ai_site_lengths[addr] = nElements;
+
+				printf("INFO: %s:%s() function:%d addr:%d lazy init: %p:%u nElements:%u\n",
+					DN, FN, function, addr, eslo_src[addr], ai_site_lengths[addr], nElements);
 			}
 			copy_to = eslo_src[addr];
 		}else{
@@ -317,6 +373,9 @@ asynStatus acq400_Proxy::writeFloat32Array(asynUser *pasynUser, epicsFloat32 *va
 				eoff_src[addr] = new epicsFloat32[nElements];
 				assert(ai_site_lengths[addr] == 0 || ai_site_lengths[addr] == nElements);
 				ai_site_lengths[addr] = nElements;
+
+				printf("INFO: %s:%s() function:%d addr:%d lazy init: %p:%u nElements:%u\n",
+					DN, FN, function, addr, eoff_src[addr], ai_site_lengths[addr], nElements);
 			}
 			copy_to = eoff_src[addr];
 		}
