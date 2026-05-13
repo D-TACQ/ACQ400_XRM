@@ -27,9 +27,11 @@ export EPICS_PVAS_INTF_ADDR_LIST=$ETH00_IP
 export EPICS_CA_ADDR_LIST="$ETH0_IP $ETH00_IP"
 export EPICS_PVA_ADDR_LIST="$ETH0_IP $ETH00_IP"
 
+export XRM_PROXY=1
 #export XRM_FMT_SIM=1
 export XRM_FMT_RX=1
 export XRM_SOE=1
+export XRM_PM=1
 
 # only ONE can be STR. Both could be SPY ..
 # STRSPY also supported : SPY, but through a socket rather than memory
