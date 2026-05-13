@@ -320,6 +320,12 @@ asynStatus acq400_Proxy::writeFloat32Array(asynUser *pasynUser, epicsFloat32 *va
 			copy_to = eoff_src[addr];
 		}
 		memcpy(copy_to, value, nElements*sizeof(epicsFloat32));
+
+		int runstop;
+		gip(P_RUNSTOP, &runstop);
+		if (runstop == 1){
+			epicsEventSignal(eventId);    // don't do this before boot said it's OK..
+		}
 		unlock();
 	}
 
