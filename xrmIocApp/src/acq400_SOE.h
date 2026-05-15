@@ -137,6 +137,8 @@ public:
 
 class acq400_SOE: public acq400_asynPortDriver {
 protected:
+	static int verbose;
+
 	SOE_LUT soe_lut;
 	SOE_HOLD_HEADER* the_hold_table;   // preallocate the max possible size. do it once!
 

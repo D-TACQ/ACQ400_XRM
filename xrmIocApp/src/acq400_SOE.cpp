@@ -23,7 +23,8 @@ using namespace std;
 #define MARK	fprintf(stderr, "%s %d\n", FN, __LINE__)
 #define MARKI(p) fprintf(stderr, "%s %d P_ %s:%d\n", FN, __LINE__, #p, p)
 
-int acq400_SOE::nice = ::getenv_default("acq400_SOE_NICE", 0);
+int acq400_SOE::nice    = ::getenv_default("acq400_SOE_NICE", 0);
+int acq400_SOE::verbose	= ::getenv_default("acq400_SOE_VERBOSE", 0);
 
 acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	acq400_asynPortDriver(portName,
@@ -231,8 +232,8 @@ void acq400_SOE::update_hld_tab_columns()
 
 		hold_cols.c_SP2[row] = wrv = sp_raw[SP2];
 		hold_cols.c_SP3[row] = wrs = sp_raw[SP3];
-		hold_cols.c_WRVS[row]= (sp_raw[SP2] >> 28)&0x07;
-		hold_cols.c_WRVT[row]= sp_raw[SP2]&0x0fffffff;
+		hold_cols.c_WRVS[row]= (wrv >> 28)&0x07;
+		hold_cols.c_WRVT[row]= wrv&0x0fffffff;
 		hold_cols.c_WRUS[row]= getWrTs(wrs, wrv);
 	}
 	hold_row_limit = row;
@@ -288,12 +289,26 @@ epicsInt64 getWrTsFromRaw(unsigned* sp_raw)
 
 void acq400_SOE::update_kbuf_info(char* raw)
 {
+	static int updates = 0;
 	unsigned * sp_raw = (unsigned*)raw + samplePrams.SP_INDEX;
+
+	unsigned count0 = sp_raw[SP0];
+	const int SSL = samplePrams.SSB/sizeof(long);
+	const unsigned skipl = SSL*(samplePrams.NSAM-1-SKIP_ES);
+
 	current_kb.wrt0 = getWrTsFromRaw(sp_raw);
 
-	const int SSL = samplePrams.SSB/sizeof(long);
-	sp_raw += SSL*(samplePrams.NSAM-1-SKIP_ES);
+	sp_raw += skipl;
+	unsigned count1 = sp_raw[SP0];
 	current_kb.wrt1 = getWrTsFromRaw(sp_raw);
+
+	if ((verbose >= 1 && ++updates % 20 == 0) || verbose > 2){
+		fprintf(stderr, "%s:%s() update:%u ib:%03d NS:%d SPIX:%d SSL:%d, skipl:%u, count:%08x,%08x ts:%llu,%llu\n",
+				DN, FN, updates, ib,
+				samplePrams.NSAM, samplePrams.SP_INDEX, SSL, skipl,
+				count0, count1, current_kb.wrt0, current_kb.wrt1);
+	}
+
 
 	sip(0, P_SOE_KBUF_INDEX, current_kb.ib = ib);
 	sip(0, P_SOE_KBUF_WRT0,  current_kb.wrt0);
@@ -317,6 +332,7 @@ void acq400_SOE::task()
 	MonitorRateLimit rateLimit;
 
 	get_sample_dimensions();
+	update_soe_lut_columns(); // cosmetic stuff in slack time.
 	init_the_hold_table();
 	callParamCallbacks();
 
@@ -332,7 +348,7 @@ void acq400_SOE::task()
 				;   // onStart actions
 			}
 			clearHold();
-			update_soe_lut_columns(); // cosmetic stuff in slack time.
+
 			char* raw = Buffer::the_buffers[ib]->getBase() +
 					SKIP_ES*samplePrams.SSB;
 
@@ -341,7 +357,6 @@ void acq400_SOE::task()
 			const acq400_SOE_Strategy::RC rc =
 					(*strategy)(current_kb, samplePrams,
 						 soe_lut, the_hold_table);
-
 			sip(0, P_SOE_FMT_RX_TIMEOUT_REASON, rc.status);
 			sip(0, P_SOE_FMT_DELTA_TS, rc.delta_us);
 			sip(0, P_SOE_FMT_EV_MATCHES, rc.events_accepted);
@@ -372,6 +387,10 @@ void acq400_SOE::task()
 					update_hld_tab_columns_callbacks();
 					unlock();
 				}
+			}
+			// cosmetic stuff in slack time.
+			if (rateLimit.goAhead()){
+				update_soe_lut_columns();
 			}
 		}
 	}
