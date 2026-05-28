@@ -222,10 +222,15 @@ void acq400_Proxy::get_cal()
 }
 void acq400_Proxy::task()
 {
-	while(1){
-		if (verbose) printf("INFO: %s:%s wait Event\n", DN, FN);
-		epicsEventWait(eventId);
-		if (verbose) printf("INFO: %s:%s wait done\n", DN, FN);
+	// loop waiting for valid data ?
+	for (bool first_time = true; !samplePrams.isValid(); first_time = false){
+		if (first_time){
+			if (verbose) printf("INFO: %s:%s wait Event\n", DN, FN);
+			epicsEventWait(eventId);
+			if (verbose) printf("INFO: %s:%s wait done\n", DN, FN);
+		}else{
+			sleep(1);
+		}
 
 		lock();
 		get_sample_dimensions();

@@ -275,6 +275,7 @@ void acq400_SOE::get_sample_dimensions()
 		fprintf(stderr, "%s:%s wait for SamplePrams Valid\n", DN, FN);
 		sleep(1);
 	}
+	fprintf(stderr, "%s:%s wait for SamplePrams Valid SUCCESS\n", DN, FN);
 	samplePrams = *sp;
 }
 
@@ -287,6 +288,7 @@ epicsInt64 getWrTsFromRaw(unsigned* sp_raw)
 
 
 
+
 void acq400_SOE::update_kbuf_info(char* raw)
 {
 	static int updates = 0;
@@ -294,15 +296,26 @@ void acq400_SOE::update_kbuf_info(char* raw)
 
 	unsigned count0 = sp_raw[SP0];
 	const int SSL = samplePrams.SSB/sizeof(long);
-	const unsigned skipl = SSL*(samplePrams.NSAM-1-SKIP_ES);
+	const unsigned skips = samplePrams.NSAM-1-SKIP_ES;
+	const unsigned skipl = SSL*skips;
 
+	if (updates == 0){
+		fprintf(stderr, "%s:%s() NSAM:%u skips:%u skipl:%u\n",
+				DN, FN, samplePrams.NSAM, skips, skipl);
+	}
 	current_kb.wrt0 = getWrTsFromRaw(sp_raw);
 
 	sp_raw += skipl;
 	unsigned count1 = sp_raw[SP0];
 	current_kb.wrt1 = getWrTsFromRaw(sp_raw);
 
-	if ((verbose >= 1 && ++updates % 20 == 0) || verbose > 2){
+	if (count1 > count0){
+		if (count1 - count0 != skips){
+			fprintf(stderr, "%s:%s()  count mismatch %u-%u-1 != %u\n",
+					DN, FN, count1, count0, skips);
+		}
+	}
+	if ((++updates % 20 == 0 && verbose >= 1) || verbose > 2){
 		fprintf(stderr, "%s:%s() update:%u ib:%03d NS:%d SPIX:%d SSL:%d, skipl:%u, count:%08x,%08x ts:%llu,%llu\n",
 				DN, FN, updates, ib,
 				samplePrams.NSAM, samplePrams.SP_INDEX, SSL, skipl,

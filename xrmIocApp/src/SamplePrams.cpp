@@ -22,7 +22,11 @@ SamplePrams::SamplePrams()
 }
 void SamplePrams::validate()
 {
-	MAGIC = SP_MAGIC;
+	if ((SSB * NSAM * (AI_COUNT+DI_COUNT+SP_COUNT)) != 0){
+		MAGIC = SP_MAGIC;
+	}else{
+		fprintf(stderr, "%s:%s fail to validate\n", __FILE__, __FUNCTION__);
+	}
 }
 
 bool SamplePrams::isValid() const
@@ -31,13 +35,17 @@ bool SamplePrams::isValid() const
 }
 int SamplePrams::store(const SamplePrams& samplePrams)
 {
-	FILE* fp = fopen(SAMPLE_PRAMS_FILE, "w");
-	if (fp == 0){
-		return -1;
+	if (samplePrams.isValid()){
+		FILE* fp = fopen(SAMPLE_PRAMS_FILE, "w");
+		if (fp == 0){
+			return -1;
+		}else{
+			int rc = fwrite(&samplePrams, sizeof(SamplePrams), 1, fp);
+			fclose(fp);
+			return rc;
+		}
 	}else{
-		int rc = fwrite(&samplePrams, sizeof(SamplePrams), 1, fp);
-		fclose(fp);
-		return rc;
+		return -1;
 	}
 }
 
@@ -50,7 +58,7 @@ int SamplePrams::load(SamplePrams& samplePrams)
 		int rc = fread(&samplePrams, sizeof(SamplePrams), 1, fp);
 		fclose(fp);
 		if (rc == 1){
-			if (samplePrams.MAGIC == SP_MAGIC){
+			if (samplePrams.isValid()){
 				return 1;
 			}else{
 				return -2;
