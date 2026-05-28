@@ -74,18 +74,18 @@ EOF
 fi
 
 # XRM_FMT_SIM is normally exclusive to the other options below
-[ ! -z $XRM_FMT_SIM ] && ./scripts/load.fmt_sim $XRM_FMT_SIM
+[ "x$XRM_FMT_SIM" != "x0" ]	&& ./scripts/load.fmt_sim $XRM_FMT_SIM
 
 # XRM_PROXY is always needed if not XRM_FMT_SIM
-[ ! -z $XRM_PROXY ] && ./scripts/load.smpl $XRM_PROXY
+[ "x$XRM_PROXY" != "x0" ] 	&& ./scripts/load.smpl $XRM_PROXY
 
 # XRM_FMT_RX is required is XRM_SOE is set.
-[ ! -z $XRM_FMT_RX ] && ./scripts/load.fmt_rx $XRM_FMT_RX
+[ "x$XRM_FMT_RX" != "x0" ] 	&& ./scripts/load.fmt_rx $XRM_FMT_RX
 
-[ ! -z $XRM_SOE ] && ./scripts/load.soe $XRM_SOE
-[ ! -z $XRM_PM ] && ./scripts/load.pm $XRM_PM
-[ ! -z $XRM_INST1 ] && ./scripts/load.inst 1 $XRM_INST1
-[ ! -z $XRM_INST2 ] && ./scripts/load.inst 2 $XRM_INST2
+[ "x$XRM_SOE" != "x0" ] 	&& ./scripts/load.soe $XRM_SOE
+[ "x$XRM_PM" != "x0" ] 		&& ./scripts/load.pm $XRM_PM
+[ "x$XRM_INST1" != "x0" ] 	&& ./scripts/load.inst 1 $XRM_INST1
+[ "x$XRM_INST2" != "x0" ] 	&& ./scripts/load.inst 2 $XRM_INST2
 
 cat - <<EOF
 dbLoadRecords("db/local-aliases.db","UUT=acq2206_088")
