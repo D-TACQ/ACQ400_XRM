@@ -49,6 +49,7 @@ struct BufferPair {
 #define PS_PM_COL_WRUS  	"PM_COL_WRUS"  // WR time, usec since epoch
 
 
+
 #define PS_RAWBUF	"RAWBUF"        /* addr 0..32 */
 
 class acq400_PM: public acq400_asynPortDriver {
@@ -86,6 +87,7 @@ protected:
 	static int nice;
 	static int verbose;
 	static int spX_from_live;
+	static int buffer_throttle_modulo;
 
 	int P_NBUF;
 	int P_RING;

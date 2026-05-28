@@ -22,6 +22,7 @@ using namespace std;
 int acq400_PM::nice 		= ::getenv_default("acq400_PM_NICE", 10);
 int acq400_PM::verbose 		= ::getenv_default("acq400_PM_VERBOSE", 0);
 int acq400_PM::spX_from_live 	= ::getenv_default("acq400_PM_spX_from_live", 0);
+int acq400_PM::buffer_throttle_modulo = ::getenv_default("acq400_PM_buffer_throttle_modulo", 0);
 
 acq400_PM::acq400_PM(const char* portName):
 	acq400_asynPortDriver(portName,
@@ -178,7 +179,7 @@ void acq400_PM::task()
 	fprintf(stderr, "%s 01\n", FN);
 	epicsEventWait(eventId);
 
-	fprintf(stderr, "%s LET's go\n", FN);
+	fprintf(stderr, "%s LET's go buffer_throttle_modulo %d\n", FN, buffer_throttle_modulo);
 	int fc = open("/dev/acq400.0.bq", O_RDONLY);
 	assert(fc >= 0);
 
@@ -186,6 +187,7 @@ void acq400_PM::task()
 	gip(P_NBUF, &nbuf);
 	const unsigned NBUF = (unsigned)nbuf;
 	MonitorRateLimit rateLimit;
+	int buffer_count = 0;
 
 	if ((ib = getBufferId(fc)) < 0){
 		fprintf(stderr, "ERROR: getBufferId() fail");
@@ -194,6 +196,7 @@ void acq400_PM::task()
 
 
 	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0; runstop0 = runstop){
+
 		lock();
 		gip(P_RUNSTOP, &runstop);
 		unlock();
@@ -201,6 +204,9 @@ void acq400_PM::task()
 		if (runstop == 1 || runstop0 == 1){
 			if (runstop0 == 0){
 				init_buffers(NBUF);
+			}
+			if (buffer_count++%buffer_throttle_modulo != 0){
+				continue;
 			}
 			stash_buffer(ib, NBUF);
 
