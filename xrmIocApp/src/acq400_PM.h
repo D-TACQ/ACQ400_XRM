@@ -18,6 +18,7 @@
 #define XRMIOCAPP_SRC_ACQ400_PM_H_
 
 #include "acq400_asyn_common.h"
+#include "SamplePrams.h"
 #include "epicsRingBytes.h"
 
 #include <algorithm>
@@ -77,6 +78,9 @@ protected:
 	} pm_cols;
 
 	unsigned update;
+
+	SamplePrams samplePrams;
+	void get_sample_dimensions();
 
 	virtual void update_pm_tab_row(int row, int ib);
 	virtual void update_pm_callbacks(bool call_array_callbacks);

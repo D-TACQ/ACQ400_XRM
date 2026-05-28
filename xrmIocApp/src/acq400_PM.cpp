@@ -6,6 +6,7 @@
  */
 
 #include "acq400_PM.h"
+#include "acq400_Proxy.h"
 #include <fcntl.h>                // open()
 #include <sys/ioctl.h>
 #include <unistd.h>
@@ -23,6 +24,15 @@ int acq400_PM::nice 		= ::getenv_default("acq400_PM_NICE", 10);
 int acq400_PM::verbose 		= ::getenv_default("acq400_PM_VERBOSE", 0);
 int acq400_PM::spX_from_live 	= ::getenv_default("acq400_PM_spX_from_live", 0);
 int acq400_PM::buffer_throttle_modulo = ::getenv_default("acq400_PM_buffer_throttle_modulo", 0);
+
+#define SKIP_ES 1
+#define SSB			(samplePrams.SSB)
+#define TRANSLEN		(samplePrams.NSAM)
+#define BURST_LW 		(SSB*TRANSLEN/sizeof(int))
+#define SOE_SMPL_DI_INDEX	16
+#define SOE_SMPL_SP_INDEX	17
+
+
 
 acq400_PM::acq400_PM(const char* portName):
 	acq400_asynPortDriver(portName,
@@ -82,6 +92,20 @@ void acq400_PM::task_runner(void *drvPvt)
 
 int FIRST=2;   // @@todo SWAG. Make official.
 
+
+void acq400_PM::get_sample_dimensions()
+{
+	const SamplePrams *sp;
+
+	while (!(sp = acq400_Proxy::getSamplePrams())->isValid()){
+		fprintf(stderr, "%s:%s wait for SamplePrams Valid\n", DN, FN);
+		sleep(1);
+	}
+	fprintf(stderr, "%s:%s wait for SamplePrams Valid SUCCESS\n", DN, FN);
+	samplePrams = *sp;
+}
+
+
 void acq400_PM::init_buffers(const unsigned nbuf)
 {
 	if (verbose) fprintf(stderr, "%s 01\n", FN);
@@ -115,14 +139,19 @@ void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
 	filled.push_front(bp);
 
 	Buffer* dst_bp = Buffer::the_buffers[bp.ib_store];
-	int rc = ioctl(dst_bp->getFD(), ACQ400_HB_COPYFROM, bp.ib_live);
+	unsigned long arg = BURST_LW << 10 | bp.ib_live;
+	int rc = ioctl(dst_bp->getFD(), ACQ400_HB_COPYFROM_LEN, arg);
 
 	if (rc != 0){
 		char msg[80];
-		snprintf(msg, 80, "ERROR dst:\"%s\" ioctl fail %d arg %d",
-				dst_bp->getName(), ACQ400_HB_COPYFROM, bp.ib_live);
+		snprintf(msg, 80, "ERROR dst:\"%s\" ioctl fail %d arg %08lx",
+				dst_bp->getName(), ACQ400_HB_COPYFROM_LEN, arg);
 		perror(msg);
 		assert(rc != 0);
+	}else{
+		if (verbose > 2){
+			fprintf(stderr, "%s:%s ioctl %08lx success\n", __FILE__, FN, arg);
+		}
 	}
 }
 
@@ -148,14 +177,6 @@ void acq400_PM::update_pm_callbacks(bool call_array_callbacks )
 
 }
 
-/* @@todo: FIXME. Common code with SOE. Refactor recommended. */
-#define SKIP_ES 1
-#define SSB		128
-#define TRANSLEN	1024
-#define BURST_LW 	(SSB*TRANSLEN/sizeof(int))
-#define SOE_SMPL_DI_INDEX	16
-#define SOE_SMPL_SP_INDEX	17
-
 
 
 void acq400_PM::update_pm_tab_row(int row, int ib)
@@ -178,6 +199,8 @@ void acq400_PM::task()
 {
 	fprintf(stderr, "%s 01\n", FN);
 	epicsEventWait(eventId);
+
+	get_sample_dimensions();
 
 	fprintf(stderr, "%s LET's go buffer_throttle_modulo %d\n", FN, buffer_throttle_modulo);
 	int fc = open("/dev/acq400.0.bq", O_RDONLY);
