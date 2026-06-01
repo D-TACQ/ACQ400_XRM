@@ -5,13 +5,27 @@ SPORT=PM
 ACQ400_PM_NBUF=${ACQ400_PM_NBUF:-20}
 # default : 1024 * 128 / 4 = 32768
 
-ssb=$(get.site 0 ssb)
-nsam=$(get.site 1 RTM_TRANSLEN | awk '{ print $2 }')
-nlw=$((ssb*nsam/4))
+
+retry=0
+
+while [ $retry -lt 5  ]; do
+	ssb=$(get.site 0 ssb)
+	nsam=$(get.site 1 RTM_TRANSLEN | awk '{ print $2 }')
+	nlw=$((ssb*nsam/4))
+	if [ $nlw -gt 0 ]; then
+		echo "NLW $nlw, PROCEED after $retry attempts"
+		break
+	else
+		echo "retry $retry ssb:$ssb nsam:$nsam, take 5"
+		sleep 5
+	fi
+done
+
 if [ $nlw -gt 0 ] && [ -z $ACQ400_PM_NLW ]; then
 	ACQ400_PM_NLW=$nlw
 fi
-ACQ400_PM_NLW=${ACQ400_PM_NLW:-32768}
+
+ACQ400_PM_NLW=${ACQ400_PM_NLW:-131072}
 
 echo acq400_PM_Configure\($SPORT,$SRC\)
 
