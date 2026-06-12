@@ -90,6 +90,10 @@ public:
 			perror("sendto");
 			exit(1);
 		}
+		if (verbose >1){
+			fprintf(stderr, "%s group:%s port:%d sock:%d msg:%p len:%d rc:%d\n",
+					FN, group, port, sock, message, len, rc);
+		}
 		return rc;
 	}
 };
