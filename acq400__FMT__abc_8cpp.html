@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.17.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ACQ400_XRM (xrmIoc): EnvBuilder Class Reference</title>
+<title>ACQ400_XRM (xrmIoc): xrmIocApp/src/acq400_FMT_abc.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
 <script type="text/javascript" src="clipboard.js"></script>
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 <script type="text/javascript">
-document.addEventListener('DOMContentLoaded',() => { initNavTree('classEnvBuilder.html','','classEnvBuilder-members'); });
+document.addEventListener('DOMContentLoaded',() => { initNavTree('acq400__FMT__abc_8cpp.html','',''); });
 </script>
 <div id="container">
 <div id="doc-content">
@@ -115,35 +115,33 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('classEnvBuilde
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">EnvBuilder Class Reference</div></div>
+  <div class="headertitle"><div class="title">acq400_FMT_abc.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr class="memitem:af6f55cc8b3dbe4171d549c46cb1fb0a3" id="r_af6f55cc8b3dbe4171d549c46cb1fb0a3"><td class="memItemLeft"><a id="af6f55cc8b3dbe4171d549c46cb1fb0a3" name="af6f55cc8b3dbe4171d549c46cb1fb0a3"></a>
-&#160;</td><td class="memItemRight"><b>EnvBuilder</b> (int max_new, char **copy_this=0)</td></tr>
-<tr class="memitem:a643e21e93abd3e3d5796196e41889022" id="r_a643e21e93abd3e3d5796196e41889022"><td class="memItemLeft"><a id="a643e21e93abd3e3d5796196e41889022" name="a643e21e93abd3e3d5796196e41889022"></a>
-void&#160;</td><td class="memItemRight"><b>add</b> (char *deleteable_kev)</td></tr>
-<tr class="memitem:a75be0fe88e3c5caa8ef39ed2d8a410ff" id="r_a75be0fe88e3c5caa8ef39ed2d8a410ff"><td class="memItemLeft"><a id="a75be0fe88e3c5caa8ef39ed2d8a410ff" name="a75be0fe88e3c5caa8ef39ed2d8a410ff"></a>
-void&#160;</td><td class="memItemRight"><b>print</b> (const char *name)</td></tr>
+<div class="textblock"><code>#include &quot;acq400_asyn_common.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="acq400__FMT__sim_8h_source.html">acq400_FMT_sim.h</a>&quot;</code><br />
+<code>#include &quot;acq-util.h&quot;</code><br />
+<code>#include &lt;unistd.h&gt;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ad6ebbc68b0071f082925e51e4f2bd9a8" id="r_ad6ebbc68b0071f082925e51e4f2bd9a8"><td class="memItemLeft"><a id="ad6ebbc68b0071f082925e51e4f2bd9a8" name="ad6ebbc68b0071f082925e51e4f2bd9a8"></a>
+#define&#160;</td><td class="memItemRight"><b>DN</b>&#160;&#160;&#160;driverName</td></tr>
+<tr class="memitem:a73642279d5a43faadf56b2598f984227" id="r_a73642279d5a43faadf56b2598f984227"><td class="memItemLeft"><a id="a73642279d5a43faadf56b2598f984227" name="a73642279d5a43faadf56b2598f984227"></a>
+#define&#160;</td><td class="memItemRight"><b>FN</b>&#160;&#160;&#160;__FUNCTION__</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ab19bb66c7fcebd872bce7027f3288d78" id="r_ab19bb66c7fcebd872bce7027f3288d78"><td class="memItemLeft"><a id="ab19bb66c7fcebd872bce7027f3288d78" name="ab19bb66c7fcebd872bce7027f3288d78"></a>
-static int&#160;</td><td class="memItemRight"><b>env_count</b> (char **envp=environ)</td></tr>
-<tr class="memitem:a8027a8515e1e93cd11880c80c2a1a710" id="r_a8027a8515e1e93cd11880c80c2a1a710"><td class="memItemLeft"><a id="a8027a8515e1e93cd11880c80c2a1a710" name="a8027a8515e1e93cd11880c80c2a1a710"></a>
-static int&#160;</td><td class="memItemRight"><b>copy_env</b> (char **new_env, char **old_env)</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:ab1e775157476e5cc0aa0e9cb26e13f2c" id="r_ab1e775157476e5cc0aa0e9cb26e13f2c"><td class="memItemLeft"><a id="ab1e775157476e5cc0aa0e9cb26e13f2c" name="ab1e775157476e5cc0aa0e9cb26e13f2c"></a>
-char **&#160;</td><td class="memItemRight"><b>env</b></td></tr>
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:aca3dac04840fdaf6182ea9a818a1e4e7" id="r_aca3dac04840fdaf6182ea9a818a1e4e7"><td class="memItemLeft"><a id="aca3dac04840fdaf6182ea9a818a1e4e7" name="aca3dac04840fdaf6182ea9a818a1e4e7"></a>
+const char *&#160;</td><td class="memItemRight"><b>G::fmt_mc_group</b> = getenv_default(&quot;acq400_FMT_MC_GROUP&quot;, &quot;224.0.23.200&quot;)</td></tr>
+<tr class="memitem:aadb59c702690d42bc9c0f14a3a9ce1ea" id="r_aadb59c702690d42bc9c0f14a3a9ce1ea"><td class="memItemLeft"><a id="aadb59c702690d42bc9c0f14a3a9ce1ea" name="aadb59c702690d42bc9c0f14a3a9ce1ea"></a>
+const int&#160;</td><td class="memItemRight"><b>G::fmt_mc_port</b> = getenv_default(&quot;acq400_FMT_MC_PORT&quot;, 5055)</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>xrmIocApp/src/<a class="el" href="acq400__INST_8cpp.html">acq400_INST.cpp</a></li>
-</ul>
-</div><!-- contents -->
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>@ brief <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table input from plant: 20Hz This is the binary implementation that goes out on ...">FMT</a> Abstract Base Class - common base implementation for SIM and RX</p>
+<p>Created on: 16 Feb 2026 Author: pgm </p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
 <div id="page-nav-resize-handle"></div>
@@ -156,7 +154,7 @@ char **&#160;</td><td class="memItemRight"><b>env</b></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a href="classEnvBuilder.html">EnvBuilder</a></li>
+    <li class="navelem"><b>xrmIocApp</b></li><li class="navelem"><b>src</b></li><li class="navelem"><a href="acq400__FMT__abc_8cpp.html">acq400_FMT_abc.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.17.0 </li>
   </ul>
 </div>
