@@ -1,5 +1,5 @@
 /** @file acq400_Proxy.cpp
- *  @brief acq400_Proxy (aka Sample Geometry) implementation.
+ *  @brief acq400_Proxy implementation.
  *
  *  Created on: 12 May 2026
  *      Author: pgm
