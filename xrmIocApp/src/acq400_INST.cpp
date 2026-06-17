@@ -1,5 +1,5 @@
-/*
- * acq400_INST.cpp
+/** @file acq400_INST.cpp
+ *  @brief acq400_INST class implementation.
  *
  *  Created on: 9 Apr 2026
  *      Author: pgm
@@ -34,14 +34,6 @@ static const char *driverName="acq400_INST";
 
 int acq400_INST::nice = ::getenv_default("acq400_INST_NICE", 0);
 
-const char* getenv_default(const char* key, const char* def = "echo undefined")
-{
-	const char *value = getenv(key);
-	if (value == 0){
-		value = def;
-	}
-	return value;
-}
 
 acq400_INST::acq400_INST(const char* portName, const char* _strategy):
 	acq400_asynPortDriver(portName,

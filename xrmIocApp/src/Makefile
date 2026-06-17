@@ -63,6 +63,7 @@ xrmIoc_SRCS += xrm_struct_support.cpp
 #xrmIoc_SRCS += xrm_struct_test.cpp
 xrmIoc_SRCS += SamplePrams.cpp
 xrmIoc_SRCS += acq400_common.cpp
+xrmIoc_SRCS += acq400_asyn_common.cpp
 xrmIoc_SRCS += acq400_asynPortDriver.cpp
 xrmIoc_SRCS += acq400_FMT_abc.cpp
 xrmIoc_SRCS += acq400_FMT_sim.cpp
@@ -132,7 +133,8 @@ PROD_SYS_LIBS_DEFAULT += stream asyn pcre fftw3f
 #acq400_HT_server_SRCS += acq400_HT_server.cpp
 #acq400_HT_server_LIBS += $(EPICS_BASE_IOC_LIBS)
 PROD += xrm_ht_monitor
-xrm_ht_monitor_SRCS += xrm_ht_monitor.cpp
+xrm_ht_monitor_SRCS += xrm_ht_monitor.cpp acq400_asyn_common.cpp
+
 xrm_ht_monitor_LIBS += acq $(EPICS_BASE_IOC_LIBS)
 
 include $(TOP)/configure/RULES

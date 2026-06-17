@@ -1,5 +1,5 @@
-/*
- * acq400_FMT_abc.cpp  Abstract Base Class - common base for SIM and RX
+/** @file acq400_FMT_abc.cpp
+ *  @ brief FMT Abstract Base Class - common base implementation for SIM and RX
  *
  *  Created on: 16 Feb 2026
  *      Author: pgm
@@ -12,8 +12,8 @@
 #include <string.h>
 
 namespace G {
-	const char* fmt_mc_group = "224.0.23.200";
-	const int fmt_mc_port = 5055;
+	const char* fmt_mc_group = getenv_default("acq400_FMT_MC_GROUP", "224.0.23.200");
+	const int fmt_mc_port = getenv_default("acq400_FMT_MC_PORT", 5055);
 }
 
 static const char *driverName="acq400_FMT_abc";
