@@ -1,5 +1,5 @@
-/*
- * xrm_ht_monitor.cpp
+/** @file xrm_ht_monitor.cpp
+ *  @brief reports structured data from SOE_HLD by wrapping pvxmonitor and decodeing the u32 array as HT
  *
  *  Created on: 24 Mar 2026
  *      Author: pgm
