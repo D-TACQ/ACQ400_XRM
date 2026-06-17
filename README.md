@@ -3,8 +3,10 @@
 
 ## xrmIoc creates the custom functionality and public interface for the XRM series devices.
 
+Doxygen code documentation is provided [here](https://d-tacq.github.io/ACQ400_XRM/)
+
 The XRM functionality is created in a modular fashion from sub-classes of 
-[acq400_asynPortDriver](./classacq400__asynPortDriver.html), a subclass of asynPortDriver.
+[acq400_asynPortDriver](https://d-tacq.github.io/ACQ400_XRM/classacq400__asynPortDriver.html), a subclass of asynPortDriver.
 
 Link above is broken. How to do gh-pages ..
 
