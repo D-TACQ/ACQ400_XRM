@@ -33,9 +33,9 @@ echo acq400_PM_Configure\($SPORT,$SRC\)
 ARP="P=${IOC_HOST}:,R=${SPORT},PORT=${SPORT},ADDR=0,IMAX=100,OMAX=100,TB3=0,TIB0=0"
 echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
 
-PRAMS="UUT=${IOC_HOST},PORT=$SPORT,ADDR=0,TIMEOUT=0"
-echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},FUN=PM\"\)
-echo dbLoadRecords\(\"db/pm_base.db\",\"${PRAMS},NBUF=${ACQ400_PM_NBUF}\"\)
+PRAMS="UUT=${IOC_HOST},PORT=$SPORT,TIMEOUT=0"
+echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},ADDR=0,FUN=PM\"\)
+echo dbLoadRecords\(\"db/pm_base.db\",\"${PRAMS},ADDR=0,NBUF=${ACQ400_PM_NBUF}\"\)
 
 NBM1=$((ACQ400_PM_NBUF-1))
 # 00: most recent, 19: oldest of 20
