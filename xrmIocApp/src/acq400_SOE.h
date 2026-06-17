@@ -1,5 +1,5 @@
-/*
- * acq400_SOE.h
+/** @file acq400_SOE.h
+ * @brief acq400_SOE class implements SOE function
  *
  *  Created on: 23 Feb 2026
  *      Author: pgm
@@ -140,7 +140,7 @@ protected:
 	static int verbose;
 
 	SOE_LUT soe_lut;
-	SOE_HOLD_HEADER* the_hold_table;   // preallocate the max possible size. do it once!
+	SOE_HOLD_HEADER* the_hold_table;   /**< preallocate the max possible size. do it once! */
 
 	acq400_SOE_Strategy* strategy;
 
@@ -197,68 +197,71 @@ protected:
 
 	static void task_runner(void *drvPvt);
 
-	int P_SOE_STRATEGY;
+	int P_SOE_STRATEGY;		/**< STRATEGY: LutFmtStrategy1 or NullStrategy (used initial test). */
 
-	int P_SOE_LUT_COL_ROWNUM;
-	int P_SOE_LUT_COL_EVENT;
-	int P_SOE_LUT_COL_PAD;
-	int P_SOE_LUT_COL_PV_ID;
-	int P_SOE_LUT_COL_OFFSET_US;
+	int P_SOE_LUT_COL_ROWNUM;	/**< LUT view show ROWNUM (synthetic)   */
+	int P_SOE_LUT_COL_EVENT;	/**< LUT view show EVENT 		*/
+	int P_SOE_LUT_COL_PAD;		/**< LUT view show PAD 			*/
+	int P_SOE_LUT_COL_PV_ID;	/**< LUT view show PV_ID		*/
+	int P_SOE_LUT_COL_OFFSET_US;	/**< LUT view show OFFSET_US		*/
 
-	int P_SOE_LUT_REDIT_ROW;
-	int P_SOE_LUT_REDIT_ROWCOUNT;
-	int P_SOE_LUT_REDIT_EVENT;
-	int P_SOE_LUT_REDIT_EVENT_STEP;
-	int P_SOE_LUT_REDIT_PV_ID;
-	int P_SOE_LUT_REDIT_PV_ID_STEP;
-	int P_SOE_LUT_REDIT_OFFSET_US;
-	int P_SOE_LUT_REDIT_OFFSET_US_STEP;
+	int P_SOE_LUT_REDIT_ROW;	/**< Row Edit define first row		*/
+	int P_SOE_LUT_REDIT_ROWCOUNT;	/**< Row Edit number of rows to edit	*/
+	int P_SOE_LUT_REDIT_EVENT;	/**< Row Edit set EVENT for first row   */
+	int P_SOE_LUT_REDIT_EVENT_STEP; /**< Row Edit def series of EVENTs	*/
+	int P_SOE_LUT_REDIT_PV_ID;	/**< Row Edit set first PV ID           */
+	int P_SOE_LUT_REDIT_PV_ID_STEP; /**< Row Edit def series of PV_IDS's    */
+	int P_SOE_LUT_REDIT_OFFSET_US;  /**< Row Edit first OFFSET_US           */
+	int P_SOE_LUT_REDIT_OFFSET_US_STEP; /**< Row edit def series of offsets */
 
-	int P_SOE_LUT_REDIT_COMMIT;
+	int P_SOE_LUT_REDIT_COMMIT;	/**< Row Edit: action the new definition */
 
 
-	int P_SOE_HLD_COL_ROWNUM;
-	int P_SOE_HLD_COL_PV_ID;
-	int P_SOE_HLD_COL_CLIDAT;
-	int P_SOE_HLD_COL_TS;
-	int P_SOE_HLD_COL_DATA_OFFSET;
 
-	int P_SOE_AGG_SITES; // asynParamOctet
-	int P_SOE_SITE_SSB;
-	int P_SOE_SMPL_NSAM;
-	int P_SOE_SITE_IS_ADC;
-	int P_SOE_SMPL_SS_U32;
-	int P_SOE_SMPL_AI_COUNT;
-	int P_SOE_SMPL_DI_COUNT;
-	int P_SOE_SMPL_SP_COUNT;
-	int P_SOE_SMPL_DI_INDEX;
-	int P_SOE_SMPL_SP_INDEX;
+	int P_SOE_AGG_SITES; 		/**< Geometry: aggregator site list 	*/
+	int P_SOE_SITE_SSB;		/**< Geometry: Sample Size Bytes	*/
+	int P_SOE_SMPL_SS_U32;		/**< Geometry: Sample Size U32		*/
 
-	int P_SOE_HLD_COL_AI1;
-	int P_SOE_HLD_COL_AI2;
+	int P_SOE_SMPL_NSAM;		/**< Geometry: Number of Samples in Burst*/
+	int P_SOE_SITE_IS_ADC;		/**< Geometry: First ADC site 		*/
 
-	int P_SOE_HLD_COL_DI1;
-	int P_SOE_HLD_COL_DI2;
+	int P_SOE_SMPL_AI_COUNT;	/**< Geometry: number of AI16 columns in data */
+	int P_SOE_SMPL_DI_COUNT;	/**< Geometry: number of DI32 columns in data */
+	int P_SOE_SMPL_SP_COUNT;	/**< Geometry: number of SP32 columns in data */
+	int P_SOE_SMPL_DI_INDEX;	/**< Geometry: index of first DI word */
+	int P_SOE_SMPL_SP_INDEX;	/**< Geometry: index of first SP word */
 
-	int P_SOE_HLD_COL_SP0;
-	int P_SOE_HLD_COL_SP1;
-	int P_SOE_HLD_COL_SP2;
-	int P_SOE_HLD_COL_SP3;
-	int P_SOE_HLD_COL_WRVS;
-	int P_SOE_HLD_COL_WRVT;
-	int P_SOE_HLD_COL_WRUS;
+	int P_SOE_HLD_COL_ROWNUM;	/**< HLD view show ROWNUM (synthetic)	*/
+	int P_SOE_HLD_COL_PV_ID;	/**< HLD view show PV_ID		*/
+	int P_SOE_HLD_COL_CLIDAT;	/**< HLD view show CLIDAT		*/
+	int P_SOE_HLD_COL_TS;		/**< HLD view show TimeStamp		*/
+	int P_SOE_HLD_COL_DATA_OFFSET;	/**< HLD view show offset to data in HLD TABLE */
 
-	int P_SOE_KBUF_INDEX;
-	int P_SOE_KBUF_WRT0;
-	int P_SOE_KBUF_WRT1;
+	int P_SOE_HLD_COL_AI1;		/**< HLD view speciment AI#1 (we can't slice them all) */
+	int P_SOE_HLD_COL_AI2;		/**< HLD view speciment AI#2 (we can't slice them all) */
 
-	int P_SOE_FMT_RX_TIMEOUTS;
-	int P_SOE_FMT_RX_TIMEOUT_REASON;
-	int P_SOE_FMT_DELTA_TS;
-	int P_SOE_FMT_RX_SUCCESS;
-	int P_SOE_FMT_EV_MATCHES;
-	int P_SOE_FMT_EV_NIB;
-	int P_SOE_HLD_TABLE_WF;
+	int P_SOE_HLD_COL_DI1;		/**< HLD view DI32#1 */
+	int P_SOE_HLD_COL_DI2;		/**< HLD view DI32#2 */
+
+	int P_SOE_HLD_COL_SP0;		/**< HLD view SPAD[0] (Sample Number) 		*/
+	int P_SOE_HLD_COL_SP1;		/**< HLD view SPAD[1] (usec since trigger)	*/
+	int P_SOE_HLD_COL_SP2;		/**< HLD view SPAD[2] (WR Vernier)		*/
+	int P_SOE_HLD_COL_SP3;		/**< HLD view SPAD[3] (WR seconds since EPOCH)  */
+	int P_SOE_HLD_COL_WRVS;		/**< HLD view WR Vernier Seconds (f(SPAD[2])	*/
+	int P_SOE_HLD_COL_WRVT;		/**< HLD view WR Vernier Ticks (f(SPAD[2])	*/
+	int P_SOE_HLD_COL_WRUS;         /**< HLD view WR Time usec since epich (calculated) */
+
+	int P_SOE_KBUF_INDEX;		/**< Current KBUF number */
+	int P_SOE_KBUF_WRT0;		/**< Current KBUF start time */
+	int P_SOE_KBUF_WRT1;		/**< Current KBUF end time */
+
+	int P_SOE_FMT_RX_TIMEOUTS;	/**< Stat: Receive Timeouts */
+	int P_SOE_FMT_RX_TIMEOUT_REASON;/**< Stat: Receive Timeout Reason */
+	int P_SOE_FMT_DELTA_TS;		/**< Stat: Delta TS: time between FMT and latest KBUF */
+	int P_SOE_FMT_RX_SUCCESS;	/**< Stat: count timely received buffers */
+	int P_SOE_FMT_EV_MATCHES;	/**< Stat: count buffers with matching events */
+	int P_SOE_FMT_EV_NIB;		/**< Stat: count buffers with events NOT IN BUFFER */
+	int P_SOE_HLD_TABLE_WF;		/**< HLD Table full binary output for remote clients */
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
 	acq400_SOE(const char *portName, acq400_SOE_Strategy* strategy);

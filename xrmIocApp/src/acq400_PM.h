@@ -1,14 +1,13 @@
-/*
- * acq400_PM.h  : acq400_PM : Post Mortem class.
+/** @file acq400_PM.h  : acq400_PM : Post Mortem class.
+ * @brief handles Post Mortem, one ADDRESS per PMBUF
  *
- * ACQ400 has supplied PM data from the start "TRANSIENT".
- * however, TRANSIENT is a one shot, start, stop, offload
- * XRM calls for a "live PM" that allows the capture to continue.
- * We do this by copying EVERY capture buffer, maintining a ring-buffer
- * of the previous second.
- * The previous second is presented as :PM:00 latest .. PM:19: oldest
- * acq400_PM has a RUNSTOP paramter. On run, the ring-buffer is maintained as normal
- * on STOP, the
+ - ACQ400 has supplied PM data from the start "TRANSIENT".
+ - however, TRANSIENT is a one shot, start, stop, off-load
+ - XRM calls for a "live PM" that allows the capture to continue.
+  - We do this by copying EVERY capture buffer, maintaining a ring-buffer of the previous second.
+  - The previous second is presented as :PM:00 latest .. PM:19: oldest
+  - acq400_PM has a RUNSTOP paramter. On run, the ring-buffer is maintained as normal
+  - on STOP, the PM buffers are published for external client use.
  *
  *  Created on: 6 Mar 2026
  *      Author: pgm
@@ -54,7 +53,6 @@ struct BufferPair {
 #define PS_RAWBUF	"RAWBUF"        /* addr 0..32 */
 
 class acq400_PM: public acq400_asynPortDriver {
-
 
 protected:
 	std::deque<BufferPair> empties;

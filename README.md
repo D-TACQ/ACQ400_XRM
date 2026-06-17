@@ -1,9 +1,15 @@
-```
- 1071  makeBaseApp.pl -t example xrmIoc
- 1072  makeBaseApp.pl -t example -i xrmIoc
-enter: linux-arm
- 1073  make
+# ACQ400_XRM : xrmIoc
+/** \mainpage ACQ400_XRM README
 
+## xrmIoc creates the custom functionality and public interface for the XRM series devices.
+
+The XRM functionality is created in a modular fashion from sub-classes of 
+[acq400_asynPortDriver](./classacq400__asynPortDriver.html), a subclass of asynPortDriver.
+
+
+
+## Local Customization
+```
 cat /mnt/local/sysconfig/xrm_epics.sh
 #!/bin/sh
 
@@ -64,3 +70,14 @@ acq2206_088> pvget_value acq2206_588:SMPL
     epics:nt/NTScalar:1.0 SSB        int value 128
 
 ```
+
+
+### How did we create this project?
+```
+ 1071  makeBaseApp.pl -t example xrmIoc
+ 1072  makeBaseApp.pl -t example -i xrmIoc
+enter: linux-arm
+ 1073  make
+ ```
+ 
+ 

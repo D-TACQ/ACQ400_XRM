@@ -1,5 +1,5 @@
-/*
- * acq400_FMT_rx.h
+/** @file acq400_FMT_rx.h
+ * @brief define FMT receiver class
  *
  *  Created on: 18 Feb 2026
  *      Author: pgm
@@ -10,7 +10,9 @@
 
 #include "acq400_FMT.h"
 
-/* singleton */
+/** FMT receiver
+ * - singleton - must bind to port.
+ */
 class acq400_FMT_rx: public acq400_FMT_abc {
 
 	virtual void update_fmt(bool first_time = false);
@@ -21,7 +23,7 @@ class acq400_FMT_rx: public acq400_FMT_abc {
 protected:
 	virtual void task();
 	virtual void process_fmt(bool first_time);
-	/**< main processing here (subclass?) */
+	/**< main processing here */
 
 	acq400_FMT_rx(const char* portName);
 
@@ -32,11 +34,12 @@ public:
 
 
 	int waitFMT(unsigned timeout_ms);
+	/**< clients block for FMT arrival. */
 
 	asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
 
 	static acq400_FMT_rx* instance(const char* portName = 0);
-	/* first caller MUST set portName */
+	/**< singleton factory: first caller MUST set portName */
 };
 
 

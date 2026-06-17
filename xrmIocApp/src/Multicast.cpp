@@ -53,6 +53,7 @@ public:
 		addrlen = sizeof(addr);
 
 		if (multicast_if){
+
 			struct in_addr localInterface;
 			localInterface.s_addr = inet_addr(multicast_if);
 
@@ -60,9 +61,11 @@ public:
 				perror("ERROR setting local interface");
 				exit(1);
 			}else{
-				fprintf(stderr, "MultiCastImpl set IP_MULTICAST_IF %s\n", multicast_if);
+				fprintf(stderr, "MultiCastImpl set IP_MULTICAST_IF %s\n",
+						multicast_if);
 			}
-		   }
+		}
+
 	}
 	virtual int sendto(const void* message, int len) {
 		return -1;
@@ -78,7 +81,14 @@ class MultiCastSender : public MultiCastImpl {
 public:
 	MultiCastSender(const char* _group, int _port):
 		MultiCastImpl(_group, _port)
-	{}
+	{
+		int ttl = 60; /* max = 255 */
+		if (setsockopt(sock, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0){
+			perror("ERROR setting TTL");
+			exit(1);
+		}
+		fprintf(stderr, "MultiCastSender set TTL %d\n", ttl);
+	}
 	virtual int sendto(const void* message, int len) {
 		if (verbose){
 			fprintf(stderr, "%s group:%s port:%d sock:%d msg:%p len:%d\n",

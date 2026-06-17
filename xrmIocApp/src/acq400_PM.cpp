@@ -305,6 +305,7 @@ asynStatus acq400_PM::writeInt32(asynUser *pasynUser, epicsInt32 value)
 extern "C" {
 	/** EPICS iocsh callable function to call constructor for the testAsynPortDriver class.
 	  * \param[in] portName The name of the asyn port driver to be created.
+	  * @todo: should be a Singleton
 	  */
 	int acq400_PM_Configure(const char *portName)
 	{

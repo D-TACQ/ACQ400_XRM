@@ -1,4 +1,8 @@
-/*
+/** @file xrm_structs.h
+ * @brief Declarations for key XRM structures for internal and wire (external) use.
+ * - @ref FMT
+ * - @ref SOE_LUT
+ * - @ref SOE_HOLD_TABLE
  * xrm_structs.h
  *
  *  Created on: 6 Feb 2026
@@ -10,15 +14,11 @@
 #ifndef XRMIOCAPP_SRC_XRM_STRUCTS_H_
 #define XRMIOCAPP_SRC_XRM_STRUCTS_H_
 
-/* FMT : FNAL Multicast Table
- * input from plant: 20Hz
- */
-
 struct FMT_ROW {
-	epicsUInt16 event;           // FNAL Event number
-	epicsUInt16 pad;             // 32 bit alignment is best, available for future
-	epicsUInt32 client_data;     // opaque value to pass back
-	epicsInt64 timestamp;       // WR usec from EPOCH **
+	epicsUInt16 event;           /**< FNAL Event number				*/
+	epicsUInt16 pad;             /**< 32 bit alignment is best, available for future */
+	epicsUInt32 client_data;     /**< opaque value to pass back			*/
+	epicsInt64 timestamp;       /**< 64 bit WR timestamp in usec from EPOCH		*/
 };
 
 /* ** we're losing one bit here, but it's OK, we have time..
@@ -33,23 +33,28 @@ const epicsUInt16 EV99 = 65535U;	     // denotes last event in table.
 const int FMT_ROWS = 64;
 //#define FMT_ROWS 64
 
+/** @brief FMT : FNAL Multicast Table
+ * input from plant: 20Hz
+ * This is the binary implementation that goes out on the wire.
+ */
 typedef struct FMT_ROW  FMT[FMT_ROWS];
 
 /* SOE_LUT : Sample On Event Lookup Table
  * input from plant: as required (EPICS PV)
  */
 struct SOE_LUT_ROW {
-	epicsUInt16 event;           // FNAL Event number
-	epicsUInt16 pad;             // 32 bit alignment is best, available for future
-	epicsUInt32 pv_id;
-	epicsInt32 offset_us;        // Before or After Event, to the limit of data this cycle
+	epicsUInt16 event;           /**< FNAL Event number.					*/
+	epicsUInt16 pad;             /**< 32 bit alignment is best, available for future.	*/
+	epicsUInt32 pv_id;	     /**< PV id match event to this PV				*/
+	epicsInt32 offset_us;        /**< time offset Before or After Event, to the limit of data this cycle */
 };
 
 const int SOE_LUT_ROWS = 64;
 
+/** @brief SOE_LUT definition */
 typedef struct SOE_LUT_ROW  SOE_LUT[SOE_LUT_ROWS];
 
-/** SOE HOLD TABLE
+/** @brief SOE_HOLD_TABLE
  * This is the OUTPUT from each CYCLE
  * For N events, the OUTPUT comprises:
  * N+1 SOE_HOLD_HEADER rows, headers for N events + 1 row of zeros
@@ -69,63 +74,64 @@ typedef struct SOE_LUT_ROW  SOE_LUT[SOE_LUT_ROWS];
  * use data_offset to access the data.
  *
  * In summary, the memory layout looks like this:
- * Example 4 entries
- * sizeof(SOE_HOLD_HEADER==22)
- * XRMMAGPS: SSB=128 ruler in byte*2:
- * 00000111112222233333444445555566666777778888899999AAAAABBBBBCCCC
- * 0246802468024680246802468024680246802468024680246802468024680246
- *|SOE HOLD 1 |
- *|SOE HOLD 2 |
- *|SOE HOLD 3 |
- *|SOE HOLD 4 |
- *|00000000000|
- *|RAW SMPL 1 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
- *|RAW SMPL 2 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
- *|RAW SMPL 3 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
- *|RAW SMPL 4 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
+ * ```
+  Example 4 entries
+  sizeof(SOE_HOLD_HEADER==22)
+  XRMMAGPS: SSB=128 ruler in byte*2:
+  00000111112222233333444445555566666777778888899999AAAAABBBBBCCCC
+  0246802468024680246802468024680246802468024680246802468024680246
+ |SOE HOLD 1 |
+ |SOE HOLD 2 |
+ |SOE HOLD 3 |
+ |SOE HOLD 4 |
+ |00000000000|
+ |RAW SMPL 1 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
+ |RAW SMPL 2 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
+ |RAW SMPL 3 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
+ |RAW SMPL 4 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
 
 
- * showing the SOE HOLD struct on a line of bytes
- * 0123456789012345678901|24680246802468024680246802468024680246802468024680246
- * PVID                  |    epicsUInt32 pv_id;
- * ____CLID______________|    epicsUInt32 client_data;
- * ________TIMSTAMP______|    epicsInt64 timestamp;
- * ________________DO____|    epicsUInt16 data_offset;
- * __________________SADP|    epicsUInt8  ss_u32, ai_count, di_count, sp_count;
- *
- *
- * Actual wire protocol:
- * We meet the letter of the requirement by sending as a PVA ARRAY of U32
- * where NORD gives the overall size of the table, including DATA.
- *
- * In the above example, MAGPS with 4 EVENTS,
- * NORD = (5 * sizeof(SOE_HOLD_HEADER))/sizeof(int32) + 4*SSB/sizeof(int32)
- * NORD = (5 * 22)/4 + 128
- * NORD = 156 @@todo 22 is not a good size for the structure..
- *
- * We've attempted to meet the spirit of the requirement using the PVXS API
- * to create an Array of Groups, but this has not been a success.
- * Happy to revisit later when we have an example that works.
+ showing the SOE HOLD struct on a line of bytes
+ 0123456789012345678901|24680246802468024680246802468024680246802468024680246
+ PVID                  |    epicsUInt32 pv_id;
+ ____CLID______________|    epicsUInt32 client_data;
+ ________TIMSTAMP______|    epicsInt64 timestamp;
+ ________________DO____|    epicsUInt16 data_offset;
+ __________________SADP|    epicsUInt8  ss_u32, ai_count, di_count, sp_count;
+
+ ```
+ Actual wire protocol:
+ - We meet the letter of the requirement by sending as a PVA ARRAY of U32
+  - where NORD gives the overall size of the table, including DATA.
+
+ - In the above example, MAGPS with 4 EVENTS,
+   - NORD = (5 * sizeof(SOE_HOLD_HEADER))/sizeof(int32) + 4*SSB/sizeof(int32)
+   - NORD = (5 * 22)/4 + 128
+   - NORD = 156 @@todo 22 is not a good size for the structure..
+
+ We've attempted to meet the spirit of the requirement using the PVXS API
+ to create an Array of Groups, but this has not been a success.
+ Happy to revisit later when we have an example that works.
  */
 
 struct SOE_HOLD_HEADER {
-	epicsUInt32 pv_id;		// links Event and Offset
-	epicsUInt32 client_data;	// copied from FMT (if required)
-	epicsInt64 timestamp;		// cross check: which FMT update this derives from.
-	epicsUInt16 data_offset;	// offset of RAW DATA in u32 from start of table.
+	epicsUInt32 pv_id;		/**< links Event and Offset				*/
+	epicsUInt32 client_data;	/**< copied from FMT (if required) @todo more required?	*/
+	epicsInt64 timestamp;		/**< cross check: which FMT update this derives from.	*/
+	epicsUInt16 data_offset;	/**< offset of RAW DATA in u32 from start of table.	*/
 	/* description of raw sample from hardware
 	 * it's not totally raw because all AI are presented as calibrated V.
 	 * but after that a series of U32 representing DI, SPAD
 	 * this is not in the spec, but will be useful for validation.
 	 */
-	epicsUInt8  ss_u32;		// sample size  (u32)
-	epicsUInt8  ai_count;           // number of AI (floats) in data
-	epicsUInt8  di_count;           // number of DI (u32) in data
-	epicsUInt8  sp_count;           // number of SP (u32) in data
+	epicsUInt8  ss_u32;		/**< sample size  (u32)					*/
+	epicsUInt8  ai_count;           /**< number of AI (floats) in data			*/
+	epicsUInt8  di_count;           /**< number of DI (u32) in data				*/
+	epicsUInt8  sp_count;           /**< number of SP (u32) in data				*/
 };
 
-const int SPAD0_SC = 0;                   // SPAD[0] is sample count (u32)
-const int SPAD1_TS = 1;                   // SPAD[1] is WR TS 3 bit seconds, 28 bit ticks
+const int SPAD0_SC = 0;                   /**< SPAD[0] is sample count (u32)			*/
+const int SPAD1_TS = 1;                   /**< SPAD[1] is WR TS 3 bit seconds, 28 bit ticks	*/
 
 const int SOE_HLD_ROWS = 64;
 

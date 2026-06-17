@@ -1,6 +1,5 @@
-/*
- * ACQ400_FMT.h
- *
+/** @file acq400_FMT.h
+ * @brief Fermi Multicast Table Abstract Base Class
  *  Created on: 16 Feb 2026
  *      Author: pgm
  */
@@ -16,29 +15,22 @@
 #define PS_FMT_MC_GRP	"FMT_MC_GRP"    /* string, r/set on PINI */
 #define PS_FMT_MC_PORT  "FMT_MC_PORT"   /* asynInt32, r/set on PINI */
 
-/*
-epicsUInt16 event;           // FNAL Event number
-epicsUInt16 pad;             // 32 bit alignment is best, available for future
-epicsUInt32 client_data;     // opaque value to pass back
-epicsUInt64 timestamp;
-*/
-/* arrays should be writable on sim... but a user would _really_ want to write rows */
-/* writeable FMT interface should be by rows. so a row should be a GROUP of scalars,
- * and the TABLE should be an array of the groups.. @@todo LATER!
- * or we just have a name explosion of scalars that happen to be grouped for atomicity..
- */
 #define PS_FMT_COL_ROWNUM	"FMT_COL_ROWNUM"  /* cosmetic for display, NOT part of FMT */
 #define PS_FMT_COL_EVENT	"FMT_COL_EVENT"  	/* asynInt16Array, ro */
 #define PS_FMT_COL_PAD		"FMT_COL_PAD"	/* asynInt16Array, ro */
 #define PS_FMT_COL_CLIDAT	"FMT_COL_CLIDAT"	/* asynInt32Array, ro */
 #define PS_FMT_COL_TS 		"FMT_COL_TS"	/* asynInt64Array, ro */
 
-
+/** Fermi Multicast Table Abstract Base Class
+ * - We represent the data as an NTTABLE for display purposes (usually subject to RATE_LIM)
+ * - This is a column-major representation, unsuited for FMT in general.
+ * - The FMT itself is published as a flat binary array of u32.
+ */
 class acq400_FMT_abc: public acq400_asynPortDriver {
 public:
-	FMT fmt;
+	FMT fmt;	/**< FMT binary instance */
 protected:
-	/* EPICS NTTABLE is a convenient display mechanism,
+	/** EPICS NTTABLE is a convenient display mechanism,
 	 * but unfortunately it needs the data in columns.
 	 *
 	 * @@todo : for dynamic update, we want a NTGROUP per row,
@@ -70,13 +62,13 @@ protected:
 	unsigned update;
 	epicsInt64 now_us;
 
-	int P_FMT_MC_GRP;
-	int P_FMT_MC_PORT;
-	int P_FMT_COL_ROWNUM;
-	int P_FMT_COL_EVENT;
-	int P_FMT_COL_PAD;
-	int P_FMT_COL_CLIDAT;
-	int P_FMT_COL_TS;
+	int P_FMT_MC_GRP;		/**< MultiCast Group eg 224.x.x.x */
+	int P_FMT_MC_PORT;		/**< MultiCast Port */
+	int P_FMT_COL_ROWNUM;		/**< NTTABLE column-major view, Row Number */
+	int P_FMT_COL_EVENT;		/**< NTTABLE column-major view, Event */
+	int P_FMT_COL_PAD;		/**< NTTABLE column-major view, PAD */
+	int P_FMT_COL_CLIDAT;		/**< NTTABLE column-major view, CLIDAT client data */
+	int P_FMT_COL_TS;		/**< NTTABLE column-major view, Timestamp */
 
 	acq400_FMT_abc(const char *portName, int maxAddr, int interfaceMask, int interruptMask,
 	                   int asynFlags, int autoConnect, int priority, int stackSize);

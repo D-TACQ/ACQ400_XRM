@@ -1,5 +1,5 @@
-/*
- * acq400_INST.h
+/** @file acq400_INST.h
+ *  @brief class provides launch framework for instrumentation streaming.
  *
  *  Created on: 9 Apr 2026
  *      Author: pgm
@@ -33,6 +33,9 @@ struct child_process_info {
 
 #define MAXREAD_BACKLOG 2
 
+/** provides launch framework for instrumentation streaming.
+ *
+ */
 class acq400_INST: public acq400_asynPortDriver {
 protected:
 	static int nice;
@@ -45,14 +48,16 @@ protected:
 
 	child_process_info run_socket_fork_exec();
 
-	int P_INST_STRATEGY;
-	int P_REDIS_HOST;
-	int P_REDIS_PORT;
-	int P_REDIS_MKEY;
-	int P_REDIS_BCOUNT;
-	int P_REDIS_STATUS;
-	int P_REDIS_MMKEY;
-	int P_ACQ_PORT;
+	int P_INST_STRATEGY;	/**< Instrumentation strategy "STReam" or "SPY" (output).
+				  - SPY is non-intrusive and recommended.
+				*/
+	int P_REDIS_HOST;	/**< REDIS server DNS-name or IP. (input)	*/
+	int P_REDIS_PORT;	/**< REDIS port to send to. (input)		*/
+	int P_REDIS_MKEY;	/**< REDIS major key.	(input)			*/
+	int P_REDIS_BCOUNT;	/**< REDIS byte count (output)			*/
+	int P_REDIS_STATUS;	/**< REDIS status (output)			*/
+	int P_REDIS_MMKEY;	/**< REDIS current major.minor key (output) 	*/
+	int P_ACQ_PORT;		/**< Port used on acq400 (4210=STReam, 53667=SPY) */
 
 	char* make_kev_from_ip(const char* ps_name, int p_key);
 	/**< returns new char[] key-equals-value string from INTEGER param.

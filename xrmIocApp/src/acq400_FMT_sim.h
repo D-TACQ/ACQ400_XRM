@@ -1,5 +1,8 @@
-/*
- * acq400_FMT_sim.h
+/** @file acq400_FMT_sim.h
+ * @brief FMT simulator: sends FMT timed to CYCLE
+ * - requires CYCLE input on FP TRG
+ * - requires WR
+ * - local network MUST allow multicast to proceed
  *
  *  Created on: 9 Feb 2026
  *      Author: pgm
@@ -10,7 +13,7 @@
 
 #include "acq400_FMT.h"
 
-/* REDIT : Row EDIT */
+/** REDIT : Row EDIT */
 #define PS_FMT_REDIT_ROW	"FMT_REDIT_ROW" 	/* edit this row */
 #define PS_FMT_REDIT_ROWCOUNT	"FMT_REDIT_ROWCOUNT"	/* for this many rows */
 #define PS_FMT_REDIT_EVENT      "FMT_REDIT_EVENT"       /* set this event */
