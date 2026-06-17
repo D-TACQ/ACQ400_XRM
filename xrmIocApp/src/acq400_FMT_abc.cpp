@@ -1,5 +1,5 @@
 /** @file acq400_FMT_abc.cpp
- *  @ brief FMT Abstract Base Class - common base implementation for SIM and RX
+ *  @brief acq400_FMT_abc FMT Abstract Base Class - common base implementation for SIM and RX
  *
  *  Created on: 16 Feb 2026
  *      Author: pgm

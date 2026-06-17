@@ -1,5 +1,5 @@
-/*
- * acq400_FMT_sim.cpp
+/** @file acq400_FMT_sim.cpp
+ *  @brief acq400_FMT_sim implementation.
  *
  *  Created on: 9 Feb 2026
  *      Author: pgm

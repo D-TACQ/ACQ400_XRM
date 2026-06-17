@@ -1,5 +1,5 @@
-/*
- * acq400_SOE_Strategy.cpp
+/** @file acq400_SOE_Strategy.cpp
+ *  @brief acq400_SOE_Strategy implementation.
  *
  *  Created on: 13 Mar 2026
  *      Author: pgm

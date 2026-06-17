@@ -1,5 +1,5 @@
-/*
- * acq400_FMT_rx.cpp
+/** @file acq400_FMT_rx.cpp
+ *  @brief acq400_FMT_rx implementation
  *
  *  Created on: 18 Feb 2026
  *      Author: pgm

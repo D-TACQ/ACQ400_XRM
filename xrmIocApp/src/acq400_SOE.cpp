@@ -1,5 +1,5 @@
-/*
- * acq400_SOE.cpp
+/** @file acq400_SOE.cpp
+ *  @brief acq400_SOE implementation.
  *
  *  Created on: 23 Feb 2026
  *      Author: pgm

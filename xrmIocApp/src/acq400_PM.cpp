@@ -1,5 +1,5 @@
-/*
- * acq400_PM.cpp
+/** @file acq400_PM.cpp
+ *  @brief acq400_PM implementation.
  *
  *  Created on: 6 Mar 2026
  *      Author: pgm
