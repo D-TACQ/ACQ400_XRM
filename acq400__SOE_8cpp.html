@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.17.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ACQ400_XRM (xrmIoc): xrmIocApp/src/acq400_FMT_abc.cpp File Reference</title>
+<title>ACQ400_XRM (xrmIoc): xrmIocApp/src/acq400_SOE.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
 <script type="text/javascript" src="clipboard.js"></script>
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 <script type="text/javascript">
-document.addEventListener('DOMContentLoaded',() => { initNavTree('acq400__FMT__abc_8cpp.html','',''); });
+document.addEventListener('DOMContentLoaded',() => { initNavTree('acq400__SOE_8cpp.html','',''); });
 </script>
 <div id="container">
 <div id="doc-content">
@@ -115,36 +115,96 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('acq400__FMT__a
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">acq400_FMT_abc.cpp File Reference</div></div>
+  <div class="headertitle"><div class="title">acq400_SOE.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><a class="el" href="classacq400__FMT__abc.html">acq400_FMT_abc</a> <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table input from plant: 20Hz This is the binary implementation that goes out on ...">FMT</a> Abstract Base Class - common base implementation for SIM and RX  
+<p><a class="el" href="classacq400__SOE.html">acq400_SOE</a> implementation.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;acq400_asyn_common.h&quot;</code><br />
-<code>#include &quot;<a class="el" href="acq400__FMT__sim_8h_source.html">acq400_FMT_sim.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="acq400__SOE_8h_source.html">acq400_SOE.h</a>&quot;</code><br />
+<code>#include &quot;acq400_Proxy.h&quot;</code><br />
 <code>#include &quot;acq-util.h&quot;</code><br />
+<code>#include &quot;split2.h&quot;</code><br />
+<code>#include &lt;fcntl.h&gt;</code><br />
 <code>#include &lt;unistd.h&gt;</code><br />
 <code>#include &lt;string.h&gt;</code><br />
+<code>#include &quot;Buffer.h&quot;</code><br />
+<code>#include &quot;ES.h&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:ad6ebbc68b0071f082925e51e4f2bd9a8" id="r_ad6ebbc68b0071f082925e51e4f2bd9a8"><td class="memItemLeft"><a id="ad6ebbc68b0071f082925e51e4f2bd9a8" name="ad6ebbc68b0071f082925e51e4f2bd9a8"></a>
-#define&#160;</td><td class="memItemRight"><b>DN</b>&#160;&#160;&#160;driverName</td></tr>
+#define&#160;</td><td class="memItemRight"><b>DN</b>&#160;&#160;&#160;__FILE__</td></tr>
 <tr class="memitem:a73642279d5a43faadf56b2598f984227" id="r_a73642279d5a43faadf56b2598f984227"><td class="memItemLeft"><a id="a73642279d5a43faadf56b2598f984227" name="a73642279d5a43faadf56b2598f984227"></a>
 #define&#160;</td><td class="memItemRight"><b>FN</b>&#160;&#160;&#160;__FUNCTION__</td></tr>
+<tr class="memitem:abeb214368f7f34cff98de9047aa6eb2f" id="r_abeb214368f7f34cff98de9047aa6eb2f"><td class="memItemLeft"><a id="abeb214368f7f34cff98de9047aa6eb2f" name="abeb214368f7f34cff98de9047aa6eb2f"></a>
+#define&#160;</td><td class="memItemRight"><b>MARK</b>&#160;&#160;&#160;fprintf(stderr, &quot;%s %d\n&quot;, FN, __LINE__)</td></tr>
+<tr class="memitem:af8e69cd1afe7fcf0d328bd78edc582f0" id="r_af8e69cd1afe7fcf0d328bd78edc582f0"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#af8e69cd1afe7fcf0d328bd78edc582f0">MARKI</a>(p)</td></tr>
+<tr class="memitem:a541ee6f697be0d9abc0bd30e599d0176" id="r_a541ee6f697be0d9abc0bd30e599d0176"><td class="memItemLeft"><a id="a541ee6f697be0d9abc0bd30e599d0176" name="a541ee6f697be0d9abc0bd30e599d0176"></a>
+#define&#160;</td><td class="memItemRight"><b>SKIP_ES</b>&#160;&#160;&#160;1</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:aca3dac04840fdaf6182ea9a818a1e4e7" id="r_aca3dac04840fdaf6182ea9a818a1e4e7"><td class="memItemLeft"><a id="aca3dac04840fdaf6182ea9a818a1e4e7" name="aca3dac04840fdaf6182ea9a818a1e4e7"></a>
-const char *&#160;</td><td class="memItemRight"><b>G::fmt_mc_group</b> = getenv_default(&quot;acq400_FMT_MC_GROUP&quot;, &quot;224.0.23.200&quot;)</td></tr>
-<tr class="memitem:aadb59c702690d42bc9c0f14a3a9ce1ea" id="r_aadb59c702690d42bc9c0f14a3a9ce1ea"><td class="memItemLeft"><a id="aadb59c702690d42bc9c0f14a3a9ce1ea" name="aadb59c702690d42bc9c0f14a3a9ce1ea"></a>
-const int&#160;</td><td class="memItemRight"><b>G::fmt_mc_port</b> = getenv_default(&quot;acq400_FMT_MC_PORT&quot;, 5055)</td></tr>
+<tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:acf297996de3e655e953ae31c5016dc4b" id="r_acf297996de3e655e953ae31c5016dc4b"><td class="memItemLeft"><a id="acf297996de3e655e953ae31c5016dc4b" name="acf297996de3e655e953ae31c5016dc4b"></a>
+typedef std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight"><b>VS</b></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a58f1358cf05fc8613637fede31686974" id="r_a58f1358cf05fc8613637fede31686974"><td class="memItemLeft"><a id="a58f1358cf05fc8613637fede31686974" name="a58f1358cf05fc8613637fede31686974"></a>
+epicsInt64&#160;</td><td class="memItemRight"><b>getWrTsFromRaw</b> (unsigned *sp_raw)</td></tr>
+<tr class="memitem:ae0302630586945126375c8bfffa5ab8d" id="r_ae0302630586945126375c8bfffa5ab8d"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ae0302630586945126375c8bfffa5ab8d">acq400_SOE_Configure</a> (const char *portName)</td></tr>
+<tr class="memitem:add9eb03cc0ef8d5ba987a5bf1d86b35d" id="r_add9eb03cc0ef8d5ba987a5bf1d86b35d"><td class="memItemLeft"><a id="add9eb03cc0ef8d5ba987a5bf1d86b35d" name="add9eb03cc0ef8d5ba987a5bf1d86b35d"></a>
+void&#160;</td><td class="memItemRight"><b>acq400_SOE_Register</b> (void)</td></tr>
+<tr class="memitem:a2a207ce001783f2ff71e221754060616" id="r_a2a207ce001783f2ff71e221754060616"><td class="memItemLeft"><a id="a2a207ce001783f2ff71e221754060616" name="a2a207ce001783f2ff71e221754060616"></a>
+&#160;</td><td class="memItemRight"><b>epicsExportRegistrar</b> (acq400_SOE_Register)</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="classacq400__FMT__abc.html">acq400_FMT_abc</a> <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table input from plant: 20Hz This is the binary implementation that goes out on ...">FMT</a> Abstract Base Class - common base implementation for SIM and RX </p>
-<p>Created on: 16 Feb 2026 Author: pgm </p>
-</div></div><!-- contents -->
+<div class="textblock"><p><a class="el" href="classacq400__SOE.html">acq400_SOE</a> implementation. </p>
+<p>Created on: 23 Feb 2026 Author: pgm </p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="af8e69cd1afe7fcf0d328bd78edc582f0" name="af8e69cd1afe7fcf0d328bd78edc582f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8e69cd1afe7fcf0d328bd78edc582f0">&#9670;&#160;</a></span>MARKI</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MARKI</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>p</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">fprintf(stderr, <span class="stringliteral">&quot;%s %d P_ %s:%d\n&quot;</span>, FN, __LINE__, #p, p)</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="ae0302630586945126375c8bfffa5ab8d" name="ae0302630586945126375c8bfffa5ab8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0302630586945126375c8bfffa5ab8d">&#9670;&#160;</a></span>acq400_SOE_Configure()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int acq400_SOE_Configure </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>portName</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>EPICS iocsh callable function to call constructor for the testAsynPortDriver class. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">portName</td><td>The name of the asyn port driver to be created. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
 <div id="page-nav-resize-handle"></div>
@@ -157,7 +217,7 @@ const int&#160;</td><td class="memItemRight"><b>G::fmt_mc_port</b> = getenv_defa
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>xrmIocApp</b></li><li class="navelem"><b>src</b></li><li class="navelem"><a href="acq400__FMT__abc_8cpp.html">acq400_FMT_abc.cpp</a></li>
+    <li class="navelem"><b>xrmIocApp</b></li><li class="navelem"><b>src</b></li><li class="navelem"><a href="acq400__SOE_8cpp.html">acq400_SOE.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.17.0 </li>
   </ul>
 </div>

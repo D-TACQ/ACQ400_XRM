@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.17.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ACQ400_XRM (xrmIoc): xrmIocApp/src/acq400_FMT_abc.cpp File Reference</title>
+<title>ACQ400_XRM (xrmIoc): xrmIocApp/src/SamplePrams.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
 <script type="text/javascript" src="clipboard.js"></script>
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 <script type="text/javascript">
-document.addEventListener('DOMContentLoaded',() => { initNavTree('acq400__FMT__abc_8cpp.html','',''); });
+document.addEventListener('DOMContentLoaded',() => { initNavTree('SamplePrams_8cpp.html','',''); });
 </script>
 <div id="container">
 <div id="doc-content">
@@ -115,35 +115,26 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('acq400__FMT__a
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">acq400_FMT_abc.cpp File Reference</div></div>
+  <div class="headertitle"><div class="title">SamplePrams.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><a class="el" href="classacq400__FMT__abc.html">acq400_FMT_abc</a> <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table input from plant: 20Hz This is the binary implementation that goes out on ...">FMT</a> Abstract Base Class - common base implementation for SIM and RX  
+<p><a class="el" href="structSamplePrams.html">SamplePrams</a> (aka Sample Geometry) implementation.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;acq400_asyn_common.h&quot;</code><br />
-<code>#include &quot;<a class="el" href="acq400__FMT__sim_8h_source.html">acq400_FMT_sim.h</a>&quot;</code><br />
-<code>#include &quot;acq-util.h&quot;</code><br />
-<code>#include &lt;unistd.h&gt;</code><br />
+<div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;string.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="SamplePrams_8h_source.html">SamplePrams.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:ad6ebbc68b0071f082925e51e4f2bd9a8" id="r_ad6ebbc68b0071f082925e51e4f2bd9a8"><td class="memItemLeft"><a id="ad6ebbc68b0071f082925e51e4f2bd9a8" name="ad6ebbc68b0071f082925e51e4f2bd9a8"></a>
-#define&#160;</td><td class="memItemRight"><b>DN</b>&#160;&#160;&#160;driverName</td></tr>
-<tr class="memitem:a73642279d5a43faadf56b2598f984227" id="r_a73642279d5a43faadf56b2598f984227"><td class="memItemLeft"><a id="a73642279d5a43faadf56b2598f984227" name="a73642279d5a43faadf56b2598f984227"></a>
-#define&#160;</td><td class="memItemRight"><b>FN</b>&#160;&#160;&#160;__FUNCTION__</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:aca3dac04840fdaf6182ea9a818a1e4e7" id="r_aca3dac04840fdaf6182ea9a818a1e4e7"><td class="memItemLeft"><a id="aca3dac04840fdaf6182ea9a818a1e4e7" name="aca3dac04840fdaf6182ea9a818a1e4e7"></a>
-const char *&#160;</td><td class="memItemRight"><b>G::fmt_mc_group</b> = getenv_default(&quot;acq400_FMT_MC_GROUP&quot;, &quot;224.0.23.200&quot;)</td></tr>
-<tr class="memitem:aadb59c702690d42bc9c0f14a3a9ce1ea" id="r_aadb59c702690d42bc9c0f14a3a9ce1ea"><td class="memItemLeft"><a id="aadb59c702690d42bc9c0f14a3a9ce1ea" name="aadb59c702690d42bc9c0f14a3a9ce1ea"></a>
-const int&#160;</td><td class="memItemRight"><b>G::fmt_mc_port</b> = getenv_default(&quot;acq400_FMT_MC_PORT&quot;, 5055)</td></tr>
+<tr class="memitem:a67f801ffc5394c6e55e9ee2dfc1774b8" id="r_a67f801ffc5394c6e55e9ee2dfc1774b8"><td class="memItemLeft"><a id="a67f801ffc5394c6e55e9ee2dfc1774b8" name="a67f801ffc5394c6e55e9ee2dfc1774b8"></a>
+#define&#160;</td><td class="memItemRight"><b>SAMPLE_PRAMS_FILE</b>&#160;&#160;&#160;&quot;/dev/shm/SamplePrams&quot;</td></tr>
+<tr class="memitem:af80a19046d6c8ea424a6681a78b86c09" id="r_af80a19046d6c8ea424a6681a78b86c09"><td class="memItemLeft"><a id="af80a19046d6c8ea424a6681a78b86c09" name="af80a19046d6c8ea424a6681a78b86c09"></a>
+#define&#160;</td><td class="memItemRight"><b>SP_MAGIC</b>&#160;&#160;&#160;(('S' &lt;&lt; 24)|('M' &lt;&lt; 16)|('P' &lt;&lt; 8)|'L')</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="classacq400__FMT__abc.html">acq400_FMT_abc</a> <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table input from plant: 20Hz This is the binary implementation that goes out on ...">FMT</a> Abstract Base Class - common base implementation for SIM and RX </p>
-<p>Created on: 16 Feb 2026 Author: pgm </p>
+<div class="textblock"><p><a class="el" href="structSamplePrams.html">SamplePrams</a> (aka Sample Geometry) implementation. </p>
+<p>Created on: 6 Apr 2026 Author: pgm </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
@@ -157,7 +148,7 @@ const int&#160;</td><td class="memItemRight"><b>G::fmt_mc_port</b> = getenv_defa
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>xrmIocApp</b></li><li class="navelem"><b>src</b></li><li class="navelem"><a href="acq400__FMT__abc_8cpp.html">acq400_FMT_abc.cpp</a></li>
+    <li class="navelem"><b>xrmIocApp</b></li><li class="navelem"><b>src</b></li><li class="navelem"><a href="SamplePrams_8cpp.html">SamplePrams.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.17.0 </li>
   </ul>
 </div>
