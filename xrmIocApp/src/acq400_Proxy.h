@@ -1,7 +1,7 @@
-/*
- * acq400_Proxy.h : local proxy for UUT parameters, perhaps in a more accessible form
- * #1 SMPL: to be clawed back from SMPL so we don't HAVE to have SOE instantiated and running.
- * #2 CAL: $IOC_HOST:0:AI:CAL:ESLO/EOFF : view UUT calibration as a single vector of channels.
+/** @file acq400_Proxy.h
+ *  @brief local proxy for UUT parameters, perhaps in a more accessible form
+ - #1 SMPL: to be clawed back from SMPL so we don't HAVE to have SOE instantiated and running.
+ - #2 CAL: $IOC_HOST:0:AI:CAL:ESLO/EOFF : view UUT calibration as a single vector of channels.
  *
  *  Created on: 12 May 2026
  *      Author: pgm
