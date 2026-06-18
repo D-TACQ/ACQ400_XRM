@@ -13,7 +13,7 @@ var dir_d088fbf78ae7ddbc81d145918de305a2 =
     [ "acq400_PM.cpp", "acq400__PM_8cpp.html", "acq400__PM_8cpp" ],
     [ "acq400_PM.h", "acq400__PM_8h.html", "acq400__PM_8h" ],
     [ "acq400_Proxy.cpp", "acq400__Proxy_8cpp.html", "acq400__Proxy_8cpp" ],
-    [ "acq400_Proxy.h", "acq400__Proxy_8h_source.html", null ],
+    [ "acq400_Proxy.h", "acq400__Proxy_8h.html", "acq400__Proxy_8h" ],
     [ "acq400_SOE.cpp", "acq400__SOE_8cpp.html", "acq400__SOE_8cpp" ],
     [ "acq400_SOE.h", "acq400__SOE_8h.html", "acq400__SOE_8h" ],
     [ "acq400_SOE_Strategy.cpp", "acq400__SOE__Strategy_8cpp.html", "acq400__SOE__Strategy_8cpp" ],
