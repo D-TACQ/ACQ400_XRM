@@ -94,7 +94,6 @@ fi
 [ ! -z $XRM_INST2 ] && [ "x$XRM_INST2" != "x0" ] 	&& ./scripts/load.inst 2 $XRM_INST2
 
 cat - <<EOF
-dbLoadRecords("db/local-aliases.db","UUT=acq2206_088")
 iocInit()
 dbl > ${RL}
 dbpf ${HOST}:IOC_READY 1
