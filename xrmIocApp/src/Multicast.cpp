@@ -87,6 +87,12 @@ public:
 			perror("ERROR setting TTL");
 			exit(1);
 		}
+		ttl = 61;
+		if (setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl)) < 0){
+					perror("ERROR setting TTL");
+					exit(1);
+		}
+
 		fprintf(stderr, "MultiCastSender set TTL %d\n", ttl);
 	}
 	virtual int sendto(const void* message, int len) {
