@@ -77,23 +77,32 @@ public:
 const char* MultiCast::multicast_if;
 
 class MultiCastSender : public MultiCastImpl {
-
+	static int unicast_ttl;
+	static int multicast_ttl;
 public:
 	MultiCastSender(const char* _group, int _port):
 		MultiCastImpl(_group, _port)
 	{
-		int ttl = 60; /* max = 255 */
-		if (setsockopt(sock, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0){
-			perror("ERROR setting TTL");
-			exit(1);
+		if (unicast_ttl > 1){
+			if (setsockopt(sock, IPPROTO_IP, IP_TTL,
+					&unicast_ttl, sizeof(unicast_ttl)) < 0){
+				perror("ERROR setting IP_TTL");
+				exit(1);
+			}else{
+				fprintf(stderr, "MultiCastSender set unicast IP_TTL %d\n",
+						unicast_ttl);
+			}
 		}
-		ttl = 61;
-		if (setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl)) < 0){
-					perror("ERROR setting TTL");
-					exit(1);
+		if (multicast_ttl > 1){
+			if (setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL,
+					&multicast_ttl, sizeof(multicast_ttl)) < 0){
+				perror("ERROR setting IP_MULTICAST_TTL");
+				exit(1);
+			}else{
+				fprintf(stderr, "MultiCastSender set IP_MULTICAST_TTL %d\n",
+						multicast_ttl);
+			}
 		}
-
-		fprintf(stderr, "MultiCastSender set TTL %d\n", ttl);
 	}
 	virtual int sendto(const void* message, int len) {
 		if (verbose){
@@ -113,6 +122,9 @@ public:
 		return rc;
 	}
 };
+
+int MultiCastSender::unicast_ttl	= getenv_default("MultiCastSender_unicast_ttl", 1);
+int MultiCastSender::multicast_ttl	= getenv_default("MultiCastSender_multicast_ttl", 1);
 
 class MultiCastReceiver : public MultiCastImpl {
 	struct ip_mreq mreq;
