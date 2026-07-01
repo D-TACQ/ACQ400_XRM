@@ -100,3 +100,11 @@ record (stringin,  "${UUT}:${FUN}:REDIS_MMKEY") {
 		}
 	})
 }
+
+record (stringout,  "${UUT}:0:STREAM_SUBSET_MASK") {
+	field(DTYP, "asynOctetWrite")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))STREAM_SUBSET_MASK")
+	field(DOL,  {pva: {pv:"${ACQ400IOC}:0:STREAM_SUBSET_MASK", "proc":"CPP"}})
+	field(OMSL, "closed_loop")
+}
+

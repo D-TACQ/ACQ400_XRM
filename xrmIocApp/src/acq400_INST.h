@@ -23,6 +23,7 @@
 #define PS_REDIS_STATUS	 "REDIS_STATUS"     // status good/bad
 #define PS_REDIS_MMKEY   "REDIS_MMKEY"      // Major+Minor key (INPUT)
 #define PS_ACQ_PORT	 "ACQ_PORT"         // source port for spawned app (if used)
+#define PS_STREAM_SUBSET_MASK "STREAM_SUBSET_MASK"  // to allow a SPY to handle subset mask
 
 #define FAKE_SPY	"/usr/local/xrm/epics/scripts/inst-spy-fake"
 
@@ -58,6 +59,7 @@ protected:
 	int P_REDIS_STATUS;	/**< REDIS status (output)			*/
 	int P_REDIS_MMKEY;	/**< REDIS current major.minor key (output) 	*/
 	int P_ACQ_PORT;		/**< Port used on acq400 (4210=STReam, 53667=SPY) */
+	int P_STREAM_SUBSET_MASK; /**< SPY client would need to know this */
 
 	char* make_kev_from_ip(const char* ps_name, int p_key);
 	/**< returns new char[] key-equals-value string from INTEGER param.

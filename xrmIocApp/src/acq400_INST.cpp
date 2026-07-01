@@ -57,6 +57,7 @@ acq400_INST::acq400_INST(const char* portName, const char* _strategy):
 	createParam(PS_REDIS_STATUS,  asynParamOctet,   &P_REDIS_STATUS);
 	createParam(PS_REDIS_MMKEY,   asynParamOctet,   &P_REDIS_MMKEY);
 	createParam(PS_ACQ_PORT,      asynParamOctet,   &P_ACQ_PORT);
+	createParam(PS_STREAM_SUBSET_MASK, asynParamOctet, &P_STREAM_SUBSET_MASK);
 
 
 	ssp(P_INST_STRATEGY, _strategy);
@@ -259,6 +260,7 @@ child_process_info acq400_INST::run_socket_fork_exec()
 	env_builder.add(make_kev_from_sp(PS_REDIS_PORT, P_REDIS_PORT));
 	env_builder.add(make_kev_from_sp(PS_REDIS_MKEY, P_REDIS_MKEY));
 	env_builder.add(make_kev_from_sp(PS_ACQ_PORT, P_ACQ_PORT));
+	env_builder.add(make_kev_from_sp(PS_STREAM_SUBSET_MASK, P_STREAM_SUBSET_MASK));
 
 	const SamplePrams* sp = acq400_SOE::getSamplePrams();
 
