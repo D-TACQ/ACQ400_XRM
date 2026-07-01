@@ -173,6 +173,8 @@ Protected Attributes</h2></td></tr>
 const char *&#160;</td><td class="memItemRight"><b>cmd</b></td></tr>
 <tr class="memitem:ac8ee693ad95d11d1ef8a47448de39c61" id="r_ac8ee693ad95d11d1ef8a47448de39c61"><td class="memItemLeft"><a id="ac8ee693ad95d11d1ef8a47448de39c61" name="ac8ee693ad95d11d1ef8a47448de39c61"></a>
 bool&#160;</td><td class="memItemRight"><b>send_buffer_numbers</b></td></tr>
+<tr class="memitem:a1afc4afc98301a524e5abd99f30a327b" id="r_a1afc4afc98301a524e5abd99f30a327b"><td class="memItemLeft"><a id="a1afc4afc98301a524e5abd99f30a327b" name="a1afc4afc98301a524e5abd99f30a327b"></a>
+bool&#160;</td><td class="memItemRight"><b>block_on_new_buffer</b></td></tr>
 <tr class="memitem:a9d072f6456a9790c2fb56990b6e514ab" id="r_a9d072f6456a9790c2fb56990b6e514ab"><td class="memItemLeft"><a id="a9d072f6456a9790c2fb56990b6e514ab" name="a9d072f6456a9790c2fb56990b6e514ab"></a>
 int&#160;</td><td class="memItemRight"><b>read_backlog</b> [MAXREAD_BACKLOG+1]</td></tr>
 <tr class="memitem:af51b890a9720ea1484e96b45be63b339" id="r_af51b890a9720ea1484e96b45be63b339"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#af51b890a9720ea1484e96b45be63b339">P_INST_STRATEGY</a></td></tr>
@@ -183,6 +185,7 @@ int&#160;</td><td class="memItemRight"><b>read_backlog</b> [MAXREAD_BACKLOG+1]</
 <tr class="memitem:a1dd979138e05b058f8a480df44fb68d9" id="r_a1dd979138e05b058f8a480df44fb68d9"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a1dd979138e05b058f8a480df44fb68d9">P_REDIS_STATUS</a></td></tr>
 <tr class="memitem:a5557ceee38791fe984ca6f7e9eb3bd90" id="r_a5557ceee38791fe984ca6f7e9eb3bd90"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a5557ceee38791fe984ca6f7e9eb3bd90">P_REDIS_MMKEY</a></td></tr>
 <tr class="memitem:a6280783a433602cd33d3b7330143e94a" id="r_a6280783a433602cd33d3b7330143e94a"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a6280783a433602cd33d3b7330143e94a">P_ACQ_PORT</a></td></tr>
+<tr class="memitem:a25bdc9095faac0139bac32335681ec79" id="r_a25bdc9095faac0139bac32335681ec79"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a25bdc9095faac0139bac32335681ec79">P_STREAM_SUBSET_MASK</a></td></tr>
 <tr class="inherit_header pro_attribs_classacq400__asynPortDriver"><td colspan="2">Protected Attributes inherited from <a class="el" href="classacq400__asynPortDriver.html">acq400_asynPortDriver</a></td></tr>
 <tr class="memitem:a9c0808e315de236e324e7087edcdff1b pro_attribs_classacq400__asynPortDriver" id="r_a9c0808e315de236e324e7087edcdff1b"><td class="memItemLeft">epicsEventId&#160;</td><td class="memItemRight"><a class="el" href="classacq400__asynPortDriver.html#a9c0808e315de236e324e7087edcdff1b">eventId</a></td></tr>
 <tr class="memitem:a843ed0fdfb5164a369cf02d0f872d19d pro_attribs_classacq400__asynPortDriver" id="r_a843ed0fdfb5164a369cf02d0f872d19d"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="classacq400__asynPortDriver.html#a843ed0fdfb5164a369cf02d0f872d19d">P_RUNSTOP</a></td></tr>
@@ -444,6 +447,29 @@ static int&#160;</td><td class="memItemRight"><b>nice</b> = ::getenv_default(&qu
 </table>
 </div><div class="memdoc">
 <p>REDIS status (output) </p>
+
+</div>
+</div>
+<a id="a25bdc9095faac0139bac32335681ec79" name="a25bdc9095faac0139bac32335681ec79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25bdc9095faac0139bac32335681ec79">&#9670;&#160;</a></span>P_STREAM_SUBSET_MASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int acq400_INST::P_STREAM_SUBSET_MASK</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>SPY client would need to know this </p>
 
 </div>
 </div>

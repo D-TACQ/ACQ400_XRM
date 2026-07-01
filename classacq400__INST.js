@@ -9,5 +9,6 @@ var classacq400__INST =
     [ "P_REDIS_MKEY", "classacq400__INST.html#a1232dee8ad62d8b733016fb33c24edb6", null ],
     [ "P_REDIS_MMKEY", "classacq400__INST.html#a5557ceee38791fe984ca6f7e9eb3bd90", null ],
     [ "P_REDIS_PORT", "classacq400__INST.html#a3546abf48f578d2496e0312e1c05c980", null ],
-    [ "P_REDIS_STATUS", "classacq400__INST.html#a1dd979138e05b058f8a480df44fb68d9", null ]
+    [ "P_REDIS_STATUS", "classacq400__INST.html#a1dd979138e05b058f8a480df44fb68d9", null ],
+    [ "P_STREAM_SUBSET_MASK", "classacq400__INST.html#a25bdc9095faac0139bac32335681ec79", null ]
 ];
