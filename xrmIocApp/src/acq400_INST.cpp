@@ -443,7 +443,7 @@ extern "C" {
 		printf("%s:%s R1001 %s\n", DN, FN, portName);
 
 		if (strncmp(stream_or_spy, "STR", 3) == 0){
-			new acq400_INST_STR(portName, stream_or_spy);
+			new acq400_INST_STR(portName, stream_or_spy);  // descriptive text could be "STREAM" or "STRSPY"
 		}else if (strcmp(stream_or_spy, "SPY") == 0){
 			new acq400_INST_SPY(portName);
 		}else{
