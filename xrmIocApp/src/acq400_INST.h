@@ -42,6 +42,7 @@ protected:
 	static int nice;
 	const char* cmd;
 	bool send_buffer_numbers;
+	bool block_on_new_buffer;
 	int read_backlog[MAXREAD_BACKLOG+1];
 
 	virtual void task();

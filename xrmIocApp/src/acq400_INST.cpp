@@ -45,7 +45,8 @@ acq400_INST::acq400_INST(const char* portName, const char* _strategy):
 	/* Autoconnect */       1,
 	/* Default priority */  0,
 	/* Default stack size*/ 0),
-	send_buffer_numbers(true)
+	send_buffer_numbers(true),
+	block_on_new_buffer(true)
 {
 	fprintf(stderr, "%s R1041\n", FN);
 
@@ -285,15 +286,17 @@ void acq400_INST::task()
 	assert(fc >= 0);
 
 	MonitorRateLimit rateLimit;
-	int ib;
+	int ib = 0;
 	child_process_info cpi = {};
 
-	if ((ib = getBufferId(fc)) < 0){
+	if (block_on_new_buffer && (ib = getBufferId(fc)) < 0){
 		fprintf(stderr, "ERROR: getBufferId() fail");
 		return;
 	}
 
-	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0; runstop0 = runstop){
+	for (int runstop, runstop0 = 0;
+			!block_on_new_buffer || ((ib = getBufferId(fc)) >= 0);
+			runstop0 = runstop){
 		lock();
 		sip(0, P_UPDATES, bcount++);
 		gip(P_RUNSTOP, &runstop);
@@ -377,6 +380,10 @@ void acq400_INST::task()
 			fprintf(stderr, "readbacklog: %d,%d,%d\n",
 					read_backlog[0], read_backlog[1], read_backlog[2]);
 		}
+		if (!block_on_new_buffer){
+			usleep(1000);
+			++ib;
+		}
 	}
 
 	close(fc);
@@ -427,6 +434,7 @@ public:
 	acq400_INST_STR(const char* portName, const char* _strategy):
 		acq400_INST(portName, _strategy) {
 		send_buffer_numbers = false;
+		block_on_new_buffer = false;
 	}
 };
 
