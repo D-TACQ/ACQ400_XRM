@@ -34,6 +34,7 @@ static const char *driverName="acq400_INST";
 
 int acq400_INST::nice = ::getenv_default("acq400_INST_NICE", 0);
 
+int acq400_INST::verbose 		= ::getenv_default("acq400_INST_VERBOSE", 0);
 
 acq400_INST::acq400_INST(const char* portName, const char* _strategy):
 	acq400_asynPortDriver(portName,
@@ -197,6 +198,7 @@ child_process_info socket_fork_exec(const char *file, char *const argv[], char *
 		assert(rc);
 		return { 0, 0 };   // not going to happen
 	}else{
+		fprintf(stderr, "socketfork() pid:%d\n", pid);
 		close(fd[childsocket]);
 		return { pid, fd[parentsocket] };
 	}
@@ -269,6 +271,11 @@ child_process_info acq400_INST::run_socket_fork_exec()
 	env_builder.add(make_kev_from_kvi("REDIS_NSAM", sp->NSAM));
 	env_builder.add(make_kev_from_kvi("REDIS_SPIX", sp->SP_INDEX));
 
+	if (verbose){
+		for(int ii = 0; env_builder.env[ii]; ++ii){
+			fprintf(stderr, "%s %s\n", FN, env_builder.env[ii]);
+		}
+	}
 	return socket_fork_exec(cmd, argv_builder.env, env_builder.env);
 }
 

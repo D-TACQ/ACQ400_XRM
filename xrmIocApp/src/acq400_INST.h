@@ -38,6 +38,7 @@ struct child_process_info {
  *
  */
 class acq400_INST: public acq400_asynPortDriver {
+	static int verbose;
 protected:
 	static int nice;
 	const char* cmd;
