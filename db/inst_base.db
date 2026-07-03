@@ -61,6 +61,19 @@ record (stringout,  "${UUT}:${FUN}:REDIS_MKEY") {
 		}
 	})	
 }
+record (stringout,  "${UUT}:${FUN}:CHUNK_SIZE") {
+	field(DTYP, "asynOctetWrite")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))CHUNK_SIZE")
+	field(DESC, "Redis packet size in bytes")
+	field(PINI, "YES")
+	field(VAL,  "${CHUNK_SIZE}")
+	
+	info(Q:group, {
+		"${UUT}:${FUN}:REDIS:SET": {
+			"CHUNK_SIZE": {+channel:"VAL"}
+		}
+	})	
+}
 
 record (longin, "${UUT}:${FUN}:REDIS_BCOUNT") {
 	field(DTYP, "asynInt32")
