@@ -269,10 +269,6 @@ protected:
 	static acq400_SOE* _instance;
 public:
 	static void create_instance(const char *portName, acq400_SOE_Strategy* strategy);
-	static const SamplePrams *getSamplePrams() {
-		assert(_instance != 0);
-		return &_instance->samplePrams;
-	}
 	virtual ~acq400_SOE() {}
 
 	void clearHold();

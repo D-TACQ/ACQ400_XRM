@@ -7,7 +7,7 @@
 
 #include "acq400_asyn_common.h"
 #include "acq400_INST.h"
-#include "acq400_SOE.h"		//@@todo split .. static const SamplePrams *getSamplePrams()
+#include "acq400_Proxy.h"
 #include "acq-util.h"
 #include "split2.h"
 #include <fcntl.h>                // open()
@@ -265,7 +265,7 @@ child_process_info acq400_INST::run_socket_fork_exec()
 	env_builder.add(make_kev_from_sp(PS_ACQ_PORT, P_ACQ_PORT));
 	env_builder.add(make_kev_from_sp(PS_STREAM_SUBSET_MASK, P_STREAM_SUBSET_MASK));
 
-	const SamplePrams* sp = acq400_SOE::getSamplePrams();
+	const SamplePrams* sp = acq400_Proxy::getSamplePrams();
 
 	env_builder.add(make_kev_from_kvi("REDIS_SSB", sp->SSB));
 	env_builder.add(make_kev_from_kvi("REDIS_NSAM", sp->NSAM));
