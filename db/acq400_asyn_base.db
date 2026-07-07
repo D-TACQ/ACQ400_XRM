@@ -45,5 +45,5 @@ record(mbbo, "${UUT}:${FUN}:MON_RL")
 	field(FVVL, "5")
 	field(DESC, "${FUN}MONITOR RATE LIMIT")
 	field(PINI, "YES")
-	field(VAL,  "5")
+	field(VAL,  "2")
 }
