@@ -239,6 +239,7 @@ void acq400_Proxy::task()
 
 		if (verbose) printf("INFO: %s:%s cal done\n", DN, FN);
 	}
+	fprintf(stderr, "INFO: %s:%s samplePrams are VALID\n", DN, FN);
 }
 
 asynStatus acq400_Proxy::writeInt32(asynUser *pasynUser, epicsInt32 value)
