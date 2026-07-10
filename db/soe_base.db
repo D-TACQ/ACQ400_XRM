@@ -97,6 +97,17 @@ record(longin, "${UUT}:SOE:FMT:EV_MATCHES")
 	field(DESC, "Number of Events matched this CYCLE")
 }
 
+record(bi, "${UUT}:SOE:FMT:MATCH_PREVIOUS")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_USE_PREVIOUS")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+
+	field(DESC, "Match FMT to previous buffer")
+}
+
 record(longin, "${UUT}:SOE:FMT:EV_NIB")
 {
 	field(PINI, "NO")

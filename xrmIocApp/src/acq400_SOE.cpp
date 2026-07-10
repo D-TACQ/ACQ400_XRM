@@ -45,6 +45,9 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	hold_row_limit(SOE_HLD_ROWS)
 {
 	fprintf(stderr, "%s R1040\n", FN);
+	assert(!current_kb.isValid());          // check init to zero
+	assert(!previous_kb.isValid());          // check init to zero
+
 	asynStatus status = asynSuccess;
 	memset(soe_lut, 0, sizeof(soe_lut));
 
@@ -303,6 +306,9 @@ void acq400_SOE::update_kbuf_info(char* raw)
 		fprintf(stderr, "%s:%s() NSAM:%u skips:%u skipl:%u\n",
 				DN, FN, samplePrams.NSAM, skips, skipl);
 	}
+	if (current_kb.isValid()){
+		previous_kb = current_kb;
+	}
 	current_kb.wrt0 = getWrTsFromRaw(sp_raw);
 
 	sp_raw += skipl;
@@ -367,9 +373,17 @@ void acq400_SOE::task()
 
 			update_kbuf_info(raw);
 
-			const acq400_SOE_Strategy::RC rc =
+			bool using_current_kb = true;
+			acq400_SOE_Strategy::RC rc =
 					(*strategy)(current_kb, samplePrams,
 						 soe_lut, the_hold_table);
+			if (rc.status == acq400_SOE_Strategy::E_FMT_TS_TOO_LATE && previous_kb.isValid()){
+				using_current_kb = false;
+				rc = (*strategy)(previous_kb, samplePrams,
+						 soe_lut, the_hold_table);
+
+			}
+			sip(0, P_SOE_FMT_USE_PREVIOUS, !using_current_kb);
 			sip(0, P_SOE_FMT_RX_TIMEOUT_REASON, rc.status);
 			sip(0, P_SOE_FMT_DELTA_TS, rc.delta_us);
 			sip(0, P_SOE_FMT_EV_MATCHES, rc.events_accepted);

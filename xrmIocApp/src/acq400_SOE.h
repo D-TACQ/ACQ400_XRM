@@ -99,6 +99,7 @@
 #define PS_SOE_FMT_RX_SUCCESS   "SOE_FMT_RX_SUCCESS"
 #define PS_SOE_FMT_EV_MATCHES   "SOE_FMT_EV_MATCHES"
 #define PS_SOE_FMT_EV_NIB	"SOE_FMT_EV_NOT_IN_BUFFER"
+#define PS_SOE_FMT_USE_PREVIOUS "SOE_FMT_USE_PREVIOUS"
 
 #define PS_SOE_HLD_TABLE_WF	"SOE_HLD_TABLE_WF" // raw event table.
 
@@ -108,6 +109,16 @@ struct KBUF {
 	epicsInt64 wrt0;
 	epicsInt64 wrt1;
 	const char* raw;
+
+	KBUF() {
+		clear();
+	}
+	bool isValid() {
+		return raw != 0;
+	}
+	void clear() {
+		raw = 0;
+	}
 };
 
 /** singleton */
@@ -191,6 +202,7 @@ protected:
 	virtual void update_hld_tab_columns_callbacks(void);
 
 	struct KBUF current_kb;
+	struct KBUF previous_kb;
 	void update_kbuf_info(char* raw);
 
 	virtual void task();
@@ -261,6 +273,7 @@ protected:
 	int P_SOE_FMT_RX_SUCCESS;	/**< Stat: count timely received buffers */
 	int P_SOE_FMT_EV_MATCHES;	/**< Stat: count buffers with matching events */
 	int P_SOE_FMT_EV_NIB;		/**< Stat: count buffers with events NOT IN BUFFER */
+	int P_SOE_FMT_USE_PREVIOUS;	/**< Stat: using previous buffer not current */
 	int P_SOE_HLD_TABLE_WF;		/**< HLD Table full binary output for remote clients */
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
