@@ -23,15 +23,18 @@ static const char *driverName="acq400_FMT_abc";
 
 
 int acq400_FMT_abc::nice = ::getenv_default("acq400_FMT_NICE", 0);
+int acq400_FMT_abc::verbose = ::getenv_default("acq400_FMT_VERBOSE", 0);
 
 acq400_FMT_abc::acq400_FMT_abc(
-	const char *portName, int maxAddr, int interfaceMask, int interruptMask,
+	const char *portName, int maxAddr, int _n_cache, int interfaceMask, int interruptMask,
 	                   int asynFlags, int autoConnect, int priority, int stackSize) :
 	acq400_asynPortDriver(portName, maxAddr, interfaceMask, interruptMask,
 			   asynFlags, autoConnect, priority, stackSize),
+	n_cache(_n_cache),
 	update(0)
 {
-	memset(fmt, 0, sizeof(fmt));
+	fmt_cache = new FMT[n_cache];
+	memset(fmt_cache, 0, n_cache*sizeof(FMT));
 
 	assert(FMT_ROWS < 0xffU);
 	for (epicsInt8 row = 0; row < FMT_ROWS; ++row){
@@ -52,6 +55,13 @@ acq400_FMT_abc::acq400_FMT_abc(
 	setStringParam(P_FMT_MC_GRP, G::fmt_mc_group);
 	setIntegerParam(P_FMT_MC_PORT, G::fmt_mc_port);
 }
+
+const FMT& acq400_FMT_abc::get_fmt(int icache)
+{
+	assert(icache >= 0 && icache < n_cache);
+	return fmt_cache[icache];
+}
+
 
 void acq400_FMT_abc::init_mc_url(char* group, int maxgroup, int *port)
 {
@@ -82,7 +92,7 @@ MultiCast& acq400_FMT_abc::mc_factory(MultiCast::MC txrx)
 	return MultiCast::factory(mc_group, mc_port, txrx);
 }
 
-void acq400_FMT_abc::update_fmt_columns()
+void acq400_FMT_abc::update_fmt_columns(const FMT& fmt)
 {
 	for (int row = 0; row < FMT_ROWS; ++row){
 		cols.c_event[row]= fmt[row].event;

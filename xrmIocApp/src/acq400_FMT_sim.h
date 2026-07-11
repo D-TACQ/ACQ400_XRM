@@ -29,8 +29,7 @@ struct TimeProvider {
 
 
 class acq400_FMT_Sim: public acq400_FMT_abc {
-	virtual void update_fmt(bool first_time = false);
-
+	virtual void update_fmt(FMT& fmt, bool first_time = false);
 
 	void redit();  /* Row EDIT */
 

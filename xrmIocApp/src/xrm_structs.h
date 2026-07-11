@@ -14,6 +14,8 @@
 #ifndef XRMIOCAPP_SRC_XRM_STRUCTS_H_
 #define XRMIOCAPP_SRC_XRM_STRUCTS_H_
 
+#include <cstring>			// memset()
+
 struct FMT_ROW {
 	epicsUInt16 event;           /**< FNAL Event number				*/
 	epicsUInt16 pad;             /**< 32 bit alignment is best, available for future */
@@ -38,6 +40,10 @@ const int FMT_ROWS = 64;
  * This is the binary implementation that goes out on the wire.
  */
 typedef struct FMT_ROW  FMT[FMT_ROWS];
+
+static inline void clean(FMT fmt) {
+	memset(fmt, 0, sizeof(FMT));
+}
 
 /* SOE_LUT : Sample On Event Lookup Table
  * input from plant: as required (EPICS PV)

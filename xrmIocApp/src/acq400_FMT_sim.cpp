@@ -120,7 +120,7 @@ public:
 };
 
 
-void acq400_FMT_Sim::update_fmt(bool first_time)
+void acq400_FMT_Sim::update_fmt(FMT& fmt, bool first_time)
 /* first_time: set now_us; else first use previous now_us then set now_us; */
 {
 	if (first_time){
@@ -141,10 +141,13 @@ void acq400_FMT_Sim::update_fmt(bool first_time)
 
 }
 
+#define N_SIM_CACHE	1
+
 acq400_FMT_Sim::acq400_FMT_Sim(
 		const char* portName, TimeProvider& _timeProvider):
 	acq400_FMT_abc(portName,
 	/* maxAddr */		FMT_ROWS,    /* nchan from 0 */
+				N_SIM_CACHE,
 	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
 					asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
 					asynFloat32ArrayMask|asynInt64ArrayMask|asynDrvUserMask,
@@ -191,6 +194,7 @@ void acq400_FMT_Sim::task(void) {
 
 	MultiCast& multicast = acq400_FMT_abc::mc_factory(MultiCast::MC_SENDER);
 	MonitorRateLimit rateLimit;
+	FMT& fmt = fmt_cache[0];
 
 	for (int runstop, runstop0 = 0; ; runstop0 = runstop){
 		lock();
@@ -201,14 +205,15 @@ void acq400_FMT_Sim::task(void) {
 		}
 		unlock();
 		if (runstop == 1){
+
 			if (runstop0 == 0){
-				update_fmt(true);
+				update_fmt(fmt, true);
 			}else{
-				update_fmt(false);
-				multicast.sendto(fmt, sizeof(fmt));
+				update_fmt(fmt, false);
+				multicast.sendto(fmt, sizeof(FMT));
 				rateLimit.newData(mrl_param);
 				if (rateLimit.goAhead()){
-					update_fmt_columns();
+					update_fmt_columns(fmt);
 				}
 				lock();
 				updateTimeStamp();
@@ -248,6 +253,7 @@ void acq400_FMT_Sim::redit()
 			row, row_count, event, event_step, clidat, clidat_step);
 
 	lock();
+	FMT& fmt = fmt_cache[0];
 	for (int rn = 0; rn < row_count; ++rn){
 		struct FMT_ROW& this_row = fmt[row+rn];
 		this_row.event = event + rn*event_step;
