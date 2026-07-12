@@ -171,10 +171,12 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 {
 	const int SSB = sp.SSB;
 	const int SSL = SSB/sizeof(long);
+	const FMT& latest = FMT_rx->get_fmt(0);  // @@todo check (0) really is latest?
+
 	/* always "SOE_SUCCESS" because the FMT and KBUF TS matched */
 	acq400_SOE_Strategy::RC rc = {
 				SOE_SUCCESS,
-				FMT_rx->fmt[0].timestamp-kbuf.wrt0,
+				latest[0].timestamp - kbuf.wrt0,
 			};
 
 	int bsi_entries[SOE_HLD_ROWS];
@@ -182,8 +184,8 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 	int imatch = 0;
 
 	for (; fmt_row < FMT_ROWS; ++fmt_row){
-		const epicsUInt64 fmt_ts = FMT_rx->fmt[fmt_row].timestamp;
-		const epicsUInt16 fmt_event = FMT_rx->fmt[fmt_row].event;
+		const epicsUInt64 fmt_ts = latest[fmt_row].timestamp;
+		const epicsUInt16 fmt_event = latest[fmt_row].event;
 		if (fmt_event == EV99){
 			break;
 		}
@@ -204,7 +206,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 			int bsi = find_event_in_buf(kbuf, NSAM, soe_ts);
 			if (bsi >= 0){
 				build_hold_entry(kbuf, sp,
-						FMT_rx->fmt[fmt_row],
+						latest[fmt_row],
 						soe_lut[soe_row],
 						bsi,
 						ht,
@@ -260,7 +262,8 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 	}
 
 	if (FMT_rx->waitFMT(CYCLE_MS) == 0){
-		const epicsInt64 fmt_ts = FMT_rx->fmt[0].timestamp;
+		const FMT& latest = FMT_rx->get_fmt(0);  // @@todo check (0) really is latest?
+		const epicsInt64 fmt_ts = latest[0].timestamp;
 
 		if (fmt_ts < kbuf.wrt0-CYCLE_MS*1000){
 			return { E_FMT_TS_TOO_LATE, kbuf.wrt0-fmt_ts, };
