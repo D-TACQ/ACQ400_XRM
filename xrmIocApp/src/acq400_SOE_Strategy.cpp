@@ -79,7 +79,7 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 	ht_data_offset += SSL*stride;
 
 	acq400_SOE_Strategy::RC rc = {
-			SOE_SUCCESS, 0LL, ht_data_offset, SOE_HLD_ROWS, 0
+			SOE_SUCCESS, 0LL, ht_data_offset, SOE_HLD_ROWS, 0,
 	};
 	fprintf(stderr, "%s returning %d, %d, %lld, %d\n", FN,
 				rc.status, rc.events_accepted, rc.delta_us, rc.ht_size32);
@@ -271,7 +271,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 	}
 
 	if (FMT_rx->waitFMT(CYCLE_MS) == 0){
-		const FMT& latest = FMT_rx->get_fmt(0);  // @@todo check (0) really is latest?
+		const FMT& latest = FMT_rx->get_fmt(0);
 		const epicsInt64 fmt_ts = latest[0].timestamp;
 
 		acq400_SOE_Strategy::RC rc = timestamp_in_buf(soe, fmt_ts);
@@ -280,7 +280,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 		}
 		return rc;
 	} else {
-		return { -E_TIMEOUT, };
+		return { E_TIMEOUT, };
 	}
 }
 
@@ -301,8 +301,51 @@ acq400_SOE_Strategy::RC LutFmtStrategy2::operator() (
 			const SOE_DIMS& soe,
 			SOE_HOLD_TABLE ht)
 {
-	return LutFmtStrategy1::operator()(soe, ht);
-//	return { -E_TIMEOUT, };
+	if (FMT_rx == 0){
+		FMT_rx = acq400_FMT_rx::instance();
+	}
+
+	const FMT& fmt = FMT_rx->get_fmt(0);
+
+	acq400_SOE_Strategy::RC rc = timestamp_in_buf(soe, fmt[0].timestamp);
+	switch(rc.status){
+	case SOE_SUCCESS:
+		rc.fmt_num = FMT_CUR;
+		return soe_lut_lookup(soe, fmt, ht, rc);
+	case E_FMT_TS_TOO_EARLY: {
+		const FMT& fmt_m1 = FMT_rx->get_fmt(1);
+
+		rc = timestamp_in_buf(soe, fmt_m1[0].timestamp);
+		rc.fmt_num = FMT_PRE;
+		switch(rc.status){
+		case SOE_SUCCESS:
+			return soe_lut_lookup(soe, fmt_m1, ht, rc);
+		default:
+			return rc;
+		}
+	} case E_FMT_TS_TOO_LATE:
+		for (unsigned retry = 0, delay = CYCLE_MS/5; retry < 5; ++retry){
+			if (FMT_rx->waitFMT(delay) == 0){
+				const FMT& latest = FMT_rx->get_fmt(0);
+				const epicsInt64 fmt_ts = latest[0].timestamp;
+				if (fmt_ts == fmt[0].timestamp){
+					continue;              // bogus:event was already set from a previous run
+				}
+
+				acq400_SOE_Strategy::RC rc = timestamp_in_buf(soe, fmt_ts);
+
+				rc = soe_lut_lookup(soe, latest, ht, rc);
+				rc.fmt_num = FMT_WAIT;
+				return rc;
+			}
+		}
+		rc.status = E_TIMEOUT;
+		rc.fmt_num = FMT_WAIT;
+		return rc;
+	default:
+		assert(rc.status == E_FMT_UNDEFINED);
+	}
+	return { E_FMT_UNDEFINED, };   // fake return for compiler, "never called"
 }
 
 

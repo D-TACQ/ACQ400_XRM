@@ -120,25 +120,34 @@ struct SOE_DIMS {
 class acq400_SOE_Strategy {
 
 public:
+	enum ERR_CODES {
+		SOE_SUCCESS = 0,
+		E_TIMEOUT = -1,
+		E_FMT_TS_TOO_EARLY = -2,
+		E_FMT_TS_TOO_LATE = -3,
+		E_FMT_NO_EVENTS_FOUND = -4,
+		E_FMT_UNDEFINED = -99
+	};
+	enum FMT_NUM {
+		FMT_PRE = -1,
+		FMT_CUR = 0,
+		FMT_WAIT = 1
+	};
 	struct RC {
-		int status;
+		ERR_CODES status;
+
 		long long delta_us;
 		int ht_size32;
 		short events_accepted;
 		short events_not_in_buffer;
+		FMT_NUM fmt_num;
 	};
 	/** implements strategy, .. waitFMT, compare LUT, look up data in raw and build output <ht> */
 	virtual RC operator() (const SOE_DIMS& soe, SOE_HOLD_TABLE ht) = 0;
 
 	static acq400_SOE_Strategy** factory();
 
-	enum ERR_CODES {
-		SOE_SUCCESS = 0,
-		E_TIMEOUT = 1,
-		E_FMT_TS_TOO_EARLY = 2,
-		E_FMT_TS_TOO_LATE = 3,
-		E_FMT_NO_EVENTS_FOUND = 4,
-	};
+
 };
 
 
