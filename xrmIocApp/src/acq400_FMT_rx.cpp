@@ -39,7 +39,7 @@ acq400_FMT_rx::acq400_FMT_rx(const char* portName) :
 	printf("acq400_FMT_rx: sizeof(FMT) %u sizeof(fmt) %u\n", sizeof(FMT));
 
 	for (int ii = 0; ii < maxq; ++ii){
-		empties.push_back(ii);
+		empties.push_front(ii);
 	}
 
 	for (auto ii: empties){
@@ -92,10 +92,10 @@ int acq400_FMT_rx::get_empty() {
 
 	if (empties.empty()){
 		assert(!filled.empty());
-		ib = filled.back(); filled.pop_front();
+		ib = filled.back(); filled.pop_back();       // pull oldest
 		fill_from = "filled";
 	}else{
-		ib = empties.front(); empties.pop_front();
+		ib = empties.back(); empties.pop_back();     // pull oldest (academic for empties)
 		fill_from = "empties";
 	}
 
@@ -103,10 +103,18 @@ int acq400_FMT_rx::get_empty() {
 		fprintf(stderr, "%s fill_from:%s push %d\n",
 			FN, fill_from, ib);
 	}
-	filled.push_back(ib);
+
 	return ib;
 }
 
+
+FMT& acq400_FMT_rx::receive(MultiCast& multicast){
+	const int ib = get_empty();
+	FMT& fmt = fmt_cache[ib];
+	multicast.recvfrom(fmt, sizeof(FMT));
+	filled.push_front(ib);                     // filled[0] is latest arrival
+	return fmt;
+}
 
 void acq400_FMT_rx::task(void) {
 	asynStatus status = asynSuccess;
@@ -127,8 +135,7 @@ void acq400_FMT_rx::task(void) {
 		}
 		unlock();
 		if (runstop == 1){
-			FMT& fmt = fmt_cache[get_empty()];
-			multicast.recvfrom(fmt, sizeof(FMT));
+			FMT& fmt = receive(multicast);
 			rateLimit.newData(mrl_param);
 			update_fmt(fmt, first_time);
 			process_fmt(first_time);
