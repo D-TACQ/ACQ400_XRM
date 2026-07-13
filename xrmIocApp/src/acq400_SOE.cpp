@@ -25,6 +25,9 @@ using namespace std;
 
 int acq400_SOE::nice    = ::getenv_default("acq400_SOE_NICE", 0);
 int acq400_SOE::verbose	= ::getenv_default("acq400_SOE_VERBOSE", 0);
+const int acq400_SOE::CYCLE_MS(::getenv_default("acq400_SOE_CYCLE_MS", 50));
+
+
 
 acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	acq400_asynPortDriver(portName,

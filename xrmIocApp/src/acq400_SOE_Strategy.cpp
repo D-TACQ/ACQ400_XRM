@@ -129,7 +129,7 @@ public:
 friend class acq400_SOE_Strategy;
 };
 
-#define CYCLE_MS	50		// @@todo make me programmable
+#define CYCLE_MS	acq400_SOE::CYCLE_MS		// @@todo make me programmable
 
 
 int  LutFmtStrategy1::build_hold_entry(

@@ -146,6 +146,7 @@ class acq400_SOE: public acq400_asynPortDriver {
 protected:
 	static int verbose;
 
+
 	SOE_LUT soe_lut;
 	SOE_HOLD_HEADER* the_hold_table;   /**< preallocate the max possible size. do it once! */
 
@@ -281,6 +282,8 @@ public:
 	void clearHold();
 
 	virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+
+	static const int CYCLE_MS;
 };
 
 #endif /* XRMIOCAPP_SRC_ACQ400_SOE_H_ */
