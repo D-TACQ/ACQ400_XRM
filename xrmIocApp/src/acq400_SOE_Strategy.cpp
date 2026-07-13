@@ -90,13 +90,17 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 
 class LutFmtStrategy1 : public acq400_SOE_Strategy
 {
+protected:
 	acq400_FMT_rx* FMT_rx;
 
-	acq400_SOE_Strategy::RC soe_lut_lookup (
+	RC soe_lut_lookup (
 			const SOE_DIMS& soe,
 			const FMT& latest,
-			SOE_HOLD_TABLE ht
-			);
+			SOE_HOLD_TABLE ht,
+			acq400_SOE_Strategy::RC rc);
+
+	RC timestamp_in_buf(
+			const SOE_DIMS& soe, const epicsInt64 fmt_ts);
 
 	int find_event_in_buf(
 			const KBUF& kbuf,
@@ -163,17 +167,12 @@ int G_raw_dump = ::getenv_default("acq400_SOE_Strategy_dump", 0);
 acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 		const SOE_DIMS& soe,
 		const FMT& latest,
-		SOE_HOLD_TABLE ht)
+		SOE_HOLD_TABLE ht,
+		acq400_SOE_Strategy::RC rc)
 /* FMT, SOE_LUT assumed to be sorted by event */
 {
 	const int SSB = soe.samplePrams.SSB;
 	const int SSL = SSB/sizeof(long);
-
-	/* always "SOE_SUCCESS" because the FMT and KBUF TS matched */
-	acq400_SOE_Strategy::RC rc = {
-				SOE_SUCCESS,
-				latest[0].timestamp - soe.kbuf.wrt0,
-			};
 
 	int bsi_entries[SOE_HLD_ROWS];
 	int fmt_row = 0;
@@ -249,6 +248,20 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 
 #define MARK	fprintf(stderr, "%s %d\n", FN, __LINE__)
 
+
+acq400_SOE_Strategy::RC LutFmtStrategy1::timestamp_in_buf(
+		const SOE_DIMS& soe, const epicsInt64 fmt_ts)
+{
+	if (fmt_ts < soe.kbuf.wrt0-CYCLE_MS*1000){
+		return { E_FMT_TS_TOO_LATE, soe.kbuf.wrt0-fmt_ts, };
+	}else if (fmt_ts > soe.kbuf.wrt1+CYCLE_MS*1000){
+		fprintf(stderr, "FMT TOO EARLY %llu > %llu by %llu\n",
+				fmt_ts, soe.kbuf.wrt1, fmt_ts-soe.kbuf.wrt1);
+		return { E_FMT_TS_TOO_EARLY, fmt_ts-soe.kbuf.wrt1, };
+	}else{
+		return { SOE_SUCCESS, fmt_ts - soe.kbuf.wrt0};
+	}
+}
 acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 		const SOE_DIMS& soe,
 		SOE_HOLD_TABLE ht)
@@ -261,15 +274,11 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 		const FMT& latest = FMT_rx->get_fmt(0);  // @@todo check (0) really is latest?
 		const epicsInt64 fmt_ts = latest[0].timestamp;
 
-		if (fmt_ts < soe.kbuf.wrt0-CYCLE_MS*1000){
-			return { E_FMT_TS_TOO_LATE, soe.kbuf.wrt0-fmt_ts, };
-		}else if (fmt_ts > soe.kbuf.wrt1+CYCLE_MS*1000){
-			fprintf(stderr, "FMT TOO EARLY %llu > %llu by %llu\n",
-					fmt_ts, soe.kbuf.wrt1, fmt_ts-soe.kbuf.wrt1);
-			return { E_FMT_TS_TOO_EARLY, fmt_ts-soe.kbuf.wrt1, };
-		}else{
-			return soe_lut_lookup(soe, latest, ht);
+		acq400_SOE_Strategy::RC rc = timestamp_in_buf(soe, fmt_ts);
+		if (rc.status == SOE_SUCCESS){
+			rc = soe_lut_lookup(soe, latest, ht, rc);
 		}
+		return rc;
 	} else {
 		return { -E_TIMEOUT, };
 	}
