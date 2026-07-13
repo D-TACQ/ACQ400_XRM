@@ -32,9 +32,7 @@ class NullStrategy : public acq400_SOE_Strategy
 	const int stride;
 
 	virtual acq400_SOE_Strategy::RC operator() (
-			const KBUF& kbuf,
-			const SamplePrams& samplePrams,
-			const SOE_LUT& soe_lut,
+			const SOE_DIMS& soe,
 			SOE_HOLD_TABLE ht);
 	NullStrategy(int _stride = 1):
 		acq400_SOE_Strategy(),
@@ -44,15 +42,14 @@ friend class acq400_SOE_Strategy;
 };
 
 acq400_SOE_Strategy::RC NullStrategy::operator() (
-		const KBUF& kbuf,
-		const SamplePrams& samplePrams,
-		const SOE_LUT& soe_lut,
+		const SOE_DIMS& soe,
 		SOE_HOLD_TABLE ht)
 {
-	const int SSB = samplePrams.SSB;
+	const int SSB = soe.samplePrams.SSB;
 	const int SSL = SSB/sizeof(long);
-	const char* raw = kbuf.raw;
-	const unsigned* sp_raw = (const unsigned*)kbuf.raw + samplePrams.SP_INDEX;;
+	const char* raw = soe.kbuf.raw;
+	const unsigned* sp_raw =
+		(const unsigned*)soe.kbuf.raw + soe.samplePrams.SP_INDEX;
 
 	assert(SOE_LUT_ROWS >= SOE_HLD_ROWS);
 
@@ -61,7 +58,7 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 	for (int ii = 10; ii; --ii){
 		ht[ii].client_data = ht[ii-1].client_data;
 	}
-	ht[0].client_data = kbuf.ib;
+	ht[0].client_data = soe.kbuf.ib;
 
 	unsigned short ht_data_offset = HOLD_DATA_OFF()/sizeof(U32);
 
@@ -69,7 +66,7 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 			ht_data_offset += SSL*stride, sp_raw += SSL*stride, raw += SSB*stride){
 		unsigned wrs, wrv;
 
-		ht[row].pv_id = soe_lut[row].pv_id;
+		ht[row].pv_id = soe.lut[row].pv_id;
 		// From FMT! ht->entries[row].client_data = soe_lut[row].client_data;
 
 		wrv = sp_raw[SP2];
@@ -96,8 +93,7 @@ class LutFmtStrategy1 : public acq400_SOE_Strategy
 	acq400_FMT_rx* FMT_rx;
 
 	acq400_SOE_Strategy::RC soe_lut_lookup (
-			const KBUF& kbuf,
-			const SamplePrams& sp, const SOE_LUT& soe_lut,
+			const SOE_DIMS& soe,
 			SOE_HOLD_TABLE ht);
 
 	int find_event_in_buf(
@@ -126,8 +122,7 @@ public:
 		FMT_rx(0)
 	{}
 	virtual acq400_SOE_Strategy::RC operator() (
-			const KBUF& kbuf,
-			const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
+			const SOE_DIMS& soe,
 			SOE_HOLD_TABLE ht);
 friend class acq400_SOE_Strategy;
 };
@@ -164,19 +159,18 @@ int  LutFmtStrategy1::build_hold_entry(
 int G_raw_dump = ::getenv_default("acq400_SOE_Strategy_dump", 0);
 
 acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
-		const KBUF& kbuf,
-		const SamplePrams& sp, const SOE_LUT& soe_lut,
+		const SOE_DIMS& soe,
 		SOE_HOLD_TABLE ht)
 /* FMT, SOE_LUT assumed to be sorted by event */
 {
-	const int SSB = sp.SSB;
+	const int SSB = soe.samplePrams.SSB;
 	const int SSL = SSB/sizeof(long);
 	const FMT& latest = FMT_rx->get_fmt(0);  // @@todo check (0) really is latest?
 
 	/* always "SOE_SUCCESS" because the FMT and KBUF TS matched */
 	acq400_SOE_Strategy::RC rc = {
 				SOE_SUCCESS,
-				latest[0].timestamp - kbuf.wrt0,
+				latest[0].timestamp - soe.kbuf.wrt0,
 			};
 
 	int bsi_entries[SOE_HLD_ROWS];
@@ -190,7 +184,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 			break;
 		}
 		for (int soe_row = 0; soe_row < SOE_LUT_ROWS; ++soe_row){
-			const epicsUInt16 soe_lut_event = soe_lut[soe_row].event;
+			const epicsUInt16 soe_lut_event = soe.lut[soe_row].event;
 			if (soe_lut_event == EV99){
 				break;
 			}else if (soe_lut_event > fmt_event){
@@ -199,15 +193,15 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 				continue;                        // keep searching
 			} // else MATCH!
 
-			const int NSAM = sp.NSAM;
+			const int NSAM = soe.samplePrams.NSAM;
 			const epicsUInt64 soe_ts = fmt_ts +
-						soe_lut[soe_row].offset_us;
+						soe.lut[soe_row].offset_us;
 
-			int bsi = find_event_in_buf(kbuf, NSAM, soe_ts);
+			int bsi = find_event_in_buf(soe.kbuf, NSAM, soe_ts);
 			if (bsi >= 0){
-				build_hold_entry(kbuf, sp,
+				build_hold_entry(soe.kbuf, soe.samplePrams,
 						latest[fmt_row],
-						soe_lut[soe_row],
+						soe.lut[soe_row],
 						bsi,
 						ht,
 						imatch);
@@ -223,7 +217,8 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 	int ht_data_offset = (imatch+1)*sizeof(SOE_HOLD_HEADER)/sizeof(U32);
 
 	for (int ii = 0; ii < imatch; ++ii, ht_data_offset += SSL){
-		const unsigned* sample_raw = (const U32*)kbuf.raw + bsi_entries[ii]*SSL;
+		const unsigned* sample_raw =
+				(const U32*)soe.kbuf.raw + bsi_entries[ii]*SSL;
 /*
 		fprintf(stderr, "%s raw:%p from %p + %d\n",
 				sample_raw, kbuf.raw, bsi_entries[ii]*SSL);
@@ -253,8 +248,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 #define MARK	fprintf(stderr, "%s %d\n", FN, __LINE__)
 
 acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
-		const KBUF& kbuf,
-		const SamplePrams& samplePrams, const SOE_LUT& soe_lut,
+		const SOE_DIMS& soe,
 		SOE_HOLD_TABLE ht)
 {
 	if (FMT_rx == 0){
@@ -265,14 +259,14 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 		const FMT& latest = FMT_rx->get_fmt(0);  // @@todo check (0) really is latest?
 		const epicsInt64 fmt_ts = latest[0].timestamp;
 
-		if (fmt_ts < kbuf.wrt0-CYCLE_MS*1000){
-			return { E_FMT_TS_TOO_LATE, kbuf.wrt0-fmt_ts, };
-		}else if (fmt_ts > kbuf.wrt1+CYCLE_MS*1000){
+		if (fmt_ts < soe.kbuf.wrt0-CYCLE_MS*1000){
+			return { E_FMT_TS_TOO_LATE, soe.kbuf.wrt0-fmt_ts, };
+		}else if (fmt_ts > soe.kbuf.wrt1+CYCLE_MS*1000){
 			fprintf(stderr, "FMT TOO EARLY %llu > %llu by %llu\n",
-					fmt_ts, kbuf.wrt1, fmt_ts-kbuf.wrt1);
-			return { E_FMT_TS_TOO_EARLY, fmt_ts-kbuf.wrt1, };
+					fmt_ts, soe.kbuf.wrt1, fmt_ts-soe.kbuf.wrt1);
+			return { E_FMT_TS_TOO_EARLY, fmt_ts-soe.kbuf.wrt1, };
 		}else{
-			return soe_lut_lookup(kbuf, samplePrams, soe_lut, ht);
+			return soe_lut_lookup(soe, ht);
 		}
 	} else {
 		return { -E_TIMEOUT, };

@@ -368,8 +368,9 @@ void acq400_SOE::task()
 			update_kbuf_info(raw);
 
 			const acq400_SOE_Strategy::RC rc =
-					(*strategy)(current_kb, samplePrams,
-						 soe_lut, the_hold_table);
+					(*strategy)({current_kb, samplePrams, soe_lut},
+					the_hold_table);
+
 			sip(0, P_SOE_FMT_RX_TIMEOUT_REASON, rc.status);
 			sip(0, P_SOE_FMT_DELTA_TS, rc.delta_us);
 			sip(0, P_SOE_FMT_EV_MATCHES, rc.events_accepted);

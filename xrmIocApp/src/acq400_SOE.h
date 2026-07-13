@@ -110,6 +110,12 @@ struct KBUF {
 	const char* raw;
 };
 
+struct SOE_DIMS {
+	KBUF& kbuf;
+	SamplePrams& samplePrams;
+	SOE_LUT& lut;
+};
+
 /** singleton */
 class acq400_SOE_Strategy {
 
@@ -122,7 +128,7 @@ public:
 		short events_not_in_buffer;
 	};
 	/** implements strategy, .. waitFMT, compare LUT, look up data in raw and build output <ht> */
-	virtual RC operator() (const KBUF& kbuf, const SamplePrams& sp, const SOE_LUT& soe_lut, SOE_HOLD_TABLE ht) = 0;
+	virtual RC operator() (const SOE_DIMS& soe, SOE_HOLD_TABLE ht) = 0;
 
 	static acq400_SOE_Strategy** factory();
 
@@ -134,6 +140,7 @@ public:
 		E_FMT_NO_EVENTS_FOUND = 4,
 	};
 };
+
 
 class acq400_SOE: public acq400_asynPortDriver {
 protected:
