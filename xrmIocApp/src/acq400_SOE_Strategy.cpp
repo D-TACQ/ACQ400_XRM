@@ -94,7 +94,9 @@ class LutFmtStrategy1 : public acq400_SOE_Strategy
 
 	acq400_SOE_Strategy::RC soe_lut_lookup (
 			const SOE_DIMS& soe,
-			SOE_HOLD_TABLE ht);
+			const FMT& latest,
+			SOE_HOLD_TABLE ht
+			);
 
 	int find_event_in_buf(
 			const KBUF& kbuf,
@@ -160,12 +162,12 @@ int G_raw_dump = ::getenv_default("acq400_SOE_Strategy_dump", 0);
 
 acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 		const SOE_DIMS& soe,
+		const FMT& latest,
 		SOE_HOLD_TABLE ht)
 /* FMT, SOE_LUT assumed to be sorted by event */
 {
 	const int SSB = soe.samplePrams.SSB;
 	const int SSL = SSB/sizeof(long);
-	const FMT& latest = FMT_rx->get_fmt(0);  // @@todo check (0) really is latest?
 
 	/* always "SOE_SUCCESS" because the FMT and KBUF TS matched */
 	acq400_SOE_Strategy::RC rc = {
@@ -266,7 +268,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 					fmt_ts, soe.kbuf.wrt1, fmt_ts-soe.kbuf.wrt1);
 			return { E_FMT_TS_TOO_EARLY, fmt_ts-soe.kbuf.wrt1, };
 		}else{
-			return soe_lut_lookup(soe, ht);
+			return soe_lut_lookup(soe, latest, ht);
 		}
 	} else {
 		return { -E_TIMEOUT, };
