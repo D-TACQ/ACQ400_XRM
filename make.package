@@ -21,7 +21,7 @@ mkdir -p opkg/usr/local/bin/ opkg/usr/local/init/ \
 	opkg/usr/local/xrm/epics/dbd/ \
 	opkg/usr/local/xrm/epics/db  \
 	opkg/usr/local/xrm/epics/protocols \
-	opkg/usr/local/xrm/epics/scripts \
+	opkg/usr/local/xrm/epics/scripts/wireshark \
 	opkg/usr/local/xrm/epics/init.d \
 	opkg/usr/local/CARE
 
