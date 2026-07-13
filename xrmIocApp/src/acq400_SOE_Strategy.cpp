@@ -284,6 +284,26 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 	}
 }
 
+class LutFmtStrategy2 : public LutFmtStrategy1
+{
+protected:
+
+public:
+	LutFmtStrategy2(): LutFmtStrategy1()
+	{}
+	virtual acq400_SOE_Strategy::RC operator() (
+			const SOE_DIMS& soe,
+			SOE_HOLD_TABLE ht);
+friend class acq400_SOE_Strategy;
+};
+
+acq400_SOE_Strategy::RC LutFmtStrategy2::operator() (
+			const SOE_DIMS& soe,
+			SOE_HOLD_TABLE ht)
+{
+	return LutFmtStrategy1::operator()(soe, ht);
+//	return { -E_TIMEOUT, };
+}
 
 
 acq400_SOE_Strategy** acq400_SOE_Strategy::factory()
@@ -292,6 +312,7 @@ acq400_SOE_Strategy** acq400_SOE_Strategy::factory()
 	if (strategies[0] == 0){
 		int is = 0;
 		strategies[is++] = new LutFmtStrategy1();
+		strategies[is++] = new LutFmtStrategy2();
 		strategies[is++] = new NullStrategy(1);
 		strategies[is++] = new NullStrategy(2);
 		strategies[is++] = new NullStrategy(5);
