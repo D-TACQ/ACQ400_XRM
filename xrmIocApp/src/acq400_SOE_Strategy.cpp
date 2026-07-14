@@ -124,6 +124,14 @@ protected:
 			SOE_HOLD_TABLE ht,
 			int ihold);
 public:
+	/**
+	 * allow FMT up to 80% out of range
+	 * (event offset could pick).
+	 * NEVER 100% because then we'd pick the adjacent (wrong) buffer every time..
+	 * */
+	int deadBand_us() {
+		return acq400_SOE::CYCLE_MS*1000*4/5;
+	}
 	LutFmtStrategy1() :
 		FMT_rx(0)
 	{}
@@ -132,9 +140,6 @@ public:
 			SOE_HOLD_TABLE ht);
 friend class acq400_SOE_Strategy;
 };
-
-#define CYCLE_MS	acq400_SOE::CYCLE_MS		// @@todo make me programmable
-
 
 int  LutFmtStrategy1::build_hold_entry(
 		const KBUF& kbuf,
@@ -252,12 +257,12 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 acq400_SOE_Strategy::RC LutFmtStrategy1::timestamp_in_buf(
 		const SOE_DIMS& soe, const epicsInt64 fmt_ts)
 {
-	if (fmt_ts < soe.kbuf.wrt0-CYCLE_MS*1000){
-		return { E_FMT_TS_TOO_LATE, soe.kbuf.wrt0-fmt_ts, };
-	}else if (fmt_ts > soe.kbuf.wrt1+CYCLE_MS*1000){
+	if (fmt_ts < soe.kbuf.wrt0-deadBand_us()){
+		return { E_FMT_TS_TOO_LATE_FOR_KB, soe.kbuf.wrt0-fmt_ts, };
+	}else if (fmt_ts > soe.kbuf.wrt1+deadBand_us()){
 		fprintf(stderr, "FMT TOO EARLY %llu > %llu by %llu\n",
 				fmt_ts, soe.kbuf.wrt1, fmt_ts-soe.kbuf.wrt1);
-		return { E_FMT_TS_TOO_EARLY, fmt_ts-soe.kbuf.wrt1, };
+		return { E_FMT_TS_TOO_EARLY_FOR_KB, fmt_ts-soe.kbuf.wrt1, };
 	}else{
 		return { SOE_SUCCESS, fmt_ts - soe.kbuf.wrt0};
 	}
@@ -270,7 +275,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 		FMT_rx = acq400_FMT_rx::instance();
 	}
 
-	if (FMT_rx->waitFMT(CYCLE_MS) == 0){
+	if (FMT_rx->waitFMT(acq400_SOE::CYCLE_MS) == 0){
 		const FMT& latest = FMT_rx->get_fmt(0);
 		const epicsInt64 fmt_ts = latest[0].timestamp;
 
@@ -312,7 +317,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy2::operator() (
 	case SOE_SUCCESS:
 		rc.fmt_num = FMT_CUR;
 		return soe_lut_lookup(soe, fmt, ht, rc);
-	case E_FMT_TS_TOO_EARLY: {
+	case E_FMT_TS_TOO_EARLY_FOR_KB: {
 		const FMT& fmt_m1 = FMT_rx->get_fmt(1);
 
 		rc = timestamp_in_buf(soe, fmt_m1[0].timestamp);
@@ -323,20 +328,20 @@ acq400_SOE_Strategy::RC LutFmtStrategy2::operator() (
 		default:
 			return rc;
 		}
-	} case E_FMT_TS_TOO_LATE:
-		for (unsigned retry = 0, delay = CYCLE_MS/5; retry < 5; ++retry){
+	} case E_FMT_TS_TOO_LATE_FOR_KB:
+		for (unsigned retry = 0, delay = acq400_SOE::CYCLE_MS/5; retry < 5; ++retry){
 			if (FMT_rx->waitFMT(delay) == 0){
 				const FMT& latest = FMT_rx->get_fmt(0);
 				const epicsInt64 fmt_ts = latest[0].timestamp;
 				if (fmt_ts == fmt[0].timestamp){
 					continue;              // bogus:event was already set from a previous run
+				}else{
+					acq400_SOE_Strategy::RC rc = timestamp_in_buf(soe, fmt_ts);
+
+					rc = soe_lut_lookup(soe, latest, ht, rc);
+					rc.fmt_num = FMT_WAIT;
+					return rc;
 				}
-
-				acq400_SOE_Strategy::RC rc = timestamp_in_buf(soe, fmt_ts);
-
-				rc = soe_lut_lookup(soe, latest, ht, rc);
-				rc.fmt_num = FMT_WAIT;
-				return rc;
 			}
 		}
 		rc.status = E_TIMEOUT;
