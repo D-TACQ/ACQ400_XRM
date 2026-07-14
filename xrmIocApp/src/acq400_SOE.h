@@ -99,6 +99,7 @@
 #define PS_SOE_FMT_RX_SUCCESS   "SOE_FMT_RX_SUCCESS"
 #define PS_SOE_FMT_EV_MATCHES   "SOE_FMT_EV_MATCHES"
 #define PS_SOE_FMT_EV_NIB	"SOE_FMT_EV_NOT_IN_BUFFER"
+#define PS_SOE_FMT_BUF_POS	"SOE_FMT_BUF_POS"
 
 #define PS_SOE_HLD_TABLE_WF	"SOE_HLD_TABLE_WF" // raw event table.
 
@@ -278,6 +279,7 @@ protected:
 	int P_SOE_FMT_RX_SUCCESS;	/**< Stat: count timely received buffers */
 	int P_SOE_FMT_EV_MATCHES;	/**< Stat: count buffers with matching events */
 	int P_SOE_FMT_EV_NIB;		/**< Stat: count buffers with events NOT IN BUFFER */
+	int P_SOE_FMT_BUF_POS;		/**< Stat: buffer position: -1:PREV, 0:CUR, 1:NEXT */
 	int P_SOE_HLD_TABLE_WF;		/**< HLD Table full binary output for remote clients */
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */

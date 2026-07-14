@@ -134,6 +134,7 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	createParam(PS_SOE_FMT_RX_SUCCESS,	asynParamInt32, &P_SOE_FMT_RX_SUCCESS);
 	createParam(PS_SOE_FMT_EV_MATCHES,      asynParamInt32, &P_SOE_FMT_EV_MATCHES);
 	createParam(PS_SOE_FMT_EV_NIB,		asynParamInt32, &P_SOE_FMT_EV_NIB);
+	createParam(PS_SOE_FMT_BUF_POS,         asynParamInt32, &P_SOE_FMT_BUF_POS);
 	createParam(PS_SOE_HLD_TABLE_WF,	asynParamInt32Array, &P_SOE_HLD_TABLE_WF);
 
 	/* Create the thread that computes the waveforms in the background */
