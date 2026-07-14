@@ -135,6 +135,7 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	createParam(PS_SOE_FMT_EV_MATCHES,      asynParamInt32, &P_SOE_FMT_EV_MATCHES);
 	createParam(PS_SOE_FMT_EV_NIB,		asynParamInt32, &P_SOE_FMT_EV_NIB);
 	createParam(PS_SOE_FMT_BUF_POS,         asynParamInt32, &P_SOE_FMT_BUF_POS);
+	createParam(PS_SOE_FMT_NEXT_RETRY,	asynParamInt32, &P_SOE_FMT_NEXT_RETRY);
 	createParam(PS_SOE_HLD_TABLE_WF,	asynParamInt32Array, &P_SOE_HLD_TABLE_WF);
 
 	/* Create the thread that computes the waveforms in the background */
@@ -375,10 +376,12 @@ void acq400_SOE::task()
 					(*strategy)({current_kb, samplePrams, soe_lut},
 					the_hold_table);
 
-			sip(0, P_SOE_FMT_RX_TIMEOUT_REASON, rc.status);
-			sip(0, P_SOE_FMT_DELTA_TS, rc.delta_us);
-			sip(0, P_SOE_FMT_EV_MATCHES, rc.events_accepted);
-			sip(0, P_SOE_FMT_EV_NIB, rc.events_not_in_buffer);
+			sip(0, P_SOE_FMT_RX_TIMEOUT_REASON, 	rc.status);
+			sip(0, P_SOE_FMT_DELTA_TS, 		rc.delta_us);
+			sip(0, P_SOE_FMT_EV_MATCHES, 		rc.events_accepted);
+			sip(0, P_SOE_FMT_EV_NIB, 		rc.events_not_in_buffer);
+			sip(0, P_SOE_FMT_BUF_POS,		rc.fmt_num);
+			sip(0, P_SOE_FMT_NEXT_RETRY, 		rc.next_retry);
 
 			if (rc.status != 0){
 				sip(0, P_SOE_FMT_RX_TIMEOUTS, ++fmt_rx_timeouts);

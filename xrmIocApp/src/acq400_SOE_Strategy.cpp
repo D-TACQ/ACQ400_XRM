@@ -340,6 +340,7 @@ acq400_SOE_Strategy::RC LutFmtStrategy2::operator() (
 
 					rc = soe_lut_lookup(soe, latest, ht, rc);
 					rc.fmt_num = FMT_WAIT;
+					rc.next_retry = retry;
 					return rc;
 				}
 			}

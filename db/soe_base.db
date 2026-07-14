@@ -122,6 +122,18 @@ record(longin, "${UUT}:SOE:FMT:BUF_POS")
 	field(DESC, "FMT buffer in use -1:PRE, 0:CUR, 1:NEXT")
 }
 
+
+record(longin, "${UUT}:SOE:FMT:NEXT_RETRY")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_NEXT_RETRY")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+
+	field(DESC, "if NEXT, number of retries (delay CYCLE/5)")
+}
+
 record(int64in, "${UUT}:SOE:TS_USEC")
 {
 	field(PINI, "NO")

@@ -100,6 +100,7 @@
 #define PS_SOE_FMT_EV_MATCHES   "SOE_FMT_EV_MATCHES"
 #define PS_SOE_FMT_EV_NIB	"SOE_FMT_EV_NOT_IN_BUFFER"
 #define PS_SOE_FMT_BUF_POS	"SOE_FMT_BUF_POS"
+#define PS_SOE_FMT_NEXT_RETRY	"SOE_FMT_NEXT_RETRY"
 
 #define PS_SOE_HLD_TABLE_WF	"SOE_HLD_TABLE_WF" // raw event table.
 
@@ -142,6 +143,7 @@ public:
 		short events_accepted;
 		short events_not_in_buffer;
 		FMT_NUM fmt_num;
+		short next_retry;
 	};
 	/** implements strategy, .. waitFMT, compare LUT, look up data in raw and build output <ht> */
 	virtual RC operator() (const SOE_DIMS& soe, SOE_HOLD_TABLE ht) = 0;
@@ -280,6 +282,7 @@ protected:
 	int P_SOE_FMT_EV_MATCHES;	/**< Stat: count buffers with matching events */
 	int P_SOE_FMT_EV_NIB;		/**< Stat: count buffers with events NOT IN BUFFER */
 	int P_SOE_FMT_BUF_POS;		/**< Stat: buffer position: -1:PREV, 0:CUR, 1:NEXT */
+	int P_SOE_FMT_NEXT_RETRY;	/**< Stat: if next, number of retrys */
 	int P_SOE_HLD_TABLE_WF;		/**< HLD Table full binary output for remote clients */
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
