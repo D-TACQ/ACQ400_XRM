@@ -78,7 +78,7 @@ if [ "$BR" = "main" ]; then
 else
 	echo building branch $BR
         BR1=$(echo $BR | tr //- _)
-	if [ "$BR1" != "$BR" ];; then
+	if [ "$BR1" != "$BR" ]; then
 		BR="$BR1"
 		echo BR fixed to $BR
 	fi
