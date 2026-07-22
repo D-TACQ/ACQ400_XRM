@@ -63,7 +63,7 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 	unsigned short ht_data_offset = HOLD_DATA_OFF()/sizeof(U32);
 
 	for (int row = 0; row < SOE_HLD_ROWS; ++row,
-			ht_data_offset += SSL*stride, sp_raw += SSL*stride, raw += SSB*stride){
+			ht_data_offset += SSL, sp_raw += SSL*stride, raw += SSB*stride){
 		unsigned wrs, wrv;
 
 		ht[row].pv_id = soe.lut[row].pv_id;
@@ -76,7 +76,7 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 		ht[row].data_offset = ht_data_offset;
 		memcpy((U32*)ht+ht_data_offset, raw, SSB);
 	}
-	ht_data_offset += SSL*stride;
+	ht_data_offset += SSL;
 
 	acq400_SOE_Strategy::RC rc = {
 			SOE_SUCCESS, 0LL, ht_data_offset, SOE_HLD_ROWS, 0,
@@ -260,8 +260,6 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::timestamp_in_buf(
 	if (fmt_ts < soe.kbuf.wrt0-deadBand_us()){
 		return { E_FMT_TS_TOO_LATE_FOR_KB, soe.kbuf.wrt0-fmt_ts, };
 	}else if (fmt_ts > soe.kbuf.wrt1+deadBand_us()){
-		fprintf(stderr, "FMT TOO EARLY %llu > %llu by %llu\n",
-				fmt_ts, soe.kbuf.wrt1, fmt_ts-soe.kbuf.wrt1);
 		return { E_FMT_TS_TOO_EARLY_FOR_KB, fmt_ts-soe.kbuf.wrt1, };
 	}else{
 		return { SOE_SUCCESS, fmt_ts - soe.kbuf.wrt0};
@@ -317,18 +315,20 @@ acq400_SOE_Strategy::RC LutFmtStrategy2::operator() (
 	case SOE_SUCCESS:
 		rc.fmt_num = FMT_CUR;
 		return soe_lut_lookup(soe, fmt, ht, rc);
-	case E_FMT_TS_TOO_EARLY_FOR_KB: {
-		const FMT& fmt_m1 = FMT_rx->get_fmt(1);
+	case E_FMT_TS_TOO_EARLY_FOR_KB:
+		{
+			const FMT& fmt_m1 = FMT_rx->get_fmt(1);
 
-		rc = timestamp_in_buf(soe, fmt_m1[0].timestamp);
-		rc.fmt_num = FMT_PRE;
-		switch(rc.status){
-		case SOE_SUCCESS:
-			return soe_lut_lookup(soe, fmt_m1, ht, rc);
-		default:
-			return rc;
+			rc = timestamp_in_buf(soe, fmt_m1[0].timestamp);
+			rc.fmt_num = FMT_PRE;
+			switch(rc.status){
+			case SOE_SUCCESS:
+				return soe_lut_lookup(soe, fmt_m1, ht, rc);
+			default:
+				return rc;
+			}
 		}
-	} case E_FMT_TS_TOO_LATE_FOR_KB:
+	case E_FMT_TS_TOO_LATE_FOR_KB:
 		for (unsigned retry = 0, delay = acq400_SOE::CYCLE_MS/5; retry < 5; ++retry){
 			if (FMT_rx->waitFMT(delay) == 0){
 				const FMT& latest = FMT_rx->get_fmt(0);
