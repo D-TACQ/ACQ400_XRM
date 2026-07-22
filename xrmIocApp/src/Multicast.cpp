@@ -156,7 +156,8 @@ public:
 
 	virtual int recvfrom(void* message, int len) {
 
-		if (verbose > 1 )printf("MultiCastReceiver()::recvfrom 01 sock:%d\n", sock);
+		if (verbose > 1 )printf("MultiCastReceiver()::recvfrom 01 sock:%d addr:%s addrlen:%d\n",
+				sock, inet_ntoa(addr.sin_addr), addrlen);
 		int rc = ::recvfrom(sock, message, len, 0,
 				(struct sockaddr *) &addr, &addrlen);
 		if (rc < 0) {
