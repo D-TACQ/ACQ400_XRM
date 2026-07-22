@@ -158,7 +158,8 @@ acq400_FMT_Sim::acq400_FMT_Sim(
 	/* Autoconnect */       1,
 	/* Default priority */  0,
 	/* Default stack size*/ 0),
-	timeProvider(_timeProvider)
+	timeProvider(_timeProvider),
+	delay_ms(0)
 {
 	asynStatus status = asynSuccess;
 
@@ -170,6 +171,7 @@ acq400_FMT_Sim::acq400_FMT_Sim(
 	createParam(PS_FMT_REDIT_CLIDAT, 	asynParamInt32, &P_FMT_REDIT_CLIDAT);
 	createParam(PS_FMT_REDIT_CLIDAT_STEP, 	asynParamInt32, &P_FMT_REDIT_CLIDAT_STEP);
 	createParam(PS_FMT_REDIT_COMMIT,	asynParamInt32, &P_FMT_REDIT_COMMIT);
+	createParam(PS_FMT_DELAY,		asynParamInt32, &P_FMT_DELAY);
 
 
 	/* Create the thread that computes the waveforms in the background */
@@ -210,6 +212,9 @@ void acq400_FMT_Sim::task(void) {
 				update_fmt(fmt, true);
 			}else{
 				update_fmt(fmt, false);
+				if (delay_ms){
+					usleep(delay_ms*1000);
+				}
 				multicast.sendto(fmt, sizeof(FMT));
 				rateLimit.newData(mrl_param);
 				if (rateLimit.goAhead()){
@@ -280,6 +285,8 @@ asynStatus acq400_FMT_Sim::writeInt32(asynUser *pasynUser, epicsInt32 value)
 		    redit();
 	    }else if (function == P_MON_RL){
 		    mrl_param = value;
+	    }else if (function == P_FMT_DELAY){
+		    delay_ms = value;
 	    }
 
 	    /* Do callbacks so higher layers see any changes */
