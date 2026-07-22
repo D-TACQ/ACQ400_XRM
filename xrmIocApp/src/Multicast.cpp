@@ -141,6 +141,7 @@ public:
 		}
 		mreq.imr_multiaddr.s_addr = inet_addr(group);
 		if (multicast_if != 0){
+			if (verbose) printf("MultiCastReceiver sock:%d (TX) multicast_if:%s\n", sock, multicast_if);
 			mreq.imr_interface.s_addr = inet_addr(multicast_if);
 		}else{
 			mreq.imr_interface.s_addr = htonl(INADDR_ANY);
@@ -150,12 +151,12 @@ public:
 			perror("setsockopt mreq");
 			exit(1);
 		}
-		if (verbose) printf("MultiCastReceiver() 99\n");
+		if (verbose) printf("MultiCastReceiver() 99 sock:%d\n", sock);
 	}
 
 	virtual int recvfrom(void* message, int len) {
 
-		if (verbose > 1 )printf("MultiCastReceiver()::recvfrom 01\n");
+		if (verbose > 1 )printf("MultiCastReceiver()::recvfrom 01 sock:%d\n", sock);
 		int rc = ::recvfrom(sock, message, len, 0,
 				(struct sockaddr *) &addr, &addrlen);
 		if (rc < 0) {
