@@ -198,7 +198,6 @@ protected:
 
 	SamplePrams samplePrams;
 	void get_sample_dimensions();
-
 	void init_the_hold_table();
 
 	void redit();
@@ -211,6 +210,7 @@ protected:
 	virtual void update_hld_tab_columns_callbacks(void);
 
 	struct KBUF current_kb;
+	inline char* get_raw();
 	void update_kbuf_info(char* raw);
 
 	virtual void task();

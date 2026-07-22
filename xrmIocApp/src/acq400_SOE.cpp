@@ -327,14 +327,14 @@ void acq400_SOE::update_kbuf_info(char* raw)
 				count0, count1, current_kb.wrt0, current_kb.wrt1);
 	}
 
-
-	sip(0, P_SOE_KBUF_INDEX, current_kb.ib = ib);
-	sip(0, P_SOE_KBUF_WRT0,  current_kb.wrt0);
-	sip(0, P_SOE_KBUF_WRT1,  current_kb.wrt1);
-
+	current_kb.ib = ib;
 	current_kb.raw = raw;
 }
 
+char* acq400_SOE::get_raw()
+{
+	return Buffer::the_buffers[ib]->getBase() + SKIP_ES*samplePrams.SSB;
+}
 void acq400_SOE::task()
 {
 	epicsEventWait(eventId);
@@ -367,14 +367,15 @@ void acq400_SOE::task()
 			}
 			clearHold();
 
-			char* raw = Buffer::the_buffers[ib]->getBase() +
-					SKIP_ES*samplePrams.SSB;
-
-			update_kbuf_info(raw);
+			update_kbuf_info(get_raw());
 
 			const acq400_SOE_Strategy::RC rc =
 					(*strategy)({current_kb, samplePrams, soe_lut},
 					the_hold_table);
+
+			sip(0, P_SOE_KBUF_INDEX, current_kb.ib);
+			sip(0, P_SOE_KBUF_WRT0,  current_kb.wrt0);
+			sip(0, P_SOE_KBUF_WRT1,  current_kb.wrt1);
 
 			sip(0, P_SOE_FMT_RX_TIMEOUT_REASON, 	rc.status);
 			sip(0, P_SOE_FMT_DELTA_TS, 		rc.delta_us);

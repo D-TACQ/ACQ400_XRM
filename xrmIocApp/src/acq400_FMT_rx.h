@@ -40,6 +40,7 @@ public:
 
 	virtual ~acq400_FMT_rx();
 
+	const FMT& get_fmt(unsigned icache);
 
 	int waitFMT(unsigned timeout_ms);
 	/**< clients block for FMT arrival. */

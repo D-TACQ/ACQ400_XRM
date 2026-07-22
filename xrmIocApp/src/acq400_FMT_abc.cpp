@@ -56,12 +56,6 @@ acq400_FMT_abc::acq400_FMT_abc(
 	setIntegerParam(P_FMT_MC_PORT, G::fmt_mc_port);
 }
 
-const FMT& acq400_FMT_abc::get_fmt(int icache)
-{
-	assert(icache >= 0 && icache < n_cache);
-	return fmt_cache[icache];
-}
-
 
 void acq400_FMT_abc::init_mc_url(char* group, int maxgroup, int *port)
 {

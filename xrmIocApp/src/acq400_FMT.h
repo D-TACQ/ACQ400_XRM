@@ -80,7 +80,6 @@ protected:
 	virtual ~acq400_FMT_abc() {}
 
 public:
-	const FMT& get_fmt(int icache = 0);
 };
 
 

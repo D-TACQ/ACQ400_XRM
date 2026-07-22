@@ -207,6 +207,13 @@ int acq400_FMT_rx::waitFMT(unsigned timeout_ms)
 		return -1;		// doesn't happen0
 	}
 }
+
+const FMT& acq400_FMT_rx::get_fmt(unsigned icache)
+{
+	assert(icache < filled.size());
+	return fmt_cache[filled[icache]];
+}
+
 acq400_FMT_rx* acq400_FMT_rx::instance(const char* portName)
 {
 	static acq400_FMT_rx* _instance;
