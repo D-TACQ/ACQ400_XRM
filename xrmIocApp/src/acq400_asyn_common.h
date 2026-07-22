@@ -28,6 +28,14 @@
 #include <stdio.h>
 #include <string.h>
 
+/* fix printf compiler warning */
+#ifdef __arm__
+#define FMTSZT "%u"
+#else
+#define FMTSZT "%lu"
+#endif
+
+
 #define SP0	0
 #define SP1	1
 #define SP2	2
