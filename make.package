@@ -21,7 +21,7 @@ mkdir -p opkg/usr/local/bin/ opkg/usr/local/init/ \
 	opkg/usr/local/xrm/epics/dbd/ \
 	opkg/usr/local/xrm/epics/db  \
 	opkg/usr/local/xrm/epics/protocols \
-	opkg/usr/local/xrm/epics/scripts \
+	opkg/usr/local/xrm/epics/scripts/wireshark \
 	opkg/usr/local/xrm/epics/init.d \
 	opkg/usr/local/CARE
 
@@ -65,6 +65,7 @@ if [ -z "$BR" ]; then
 	BR=epics7
 fi
 
+
 if [[ -n $(git status --porcelain) ]]; then
 	GS="dirty_"
 else
@@ -77,7 +78,7 @@ if [ "$BR" = "main" ]; then
 else
 	echo building branch $BR
         BR1=$(echo $BR | tr //- _)
-	if [ "$BR1" != "$BR" ];; then
+	if [ "$BR1" != "$BR" ]; then
 		BR="$BR1"
 		echo BR fixed to $BR
 	fi
