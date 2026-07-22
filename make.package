@@ -77,8 +77,11 @@ if [ "$BR" = "main" ]; then
 	BC=$GS
 else
 	echo building branch $BR
-	BR=$(echo $BR | tr //- _)
-	echo BR fixed to $BR
+        BR1=$(echo $BR | tr //- _)
+	if [ "$BR1" != "$BR" ];; then
+		BR="$BR1"
+		echo BR fixed to $BR
+	fi
 	BC="${BR}_${GS}"
 fi
 RN=${SEQ}-${PACKAGE}-${BC}${DC}.tgz

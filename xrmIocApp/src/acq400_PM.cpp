@@ -29,8 +29,7 @@ int acq400_PM::buffer_throttle_modulo = ::getenv_default("acq400_PM_buffer_throt
 #define SSB			(samplePrams.SSB)
 #define TRANSLEN		(samplePrams.NSAM)
 #define BURST_LW 		(SSB*TRANSLEN/sizeof(int))
-#define SOE_SMPL_DI_INDEX	16
-#define SOE_SMPL_SP_INDEX	17
+#define SOE_SMPL_SP_INDEX	(samplePrams.SP_INDEX)
 
 
 
