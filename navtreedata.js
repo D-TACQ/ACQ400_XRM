@@ -25,10 +25,11 @@
 var NAVTREE =
 [
   [ "ACQ400_XRM (xrmIoc)", "index.html", [
-    [ "ACQ400_XRM README", "index.html", "index" ],
+    [ "ACQ400_XRM README", "index.html", null ],
     [ "PVA from HOST cmdline", "md_doc_22026-03-25_01Validating_01the_01HT_01with_01json_01_09_01python.html", null ],
     [ "2026-04-01 FNAL TIMESTAMP", "md_doc_22026-04-01_01_01FNAL_01TIMESTAMP.html", null ],
-    [ "ACQ400_XRM : xrmIoc", "md_README.html", null ],
+    [ "README", "md_README.html", null ],
+    [ "XRM_STRUCTS", "md_XRM__STRUCTS.html", null ],
     [ "Todo List", "todo.html", null ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],

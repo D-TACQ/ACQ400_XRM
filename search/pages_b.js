@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['readme_0',['ACQ400_XRM README',['../index.html',1,'']]]
+  ['series_20devices_0',['xrmIoc creates the custom functionality and public interface for the XRM series devices.',['../index.html#autotoc_md1',1,'']]]
 ];

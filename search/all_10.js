@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['newdata_0',['newData',['../classacq400__asynPortDriver_1_1MonitorRateLimit.html#a1f5830f0dff58edcf93b5c4b887b37c2',1,'acq400_asynPortDriver::MonitorRateLimit']]],
-  ['nsam_1',['NSAM',['../structSamplePrams.html#a1a3c4e502a01ce7e5dc06e5dd910690a',1,'SamplePrams']]],
-  ['nullstrategy_2',['NullStrategy',['../classNullStrategy.html',1,'']]]
+  ['offset_5fus_0',['offset_us',['../structSOE__LUT__ROW.html#a510773f491f530929bb6d555f73ba32b',1,'SOE_LUT_ROW']]],
+  ['operator_28_29_1',['operator()',['../classacq400__SOE__Strategy.html#a78ec905ecf06000e8eadcef92186419e',1,'acq400_SOE_Strategy::operator()()'],['../classLutFmtStrategy1.html#a69c14d365746525a6bc5b51df3468705',1,'LutFmtStrategy1::operator()()'],['../classLutFmtStrategy2.html#a7c0fad59c377b512839552655a4a1887',1,'LutFmtStrategy2::operator()()']]]
 ];
