@@ -118,7 +118,20 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('acq400__PM_8h_
   <div class="headertitle"><div class="title">acq400_PM.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="acq400__PM_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<a href="acq400__PM_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/** @file acq400_PM.h  : acq400_PM : Post Mortem class.</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * @brief handles Post Mortem, one ADDRESS per PMBUF</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> - ACQ400 has supplied PM data from the start &quot;TRANSIENT&quot;.</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> - however, TRANSIENT is a one shot, start, stop, off-load</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment"> - XRM calls for a &quot;live PM&quot; that allows the capture to continue.</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">  - We do this by copying EVERY capture buffer, maintaining a ring-buffer of the previous second.</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment">  - The previous second is presented as :PM:00 latest .. PM:19: oldest</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">  - acq400_PM has a RUNSTOP paramter. On run, the ring-buffer is maintained as normal</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">  - on STOP, the PM buffers are published for external client use.</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment"> *  Created on: 6 Mar 2026</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment"> *      Author: pgm</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#ifndef XRMIOCAPP_SRC_ACQ400_PM_H_</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#define XRMIOCAPP_SRC_ACQ400_PM_H_</span></div>
@@ -220,7 +233,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('acq400__PM_8h_
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keywordtype">int</span> P_COL_WRVT;</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keywordtype">int</span> P_COL_WRUS;</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keywordtype">int</span> ib;         </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keywordtype">int</span> ib;         <span class="comment">/** ib is physical buffer contains bpb vpb&#39;s */</span></div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <a class="code hl_function" href="classacq400__PM.html#a98d10ba315b194871fa90f1ad76a9344">acq400_PM</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *portName);</div>

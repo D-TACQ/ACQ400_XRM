@@ -144,7 +144,9 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('md_doc_22026-0
 <div class="line"><span class="keyword">static</span> <span class="keyword">inline</span></div>
 <div class="line">epicsInt64 getWrTsUs(<span class="keywordtype">unsigned</span> wrse, <span class="keywordtype">unsigned</span> wrv)</div>
 <div class="line"> </div>
-<div class="line"></div>
+<div class="line"><span class="comment">/**&lt; create full Timestamp from &lt;wrse&gt; White Rabbit Seconds from Epoch and</span></div>
+<div class="line"><span class="comment">* &lt;wrv&gt; : White Rabbit Vernier, the coded output from the WR firmware.</span></div>
+<div class="line"><span class="comment">*/</span></div>
 <div class="line"> </div>
 <div class="line">{</div>
 <div class="line">    <span class="keywordtype">unsigned</span> sec = (wrv &gt;&gt; 28)&amp;0x07;</div>
@@ -165,7 +167,12 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('md_doc_22026-0
 <div class="line"><span class="preprocessor">#define NSPS 1000000000</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">static</span> <span class="keyword">inline</span></div>
-<div class="line">epicsInt64 getWrTsNs(<span class="keywordtype">unsigned</span> wrse, <span class="keywordtype">unsigned</span> wrv)</div>
+<div class="line">epicsInt64 getWrTsNs(<span class="keywordtype">unsigned</span> wrse, <span class="keywordtype">unsigned</span> wrv)<span class="comment"></span></div>
+<div class="line"><span class="comment">/**&lt; create full Timestamp from &lt;wrse&gt; White Rabbit Seconds from Epoch and</span></div>
+<div class="line"><span class="comment">* &lt;wrv&gt; : White Rabbit Vernier, the coded output from the WR firmware.</span></div>
+<div class="line"><span class="comment">* wrv max = 40e6. 40e6 * 25 = 0x369aca00 -&gt; fits a u32</span></div>
+<div class="line"><span class="comment">* our 28 bit vernier is good to 250MHz.</span></div>
+<div class="line"><span class="comment">*/</span></div>
 <div class="line">{</div>
 <div class="line">    <span class="keywordtype">unsigned</span> sec = (wrv &gt;&gt; 28)&amp;0x07;</div>
 <div class="line"> </div>

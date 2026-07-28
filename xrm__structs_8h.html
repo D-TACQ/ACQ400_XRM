@@ -122,15 +122,16 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('xrm__structs_8
 <p>Declarations for key XRM structures for internal and wire (external) use.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;epicsTypes.h&gt;</code><br />
+<code>#include &lt;cstring&gt;</code><br />
 </div>
 <p><a href="xrm__structs_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:FMT_5FROW" id="r_FMT_5FROW"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structFMT__ROW.html">FMT_ROW</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structFMT__ROW.html" title="FMT_ROW defines a row of FMT:">FMT_ROW</a> defines a row of <a class="el" href="#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table.">FMT</a>:  <a href="structFMT__ROW.html#details">More...</a><br /></td></tr>
 <tr class="memitem:SOE_5FLUT_5FROW" id="r_SOE_5FLUT_5FROW"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structSOE__LUT__ROW.html">SOE_LUT_ROW</a></td></tr>
-<tr class="memitem:SOE_5FHOLD_5FHEADER" id="r_SOE_5FHOLD_5FHEADER"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structSOE__HOLD__HEADER.html">SOE_HOLD_HEADER</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">SOE_HOLD_TABLE This is the OUTPUT from each CYCLE For N events, the OUTPUT comprises: N+1 <a class="el" href="structSOE__HOLD__HEADER.html" title="SOE_HOLD_TABLE This is the OUTPUT from each CYCLE For N events, the OUTPUT comprises: N+1 SOE_HOLD_HE...">SOE_HOLD_HEADER</a> rows, headers for N events + 1 row of zeros N RAW SAMPLE rows.  <a href="structSOE__HOLD__HEADER.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structSOE__LUT__ROW.html" title="SOE_LUT_ROW defines a row of SOE_LUT.">SOE_LUT_ROW</a> defines a row of <a class="el" href="#a547b3745cbead80d29fda4eeac8faf28" title="SOE_LUT Sample On Event Lookup Table definition.">SOE_LUT</a>.  <a href="structSOE__LUT__ROW.html#details">More...</a><br /></td></tr>
 <tr class="memitem:XRM_5FMAGPS_5FSAMPLE" id="r_XRM_5FMAGPS_5FSAMPLE"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structXRM__MAGPS__SAMPLE.html">XRM_MAGPS_SAMPLE</a></td></tr>
 <tr class="memitem:XRM_5FQPMS_5FSAMPLE" id="r_XRM_5FQPMS_5FSAMPLE"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structXRM__QPMS__SAMPLE.html">XRM_QPMS_SAMPLE</a></td></tr>
 <tr class="memitem:XRM_5FINST_5FA_5FSAMPLE" id="r_XRM_5FINST_5FA_5FSAMPLE"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structXRM__INST__A__SAMPLE.html">XRM_INST_A_SAMPLE</a></td></tr>
@@ -138,16 +139,14 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:af1a6b6471f8370aa1a2446aa06f3b4d2" id="r_af1a6b6471f8370aa1a2446aa06f3b4d2"><td class="memItemLeft"><a id="af1a6b6471f8370aa1a2446aa06f3b4d2" name="af1a6b6471f8370aa1a2446aa06f3b4d2"></a>
-typedef struct <a class="el" href="structFMT__ROW.html">FMT_ROW</a>&#160;</td><td class="memItemRight"><b>FMT</b>[FMT_ROWS]</td></tr>
-<tr class="memdesc:af1a6b6471f8370aa1a2446aa06f3b4d2"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table input from plant: 20Hz This is the binary implementation that goes out on ...">FMT</a> : FNAL Multicast Table input from plant: 20Hz This is the binary implementation that goes out on the wire. <br /></td></tr>
-<tr class="memitem:a547b3745cbead80d29fda4eeac8faf28" id="r_a547b3745cbead80d29fda4eeac8faf28"><td class="memItemLeft"><a id="a547b3745cbead80d29fda4eeac8faf28" name="a547b3745cbead80d29fda4eeac8faf28"></a>
-typedef struct <a class="el" href="structSOE__LUT__ROW.html">SOE_LUT_ROW</a>&#160;</td><td class="memItemRight"><b>SOE_LUT</b>[SOE_LUT_ROWS]</td></tr>
-<tr class="memdesc:a547b3745cbead80d29fda4eeac8faf28"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a547b3745cbead80d29fda4eeac8faf28" title="SOE_LUT definition.">SOE_LUT</a> definition. <br /></td></tr>
+<tr class="memitem:af1a6b6471f8370aa1a2446aa06f3b4d2" id="r_af1a6b6471f8370aa1a2446aa06f3b4d2"><td class="memItemLeft">typedef struct <a class="el" href="structFMT__ROW.html">FMT_ROW</a>&#160;</td><td class="memItemRight"><a class="el" href="#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a>[<a class="el" href="#af291fe2b6c66aba48603f433b83ef77f">FMT_ROWS</a>]</td></tr>
+<tr class="memdesc:af1a6b6471f8370aa1a2446aa06f3b4d2"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table.">FMT</a> : FNAL Multicast Table.  <br /></td></tr>
+<tr class="memitem:a547b3745cbead80d29fda4eeac8faf28" id="r_a547b3745cbead80d29fda4eeac8faf28"><td class="memItemLeft">typedef struct <a class="el" href="structSOE__LUT__ROW.html">SOE_LUT_ROW</a>&#160;</td><td class="memItemRight"><a class="el" href="#a547b3745cbead80d29fda4eeac8faf28">SOE_LUT</a>[SOE_LUT_ROWS]</td></tr>
+<tr class="memdesc:a547b3745cbead80d29fda4eeac8faf28"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a547b3745cbead80d29fda4eeac8faf28" title="SOE_LUT Sample On Event Lookup Table definition.">SOE_LUT</a> Sample On Event Lookup Table definition.  <br /></td></tr>
 <tr class="memitem:a30d3f19787c0fea6d6738384403c3253" id="r_a30d3f19787c0fea6d6738384403c3253"><td class="memItemLeft"><a id="a30d3f19787c0fea6d6738384403c3253" name="a30d3f19787c0fea6d6738384403c3253"></a>
 typedef epicsUInt32&#160;</td><td class="memItemRight"><b>U32</b></td></tr>
-<tr class="memitem:a6c2dc181070ba6bf8e6d955746cb2645" id="r_a6c2dc181070ba6bf8e6d955746cb2645"><td class="memItemLeft"><a id="a6c2dc181070ba6bf8e6d955746cb2645" name="a6c2dc181070ba6bf8e6d955746cb2645"></a>
-typedef struct <a class="el" href="structSOE__HOLD__HEADER.html">SOE_HOLD_HEADER</a> *&#160;</td><td class="memItemRight"><b>SOE_HOLD_TABLE</b></td></tr>
+<tr class="memitem:a6c2dc181070ba6bf8e6d955746cb2645" id="r_a6c2dc181070ba6bf8e6d955746cb2645"><td class="memItemLeft">typedef struct SOE_HOLD_HEADER *&#160;</td><td class="memItemRight"><a class="el" href="#a6c2dc181070ba6bf8e6d955746cb2645">SOE_HOLD_TABLE</a></td></tr>
+<tr class="memdesc:a6c2dc181070ba6bf8e6d955746cb2645"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c2dc181070ba6bf8e6d955746cb2645" title="SOE_HOLD_TABLE.">SOE_HOLD_TABLE</a>.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -156,16 +155,23 @@ void&#160;</td><td class="memItemRight"><b>print</b> (<a class="el" href="#af1a6
 <tr class="memitem:a31f8adf0695e66fc3c67e4e6bf495636" id="r_a31f8adf0695e66fc3c67e4e6bf495636"><td class="memItemLeft"><a id="a31f8adf0695e66fc3c67e4e6bf495636" name="a31f8adf0695e66fc3c67e4e6bf495636"></a>
 void&#160;</td><td class="memItemRight"><b>print</b> (<a class="el" href="#a547b3745cbead80d29fda4eeac8faf28">SOE_LUT</a> &amp;lut, bool verbose=false)</td></tr>
 <tr class="memitem:ace99f851b96b9c200152f422f0604cd2" id="r_ace99f851b96b9c200152f422f0604cd2"><td class="memItemLeft"><a id="ace99f851b96b9c200152f422f0604cd2" name="ace99f851b96b9c200152f422f0604cd2"></a>
-void&#160;</td><td class="memItemRight"><b>print</b> (<a class="el" href="structSOE__HOLD__HEADER.html">SOE_HOLD_HEADER</a> *ht, bool verbose=false)</td></tr>
+void&#160;</td><td class="memItemRight"><b>print</b> (SOE_HOLD_HEADER *ht, bool verbose=false)</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a88e3a54d366076867b47f9634d279f03" id="r_a88e3a54d366076867b47f9634d279f03"><td class="memItemLeft"><a id="a88e3a54d366076867b47f9634d279f03" name="a88e3a54d366076867b47f9634d279f03"></a>
 const epicsUInt16&#160;</td><td class="memItemRight"><b>EV99</b> = 65535U</td></tr>
-<tr class="memitem:af291fe2b6c66aba48603f433b83ef77f" id="r_af291fe2b6c66aba48603f433b83ef77f"><td class="memItemLeft"><a id="af291fe2b6c66aba48603f433b83ef77f" name="af291fe2b6c66aba48603f433b83ef77f"></a>
-const int&#160;</td><td class="memItemRight"><b>FMT_ROWS</b> = 64</td></tr>
+<tr class="memitem:af291fe2b6c66aba48603f433b83ef77f" id="r_af291fe2b6c66aba48603f433b83ef77f"><td class="memItemLeft">const int&#160;</td><td class="memItemRight"><a class="el" href="#af291fe2b6c66aba48603f433b83ef77f">FMT_ROWS</a> = 64</td></tr>
 <tr class="memitem:a84d74d007dbe00285ada00cdeed72669" id="r_a84d74d007dbe00285ada00cdeed72669"><td class="memItemLeft"><a id="a84d74d007dbe00285ada00cdeed72669" name="a84d74d007dbe00285ada00cdeed72669"></a>
 const int&#160;</td><td class="memItemRight"><b>SOE_LUT_ROWS</b> = 64</td></tr>
+<tr class="memitem:a348e9b580d9ef6e63dacd1d6a2c3dca5" id="r_a348e9b580d9ef6e63dacd1d6a2c3dca5"><td class="memItemLeft">epicsUInt32&#160;</td><td class="memItemRight"><a class="el" href="#a348e9b580d9ef6e63dacd1d6a2c3dca5">client_data</a></td></tr>
+<tr class="memdesc:a348e9b580d9ef6e63dacd1d6a2c3dca5"><td class="mdescLeft">&#160;</td><td class="mdescRight">SOE_HOLD_HEADER Header tow for Hold Table. struct SOE_HOLD_HEADER { epicsUInt32 pv_id; /**&lt; links Event and Offset.  <br /></td></tr>
+<tr class="memitem:a9b19ea574849f52bfdf44259d8e113ca" id="r_a9b19ea574849f52bfdf44259d8e113ca"><td class="memItemLeft">epicsInt64&#160;</td><td class="memItemRight"><a class="el" href="#a9b19ea574849f52bfdf44259d8e113ca">timestamp</a></td></tr>
+<tr class="memitem:aff6ec7ae0b06b0e0db8701a43d6a78cd" id="r_aff6ec7ae0b06b0e0db8701a43d6a78cd"><td class="memItemLeft">epicsUInt16&#160;</td><td class="memItemRight"><a class="el" href="#aff6ec7ae0b06b0e0db8701a43d6a78cd">data_offset</a></td></tr>
+<tr class="memitem:a87ae53e635c6a50449893ea4817a13df" id="r_a87ae53e635c6a50449893ea4817a13df"><td class="memItemLeft">epicsUInt8&#160;</td><td class="memItemRight"><a class="el" href="#a87ae53e635c6a50449893ea4817a13df">ss_u32</a></td></tr>
+<tr class="memitem:a43c809ccf3bb42c3cf64e0a4804bfe49" id="r_a43c809ccf3bb42c3cf64e0a4804bfe49"><td class="memItemLeft">epicsUInt8&#160;</td><td class="memItemRight"><a class="el" href="#a43c809ccf3bb42c3cf64e0a4804bfe49">ai_count</a></td></tr>
+<tr class="memitem:aeeaa5389f0525f4f132ad18cbe89b412" id="r_aeeaa5389f0525f4f132ad18cbe89b412"><td class="memItemLeft">epicsUInt8&#160;</td><td class="memItemRight"><a class="el" href="#aeeaa5389f0525f4f132ad18cbe89b412">di_count</a></td></tr>
+<tr class="memitem:a53e888cd19bd88fc73cba1ecb0e60b27" id="r_a53e888cd19bd88fc73cba1ecb0e60b27"><td class="memItemLeft">epicsUInt8&#160;</td><td class="memItemRight"><a class="el" href="#a53e888cd19bd88fc73cba1ecb0e60b27">sp_count</a></td></tr>
 <tr class="memitem:a48292075e9c0be7dc000fe0f80eeff93" id="r_a48292075e9c0be7dc000fe0f80eeff93"><td class="memItemLeft">const int&#160;</td><td class="memItemRight"><a class="el" href="#a48292075e9c0be7dc000fe0f80eeff93">SPAD0_SC</a> = 0</td></tr>
 <tr class="memitem:ab76b65d236ae2dfbdad7fddd4eba98d3" id="r_ab76b65d236ae2dfbdad7fddd4eba98d3"><td class="memItemLeft">const int&#160;</td><td class="memItemRight"><a class="el" href="#ab76b65d236ae2dfbdad7fddd4eba98d3">SPAD1_TS</a> = 1</td></tr>
 <tr class="memitem:a63aa30a3e31cfa4df1ba7c77a6cbd247" id="r_a63aa30a3e31cfa4df1ba7c77a6cbd247"><td class="memItemLeft"><a id="a63aa30a3e31cfa4df1ba7c77a6cbd247" name="a63aa30a3e31cfa4df1ba7c77a6cbd247"></a>
@@ -200,11 +206,272 @@ const int&#160;</td><td class="memItemRight"><b>XRM_INST_B_SP32</b> = 3</td></tr
 <ul>
 <li><a class="el" href="#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT">FMT</a></li>
 <li><a class="el" href="#a547b3745cbead80d29fda4eeac8faf28" title="SOE_LUT">SOE_LUT</a></li>
-<li><p class="startli">SOE_HOLD_TABLE <a class="el" href="xrm__structs_8h.html" title="Declarations for key XRM structures for internal and wire (external) use.">xrm_structs.h</a></p>
+<li><p class="startli"><a class="el" href="#a6c2dc181070ba6bf8e6d955746cb2645" title="SOE_HOLD_TABLE">SOE_HOLD_TABLE</a> <a class="el" href="xrm__structs_8h.html" title="Declarations for key XRM structures for internal and wire (external) use.">xrm_structs.h</a></p>
 <p class="startli">Created on: 6 Feb 2026 Author: pgm </p>
 </li>
 </ul>
-</div><a name="doc-var-members" id="doc-var-members"></a><h2 id="header-doc-var-members" class="groupheader">Variable Documentation</h2>
+</div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
+<a id="af1a6b6471f8370aa1a2446aa06f3b4d2" name="af1a6b6471f8370aa1a2446aa06f3b4d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1a6b6471f8370aa1a2446aa06f3b4d2">&#9670;&#160;</a></span>FMT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structFMT__ROW.html">FMT_ROW</a> FMT[<a class="el" href="#af291fe2b6c66aba48603f433b83ef77f">FMT_ROWS</a>]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table.">FMT</a> : FNAL Multicast Table. </p>
+<p>input from plant: 20Hz</p>
+<p>This is the binary implementation that goes out on the wire.</p>
+<p>each row of the <a class="el" href="#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table.">FMT</a> is a struct <a class="el" href="structFMT__ROW.html" title="FMT_ROW defines a row of FMT:">FMT_ROW</a>.</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">ROW  </th><th class="markdownTableHeadNone">event  </th><th class="markdownTableHeadNone">pad  </th><th class="markdownTableHeadNone">client_data  </th><th class="markdownTableHeadNone">timestamp  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int64  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">1  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int64  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">2  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int64  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">..  </td><td class="markdownTableBodyNone">...  </td><td class="markdownTableBodyNone">...  </td><td class="markdownTableBodyNone">...  </td><td class="markdownTableBodyNone">...  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">64  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int64  </td></tr>
+</table>
+
+</div>
+</div>
+<a id="a6c2dc181070ba6bf8e6d955746cb2645" name="a6c2dc181070ba6bf8e6d955746cb2645"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c2dc181070ba6bf8e6d955746cb2645">&#9670;&#160;</a></span>SOE_HOLD_TABLE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct SOE_HOLD_HEADER* <a class="el" href="#a6c2dc181070ba6bf8e6d955746cb2645">SOE_HOLD_TABLE</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="#a6c2dc181070ba6bf8e6d955746cb2645" title="SOE_HOLD_TABLE.">SOE_HOLD_TABLE</a>. </p>
+<ul>
+<li>This is the OUTPUT from each CYCLE</li>
+<li>For N events, the OUTPUT comprises:<ol type="1">
+<li>N+1 SOE_HOLD_HEADER rows, headers for N events + 1 row of zeros (DELIMITER)</li>
+<li>N RAW SAMPLE rows</li>
+</ol>
+</li>
+<li>The HEADER includes the geometry of the raw sample entries, so the data is self-describing.</li>
+<li>The RAW SAMPLE row varies per unit type, the fixed header includes info to access the RAW SAMPLE.</li>
+<li>We prefer to offer the RAW sample because<ul>
+<li>Blitting off a row of data is our most efficient transfer</li>
+<li>No conversion to EGU's. User to do that thanks to $UUT:*:EOFF,ESLO</li>
+<li>RAW sample includes METADATA for checking purposes.</li>
+</ul>
+</li>
+<li>To interpret a received HOLD DATA:<ul>
+<li>iterate the SOE_HOLD_HEADER rows until zero</li>
+<li>use data_offset to access the data.</li>
+</ul>
+</li>
+<li>In summary, the memory layout looks like this:</li>
+</ul>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">ROW  </th><th class="markdownTableHeadNone">pv_id  </th><th class="markdownTableHeadNone">client_data  </th><th class="markdownTableHeadNone">timestamp  </th><th class="markdownTableHeadNone">data_offset  </th><th class="markdownTableHeadNone">ss_u32  </th><th class="markdownTableHeadNone">ai_count  </th><th class="markdownTableHeadNone">di_count  </th><th class="markdownTableHeadNone">sp_count  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int64  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">1  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int64  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">...  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int64  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">DEL  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td></tr>
+</table>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">RAW  </th><th class="markdownTableHeadNone">ai  </th><th class="markdownTableHeadNone">di  </th><th class="markdownTableHeadNone">sp  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">R0  </td><td class="markdownTableBodyNone">i16  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">U32  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">R1  </td><td class="markdownTableBodyNone">i16  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">U32  </td></tr>
+</table>
+<div class="fragment"><div class="line"> Example 4 entries</div>
+<div class="line"> <span class="keyword">sizeof</span>(SOE_HOLD_HEADER==22)</div>
+<div class="line"> XRMMAGPS: SSB=128 ruler in byte*2:</div>
+<div class="line"> 00000111112222233333444445555566666777778888899999AAAAABBBBBCCCC</div>
+<div class="line"> 0246802468024680246802468024680246802468024680246802468024680246</div>
+<div class="line">|SOE HOLD 1 |</div>
+<div class="line">|SOE HOLD 2 |</div>
+<div class="line">|SOE HOLD 3 |</div>
+<div class="line">|SOE HOLD 4 |</div>
+<div class="line">|00000000000|</div>
+<div class="line">|RAW SMPL 1 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|</div>
+<div class="line">|RAW SMPL 2 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|</div>
+<div class="line">|RAW SMPL 3 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|</div>
+<div class="line">|RAW SMPL 4 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">showing the SOE HOLD struct on a line of bytes</div>
+<div class="line">0123456789012345678901|24680246802468024680246802468024680246802468024680246</div>
+<div class="line">PVID                  |    epicsUInt32 pv_id;</div>
+<div class="line">____CLID______________|    epicsUInt32 <a class="code hl_variable" href="#a348e9b580d9ef6e63dacd1d6a2c3dca5">client_data</a>;</div>
+<div class="line">________TIMSTAMP______|    epicsInt64 <a class="code hl_variable" href="#a9b19ea574849f52bfdf44259d8e113ca">timestamp</a>;</div>
+<div class="line">________________DO____|    epicsUInt16 <a class="code hl_variable" href="#aff6ec7ae0b06b0e0db8701a43d6a78cd">data_offset</a>;</div>
+<div class="line">__________________SADP|    epicsUInt8  <a class="code hl_variable" href="#a87ae53e635c6a50449893ea4817a13df">ss_u32</a>, <a class="code hl_variable" href="#a43c809ccf3bb42c3cf64e0a4804bfe49">ai_count</a>, <a class="code hl_variable" href="#aeeaa5389f0525f4f132ad18cbe89b412">di_count</a>, <a class="code hl_variable" href="#a53e888cd19bd88fc73cba1ecb0e60b27">sp_count</a>;</div>
+<div class="ttc" id="axrm__structs_8h_html_a348e9b580d9ef6e63dacd1d6a2c3dca5"><div class="ttname"><a href="#a348e9b580d9ef6e63dacd1d6a2c3dca5">client_data</a></div><div class="ttdeci">epicsUInt32 client_data</div><div class="ttdoc">SOE_HOLD_HEADER Header tow for Hold Table. struct SOE_HOLD_HEADER { epicsUInt32 pv_id; /**&lt; links Eve...</div><div class="ttdef"><b>Definition</b> xrm_structs.h:95</div></div>
+<div class="ttc" id="axrm__structs_8h_html_a43c809ccf3bb42c3cf64e0a4804bfe49"><div class="ttname"><a href="#a43c809ccf3bb42c3cf64e0a4804bfe49">ai_count</a></div><div class="ttdeci">epicsUInt8 ai_count</div><div class="ttdef"><b>Definition</b> xrm_structs.h:104</div></div>
+<div class="ttc" id="axrm__structs_8h_html_a53e888cd19bd88fc73cba1ecb0e60b27"><div class="ttname"><a href="#a53e888cd19bd88fc73cba1ecb0e60b27">sp_count</a></div><div class="ttdeci">epicsUInt8 sp_count</div><div class="ttdef"><b>Definition</b> xrm_structs.h:106</div></div>
+<div class="ttc" id="axrm__structs_8h_html_a87ae53e635c6a50449893ea4817a13df"><div class="ttname"><a href="#a87ae53e635c6a50449893ea4817a13df">ss_u32</a></div><div class="ttdeci">epicsUInt8 ss_u32</div><div class="ttdef"><b>Definition</b> xrm_structs.h:103</div></div>
+<div class="ttc" id="axrm__structs_8h_html_a9b19ea574849f52bfdf44259d8e113ca"><div class="ttname"><a href="#a9b19ea574849f52bfdf44259d8e113ca">timestamp</a></div><div class="ttdeci">epicsInt64 timestamp</div><div class="ttdef"><b>Definition</b> xrm_structs.h:96</div></div>
+<div class="ttc" id="axrm__structs_8h_html_aeeaa5389f0525f4f132ad18cbe89b412"><div class="ttname"><a href="#aeeaa5389f0525f4f132ad18cbe89b412">di_count</a></div><div class="ttdeci">epicsUInt8 di_count</div><div class="ttdef"><b>Definition</b> xrm_structs.h:105</div></div>
+<div class="ttc" id="axrm__structs_8h_html_aff6ec7ae0b06b0e0db8701a43d6a78cd"><div class="ttname"><a href="#aff6ec7ae0b06b0e0db8701a43d6a78cd">data_offset</a></div><div class="ttdeci">epicsUInt16 data_offset</div><div class="ttdef"><b>Definition</b> xrm_structs.h:97</div></div>
+</div><!-- fragment --><p>Actual wire protocol:</p><ul>
+<li>We meet the letter of the requirement by sending as a PVA ARRAY of U32<ul>
+<li>where NORD gives the overall size of the table, including DATA.</li>
+</ul>
+</li>
+<li>In the above example, MAGPS with 4 EVENTS,<ul>
+<li>NORD = (5 * sizeof(SOE_HOLD_HEADER))/sizeof(int32) + 4*SSB/sizeof(int32)</li>
+<li>NORD = (5 * 22)/4 + 128</li>
+<li>NORD = 156 @todo 22 is not a good size for the structure..</li>
+</ul>
+</li>
+</ul>
+<p>We've attempted to meet the spirit of the requirement using the PVXS API to create an Array of Groups, but this has not been a success. Happy to revisit later when we have an example that works. </p>
+
+</div>
+</div>
+<a id="a547b3745cbead80d29fda4eeac8faf28" name="a547b3745cbead80d29fda4eeac8faf28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a547b3745cbead80d29fda4eeac8faf28">&#9670;&#160;</a></span>SOE_LUT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structSOE__LUT__ROW.html">SOE_LUT_ROW</a> SOE_LUT[SOE_LUT_ROWS]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="#a547b3745cbead80d29fda4eeac8faf28" title="SOE_LUT Sample On Event Lookup Table definition.">SOE_LUT</a> Sample On Event Lookup Table definition. </p>
+<p>matches events to PV's with a selectable time offset.</p>
+<p>input from user at user-timescale.</p>
+<p>in EPICS, we provide a "ROW_EDIT" PV to enable update, this works well for Phoebus and P4P</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">ROW  </th><th class="markdownTableHeadNone">event  </th><th class="markdownTableHeadNone">pad  </th><th class="markdownTableHeadNone">pv_id  </th><th class="markdownTableHeadNone">offset_us  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int32  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">1  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int32  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">2  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int32  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">..  </td><td class="markdownTableBodyNone">...  </td><td class="markdownTableBodyNone">...  </td><td class="markdownTableBodyNone">...  </td><td class="markdownTableBodyNone">...  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">64  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int32  </td></tr>
+</table>
+
+</div>
+</div>
+<a name="doc-var-members" id="doc-var-members"></a><h2 id="header-doc-var-members" class="groupheader">Variable Documentation</h2>
+<a id="a43c809ccf3bb42c3cf64e0a4804bfe49" name="a43c809ccf3bb42c3cf64e0a4804bfe49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43c809ccf3bb42c3cf64e0a4804bfe49">&#9670;&#160;</a></span>ai_count</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">epicsUInt8 ai_count</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>number of AI (floats) in data </p>
+
+</div>
+</div>
+<a id="a348e9b580d9ef6e63dacd1d6a2c3dca5" name="a348e9b580d9ef6e63dacd1d6a2c3dca5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a348e9b580d9ef6e63dacd1d6a2c3dca5">&#9670;&#160;</a></span>client_data</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">epicsUInt32 client_data</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>SOE_HOLD_HEADER Header tow for Hold Table. struct SOE_HOLD_HEADER { epicsUInt32 pv_id; /**&lt; links Event and Offset. </p>
+<p>copied from <a class="el" href="#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table.">FMT</a> (if required) </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo</a></b></dt><dd>more required? <br  />
+ </dd></dl>
+
+</div>
+</div>
+<a id="aff6ec7ae0b06b0e0db8701a43d6a78cd" name="aff6ec7ae0b06b0e0db8701a43d6a78cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff6ec7ae0b06b0e0db8701a43d6a78cd">&#9670;&#160;</a></span>data_offset</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">epicsUInt16 data_offset</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>offset of RAW DATA in u32 from start of table. </p>
+
+</div>
+</div>
+<a id="aeeaa5389f0525f4f132ad18cbe89b412" name="aeeaa5389f0525f4f132ad18cbe89b412"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeeaa5389f0525f4f132ad18cbe89b412">&#9670;&#160;</a></span>di_count</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">epicsUInt8 di_count</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>number of DI (u32) in data </p>
+
+</div>
+</div>
+<a id="af291fe2b6c66aba48603f433b83ef77f" name="af291fe2b6c66aba48603f433b83ef77f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af291fe2b6c66aba48603f433b83ef77f">&#9670;&#160;</a></span>FMT_ROWS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int FMT_ROWS = 64</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>define number of rows in <a class="el" href="#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table.">FMT</a>. </p>
+
+</div>
+</div>
+<a id="a53e888cd19bd88fc73cba1ecb0e60b27" name="a53e888cd19bd88fc73cba1ecb0e60b27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a53e888cd19bd88fc73cba1ecb0e60b27">&#9670;&#160;</a></span>sp_count</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">epicsUInt8 sp_count</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>number of SP (u32) in data Scratch Pad (meta-data) </p>
+
+</div>
+</div>
 <a id="a48292075e9c0be7dc000fe0f80eeff93" name="a48292075e9c0be7dc000fe0f80eeff93"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a48292075e9c0be7dc000fe0f80eeff93">&#9670;&#160;</a></span>SPAD0_SC</h2>
 
@@ -232,6 +499,36 @@ const int&#160;</td><td class="memItemRight"><b>XRM_INST_B_SP32</b> = 3</td></tr
       </table>
 </div><div class="memdoc">
 <p>SPAD[1] is WR TS 3 bit seconds, 28 bit ticks </p>
+
+</div>
+</div>
+<a id="a87ae53e635c6a50449893ea4817a13df" name="a87ae53e635c6a50449893ea4817a13df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87ae53e635c6a50449893ea4817a13df">&#9670;&#160;</a></span>ss_u32</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">epicsUInt8 ss_u32</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>sample size (u32) </p>
+
+</div>
+</div>
+<a id="a9b19ea574849f52bfdf44259d8e113ca" name="a9b19ea574849f52bfdf44259d8e113ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b19ea574849f52bfdf44259d8e113ca">&#9670;&#160;</a></span>timestamp</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">epicsInt64 timestamp</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>cross check: which <a class="el" href="#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table.">FMT</a> update this derives from. </p>
 
 </div>
 </div>

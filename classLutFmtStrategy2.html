@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.17.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ACQ400_XRM (xrmIoc): NullStrategy Class Reference</title>
+<title>ACQ400_XRM (xrmIoc): LutFmtStrategy2 Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
 <script type="text/javascript" src="clipboard.js"></script>
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 <script type="text/javascript">
-document.addEventListener('DOMContentLoaded',() => { initNavTree('classNullStrategy.html','','classNullStrategy-members'); });
+document.addEventListener('DOMContentLoaded',() => { initNavTree('classLutFmtStrategy2.html','','classLutFmtStrategy2-members'); });
 </script>
 <div id="container">
 <div id="doc-content">
@@ -115,19 +115,26 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('classNullStrat
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">NullStrategy Class Reference</div></div>
+  <div class="headertitle"><div class="title">LutFmtStrategy2 Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="dynheader">
-Inheritance diagram for NullStrategy:</div>
+Inheritance diagram for LutFmtStrategy2:</div>
 <div class="dyncontent">
  <div class="center">
-  <img src="classNullStrategy.png" usemap="#NullStrategy_map" alt=""/>
-  <map id="NullStrategy_map" name="NullStrategy_map">
+  <img src="classLutFmtStrategy2.png" usemap="#LutFmtStrategy2_map" alt=""/>
+  <map id="LutFmtStrategy2_map" name="LutFmtStrategy2_map">
+<area href="classLutFmtStrategy1.html" alt="LutFmtStrategy1" shape="rect" coords="0,56,140,80"/>
 <area href="classacq400__SOE__Strategy.html" alt="acq400_SOE_Strategy" shape="rect" coords="0,0,140,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a7c0fad59c377b512839552655a4a1887" id="r_a7c0fad59c377b512839552655a4a1887"><td class="memItemLeft">virtual <a class="el" href="structacq400__SOE__Strategy_1_1RC.html">acq400_SOE_Strategy::RC</a>&#160;</td><td class="memItemRight"><a class="el" href="#a7c0fad59c377b512839552655a4a1887">operator()</a> (const <a class="el" href="structSOE__DIMS.html">SOE_DIMS</a> &amp;soe, <a class="el" href="xrm__structs_8h.html#a6c2dc181070ba6bf8e6d955746cb2645">SOE_HOLD_TABLE</a> ht)</td></tr>
+<tr class="inherit_header pub_methods_classLutFmtStrategy1"><td colspan="2">Public Member Functions inherited from <a class="el" href="classLutFmtStrategy1.html">LutFmtStrategy1</a></td></tr>
+<tr class="memitem:a3a839a7fb0e8df79c3f5b60cbedc94f3 pub_methods_classLutFmtStrategy1" id="r_a3a839a7fb0e8df79c3f5b60cbedc94f3"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="classLutFmtStrategy1.html#a3a839a7fb0e8df79c3f5b60cbedc94f3">deadBand_us</a> ()</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-friends" class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
 <tr class="memitem:a8e72ecd0022849530e2f8c25f9dbf77d" id="r_a8e72ecd0022849530e2f8c25f9dbf77d"><td class="memItemLeft"><a id="a8e72ecd0022849530e2f8c25f9dbf77d" name="a8e72ecd0022849530e2f8c25f9dbf77d"></a>
@@ -153,7 +160,52 @@ Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_static_methods_classacq400__SOE__Strategy"><td colspan="2">Static Public Member Functions inherited from <a class="el" href="classacq400__SOE__Strategy.html">acq400_SOE_Strategy</a></td></tr>
 <tr class="memitem:a2401f4b4dbe839c1bee6cc4f0663fe1f pub_static_methods_classacq400__SOE__Strategy" id="r_a2401f4b4dbe839c1bee6cc4f0663fe1f"><td class="memItemLeft">
 static <a class="el" href="classacq400__SOE__Strategy.html">acq400_SOE_Strategy</a> **&#160;</td><td class="memItemRight"><b>factory</b> ()</td></tr>
+<tr class="inherit_header pro_methods_classLutFmtStrategy1"><td colspan="2">Protected Member Functions inherited from <a class="el" href="classLutFmtStrategy1.html">LutFmtStrategy1</a></td></tr>
+<tr class="memitem:a87eb79f5105309e874a75ead4a7cfba3 pro_methods_classLutFmtStrategy1" id="r_a87eb79f5105309e874a75ead4a7cfba3"><td class="memItemLeft">
+<a class="el" href="structacq400__SOE__Strategy_1_1RC.html">RC</a>&#160;</td><td class="memItemRight"><b>soe_lut_lookup</b> (const <a class="el" href="structSOE__DIMS.html">SOE_DIMS</a> &amp;soe, const <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a> &amp;latest, <a class="el" href="xrm__structs_8h.html#a6c2dc181070ba6bf8e6d955746cb2645">SOE_HOLD_TABLE</a> ht, <a class="el" href="structacq400__SOE__Strategy_1_1RC.html">acq400_SOE_Strategy::RC</a> rc)</td></tr>
+<tr class="memitem:ad4a79fab2ea0a0ad1b8962bd5906020c pro_methods_classLutFmtStrategy1" id="r_ad4a79fab2ea0a0ad1b8962bd5906020c"><td class="memItemLeft">
+<a class="el" href="structacq400__SOE__Strategy_1_1RC.html">RC</a>&#160;</td><td class="memItemRight"><b>timestamp_in_buf</b> (const <a class="el" href="structSOE__DIMS.html">SOE_DIMS</a> &amp;soe, const epicsInt64 fmt_ts)</td></tr>
+<tr class="memitem:a25fc2ebd33f32c9745199c1bd9d6c0f6 pro_methods_classLutFmtStrategy1" id="r_a25fc2ebd33f32c9745199c1bd9d6c0f6"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>find_event_in_buf</b> (const <a class="el" href="structKBUF.html">KBUF</a> &amp;kbuf, const int ndata, epicsInt64 ev_ts)</td></tr>
+<tr class="memitem:ac1f1bb7bc9310012981274693b30f0e7 pro_methods_classLutFmtStrategy1" id="r_ac1f1bb7bc9310012981274693b30f0e7"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>build_hold_entry</b> (const <a class="el" href="structKBUF.html">KBUF</a> &amp;kbuf, const <a class="el" href="structSamplePrams.html">SamplePrams</a> &amp;samplePrams, const <a class="el" href="structFMT__ROW.html">FMT_ROW</a> &amp;fmt_row, const <a class="el" href="structSOE__LUT__ROW.html">SOE_LUT_ROW</a> &amp;lut_row, int bsi, <a class="el" href="xrm__structs_8h.html#a6c2dc181070ba6bf8e6d955746cb2645">SOE_HOLD_TABLE</a> ht, int ihold)</td></tr>
+<tr class="inherit_header pro_attribs_classLutFmtStrategy1"><td colspan="2">Protected Attributes inherited from <a class="el" href="classLutFmtStrategy1.html">LutFmtStrategy1</a></td></tr>
+<tr class="memitem:a005b7a1ff76478cb3ae76634997d99e6 pro_attribs_classLutFmtStrategy1" id="r_a005b7a1ff76478cb3ae76634997d99e6"><td class="memItemLeft">
+<a class="el" href="classacq400__FMT__rx.html">acq400_FMT_rx</a> *&#160;</td><td class="memItemRight"><b>FMT_rx</b></td></tr>
 </table>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="a7c0fad59c377b512839552655a4a1887" name="a7c0fad59c377b512839552655a4a1887"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c0fad59c377b512839552655a4a1887">&#9670;&#160;</a></span>operator()()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structacq400__SOE__Strategy_1_1RC.html">acq400_SOE_Strategy::RC</a> LutFmtStrategy2::operator() </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structSOE__DIMS.html">SOE_DIMS</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>soe</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="xrm__structs_8h.html#a6c2dc181070ba6bf8e6d955746cb2645">SOE_HOLD_TABLE</a></td>          <td class="paramname"><span class="paramname"><em>ht</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>implements strategy, .. waitFMT, compare LUT, look up data in raw and build output &lt;ht&gt; </p>
+
+<p>Reimplemented from <a class="el" href="classLutFmtStrategy1.html#a69c14d365746525a6bc5b51df3468705">LutFmtStrategy1</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>xrmIocApp/src/<a class="el" href="acq400__SOE__Strategy_8cpp.html">acq400_SOE_Strategy.cpp</a></li>
 </ul>
@@ -170,7 +222,7 @@ static <a class="el" href="classacq400__SOE__Strategy.html">acq400_SOE_Strategy<
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a href="classNullStrategy.html">NullStrategy</a></li>
+    <li class="navelem"><a href="classLutFmtStrategy2.html">LutFmtStrategy2</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.17.0 </li>
   </ul>
 </div>

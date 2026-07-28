@@ -125,12 +125,30 @@ Inheritance diagram for LutFmtStrategy1:</div>
   <img src="classLutFmtStrategy1.png" usemap="#LutFmtStrategy1_map" alt=""/>
   <map id="LutFmtStrategy1_map" name="LutFmtStrategy1_map">
 <area href="classacq400__SOE__Strategy.html" alt="acq400_SOE_Strategy" shape="rect" coords="0,0,140,24"/>
+<area href="classLutFmtStrategy2.html" alt="LutFmtStrategy2" shape="rect" coords="0,112,140,136"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:acf674654862583314d1458b91716e04e" id="r_acf674654862583314d1458b91716e04e"><td class="memItemLeft">virtual <a class="el" href="structacq400__SOE__Strategy_1_1RC.html">acq400_SOE_Strategy::RC</a>&#160;</td><td class="memItemRight"><a class="el" href="#acf674654862583314d1458b91716e04e">operator()</a> (const <a class="el" href="structKBUF.html">KBUF</a> &amp;kbuf, const <a class="el" href="structSamplePrams.html">SamplePrams</a> &amp;samplePrams, const <a class="el" href="xrm__structs_8h.html#a547b3745cbead80d29fda4eeac8faf28">SOE_LUT</a> &amp;soe_lut, SOE_HOLD_TABLE ht)</td></tr>
+<tr class="memitem:a3a839a7fb0e8df79c3f5b60cbedc94f3" id="r_a3a839a7fb0e8df79c3f5b60cbedc94f3"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a3a839a7fb0e8df79c3f5b60cbedc94f3">deadBand_us</a> ()</td></tr>
+<tr class="memitem:a69c14d365746525a6bc5b51df3468705" id="r_a69c14d365746525a6bc5b51df3468705"><td class="memItemLeft">virtual <a class="el" href="structacq400__SOE__Strategy_1_1RC.html">acq400_SOE_Strategy::RC</a>&#160;</td><td class="memItemRight"><a class="el" href="#a69c14d365746525a6bc5b51df3468705">operator()</a> (const <a class="el" href="structSOE__DIMS.html">SOE_DIMS</a> &amp;soe, <a class="el" href="xrm__structs_8h.html#a6c2dc181070ba6bf8e6d955746cb2645">SOE_HOLD_TABLE</a> ht)</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pro-methods" class="groupheader"><a id="pro-methods" name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a87eb79f5105309e874a75ead4a7cfba3" id="r_a87eb79f5105309e874a75ead4a7cfba3"><td class="memItemLeft"><a id="a87eb79f5105309e874a75ead4a7cfba3" name="a87eb79f5105309e874a75ead4a7cfba3"></a>
+<a class="el" href="structacq400__SOE__Strategy_1_1RC.html">RC</a>&#160;</td><td class="memItemRight"><b>soe_lut_lookup</b> (const <a class="el" href="structSOE__DIMS.html">SOE_DIMS</a> &amp;soe, const <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a> &amp;latest, <a class="el" href="xrm__structs_8h.html#a6c2dc181070ba6bf8e6d955746cb2645">SOE_HOLD_TABLE</a> ht, <a class="el" href="structacq400__SOE__Strategy_1_1RC.html">acq400_SOE_Strategy::RC</a> rc)</td></tr>
+<tr class="memitem:ad4a79fab2ea0a0ad1b8962bd5906020c" id="r_ad4a79fab2ea0a0ad1b8962bd5906020c"><td class="memItemLeft"><a id="ad4a79fab2ea0a0ad1b8962bd5906020c" name="ad4a79fab2ea0a0ad1b8962bd5906020c"></a>
+<a class="el" href="structacq400__SOE__Strategy_1_1RC.html">RC</a>&#160;</td><td class="memItemRight"><b>timestamp_in_buf</b> (const <a class="el" href="structSOE__DIMS.html">SOE_DIMS</a> &amp;soe, const epicsInt64 fmt_ts)</td></tr>
+<tr class="memitem:a25fc2ebd33f32c9745199c1bd9d6c0f6" id="r_a25fc2ebd33f32c9745199c1bd9d6c0f6"><td class="memItemLeft"><a id="a25fc2ebd33f32c9745199c1bd9d6c0f6" name="a25fc2ebd33f32c9745199c1bd9d6c0f6"></a>
+int&#160;</td><td class="memItemRight"><b>find_event_in_buf</b> (const <a class="el" href="structKBUF.html">KBUF</a> &amp;kbuf, const int ndata, epicsInt64 ev_ts)</td></tr>
+<tr class="memitem:ac1f1bb7bc9310012981274693b30f0e7" id="r_ac1f1bb7bc9310012981274693b30f0e7"><td class="memItemLeft"><a id="ac1f1bb7bc9310012981274693b30f0e7" name="ac1f1bb7bc9310012981274693b30f0e7"></a>
+int&#160;</td><td class="memItemRight"><b>build_hold_entry</b> (const <a class="el" href="structKBUF.html">KBUF</a> &amp;kbuf, const <a class="el" href="structSamplePrams.html">SamplePrams</a> &amp;samplePrams, const <a class="el" href="structFMT__ROW.html">FMT_ROW</a> &amp;fmt_row, const <a class="el" href="structSOE__LUT__ROW.html">SOE_LUT_ROW</a> &amp;lut_row, int bsi, <a class="el" href="xrm__structs_8h.html#a6c2dc181070ba6bf8e6d955746cb2645">SOE_HOLD_TABLE</a> ht, int ihold)</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pro-attribs" class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:a005b7a1ff76478cb3ae76634997d99e6" id="r_a005b7a1ff76478cb3ae76634997d99e6"><td class="memItemLeft"><a id="a005b7a1ff76478cb3ae76634997d99e6" name="a005b7a1ff76478cb3ae76634997d99e6"></a>
+<a class="el" href="classacq400__FMT__rx.html">acq400_FMT_rx</a> *&#160;</td><td class="memItemRight"><b>FMT_rx</b></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-friends" class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -142,20 +160,51 @@ Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_types_classacq400__SOE__Strategy"><td colspan="2">Public Types inherited from <a class="el" href="classacq400__SOE__Strategy.html">acq400_SOE_Strategy</a></td></tr>
 <tr class="memitem:a9560cdaebbd3f324834ec2086b2a8c10 pub_types_classacq400__SOE__Strategy" id="r_a9560cdaebbd3f324834ec2086b2a8c10"><td class="memItemLeft"><a id="a9560cdaebbd3f324834ec2086b2a8c10" name="a9560cdaebbd3f324834ec2086b2a8c10"></a>enum &#160;</td><td class="memItemRight"><b>ERR_CODES</b> { <br />
 &#160;&#160;<b>SOE_SUCCESS</b> = 0
-, <b>E_TIMEOUT</b> = 1
-, <b>E_FMT_TS_TOO_EARLY</b> = 2
-, <b>E_FMT_TS_TOO_LATE</b> = 3
+, <b>E_TIMEOUT</b> = -1
+, <b>E_FMT_TS_TOO_EARLY_FOR_KB</b> = -2
+, <b>E_FMT_TS_TOO_LATE_FOR_KB</b> = -3
 , <br />
-&#160;&#160;<b>E_FMT_NO_EVENTS_FOUND</b> = 4
+&#160;&#160;<b>E_FMT_NO_EVENTS_FOUND</b> = -4
+, <b>E_FMT_UNDEFINED</b> = -99
 <br />
+ }</td></tr>
+<tr class="memitem:aeca5b5c19093e375c564e04ebf821205 pub_types_classacq400__SOE__Strategy" id="r_aeca5b5c19093e375c564e04ebf821205"><td class="memItemLeft"><a id="aeca5b5c19093e375c564e04ebf821205" name="aeca5b5c19093e375c564e04ebf821205"></a>enum &#160;</td><td class="memItemRight"><b>FMT_NUM</b> { <b>FMT_PRE</b> = -1
+, <b>FMT_CUR</b> = 0
+, <b>FMT_WAIT</b> = 1
  }</td></tr>
 <tr class="inherit_header pub_static_methods_classacq400__SOE__Strategy"><td colspan="2">Static Public Member Functions inherited from <a class="el" href="classacq400__SOE__Strategy.html">acq400_SOE_Strategy</a></td></tr>
 <tr class="memitem:a2401f4b4dbe839c1bee6cc4f0663fe1f pub_static_methods_classacq400__SOE__Strategy" id="r_a2401f4b4dbe839c1bee6cc4f0663fe1f"><td class="memItemLeft">
 static <a class="el" href="classacq400__SOE__Strategy.html">acq400_SOE_Strategy</a> **&#160;</td><td class="memItemRight"><b>factory</b> ()</td></tr>
 </table>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
-<a id="acf674654862583314d1458b91716e04e" name="acf674654862583314d1458b91716e04e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf674654862583314d1458b91716e04e">&#9670;&#160;</a></span>operator()()</h2>
+<a id="a3a839a7fb0e8df79c3f5b60cbedc94f3" name="a3a839a7fb0e8df79c3f5b60cbedc94f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a839a7fb0e8df79c3f5b60cbedc94f3">&#9670;&#160;</a></span>deadBand_us()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int LutFmtStrategy1::deadBand_us </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>allow <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table.">FMT</a> up to 80% out of range (event offset could pick). NEVER 100% because then we'd pick the adjacent (wrong) buffer every time.. </p>
+
+</div>
+</div>
+<a id="a69c14d365746525a6bc5b51df3468705" name="a69c14d365746525a6bc5b51df3468705"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69c14d365746525a6bc5b51df3468705">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -166,22 +215,12 @@ static <a class="el" href="classacq400__SOE__Strategy.html">acq400_SOE_Strategy<
         <tr>
           <td class="memname"><a class="el" href="structacq400__SOE__Strategy_1_1RC.html">acq400_SOE_Strategy::RC</a> LutFmtStrategy1::operator() </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structKBUF.html">KBUF</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>kbuf</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="structSOE__DIMS.html">SOE_DIMS</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>soe</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structSamplePrams.html">SamplePrams</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>sp</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="xrm__structs_8h.html#a547b3745cbead80d29fda4eeac8faf28">SOE_LUT</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>soe_lut</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SOE_HOLD_TABLE</td>          <td class="paramname"><span class="paramname"><em>ht</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="xrm__structs_8h.html#a6c2dc181070ba6bf8e6d955746cb2645">SOE_HOLD_TABLE</a></td>          <td class="paramname"><span class="paramname"><em>ht</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -192,7 +231,9 @@ static <a class="el" href="classacq400__SOE__Strategy.html">acq400_SOE_Strategy<
 </div><div class="memdoc">
 <p>implements strategy, .. waitFMT, compare LUT, look up data in raw and build output &lt;ht&gt; </p>
 
-<p>Implements <a class="el" href="classacq400__SOE__Strategy.html#a7f437ead47957def43f07a8cd7c0037a">acq400_SOE_Strategy</a>.</p>
+<p>Implements <a class="el" href="classacq400__SOE__Strategy.html#a78ec905ecf06000e8eadcef92186419e">acq400_SOE_Strategy</a>.</p>
+
+<p>Reimplemented in <a class="el" href="classLutFmtStrategy2.html#a7c0fad59c377b512839552655a4a1887">LutFmtStrategy2</a>.</p>
 
 </div>
 </div>

@@ -1,7 +1,9 @@
 var hierarchy =
 [
     [ "acq400_SOE_Strategy", "classacq400__SOE__Strategy.html", [
-      [ "LutFmtStrategy1", "classLutFmtStrategy1.html", null ],
+      [ "LutFmtStrategy1", "classLutFmtStrategy1.html", [
+        [ "LutFmtStrategy2", "classLutFmtStrategy2.html", null ]
+      ] ],
       [ "NullStrategy", "classNullStrategy.html", null ]
     ] ],
     [ "asynPortDriver", null, [
@@ -45,7 +47,7 @@ var hierarchy =
     [ "PVX_getter&lt; CONTAINER &gt;", "classPVX__getter.html", null ],
     [ "acq400_SOE_Strategy::RC", "structacq400__SOE__Strategy_1_1RC.html", null ],
     [ "SamplePrams", "structSamplePrams.html", null ],
-    [ "SOE_HOLD_HEADER", "structSOE__HOLD__HEADER.html", null ],
+    [ "SOE_DIMS", "structSOE__DIMS.html", null ],
     [ "SOE_LUT_ROW", "structSOE__LUT__ROW.html", null ],
     [ "TimeProvider", "structTimeProvider.html", [
       [ "TimeProviderLocaltime", "classTimeProviderLocaltime.html", null ],

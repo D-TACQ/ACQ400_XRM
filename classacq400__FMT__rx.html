@@ -133,6 +133,8 @@ Inheritance diagram for acq400_FMT_rx:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a783a503209b05b1568e2854a92f268d1" id="r_a783a503209b05b1568e2854a92f268d1"><td class="memItemLeft"><a id="a783a503209b05b1568e2854a92f268d1" name="a783a503209b05b1568e2854a92f268d1"></a>
+const <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a> &amp;&#160;</td><td class="memItemRight"><b>get_fmt</b> (unsigned icache)</td></tr>
 <tr class="memitem:a43a5122542f993dec473b0b085a05de6" id="r_a43a5122542f993dec473b0b085a05de6"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a43a5122542f993dec473b0b085a05de6">waitFMT</a> (unsigned timeout_ms)</td></tr>
 <tr class="memitem:ae78fc16bfa7ab2595b85daa6e48b254f" id="r_ae78fc16bfa7ab2595b85daa6e48b254f"><td class="memItemLeft"><a id="ae78fc16bfa7ab2595b85daa6e48b254f" name="ae78fc16bfa7ab2595b85daa6e48b254f"></a>
 asynStatus&#160;</td><td class="memItemRight"><b>writeInt32</b> (asynUser *pasynUser, epicsInt32 value)</td></tr>
@@ -151,16 +153,16 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:ae6d077736703e9ea6cab1332310caa61" id="r_ae6d077736703e9ea6cab1332310caa61"><td class="memItemLeft"><a id="ae6d077736703e9ea6cab1332310caa61" name="ae6d077736703e9ea6cab1332310caa61"></a>
 &#160;</td><td class="memItemRight"><b>acq400_FMT_rx</b> (const char *portName)</td></tr>
 <tr class="inherit_header pro_methods_classacq400__FMT__abc"><td colspan="2">Protected Member Functions inherited from <a class="el" href="classacq400__FMT__abc.html">acq400_FMT_abc</a></td></tr>
-<tr class="memitem:a85b01c89ea1f7c764ac85d1a33f086f2 pro_methods_classacq400__FMT__abc" id="r_a85b01c89ea1f7c764ac85d1a33f086f2"><td class="memItemLeft">
-virtual void&#160;</td><td class="memItemRight"><b>update_fmt_columns</b> (void)</td></tr>
+<tr class="memitem:abaeb0f063a1bab460aa63a50719f5e9d pro_methods_classacq400__FMT__abc" id="r_abaeb0f063a1bab460aa63a50719f5e9d"><td class="memItemLeft">
+virtual void&#160;</td><td class="memItemRight"><b>update_fmt_columns</b> (const <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a> &amp;fmt)</td></tr>
 <tr class="memitem:acf3acd0acc07f0a5be65c34a706c8436 pro_methods_classacq400__FMT__abc" id="r_acf3acd0acc07f0a5be65c34a706c8436"><td class="memItemLeft">
 virtual void&#160;</td><td class="memItemRight"><b>update_fmt_callbacks</b> (bool call_array_callbacks)</td></tr>
 <tr class="memitem:a1ce66bf2e383f70e04daa70fb1b2ce73 pro_methods_classacq400__FMT__abc" id="r_a1ce66bf2e383f70e04daa70fb1b2ce73"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>init_mc_url</b> (char *group, int maxgroup, int *port)</td></tr>
 <tr class="memitem:a86f45d74fb63578834fce16fef5e0c31 pro_methods_classacq400__FMT__abc" id="r_a86f45d74fb63578834fce16fef5e0c31"><td class="memItemLeft">
 <a class="el" href="classMultiCast.html">MultiCast</a> &amp;&#160;</td><td class="memItemRight"><b>mc_factory</b> (MultiCast::MC txrx)</td></tr>
-<tr class="memitem:ae49391b9e97c3633b8c3d6c8adbd11c5 pro_methods_classacq400__FMT__abc" id="r_ae49391b9e97c3633b8c3d6c8adbd11c5"><td class="memItemLeft">
-&#160;</td><td class="memItemRight"><b>acq400_FMT_abc</b> (const char *portName, int maxAddr, int interfaceMask, int interruptMask, int asynFlags, int autoConnect, int priority, int stackSize)</td></tr>
+<tr class="memitem:a4d5919ecdd8ed0e570dacdf3380504ee pro_methods_classacq400__FMT__abc" id="r_a4d5919ecdd8ed0e570dacdf3380504ee"><td class="memItemLeft">
+&#160;</td><td class="memItemRight"><b>acq400_FMT_abc</b> (const char *portName, int maxAddr, int n_cache, int interfaceMask, int interruptMask, int asynFlags, int autoConnect, int priority, int stackSize)</td></tr>
 <tr class="inherit_header pro_methods_classacq400__asynPortDriver"><td colspan="2">Protected Member Functions inherited from <a class="el" href="classacq400__asynPortDriver.html">acq400_asynPortDriver</a></td></tr>
 <tr class="memitem:ade968df4fa5c348912e9d9a41f3d37a0 pro_methods_classacq400__asynPortDriver" id="r_ade968df4fa5c348912e9d9a41f3d37a0"><td class="memItemLeft">asynStatus&#160;</td><td class="memItemRight"><a class="el" href="classacq400__asynPortDriver.html#ade968df4fa5c348912e9d9a41f3d37a0">gip</a> (int pnum, int *pram)</td></tr>
 <tr class="memitem:a1e7188b28726614ba0abfed7f748c792 pro_methods_classacq400__asynPortDriver" id="r_a1e7188b28726614ba0abfed7f748c792"><td class="memItemLeft">asynStatus&#160;</td><td class="memItemRight"><a class="el" href="classacq400__asynPortDriver.html#a1e7188b28726614ba0abfed7f748c792">gip</a> (int addr, int pnum, int *pram)</td></tr>
@@ -175,9 +177,18 @@ asynStatus&#160;</td><td class="memItemRight"><b>ssp</b> (int pnum, const char *
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pro-attribs" class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
+<tr class="memitem:a1c4b3b52b6fb8803c09cce7dc9ff71cb" id="r_a1c4b3b52b6fb8803c09cce7dc9ff71cb"><td class="memItemLeft"><a id="a1c4b3b52b6fb8803c09cce7dc9ff71cb" name="a1c4b3b52b6fb8803c09cce7dc9ff71cb"></a>
+<a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a> *&#160;</td><td class="memItemRight"><b>fmt_cache</b></td></tr>
+<tr class="memitem:aba94e0aa96021d9bada164b769f475ec" id="r_aba94e0aa96021d9bada164b769f475ec"><td class="memItemLeft"><a id="aba94e0aa96021d9bada164b769f475ec" name="aba94e0aa96021d9bada164b769f475ec"></a>
+std::deque&lt; int &gt;&#160;</td><td class="memItemRight"><b>empties</b></td></tr>
+<tr class="memitem:a841a0ec4216f73ed2e310c47815882d0" id="r_a841a0ec4216f73ed2e310c47815882d0"><td class="memItemLeft"><a id="a841a0ec4216f73ed2e310c47815882d0" name="a841a0ec4216f73ed2e310c47815882d0"></a>
+std::deque&lt; int &gt;&#160;</td><td class="memItemRight"><b>filled</b></td></tr>
 <tr class="memitem:a0024e080d62740b3696ea5b17fbb130c" id="r_a0024e080d62740b3696ea5b17fbb130c"><td class="memItemLeft"><a id="a0024e080d62740b3696ea5b17fbb130c" name="a0024e080d62740b3696ea5b17fbb130c"></a>
 epicsEventId&#160;</td><td class="memItemRight"><b>rx_event</b></td></tr>
 <tr class="inherit_header pro_attribs_classacq400__FMT__abc"><td colspan="2">Protected Attributes inherited from <a class="el" href="classacq400__FMT__abc.html">acq400_FMT_abc</a></td></tr>
+<tr class="memitem:a0a925316a7133116b22f3ff53dd749bc pro_attribs_classacq400__FMT__abc" id="r_a0a925316a7133116b22f3ff53dd749bc"><td class="memItemLeft">
+const int&#160;</td><td class="memItemRight"><b>n_cache</b></td></tr>
+<tr class="memitem:af68ebf8ead1562595ceefd44dba29887 pro_attribs_classacq400__FMT__abc" id="r_af68ebf8ead1562595ceefd44dba29887"><td class="memItemLeft"><a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a> *&#160;</td><td class="memItemRight"><a class="el" href="classacq400__FMT__abc.html#af68ebf8ead1562595ceefd44dba29887">fmt_cache</a></td></tr>
 <tr class="memitem:a82e97381a3e64e8f69123f110b29d7d7 pro_attribs_classacq400__FMT__abc" id="r_a82e97381a3e64e8f69123f110b29d7d7"><td class="memItemLeft">
 struct <a class="el" href="structacq400__FMT__abc_1_1COLUMNS.html">acq400_FMT_abc::COLUMNS</a>&#160;</td><td class="memItemRight"><b>cols</b></td></tr>
 <tr class="memitem:adfe40b13ae8346cf537f5255631f2faa pro_attribs_classacq400__FMT__abc" id="r_adfe40b13ae8346cf537f5255631f2faa"><td class="memItemLeft">
@@ -204,19 +215,24 @@ epicsInt64&#160;</td><td class="memItemRight"><b>now_us</b></td></tr>
 <tr class="memitem:a4a97a88792c21ee9759db38e5b3c59e1 pro_attribs_classacq400__asynPortDriver" id="r_a4a97a88792c21ee9759db38e5b3c59e1"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>mrl_param</b></td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pro-static-attribs" class="groupheader"><a id="pro-static-attribs" name="pro-static-attribs"></a>
+Static Protected Attributes</h2></td></tr>
+<tr class="memitem:a721b70f31b5394dbf0f469072cca3427" id="r_a721b70f31b5394dbf0f469072cca3427"><td class="memItemLeft"><a id="a721b70f31b5394dbf0f469072cca3427" name="a721b70f31b5394dbf0f469072cca3427"></a>
+static int&#160;</td><td class="memItemRight"><b>maxq</b> = ::getenv_default(&quot;acq400_FMT_rx_maxq&quot;, 4)</td></tr>
+<tr class="inherit_header pro_static_attribs_classacq400__FMT__abc"><td colspan="2">Static Protected Attributes inherited from <a class="el" href="classacq400__FMT__abc.html">acq400_FMT_abc</a></td></tr>
+<tr class="memitem:a1b6360090bdd9e496227838effd1a52e pro_static_attribs_classacq400__FMT__abc" id="r_a1b6360090bdd9e496227838effd1a52e"><td class="memItemLeft">
+static int&#160;</td><td class="memItemRight"><b>verbose</b> = ::getenv_default(&quot;acq400_FMT_VERBOSE&quot;, 0)</td></tr>
+<tr class="memitem:af039921ede27b2a108f8f3e79ad0a5c7 pro_static_attribs_classacq400__FMT__abc" id="r_af039921ede27b2a108f8f3e79ad0a5c7"><td class="memItemLeft">
+static int&#160;</td><td class="memItemRight"><b>nice</b> = ::getenv_default(&quot;acq400_FMT_NICE&quot;, 0)</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-inherited" class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_attribs_classacq400__FMT__abc"><td colspan="2">Public Attributes inherited from <a class="el" href="classacq400__FMT__abc.html">acq400_FMT_abc</a></td></tr>
-<tr class="memitem:acb1976a4b0272ff3bce94870f5dd1a4a pub_attribs_classacq400__FMT__abc" id="r_acb1976a4b0272ff3bce94870f5dd1a4a"><td class="memItemLeft"><a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a>&#160;</td><td class="memItemRight"><a class="el" href="classacq400__FMT__abc.html#acb1976a4b0272ff3bce94870f5dd1a4a">fmt</a></td></tr>
 <tr class="inherit_header pro_static_methods_classacq400__FMT__abc"><td colspan="2">Static Protected Member Functions inherited from <a class="el" href="classacq400__FMT__abc.html">acq400_FMT_abc</a></td></tr>
 <tr class="memitem:a852809df25487f1004cd27899356fbd6 pro_static_methods_classacq400__FMT__abc" id="r_a852809df25487f1004cd27899356fbd6"><td class="memItemLeft">
 static void&#160;</td><td class="memItemRight"><b>task_runner</b> (void *drvPvt)</td></tr>
-<tr class="inherit_header pro_static_attribs_classacq400__FMT__abc"><td colspan="2">Static Protected Attributes inherited from <a class="el" href="classacq400__FMT__abc.html">acq400_FMT_abc</a></td></tr>
-<tr class="memitem:af039921ede27b2a108f8f3e79ad0a5c7 pro_static_attribs_classacq400__FMT__abc" id="r_af039921ede27b2a108f8f3e79ad0a5c7"><td class="memItemLeft">
-static int&#160;</td><td class="memItemRight"><b>nice</b> = ::getenv_default(&quot;acq400_FMT_NICE&quot;, 0)</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table input from plant: 20Hz This is the binary implementation that goes out on ...">FMT</a> receiver</p><ul>
+<div class="textblock"><p><a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table.">FMT</a> receiver</p><ul>
 <li>singleton - must bind to port. </li>
 </ul>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
@@ -313,8 +329,7 @@ static int&#160;</td><td class="memItemRight"><b>nice</b> = ::getenv_default(&qu
         </tr>
       </table>
 </div><div class="memdoc">
-<p>clients block for <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table input from plant: 20Hz This is the binary implementation that goes out on ...">FMT</a> arrival.</p>
-<p>@todo: wait not implemented </p>
+<p>clients block for <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table.">FMT</a> arrival. </p>
 
 </div>
 </div>

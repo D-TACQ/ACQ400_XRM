@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['process_5ffmt_0',['process_fmt',['../classacq400__FMT__rx.html#ac970a807d3f01751352cc30088e88e5c',1,'acq400_FMT_rx']]]
+  ['operator_28_29_0',['operator()',['../classacq400__SOE__Strategy.html#a78ec905ecf06000e8eadcef92186419e',1,'acq400_SOE_Strategy::operator()()'],['../classLutFmtStrategy1.html#a69c14d365746525a6bc5b51df3468705',1,'LutFmtStrategy1::operator()()'],['../classLutFmtStrategy2.html#a7c0fad59c377b512839552655a4a1887',1,'LutFmtStrategy2::operator()()']]]
 ];

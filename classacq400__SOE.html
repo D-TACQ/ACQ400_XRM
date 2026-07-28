@@ -148,6 +148,11 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ae52342166ceab1822d2ab0151f76f807" id="r_ae52342166ceab1822d2ab0151f76f807"><td class="memItemLeft"><a id="ae52342166ceab1822d2ab0151f76f807" name="ae52342166ceab1822d2ab0151f76f807"></a>
 static void&#160;</td><td class="memItemRight"><b>create_instance</b> (const char *portName, <a class="el" href="classacq400__SOE__Strategy.html">acq400_SOE_Strategy</a> *strategy)</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-static-attribs" class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a7163d153859462a6bf15d805d12e0e63" id="r_a7163d153859462a6bf15d805d12e0e63"><td class="memItemLeft"><a id="a7163d153859462a6bf15d805d12e0e63" name="a7163d153859462a6bf15d805d12e0e63"></a>
+static const int&#160;</td><td class="memItemRight"><b>CYCLE_MS</b></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pro-methods" class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:a02c577585d50357770843cddf157bf06" id="r_a02c577585d50357770843cddf157bf06"><td class="memItemLeft"><a id="a02c577585d50357770843cddf157bf06" name="a02c577585d50357770843cddf157bf06"></a>
@@ -168,6 +173,8 @@ virtual void&#160;</td><td class="memItemRight"><b>update_hld_tab_columns</b> (v
 virtual void&#160;</td><td class="memItemRight"><b>update_hld_tab_callbacks</b> (int n_u32)</td></tr>
 <tr class="memitem:a2c0deef9d98dfcdaca52d1bb43e6b0c3" id="r_a2c0deef9d98dfcdaca52d1bb43e6b0c3"><td class="memItemLeft"><a id="a2c0deef9d98dfcdaca52d1bb43e6b0c3" name="a2c0deef9d98dfcdaca52d1bb43e6b0c3"></a>
 virtual void&#160;</td><td class="memItemRight"><b>update_hld_tab_columns_callbacks</b> (void)</td></tr>
+<tr class="memitem:aba5fcb4e0678f250412156842d151cd1" id="r_aba5fcb4e0678f250412156842d151cd1"><td class="memItemLeft"><a id="aba5fcb4e0678f250412156842d151cd1" name="aba5fcb4e0678f250412156842d151cd1"></a>
+char *&#160;</td><td class="memItemRight"><b>get_raw</b> ()</td></tr>
 <tr class="memitem:af74ed25b00f5a175975cf8465cfc17d3" id="r_af74ed25b00f5a175975cf8465cfc17d3"><td class="memItemLeft"><a id="af74ed25b00f5a175975cf8465cfc17d3" name="af74ed25b00f5a175975cf8465cfc17d3"></a>
 void&#160;</td><td class="memItemRight"><b>update_kbuf_info</b> (char *raw)</td></tr>
 <tr class="memitem:aae5fb8035df78fa96d1bfaef483a5aa8" id="r_aae5fb8035df78fa96d1bfaef483a5aa8"><td class="memItemLeft"><a id="aae5fb8035df78fa96d1bfaef483a5aa8" name="aae5fb8035df78fa96d1bfaef483a5aa8"></a>
@@ -194,7 +201,7 @@ static void&#160;</td><td class="memItemRight"><b>task_runner</b> (void *drvPvt)
 Protected Attributes</h2></td></tr>
 <tr class="memitem:aedccce22100a4eea9553ce199cec3853" id="r_aedccce22100a4eea9553ce199cec3853"><td class="memItemLeft"><a id="aedccce22100a4eea9553ce199cec3853" name="aedccce22100a4eea9553ce199cec3853"></a>
 <a class="el" href="xrm__structs_8h.html#a547b3745cbead80d29fda4eeac8faf28">SOE_LUT</a>&#160;</td><td class="memItemRight"><b>soe_lut</b></td></tr>
-<tr class="memitem:aff96584824cf1760e0c1ba695974ffb5" id="r_aff96584824cf1760e0c1ba695974ffb5"><td class="memItemLeft"><a class="el" href="structSOE__HOLD__HEADER.html">SOE_HOLD_HEADER</a> *&#160;</td><td class="memItemRight"><a class="el" href="#aff96584824cf1760e0c1ba695974ffb5">the_hold_table</a></td></tr>
+<tr class="memitem:aff96584824cf1760e0c1ba695974ffb5" id="r_aff96584824cf1760e0c1ba695974ffb5"><td class="memItemLeft">SOE_HOLD_HEADER *&#160;</td><td class="memItemRight"><a class="el" href="#aff96584824cf1760e0c1ba695974ffb5">the_hold_table</a></td></tr>
 <tr class="memitem:a24d785ec150d8d7e92120f92a63692a5" id="r_a24d785ec150d8d7e92120f92a63692a5"><td class="memItemLeft"><a id="a24d785ec150d8d7e92120f92a63692a5" name="a24d785ec150d8d7e92120f92a63692a5"></a>
 <a class="el" href="classacq400__SOE__Strategy.html">acq400_SOE_Strategy</a> *&#160;</td><td class="memItemRight"><b>strategy</b></td></tr>
 <tr class="memitem:af9c1bc6d832bfa7f7c007fd0a86a8ee2" id="r_af9c1bc6d832bfa7f7c007fd0a86a8ee2"><td class="memItemLeft"><a id="af9c1bc6d832bfa7f7c007fd0a86a8ee2" name="af9c1bc6d832bfa7f7c007fd0a86a8ee2"></a>
@@ -263,6 +270,8 @@ struct <a class="el" href="structKBUF.html">KBUF</a>&#160;</td><td class="memIte
 <tr class="memitem:a92f32bde7edd89da2f1d042f80cf01b5" id="r_a92f32bde7edd89da2f1d042f80cf01b5"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a92f32bde7edd89da2f1d042f80cf01b5">P_SOE_FMT_RX_SUCCESS</a></td></tr>
 <tr class="memitem:a04e097e383a84c5cbce273a8aa9192f3" id="r_a04e097e383a84c5cbce273a8aa9192f3"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a04e097e383a84c5cbce273a8aa9192f3">P_SOE_FMT_EV_MATCHES</a></td></tr>
 <tr class="memitem:a417fa7be40a6e6c56a34e6f26dbb1429" id="r_a417fa7be40a6e6c56a34e6f26dbb1429"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a417fa7be40a6e6c56a34e6f26dbb1429">P_SOE_FMT_EV_NIB</a></td></tr>
+<tr class="memitem:aef2ebb0454e1bbe660541fc95e3b293b" id="r_aef2ebb0454e1bbe660541fc95e3b293b"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#aef2ebb0454e1bbe660541fc95e3b293b">P_SOE_FMT_BUF_POS</a></td></tr>
+<tr class="memitem:a0ac082d90408acb9360cf5cffa697868" id="r_a0ac082d90408acb9360cf5cffa697868"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a0ac082d90408acb9360cf5cffa697868">P_SOE_FMT_NEXT_RETRY</a></td></tr>
 <tr class="memitem:acccd4735064bffd5f307370d0a015bee" id="r_acccd4735064bffd5f307370d0a015bee"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#acccd4735064bffd5f307370d0a015bee">P_SOE_HLD_TABLE_WF</a></td></tr>
 <tr class="memitem:a68e9bef836bb9b02589c4ad7f236b15a" id="r_a68e9bef836bb9b02589c4ad7f236b15a"><td class="memItemLeft"><a id="a68e9bef836bb9b02589c4ad7f236b15a" name="a68e9bef836bb9b02589c4ad7f236b15a"></a>
 int&#160;</td><td class="memItemRight"><b>ib</b></td></tr>
@@ -339,6 +348,29 @@ static <a class="el" href="classacq400__SOE.html">acq400_SOE</a> *&#160;</td><td
 
 </div>
 </div>
+<a id="aef2ebb0454e1bbe660541fc95e3b293b" name="aef2ebb0454e1bbe660541fc95e3b293b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef2ebb0454e1bbe660541fc95e3b293b">&#9670;&#160;</a></span>P_SOE_FMT_BUF_POS</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int acq400_SOE::P_SOE_FMT_BUF_POS</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Stat: buffer position: -1:PREV, 0:CUR, 1:NEXT </p>
+
+</div>
+</div>
 <a id="a275126d48659ee9e08d64e134be63d6c" name="a275126d48659ee9e08d64e134be63d6c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a275126d48659ee9e08d64e134be63d6c">&#9670;&#160;</a></span>P_SOE_FMT_DELTA_TS</h2>
 
@@ -358,7 +390,7 @@ static <a class="el" href="classacq400__SOE.html">acq400_SOE</a> *&#160;</td><td
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Stat: Delta TS: time between <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table input from plant: 20Hz This is the binary implementation that goes out on ...">FMT</a> and latest <a class="el" href="structKBUF.html">KBUF</a> </p>
+<p>Stat: Delta TS: time between <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table.">FMT</a> and latest <a class="el" href="structKBUF.html">KBUF</a> </p>
 
 </div>
 </div>
@@ -405,6 +437,29 @@ static <a class="el" href="classacq400__SOE.html">acq400_SOE</a> *&#160;</td><td
 </table>
 </div><div class="memdoc">
 <p>Stat: count buffers with events NOT IN BUFFER </p>
+
+</div>
+</div>
+<a id="a0ac082d90408acb9360cf5cffa697868" name="a0ac082d90408acb9360cf5cffa697868"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ac082d90408acb9360cf5cffa697868">&#9670;&#160;</a></span>P_SOE_FMT_NEXT_RETRY</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int acq400_SOE::P_SOE_FMT_NEXT_RETRY</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Stat: if next, number of retrys </p>
 
 </div>
 </div>
@@ -1499,7 +1554,7 @@ static <a class="el" href="classacq400__SOE.html">acq400_SOE</a> *&#160;</td><td
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structSOE__HOLD__HEADER.html">SOE_HOLD_HEADER</a>* acq400_SOE::the_hold_table</td>
+          <td class="memname">SOE_HOLD_HEADER* acq400_SOE::the_hold_table</td>
         </tr>
       </table>
   </td>
