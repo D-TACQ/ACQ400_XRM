@@ -33,6 +33,8 @@ record(mbbo, "${UUT}:SOE:STRATEGY")
 	field(FRVL, "4")
 	field(FVVL, "5")
 	field(SXVL, "6")
+	field(PINI, "YES")
+	field(VAL,  "1")
 }
 record(longin, "${UUT}:SOE:UPDATES")
 {
