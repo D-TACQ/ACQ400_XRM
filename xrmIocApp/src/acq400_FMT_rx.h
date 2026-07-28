@@ -8,6 +8,7 @@
 #ifndef XRMIOCAPP_SRC_ACQ400_FMT_RX_H_
 #define XRMIOCAPP_SRC_ACQ400_FMT_RX_H_
 
+#include <deque>
 #include "acq400_FMT.h"
 
 /** FMT receiver
@@ -15,12 +16,19 @@
  */
 class acq400_FMT_rx: public acq400_FMT_abc {
 
-	virtual void update_fmt(bool first_time = false);
+	virtual void update_fmt(FMT& fmt, bool first_time = false);
 	/**< basic housekeeping and instrumentation */
 	int packet_count;
 	epicsInt64 ts;
 
+	int get_empty();
+	FMT& receive(MultiCast& multicast);
 protected:
+	static int maxq;
+	FMT* fmt_cache;			/* fmt_cache[maxq] possible store for short list of FMT instances */
+	std::deque<int> empties;        /* indexes fmt_cache .. avoid copy */
+	std::deque<int> filled;		/* indexes fmt_cache .. avoid copy; push from front, [0] is latest */
+
 	virtual void task();
 	virtual void process_fmt(bool first_time);
 	/**< main processing here */
@@ -32,6 +40,7 @@ public:
 
 	virtual ~acq400_FMT_rx();
 
+	const FMT& get_fmt(unsigned icache);
 
 	int waitFMT(unsigned timeout_ms);
 	/**< clients block for FMT arrival. */

@@ -99,6 +99,8 @@
 #define PS_SOE_FMT_RX_SUCCESS   "SOE_FMT_RX_SUCCESS"
 #define PS_SOE_FMT_EV_MATCHES   "SOE_FMT_EV_MATCHES"
 #define PS_SOE_FMT_EV_NIB	"SOE_FMT_EV_NOT_IN_BUFFER"
+#define PS_SOE_FMT_BUF_POS	"SOE_FMT_BUF_POS"
+#define PS_SOE_FMT_NEXT_RETRY	"SOE_FMT_NEXT_RETRY"
 
 #define PS_SOE_HLD_TABLE_WF	"SOE_HLD_TABLE_WF" // raw event table.
 
@@ -110,34 +112,52 @@ struct KBUF {
 	const char* raw;
 };
 
+struct SOE_DIMS {
+	KBUF& kbuf;
+	SamplePrams& samplePrams;
+	SOE_LUT& lut;
+};
+
 /** singleton */
 class acq400_SOE_Strategy {
 
 public:
+	enum ERR_CODES {
+		SOE_SUCCESS = 0,
+		E_TIMEOUT = -1,
+		E_FMT_TS_TOO_EARLY_FOR_KB = -2,
+		E_FMT_TS_TOO_LATE_FOR_KB = -3,
+		E_FMT_NO_EVENTS_FOUND = -4,
+		E_FMT_UNDEFINED = -99
+	};
+	enum FMT_NUM {
+		FMT_PRE = -1,
+		FMT_CUR = 0,
+		FMT_WAIT = 1
+	};
 	struct RC {
-		int status;
+		ERR_CODES status;
+
 		long long delta_us;
 		int ht_size32;
 		short events_accepted;
 		short events_not_in_buffer;
+		FMT_NUM fmt_num;
+		short next_retry;
 	};
 	/** implements strategy, .. waitFMT, compare LUT, look up data in raw and build output <ht> */
-	virtual RC operator() (const KBUF& kbuf, const SamplePrams& sp, const SOE_LUT& soe_lut, SOE_HOLD_TABLE ht) = 0;
+	virtual RC operator() (const SOE_DIMS& soe, SOE_HOLD_TABLE ht) = 0;
 
 	static acq400_SOE_Strategy** factory();
 
-	enum ERR_CODES {
-		SOE_SUCCESS = 0,
-		E_TIMEOUT = 1,
-		E_FMT_TS_TOO_EARLY = 2,
-		E_FMT_TS_TOO_LATE = 3,
-		E_FMT_NO_EVENTS_FOUND = 4,
-	};
+
 };
+
 
 class acq400_SOE: public acq400_asynPortDriver {
 protected:
 	static int verbose;
+
 
 	SOE_LUT soe_lut;
 	SOE_HOLD_HEADER* the_hold_table;   /**< preallocate the max possible size. do it once! */
@@ -178,7 +198,6 @@ protected:
 
 	SamplePrams samplePrams;
 	void get_sample_dimensions();
-
 	void init_the_hold_table();
 
 	void redit();
@@ -191,6 +210,7 @@ protected:
 	virtual void update_hld_tab_columns_callbacks(void);
 
 	struct KBUF current_kb;
+	inline char* get_raw();
 	void update_kbuf_info(char* raw);
 
 	virtual void task();
@@ -261,6 +281,8 @@ protected:
 	int P_SOE_FMT_RX_SUCCESS;	/**< Stat: count timely received buffers */
 	int P_SOE_FMT_EV_MATCHES;	/**< Stat: count buffers with matching events */
 	int P_SOE_FMT_EV_NIB;		/**< Stat: count buffers with events NOT IN BUFFER */
+	int P_SOE_FMT_BUF_POS;		/**< Stat: buffer position: -1:PREV, 0:CUR, 1:NEXT */
+	int P_SOE_FMT_NEXT_RETRY;	/**< Stat: if next, number of retrys */
 	int P_SOE_HLD_TABLE_WF;		/**< HLD Table full binary output for remote clients */
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
@@ -274,6 +296,8 @@ public:
 	void clearHold();
 
 	virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+
+	static const int CYCLE_MS;
 };
 
 #endif /* XRMIOCAPP_SRC_ACQ400_SOE_H_ */

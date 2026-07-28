@@ -18,6 +18,8 @@
 #include <unistd.h>
 #include <strings.h>
 
+#include <errno.h>
+
 #include "acq-util.h"
 #define FN	__FUNCTION__
 
@@ -65,6 +67,7 @@ public:
 						multicast_if);
 			}
 		}
+		if (verbose) fprintf(stderr, "MultiCastImpl 99\n");
 
 	}
 	virtual int sendto(const void* message, int len) {
@@ -74,6 +77,8 @@ public:
 		return -1;
 	}
 };
+
+
 const char* MultiCast::multicast_if;
 
 class MultiCastSender : public MultiCastImpl {
@@ -127,20 +132,24 @@ int MultiCastSender::unicast_ttl	= getenv_default("MultiCastSender_unicast_ttl",
 int MultiCastSender::multicast_ttl	= getenv_default("MultiCastSender_multicast_ttl", 1);
 
 class MultiCastReceiver : public MultiCastImpl {
-	struct ip_mreq mreq;
+	struct ip_mreq mreq;				// MC TX filter.
 
 public:
 	MultiCastReceiver(const char* _group, int _port):
 		MultiCastImpl(_group, _port)
 	{
-		if (verbose) printf("MultiCastReceiver() 01\n");
+		if (verbose) printf("MultiCastReceiver() 01 group:%s port:%d\n", group, port);
 
 		if (bind(sock, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
 			perror("bind");
 			exit(1);
 		}
+		if (verbose > 1 ) printf("MultiCastReceiver() sock:%d addr:%s addrlen:%d\n",
+							sock, inet_ntoa(addr.sin_addr), addrlen);
+
 		mreq.imr_multiaddr.s_addr = inet_addr(group);
 		if (multicast_if != 0){
+			if (verbose) printf("MultiCastReceiver sock:%d (TX) multicast_if:%s\n", sock, multicast_if);
 			mreq.imr_interface.s_addr = inet_addr(multicast_if);
 		}else{
 			mreq.imr_interface.s_addr = htonl(INADDR_ANY);
@@ -150,18 +159,29 @@ public:
 			perror("setsockopt mreq");
 			exit(1);
 		}
-		if (verbose) printf("MultiCastReceiver() 99\n");
+		if (verbose) printf("MultiCastReceiver() 99 sock:%d\n", sock);
 	}
+
+	//         int n = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&sender_addr, &addrlen);
 
 	virtual int recvfrom(void* message, int len) {
 
-		if (verbose > 1 )printf("MultiCastReceiver()::recvfrom 01\n");
+		if (verbose > 1 )printf("MultiCastReceiver()::recvfrom 01 sock:%d addr:%s addrlen:%d\n",
+				sock, inet_ntoa(addr.sin_addr), addrlen);
 		int rc = ::recvfrom(sock, message, len, 0,
 				(struct sockaddr *) &addr, &addrlen);
+
+		if (verbose > 1 )printf("MultiCastReceiver()::recvfrom 99 sock:%d addr:%s addrlen:%d rc:%d\n",
+						sock, inet_ntoa(addr.sin_addr), addrlen, rc);
+
 		if (rc < 0) {
-			perror("recvfrom");
+			char ebuf[80];
+			snprintf(ebuf, 80, "%s errno:%d", FN, errno);
+			perror(ebuf);
 			exit(1);
 		}
+
+
 		if (verbose > 1) printf("MultiCastReceiver()::recvfrom 99 => %d\n", rc);
 		return rc;
 	}

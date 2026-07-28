@@ -28,8 +28,13 @@
  */
 class acq400_FMT_abc: public acq400_asynPortDriver {
 public:
-	FMT fmt;	/**< FMT binary instance */
+
 protected:
+	static int verbose;
+
+	const int n_cache;
+	FMT* fmt_cache;	/**< FMT binary instance */
+
 	/** EPICS NTTABLE is a convenient display mechanism,
 	 * but unfortunately it needs the data in columns.
 	 *
@@ -47,8 +52,8 @@ protected:
 	char mc_group[80];
 	int mc_port;
 
-	virtual void update_fmt(bool first_time = false) = 0;
-	virtual void update_fmt_columns(void);
+	virtual void update_fmt(FMT& fmt, bool first_time = false) = 0;
+	virtual void update_fmt_columns(const FMT& fmt);
 	virtual void update_fmt_callbacks(bool call_array_callbacks);
 	void init_mc_url(char* group, int maxgroup, int* port);
 	MultiCast& mc_factory(MultiCast::MC txrx);
@@ -70,10 +75,11 @@ protected:
 	int P_FMT_COL_CLIDAT;		/**< NTTABLE column-major view, CLIDAT client data */
 	int P_FMT_COL_TS;		/**< NTTABLE column-major view, Timestamp */
 
-	acq400_FMT_abc(const char *portName, int maxAddr, int interfaceMask, int interruptMask,
+	acq400_FMT_abc(const char *portName, int maxAddr, int n_cache, int interfaceMask, int interruptMask,
 	                   int asynFlags, int autoConnect, int priority, int stackSize);
 	virtual ~acq400_FMT_abc() {}
 
+public:
 };
 
 

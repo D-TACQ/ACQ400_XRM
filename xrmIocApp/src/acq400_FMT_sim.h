@@ -22,6 +22,7 @@
 #define PS_FMT_REDIT_CLIDAT_STEP "FMT_REDIT_CLIDAT_STEP"
 
 #define PS_FMT_REDIT_COMMIT 	"FMT_REDIT_COMMIT"
+#define PS_FMT_DELAY		"FMT_DELAY"		/* hold back the FMT (msec) */
 
 struct TimeProvider {
 	virtual epicsInt64 time_now() = 0; /* time in usec since epoch. Blocks until time available */
@@ -29,12 +30,12 @@ struct TimeProvider {
 
 
 class acq400_FMT_Sim: public acq400_FMT_abc {
-	virtual void update_fmt(bool first_time = false);
-
+	virtual void update_fmt(FMT& fmt, bool first_time = false);
 
 	void redit();  /* Row EDIT */
 
 	TimeProvider& timeProvider;
+	int delay_ms;
 protected:
 	virtual void task();
 
@@ -45,6 +46,7 @@ protected:
 	int P_FMT_REDIT_CLIDAT;
 	int P_FMT_REDIT_CLIDAT_STEP;
 	int P_FMT_REDIT_COMMIT;
+	int P_FMT_DELAY;
 
 public:
 	acq400_FMT_Sim(const char* portName, TimeProvider& _timeProvider);

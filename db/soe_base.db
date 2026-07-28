@@ -20,17 +20,19 @@ record(mbbo, "${UUT}:SOE:STRATEGY")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_STRATEGY")
 	field(NOBT, "3")
 	field(ZRST, "LutFmtStrategy1")
-	field(ONST, "Copy64(stride=1)")
-	field(TWST, "Copy64(stride=2)")
-	field(THST, "Copy64(stride=5)")
-	field(FRST, "Copy64(stride=10)")
-	field(FVST, "Copy64(stride=20)")
+	field(ONST, "LutFmtStrategy2")
+	field(TWST, "Copy64(stride=1)")
+	field(THST, "Copy64(stride=2)")
+	field(FRST, "Copy64(stride=5)")
+	field(FVST, "Copy64(stride=10)")
+	field(SXST, "Copy64(stride=20)")
 	field(ZRVL, "0")
 	field(ONVL, "1")
 	field(TWVL, "2")
 	field(THVL, "3")
 	field(FRVL, "4")
 	field(FVVL, "5")
+	field(SXVL, "6")
 }
 record(longin, "${UUT}:SOE:UPDATES")
 {
@@ -108,6 +110,30 @@ record(longin, "${UUT}:SOE:FMT:EV_NIB")
 	field(DESC, "Number of Events NOT IN BUFFER")
 }
 
+
+record(longin, "${UUT}:SOE:FMT:BUF_POS")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_BUF_POS")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+
+	field(DESC, "FMT buffer in use -1:PRE, 0:CUR, 1:NEXT")
+}
+
+
+record(longin, "${UUT}:SOE:FMT:NEXT_RETRY")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_NEXT_RETRY")
+	field(SCAN, "I/O Intr")
+	field(TSE,  "-2")
+
+	field(DESC, "if NEXT, numretries (delay CYCLE/5)")
+	#            1234567890123456789012345678901234567890
+}
 
 record(int64in, "${UUT}:SOE:TS_USEC")
 {

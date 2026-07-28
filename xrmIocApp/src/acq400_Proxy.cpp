@@ -174,7 +174,7 @@ void acq400_Proxy::get_cal()
 		assert(eslo_dst == 0);
 		assert(eoff_dst == 0);
 
-		if (verbose) fprintf(stderr, "%s:%s() lazy init agglen:%u\n", DN, FN, agglen);
+		if (verbose) fprintf(stderr, "%s:%s() lazy init agglen:" FMTSZT "\n", DN, FN, agglen);
 
 		eslo_dst = new epicsFloat32[agglen];
 		eoff_dst = new epicsFloat32[agglen];
@@ -183,7 +183,7 @@ void acq400_Proxy::get_cal()
 		eslo_dst[0] = agglen*1.0;                    // a good use for [0]
 		eoff_dst[0] = agglen*1.0;
 	}else if (ai_site_lengths[0] != agglen){
-		fprintf(stderr, "WARNING: ai_site_lengths mismatch %u %u\n",
+		fprintf(stderr, "WARNING: ai_site_lengths mismatch " FMTSZT " " FMTSZT "\n",
 				ai_site_lengths[0], agglen);
 		return;
 	}
@@ -310,7 +310,7 @@ asynStatus acq400_Proxy::writeFloat32Array(asynUser *pasynUser, epicsFloat32 *va
 				assert(ai_site_lengths[addr] == 0 || ai_site_lengths[addr] == nElements);
 				ai_site_lengths[addr] = nElements;
 
-				printf("INFO: %s:%s() function:%d addr:%d lazy init: %p:%u nElements:%u\n",
+				printf("INFO: %s:%s() function:%d addr:%d lazy init: %p:" FMTSZT " nElements:" FMTSZT "\n",
 					DN, FN, function, addr, eslo_src[addr], ai_site_lengths[addr], nElements);
 			}
 			copy_to = eslo_src[addr];
@@ -320,7 +320,7 @@ asynStatus acq400_Proxy::writeFloat32Array(asynUser *pasynUser, epicsFloat32 *va
 				assert(ai_site_lengths[addr] == 0 || ai_site_lengths[addr] == nElements);
 				ai_site_lengths[addr] = nElements;
 
-				printf("INFO: %s:%s() function:%d addr:%d lazy init: %p:%u nElements:%u\n",
+				printf("INFO: %s:%s() function:%d addr:%d lazy init: %p:" FMTSZT " nElements:" FMTSZT "\n",
 					DN, FN, function, addr, eoff_src[addr], ai_site_lengths[addr], nElements);
 			}
 			copy_to = eoff_src[addr];

@@ -14,9 +14,13 @@ static const char *driverName="acq400_FMT_rx";
 #define DN	driverName
 #define FN	__FUNCTION__
 
+int acq400_FMT_rx::maxq = ::getenv_default("acq400_FMT_rx_maxq", 4);
+
+
 acq400_FMT_rx::acq400_FMT_rx(const char* portName) :
 		acq400_FMT_abc(portName,
 		/* maxAddr */		FMT_ROWS,    /* nchan from 0 */
+					maxq,
 		/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
 					asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|
 					asynFloat32ArrayMask|asynInt64ArrayMask|asynDrvUserMask,
@@ -31,6 +35,21 @@ acq400_FMT_rx::acq400_FMT_rx(const char* portName) :
 		ts(0)
 {
 	asynStatus status = asynSuccess;
+	fmt_cache = new FMT[maxq];
+
+	if (verbose)
+		fprintf(stderr, "%s: sizeof(FMT) " FMTSZT " fmt_cache " FMTSZT " *fmt_cache " FMTSZT "\n",
+			FN, sizeof(FMT), sizeof(fmt_cache), sizeof(*fmt_cache));
+
+
+
+	for (int ii = 0; ii < maxq; ++ii){
+		empties.push_front(ii);
+	}
+
+	for (auto ii: empties){
+		printf("acq400_FMT_rx empties:%p\n", fmt_cache[ii]);
+	}
 
 	rx_event = epicsEventCreate(epicsEventEmpty);
 
@@ -51,7 +70,7 @@ acq400_FMT_rx::~acq400_FMT_rx() {
 	assert(0);
 }
 
-void acq400_FMT_rx::update_fmt(bool first_time)
+void acq400_FMT_rx::update_fmt(FMT& fmt, bool first_time)
 {
 	++packet_count;
 	fmt[4].pad = packet_count>>16;
@@ -70,6 +89,37 @@ void acq400_FMT_rx::update_fmt(bool first_time)
 void acq400_FMT_rx::process_fmt(bool first_time)
 {
 	epicsEventSignal(rx_event);
+}
+
+int acq400_FMT_rx::get_empty() {
+	const char* fill_from = "xxx";
+	int ib;
+
+	if (empties.empty()){
+		assert(!filled.empty());
+		ib = filled.back(); filled.pop_back();       // pull oldest
+		fill_from = "filled";
+	}else{
+		ib = empties.back(); empties.pop_back();     // pull oldest (academic for empties)
+		fill_from = "empties";
+	}
+
+	if (verbose > 1){
+		fprintf(stderr, "%s fill_from:%s push %d\n",
+			FN, fill_from, ib);
+	}
+
+	return ib;
+}
+
+
+FMT& acq400_FMT_rx::receive(MultiCast& multicast){
+	const int ib = get_empty();
+	if (verbose)
+	    fprintf(stderr, "%s ib:%d\n", FN, ib);
+	multicast.recvfrom(fmt_cache[ib], sizeof(FMT));
+	filled.push_front(ib);                     // filled[0] is latest arrival
+	return fmt_cache[ib];
 }
 
 void acq400_FMT_rx::task(void) {
@@ -91,12 +141,12 @@ void acq400_FMT_rx::task(void) {
 		}
 		unlock();
 		if (runstop == 1){
-			multicast.recvfrom(fmt, sizeof(fmt));
+			FMT& fmt = receive(multicast);
 			rateLimit.newData(mrl_param);
-			update_fmt(first_time);
+			update_fmt(fmt, first_time);
 			process_fmt(first_time);
 			if (rateLimit.goAhead()){
-				update_fmt_columns();
+				update_fmt_columns(fmt);   // @@todo head
 			}
 			lock();
 			updateTimeStamp();
@@ -157,6 +207,13 @@ int acq400_FMT_rx::waitFMT(unsigned timeout_ms)
 		return -1;		// doesn't happen0
 	}
 }
+
+const FMT& acq400_FMT_rx::get_fmt(unsigned icache)
+{
+	assert(icache < filled.size());
+	return fmt_cache[filled[icache]];
+}
+
 acq400_FMT_rx* acq400_FMT_rx::instance(const char* portName)
 {
 	static acq400_FMT_rx* _instance;
