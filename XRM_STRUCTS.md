@@ -5,6 +5,5 @@
 - \ref FMT
 - \ref SOE_LUT
 - \ref SOE_HOLD_TABLE
-
-- that's all folks
+- example of PVA transfer and local decode of HOLD TABLE \ref xrm_ht_monitor.cpp
 
