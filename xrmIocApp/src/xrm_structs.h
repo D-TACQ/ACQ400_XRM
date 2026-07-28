@@ -78,6 +78,11 @@ const int SOE_LUT_ROWS = 64;
 
  * in EPICS, we provide a "ROW_EDIT" PV to enable update, this works well for Phoebus and P4P
 
+ * @@todo: unsure how to make a direct pvput for the whole table.
+  - Currently this would have to be an array of u32
+  - Don't know how to make a EPICS V4 array for this
+  - Workaround: the "ROW EDIT" is available to change a row at a time, or a set of rows.
+
  ROW  | event | pad | pv_id | offset_us
 ------|-------|-----|-------|----------
  0    | u16   | u16 | u32   | int32
@@ -188,7 +193,7 @@ typedef epicsUInt32 	U32;
    - NORD = (5 * 22)/4 + 128
    - NORD = 156 @@todo 22 is not a good size for the structure..
 
- We've attempted to meet the spirit of the requirement using the PVXS API
+ @@todo We've attempted to meet the spirit of the requirement using the PVXS API
  to create an Array of Groups, but this has not been a success.
  Happy to revisit later when we have an example that works.
  */

@@ -1,4 +1,3 @@
-# ACQ400_XRM : xrmIoc
 /** \mainpage ACQ400_XRM README
 
 ## xrmIoc creates the custom functionality and public interface for the XRM series devices.
