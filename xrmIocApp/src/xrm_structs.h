@@ -16,11 +16,12 @@
 
 #include <cstring>			// memset()
 
+/** @brief FMT_ROW defines a row of FMT:  */
 struct FMT_ROW {
-	epicsUInt16 event;           /**< FNAL Event number				*/
-	epicsUInt16 pad;             /**< 32 bit alignment is best, available for future */
-	epicsUInt32 client_data;     /**< opaque value to pass back			*/
-	epicsInt64 timestamp;       /**< 64 bit WR timestamp in usec from EPOCH		*/
+	epicsUInt16 event;           /**< FNAL Event number					*/
+	epicsUInt16 pad;             /**< 32 bit alignment is best, available for future 	*/
+	epicsUInt32 client_data;     /**< opaque value to pass back				*/
+	epicsInt64 timestamp;        /**< 64 bit WR timestamp in usec from EPOCH		*/
 };
 
 /* ** we're losing one bit here, but it's OK, we have time..
@@ -32,12 +33,26 @@ struct FMT_ROW {
  */
 const epicsUInt16 EV99 = 65535U;	     // denotes last event in table.
 
+/** define number of rows in FMT. */
 const int FMT_ROWS = 64;
 //#define FMT_ROWS 64
 
 /** @brief FMT : FNAL Multicast Table
+
  * input from plant: 20Hz
+
  * This is the binary implementation that goes out on the wire.
+
+ * each row of the FMT is a @ref struct FMT_ROW.
+
+ ROW  | event | pad | client_data | timestamp
+------|-------|-----|-------------|----------
+ 0    | u16   | u16 | u32         | int64
+ 1    | u16   | u16 | u32         | int64
+ 2    | u16   | u16 | u32         | int64
+ ..   | ...   | ... | ...         | ...
+ 64   | u16   | u16 | u32         | int64
+
  */
 typedef struct FMT_ROW  FMT[FMT_ROWS];
 
@@ -45,9 +60,7 @@ static inline void clean(FMT fmt) {
 	memset(fmt, 0, sizeof(FMT));
 }
 
-/* SOE_LUT : Sample On Event Lookup Table
- * input from plant: as required (EPICS PV)
- */
+/** @brief SOE_LUT_ROW defines a row of SOE_LUT. */
 struct SOE_LUT_ROW {
 	epicsUInt16 event;           /**< FNAL Event number.					*/
 	epicsUInt16 pad;             /**< 32 bit alignment is best, available for future.	*/
@@ -57,30 +70,89 @@ struct SOE_LUT_ROW {
 
 const int SOE_LUT_ROWS = 64;
 
-/** @brief SOE_LUT definition */
+/** @brief SOE_LUT Sample On Event Lookup Table definition.
+ *
+ * matches events to PV's with a selectable time offset.
+
+ * input from user at user-timescale.
+
+ * in EPICS, we provide a "ROW_EDIT" PV to enable update, this works well for Phoebus and P4P
+
+ ROW  | event | pad | pv_id | offset_us
+------|-------|-----|-------|----------
+ 0    | u16   | u16 | u32   | int32
+ 1    | u16   | u16 | u32   | int32
+ 2    | u16   | u16 | u32   | int32
+ ..   | ...   | ... | ...   | ...
+ 64   | u16   | u16 | u32   | int32
+
+ */
 typedef struct SOE_LUT_ROW  SOE_LUT[SOE_LUT_ROWS];
 
+/** @brief SOE_HOLD_HEADER Header tow for Hold Table.
+struct SOE_HOLD_HEADER {
+	epicsUInt32 pv_id;		/**< links Event and Offset				*/
+	epicsUInt32 client_data;	/**< copied from FMT (if required) @todo more required?	*/
+	epicsInt64 timestamp;		/**< cross check: which FMT update this derives from.	*/
+	epicsUInt16 data_offset;	/**< offset of RAW DATA in u32 from start of table.	*/
+	/* description of raw sample from hardware
+	 * it's not totally raw because all AI are presented as calibrated V.
+	 * but after that a series of U32 representing DI, SPAD
+	 * this is not in the spec, but will be useful for validation.
+	 */
+	epicsUInt8  ss_u32;		/**< sample size  (u32)					*/
+	epicsUInt8  ai_count;           /**< number of AI (floats) in data			*/
+	epicsUInt8  di_count;           /**< number of DI (u32) in data				*/
+	epicsUInt8  sp_count;           /**< number of SP (u32) in data	Scratch Pad (meta-data) */
+};
+
+const int SPAD0_SC = 0;                   /**< SPAD[0] is sample count (u32)			*/
+const int SPAD1_TS = 1;                   /**< SPAD[1] is WR TS 3 bit seconds, 28 bit ticks	*/
+
+const int SOE_HLD_ROWS = 64;
+
+typedef epicsUInt32 	U32;
+
 /** @brief SOE_HOLD_TABLE
- * This is the OUTPUT from each CYCLE
- * For N events, the OUTPUT comprises:
- * N+1 SOE_HOLD_HEADER rows, headers for N events + 1 row of zeros
- * N RAW SAMPLE rows.
- *
- * The data structure has N fixed format HEADER, a delimiter tow and N raw sample entries.
- * The HEADER includes the geometry of the raw sample entries, so the data is self-describing.
- *
- * The RAW SAMPLE row varies per unit type, the fixed header includes info to access the RAW SAMPLE.
- * We prefer to offer the RAW sample because
- * 1. Blitting off a row of data is our most efficient transfer
- * 2. No conversion to EGU's. User to do that thanks to $UUT:*:EOFF,ESLO
- * 3. RAW sample includes METADATA for checking purposes.
- *
- * To interpret a received HOLD DATA:
- * iterate the SOE_HOLD_HEADER rows until zero
- * use data_offset to access the data.
- *
- * In summary, the memory layout looks like this:
- * ```
+ - This is the OUTPUT from each CYCLE
+
+ - For N events, the OUTPUT comprises:
+
+  1. N+1 SOE_HOLD_HEADER rows, headers for N events + 1 row of zeros (DELIMITER)
+  2. N RAW SAMPLE rows
+
+ - The HEADER includes the geometry of the raw sample entries, so the data is self-describing.
+
+ - The RAW SAMPLE row varies per unit type, the fixed header includes info to access the RAW SAMPLE.
+
+ - We prefer to offer the RAW sample because
+
+  + Blitting off a row of data is our most efficient transfer
+  + No conversion to EGU's. User to do that thanks to $UUT:*:EOFF,ESLO
+  + RAW sample includes METADATA for checking purposes.
+
+ - To interpret a received HOLD DATA:
+
+  + iterate the SOE_HOLD_HEADER rows until zero
+
+  + use data_offset to access the data.
+
+ - In summary, the memory layout looks like this:
+
+ ROW  | pv_id | client_data | timestamp | data_offset | ss_u32 | ai_count | di_count | sp_count
+------|-------|-------------|-----------|-------------|--------|----------|----------|---------
+ 0    | u32   | u32         | int64     | u16         | u8     | u8       | u8       | u8
+ 1    | u32   | u32         | int64     | u16         | u8     | u8       | u8       | u8
+ ...  | u32   | u32         | int64     | u16         | u8     | u8       | u8       | u8
+ DEL  | 0     | 0           | 0         | 0           | 0      | 0        | 0        | 0
+
+ RAW  | ai | di | sp
+ -----|----|----|---
+ R0   | i16|u32 |U32
+ R1   | i16|u32 |U32
+
+
+```
   Example 4 entries
   sizeof(SOE_HOLD_HEADER==22)
   XRMMAGPS: SSB=128 ruler in byte*2:
@@ -106,6 +178,7 @@ typedef struct SOE_LUT_ROW  SOE_LUT[SOE_LUT_ROWS];
  __________________SADP|    epicsUInt8  ss_u32, ai_count, di_count, sp_count;
 
  ```
+
  Actual wire protocol:
  - We meet the letter of the requirement by sending as a PVA ARRAY of U32
   - where NORD gives the overall size of the table, including DATA.
@@ -119,31 +192,6 @@ typedef struct SOE_LUT_ROW  SOE_LUT[SOE_LUT_ROWS];
  to create an Array of Groups, but this has not been a success.
  Happy to revisit later when we have an example that works.
  */
-
-struct SOE_HOLD_HEADER {
-	epicsUInt32 pv_id;		/**< links Event and Offset				*/
-	epicsUInt32 client_data;	/**< copied from FMT (if required) @todo more required?	*/
-	epicsInt64 timestamp;		/**< cross check: which FMT update this derives from.	*/
-	epicsUInt16 data_offset;	/**< offset of RAW DATA in u32 from start of table.	*/
-	/* description of raw sample from hardware
-	 * it's not totally raw because all AI are presented as calibrated V.
-	 * but after that a series of U32 representing DI, SPAD
-	 * this is not in the spec, but will be useful for validation.
-	 */
-	epicsUInt8  ss_u32;		/**< sample size  (u32)					*/
-	epicsUInt8  ai_count;           /**< number of AI (floats) in data			*/
-	epicsUInt8  di_count;           /**< number of DI (u32) in data				*/
-	epicsUInt8  sp_count;           /**< number of SP (u32) in data				*/
-};
-
-const int SPAD0_SC = 0;                   /**< SPAD[0] is sample count (u32)			*/
-const int SPAD1_TS = 1;                   /**< SPAD[1] is WR TS 3 bit seconds, 28 bit ticks	*/
-
-const int SOE_HLD_ROWS = 64;
-
-typedef epicsUInt32 	U32;
-
-
 typedef struct SOE_HOLD_HEADER* SOE_HOLD_TABLE;   // many more than 1 of course..
 
 

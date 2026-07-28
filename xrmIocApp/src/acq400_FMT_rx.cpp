@@ -192,7 +192,6 @@ asynStatus acq400_FMT_rx::writeInt32(asynUser *pasynUser, epicsInt32 value)
 }
 
 int acq400_FMT_rx::waitFMT(unsigned timeout_ms)
-/** @@todo: wait not implemented */
 {
 	double timeout = (double)timeout_ms/1000;
 	epicsEventStatus rx_wait_status =
