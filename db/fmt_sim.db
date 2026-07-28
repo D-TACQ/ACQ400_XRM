@@ -96,4 +96,10 @@ record(longout, "${UUT}:FMT_SIM:FMT_DELAY")
 	field(HOPR, "100")
 }
 
+record(bo, "${UUT}:FMT:RUNSTOP")
+{
+	field(VAL, "1")
+	field(PINI, "YES")
+}
+
 
