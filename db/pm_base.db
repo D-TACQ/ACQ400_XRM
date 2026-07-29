@@ -13,7 +13,7 @@ record(bo, "${UUT}:PM:RUNSTOP")
 # see fmt_rx.db
 record(calcout, "${UUT}:FMT:PM_TRG:EVT:ACT:out")
 {
-	field(OUT, "${UUT}:PM:RUNSTOP")
+	field(OUT, "${UUT}:PM:RUNSTOP PP")
 }
 record(longin, "${UUT}:PM:UPDATES")
 {
