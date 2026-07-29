@@ -93,9 +93,19 @@ void acq400_FMT_rx::update_fmt(FMT& fmt, bool first_time)
 	ts = fmt[0].timestamp;
 }
 
-void acq400_FMT_rx::process_fmt(bool first_time)
+void acq400_FMT_rx::process_fmt(FMT& fmt, bool first_time)
 {
 	epicsEventSignal(rx_event);
+
+	if (fmt_pm_trg_evt){
+		const epicsUInt16 trg_evt = fmt_pm_trg_evt;
+		for (int ii = 0; ii < FMT_ROWS; ++ii){
+			if (trg_evt == fmt[ii].event){
+				onPM_trg_evt();
+				break;
+			}
+		}
+	}
 }
 
 int acq400_FMT_rx::get_empty() {
@@ -151,7 +161,7 @@ void acq400_FMT_rx::task(void) {
 			FMT& fmt = receive(multicast);
 			rateLimit.newData(mrl_param);
 			update_fmt(fmt, first_time);
-			process_fmt(first_time);
+			process_fmt(fmt, first_time);
 			if (rateLimit.goAhead()){
 				update_fmt_columns(fmt);   // @@todo head
 			}
@@ -168,10 +178,11 @@ void acq400_FMT_rx::task(void) {
 
 void acq400_FMT_rx::onPM_trg_evt()
 {
+	fprintf(stderr, "%s\n", FN);
 	sip(0, P_FMT_PM_TRG_EVT_ACTION, 1);
 	callParamCallbacks();
-	sip(0, P_FMT_PM_TRG_EVT_ACTION, 0);
-	callParamCallbacks();
+	//sip(0, P_FMT_PM_TRG_EVT_ACTION, 0);
+	//callParamCallbacks();
 }
 
 asynStatus acq400_FMT_rx::writeInt32(asynUser *pasynUser, epicsInt32 value)

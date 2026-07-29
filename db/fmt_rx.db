@@ -2,7 +2,7 @@
 
 record(longout, "${UUT}:FMT:PM_TRG:EVT")
 {
-	field(DTYP, "asynOctetWrite")
+	field(DTYP, "asynInt32")
 	field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_PM_TRG_EVT")
 	field(PINI, "YES")
 	field(VAL,  "0")

@@ -36,7 +36,7 @@ protected:
 	std::deque<int> filled;		/* indexes fmt_cache .. avoid copy; push from front, [0] is latest */
 
 	virtual void task();
-	virtual void process_fmt(bool first_time);
+	virtual void process_fmt(FMT& fmt, bool first_time);
 	/**< main processing here */
 
 	acq400_FMT_rx(const char* portName);
