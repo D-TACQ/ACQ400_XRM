@@ -178,11 +178,9 @@ void acq400_FMT_rx::task(void) {
 
 void acq400_FMT_rx::onPM_trg_evt()
 {
-	fprintf(stderr, "%s\n", FN);
 	sip(0, P_FMT_PM_TRG_EVT_ACTION, 1);
 	callParamCallbacks();
-	//sip(0, P_FMT_PM_TRG_EVT_ACTION, 0);
-	//callParamCallbacks();
+	sip(0, P_FMT_PM_TRG_EVT_ACTION, 0);
 }
 
 asynStatus acq400_FMT_rx::writeInt32(asynUser *pasynUser, epicsInt32 value)

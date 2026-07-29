@@ -10,6 +10,11 @@ record(bo, "${UUT}:PM:RUNSTOP")
 	field(ONAM, "RUN")
 	field(VAL,  "0")
 }
+# see fmt_rx.db
+record(calcout, "${UUT}:FMT:PM_TRG:EVT:ACT:out")
+{
+	field(OUT, "${UUT}:PM:RUNSTOP")
+}
 record(longin, "${UUT}:PM:UPDATES")
 {
 	field(PINI, "NO")

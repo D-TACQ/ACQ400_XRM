@@ -15,5 +15,17 @@ record(bi, "${UUT}:FMT:PM_TRG:EVT:ACT")
 	field(INP, "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_PM_TRG_EVT_ACTION")
 	field(SCAN, "I/O Intr")
 	field(DESC, "Event is active")
+	field(FLNK, "${UUT}:FMT:PM_TRG:EVT:ACT:out")
 }
 
+record(calcout, "${UUT}:FMT:PM_TRG:EVT:ACT:out")
+{
+	field(INPA, "${UUT}:FMT:PM_TRG:EVT:ACT")
+	field(CALC, "A")
+	field(OOPT, "Transition To Non-zero")
+	field(DOPT, "Use OCAL")
+	field(OCAL, "0")
+# field OUT filled by PM if present.
+# sets output to 0 - in the PM case, transition to zero means "trigger"
+# we leave some other agent to re-enable the PM
+}
