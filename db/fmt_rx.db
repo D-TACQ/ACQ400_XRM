@@ -1,0 +1,19 @@
+
+
+record(longout, "${UUT}:FMT:PM_TRG:EVT")
+{
+	field(DTYP, "asynOctetWrite")
+	field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_PM_TRG_EVT")
+	field(PINI, "YES")
+	field(VAL,  "0")
+	field(DESC, "SPEC EVENT that will trigger PM")
+}
+
+record(bi, "${UUT}:FMT:PM_TRG:EVT:ACT")
+{
+	field(DTYP, "asynInt32")
+	field(INP, "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_PM_TRG_EVT_ACTION")
+	field(SCAN, "I/O Intr")
+	field(DESC, "Event is active")
+}
+

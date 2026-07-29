@@ -32,7 +32,8 @@ acq400_FMT_rx::acq400_FMT_rx(const char* portName) :
 		/* Default priority */  0,
 		/* Default stack size*/ 0),
 		packet_count(0),
-		ts(0)
+		ts(0),
+		fmt_pm_trg_evt(NO_TRG_EVT)
 {
 	asynStatus status = asynSuccess;
 	fmt_cache = new FMT[maxq];
@@ -50,6 +51,10 @@ acq400_FMT_rx::acq400_FMT_rx(const char* portName) :
 	for (auto ii: empties){
 		printf("acq400_FMT_rx empties:%p\n", fmt_cache[ii]);
 	}
+
+	createParam(PS_FMT_PM_TRG_EVT,  asynParamInt32,	&P_FMT_PM_TRG_EVT);
+	createParam(PS_FMT_PM_TRG_EVT_ACTION,  asynParamInt32,	&P_FMT_PM_TRG_EVT_ACTION);
+	sip(0, P_FMT_PM_TRG_EVT_ACTION, 0);
 
 	rx_event = epicsEventCreate(epicsEventEmpty);
 
@@ -73,6 +78,7 @@ acq400_FMT_rx::~acq400_FMT_rx() {
 void acq400_FMT_rx::update_fmt(FMT& fmt, bool first_time)
 {
 	++packet_count;
+#if 0
 	fmt[4].pad = packet_count>>16;
 	fmt[5].pad = packet_count&0x0ffff;
 	if (!first_time){
@@ -83,6 +89,7 @@ void acq400_FMT_rx::update_fmt(FMT& fmt, bool first_time)
 		fmt[9].pad = dt;            // BIG truncation, max 65536 us
 		fmt[10].pad = dt/1000;	    // ms, 65s rollover
 	}
+#endif
 	ts = fmt[0].timestamp;
 }
 
@@ -122,8 +129,11 @@ FMT& acq400_FMT_rx::receive(MultiCast& multicast){
 	return fmt_cache[ib];
 }
 
+const epicsUInt16 acq400_FMT_rx::getFMT_pm_trg_evt() {
+	return fmt_pm_trg_evt;
+}
+
 void acq400_FMT_rx::task(void) {
-	asynStatus status = asynSuccess;
 	bool first_time = true;
 
 	epicsEventWait(eventId);
@@ -134,11 +144,8 @@ void acq400_FMT_rx::task(void) {
 	while(1){
 		int runstop;
 		lock();
-		status = getIntegerParam(P_RUNSTOP, &runstop);
-		if (status){
-			fprintf(stderr, "%s:%s getIntegerParam P_FMT_MC_PORT fail\n", DN, FN);
-			return;
-		}
+		gip(P_RUNSTOP, &runstop);
+
 		unlock();
 		if (runstop == 1){
 			FMT& fmt = receive(multicast);
@@ -159,6 +166,14 @@ void acq400_FMT_rx::task(void) {
 	}
 }
 
+void acq400_FMT_rx::onPM_trg_evt()
+{
+	sip(0, P_FMT_PM_TRG_EVT_ACTION, 1);
+	callParamCallbacks();
+	sip(0, P_FMT_PM_TRG_EVT_ACTION, 0);
+	callParamCallbacks();
+}
+
 asynStatus acq400_FMT_rx::writeInt32(asynUser *pasynUser, epicsInt32 value)
 {
 	    int function = pasynUser->reason;
@@ -175,6 +190,8 @@ asynStatus acq400_FMT_rx::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	        if (value) epicsEventSignal(eventId);
 	    }else if (function == P_MON_RL){
 		    mrl_param = value;
+	    }else if (function == P_FMT_PM_TRG_EVT){
+		    fmt_pm_trg_evt = value;
 	    }
 
 	    /* Do callbacks so higher layers see any changes */
@@ -222,6 +239,8 @@ acq400_FMT_rx* acq400_FMT_rx::instance(const char* portName)
 	}
 	return _instance;
 }
+
+
 
 extern "C" {
 

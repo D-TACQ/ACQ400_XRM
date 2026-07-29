@@ -94,7 +94,7 @@ const int SOE_LUT_ROWS = 64;
  */
 typedef struct SOE_LUT_ROW  SOE_LUT[SOE_LUT_ROWS];
 
-/** @brief SOE_HOLD_HEADER Header tow for Hold Table.
+/** @brief SOE_HOLD_HEADER Header for Hold Table. */
 struct SOE_HOLD_HEADER {
 	epicsUInt32 pv_id;		/**< links Event and Offset				*/
 	epicsUInt32 client_data;	/**< copied from FMT (if required) @todo more required?	*/

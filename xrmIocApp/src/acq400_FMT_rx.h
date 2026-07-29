@@ -11,6 +11,11 @@
 #include <deque>
 #include "acq400_FMT.h"
 
+#define PS_FMT_PM_TRG_EVT 		"FMT_PM_TRG_EVT"	/* asynInt32, rw */
+#define PS_FMT_PM_TRG_EVT_ACTION	"FMT_PM_TRG_EVT_ACTION" /* asynInt32, ro */
+
+#define NO_TRG_EVT	0
+
 /** FMT receiver
  * - singleton - must bind to port.
  */
@@ -20,6 +25,7 @@ class acq400_FMT_rx: public acq400_FMT_abc {
 	/**< basic housekeeping and instrumentation */
 	int packet_count;
 	epicsInt64 ts;
+	int fmt_pm_trg_evt;
 
 	int get_empty();
 	FMT& receive(MultiCast& multicast);
@@ -36,11 +42,16 @@ protected:
 	acq400_FMT_rx(const char* portName);
 
 	epicsEventId rx_event;
+
+	int P_FMT_PM_TRG_EVT;
+	int P_FMT_PM_TRG_EVT_ACTION;
 public:
 
 	virtual ~acq400_FMT_rx();
 
 	const FMT& get_fmt(unsigned icache);
+	const epicsUInt16 getFMT_pm_trg_evt();
+	/**< returns true it pm_trg_evt is selected */
 
 	int waitFMT(unsigned timeout_ms);
 	/**< clients block for FMT arrival. */
@@ -49,6 +60,9 @@ public:
 
 	static acq400_FMT_rx* instance(const char* portName = 0);
 	/**< singleton factory: first caller MUST set portName */
+
+	void onPM_trg_evt();
+	/**< called if PM_trg_evt detected */
 };
 
 

@@ -182,12 +182,17 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::soe_lut_lookup(
 	int bsi_entries[SOE_HLD_ROWS];
 	int fmt_row = 0;
 	int imatch = 0;
+	epicsUInt16 pm_trg_evt = FMT_rx->getFMT_pm_trg_evt();
 
 	for (; fmt_row < FMT_ROWS; ++fmt_row){
 		const epicsUInt64 fmt_ts = latest[fmt_row].timestamp;
 		const epicsUInt16 fmt_event = latest[fmt_row].event;
 		if (fmt_event == EV99){
 			break;
+		}
+		if (pm_trg_evt && pm_trg_evt == fmt_event){
+			FMT_rx->onPM_trg_evt();
+			pm_trg_evt = 0;
 		}
 		for (int soe_row = 0; soe_row < SOE_LUT_ROWS; ++soe_row){
 			const epicsUInt16 soe_lut_event = soe.lut[soe_row].event;
