@@ -95,16 +95,21 @@ void acq400_FMT_rx::update_fmt(FMT& fmt, bool first_time)
 
 void acq400_FMT_rx::process_fmt(FMT& fmt, bool first_time)
 {
+	bool triggered = false;
 	epicsEventSignal(rx_event);
 
 	if (fmt_pm_trg_evt){
 		const epicsUInt16 trg_evt = fmt_pm_trg_evt;
 		for (int ii = 0; ii < FMT_ROWS; ++ii){
 			if (trg_evt == fmt[ii].event){
+				triggered = true;
 				onPM_trg_evt();
 				break;
 			}
 		}
+	}
+	if (!triggered){
+		sip(0, P_FMT_PM_TRG_EVT_ACTION, 0);
 	}
 }
 
@@ -180,7 +185,7 @@ void acq400_FMT_rx::onPM_trg_evt()
 {
 	sip(0, P_FMT_PM_TRG_EVT_ACTION, 1);
 	callParamCallbacks();
-	sip(0, P_FMT_PM_TRG_EVT_ACTION, 0);
+
 }
 
 asynStatus acq400_FMT_rx::writeInt32(asynUser *pasynUser, epicsInt32 value)
