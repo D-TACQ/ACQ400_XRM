@@ -66,7 +66,7 @@ acq400_SOE_Strategy::RC NullStrategy::operator() (
 			ht_data_offset += SSL, sp_raw += SSL*stride, raw += SSB*stride){
 		unsigned wrs, wrv;
 
-		ht[row].pv_id = soe.lut[row].pv_id;
+		ht[row].lut_row = soe.lut[row];
 		// From FMT! ht->entries[row].client_data = soe_lut[row].client_data;
 
 		wrv = sp_raw[SP2];
@@ -155,7 +155,7 @@ int  LutFmtStrategy1::build_hold_entry(
 	const int SSL = SSB/sizeof(long);
 	struct SOE_HOLD_HEADER& entry(ht[ihold]);
 
-	entry.pv_id = lut_row.pv_id;
+	entry.lut_row = lut_row;
 	//entry.client_data = fmt_row.client_data;
 	entry.client_data = bsi;
 	entry.timestamp = fmt_row.timestamp;

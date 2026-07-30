@@ -96,8 +96,9 @@ typedef struct SOE_LUT_ROW  SOE_LUT[SOE_LUT_ROWS];
 
 /** @brief SOE_HOLD_HEADER Header for Hold Table. */
 struct SOE_HOLD_HEADER {
-	epicsUInt32 pv_id;		/**< links Event and Offset				*/
+	SOE_LUT_ROW lut_row;		/**< LUT entry that triggered this HOLD */
 	epicsUInt32 client_data;	/**< copied from FMT (if required) @todo more required?	*/
+
 	epicsInt64 timestamp;		/**< cross check: which FMT update this derives from.	*/
 	epicsUInt16 data_offset;	/**< offset of RAW DATA in u32 from start of table.	*/
 	/* description of raw sample from hardware

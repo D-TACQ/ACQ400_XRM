@@ -151,7 +151,9 @@ public:
 void JSON_Formatter::print(SOE_HOLD_HEADER& header)
 {
 	fprintf(fp, "%s" "\"HDR\": {\n", indent(1));
-	fprintf(fp, "%s" "\"pv_id\": %10u,\n", indent(0), header.pv_id);
+	fprintf(fp, "%s" "\"pv_id\": %10u,\n", indent(0), header.lut_row.pv_id);
+	fprintf(fp, "%s" "\"evt\": %10u,\n", indent(0), header.lut_row.event);
+	fprintf(fp, "%s" "\"offset_us\": %10u,\n", indent(0), header.lut_row.offset_us);
 	fprintf(fp, "%s" "\"client_data\": %10u,\n", indent(0), header.client_data);
 	fprintf(fp, "%s" "\"timestamp\": %10llu,\n", 	indent(0), header.timestamp);
 	fprintf(fp, "%s" "\"data_offset\": %10u,\n", indent(0), header.data_offset);
@@ -215,7 +217,7 @@ void JSON_Formatter::print(SOE_HOLD_HEADER* header, int* ht_data)
 	print_header_intro();
 	print(*header);
 	print_raw(*header, ht_data);
-	print_header_outro((header+1)->pv_id != 0);
+	print_header_outro((header+1)->lut_row.pv_id != 0);
 }
 
 
@@ -291,7 +293,7 @@ void parse(int* ht_data, unsigned nelems)
 	Formatter::instance()->start(nelems);
 
 	for (SOE_HOLD_HEADER* header = (SOE_HOLD_HEADER*)ht_data;
-			header->pv_id != 0; ++header){
+			header->lut_row.pv_id != 0; ++header){
 		Formatter::instance()->print(header, ht_data+header->data_offset);
 	}
 	Formatter::instance()->finish();

@@ -210,7 +210,7 @@ void acq400_SOE::update_hld_tab_columns()
 	int row;
 
 	for (row = 0; row < SOE_HLD_ROWS; ++row){
-		if (the_hold_table[row].pv_id == 0){
+		if (the_hold_table[row].lut_row.pv_id == 0){
 			break;
 		}
 		U32* raw = (U32*)the_hold_table + the_hold_table[row].data_offset;
@@ -218,7 +218,7 @@ void acq400_SOE::update_hld_tab_columns()
 		int * di_raw = (int*)raw + samplePrams.DI_INDEX;
 		int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
 
-		hold_cols.c_pv_id[row] = the_hold_table[row].pv_id;
+		hold_cols.c_pv_id[row] = the_hold_table[row].lut_row.pv_id;
 		hold_cols.c_client_data[row] = the_hold_table[row].client_data;
 		hold_cols.c_timestamp[row] = the_hold_table[row].timestamp;
 
