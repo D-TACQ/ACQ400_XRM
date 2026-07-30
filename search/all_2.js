@@ -35,7 +35,7 @@ var searchData=
   ['acq400_5fsoe_5fstrategy_2ecpp_32',['acq400_SOE_Strategy.cpp',['../acq400__SOE__Strategy_8cpp.html',1,'']]],
   ['acq400_5fxrm_20readme_33',['ACQ400_XRM README',['../index.html',1,'']]],
   ['ai_5fcount_34',['AI_COUNT',['../structSamplePrams.html#a2199b11adad769f5a824c5f1789f2172',1,'SamplePrams']]],
-  ['ai_5fcount_35',['ai_count',['../xrm__structs_8h.html#a43c809ccf3bb42c3cf64e0a4804bfe49',1,'xrm_structs.h']]],
+  ['ai_5fcount_35',['ai_count',['../structSOE__HOLD__HEADER.html#a86344279e078906a466913ca28266c0a',1,'SOE_HOLD_HEADER']]],
   ['ai_5findex_36',['AI_INDEX',['../structSamplePrams.html#aab96630c602ba315ec4fc416c125b9c8',1,'SamplePrams']]],
   ['and_20public_20interface_20for_20the_20xrm_20series_20devices_37',['xrmIoc creates the custom functionality and public interface for the XRM series devices.',['../index.html#autotoc_md1',1,'']]]
 ];

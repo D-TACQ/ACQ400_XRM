@@ -48,6 +48,7 @@ var hierarchy =
     [ "acq400_SOE_Strategy::RC", "structacq400__SOE__Strategy_1_1RC.html", null ],
     [ "SamplePrams", "structSamplePrams.html", null ],
     [ "SOE_DIMS", "structSOE__DIMS.html", null ],
+    [ "SOE_HOLD_HEADER", "structSOE__HOLD__HEADER.html", null ],
     [ "SOE_LUT_ROW", "structSOE__LUT__ROW.html", null ],
     [ "TimeProvider", "structTimeProvider.html", [
       [ "TimeProviderLocaltime", "classTimeProviderLocaltime.html", null ],

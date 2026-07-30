@@ -31,6 +31,7 @@ var annotated_dup =
     [ "PVX_getter", "classPVX__getter.html", null ],
     [ "SamplePrams", "structSamplePrams.html", "structSamplePrams" ],
     [ "SOE_DIMS", "structSOE__DIMS.html", null ],
+    [ "SOE_HOLD_HEADER", "structSOE__HOLD__HEADER.html", "structSOE__HOLD__HEADER" ],
     [ "SOE_LUT_ROW", "structSOE__LUT__ROW.html", "structSOE__LUT__ROW" ],
     [ "TimeProvider", "structTimeProvider.html", null ],
     [ "TimeProviderLocaltime", "classTimeProviderLocaltime.html", null ],

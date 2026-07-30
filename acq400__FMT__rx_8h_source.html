@@ -130,57 +130,73 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('acq400__FMT__r
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;deque&gt;</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &quot;<a class="code" href="acq400__FMT_8h.html">acq400_FMT.h</a>&quot;</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment"></span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">/** FMT receiver</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment"> * - singleton - must bind to port.</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment"> */</span></div>
-<div class="foldopen" id="foldopen00017" data-start="{" data-end="};">
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="classacq400__FMT__rx.html">   17</a></span><span class="keyword">class </span>acq400_FMT_rx: <span class="keyword">public</span> acq400_FMT_abc {</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> update_fmt(<a class="code hl_typedef" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a>&amp; fmt, <span class="keywordtype">bool</span> first_time = <span class="keyword">false</span>);<span class="comment"></span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">    /**&lt; basic housekeeping and instrumentation */</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <span class="keywordtype">int</span> packet_count;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    epicsInt64 ts;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#define PS_FMT_PM_TRG_EVT       &quot;FMT_PM_TRG_EVT&quot;    </span><span class="comment">/* asynInt32, rw */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#define PS_FMT_PM_TRG_EVT_ACTION    &quot;FMT_PM_TRG_EVT_ACTION&quot; </span><span class="comment">/* asynInt32, ro */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#define NO_TRG_EVT  0</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment"></span> </div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">/** FMT receiver</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment"> * - singleton - must bind to port.</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment"> */</span></div>
+<div class="foldopen" id="foldopen00022" data-start="{" data-end="};">
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="classacq400__FMT__rx.html">   22</a></span><span class="keyword">class </span>acq400_FMT_rx: <span class="keyword">public</span> acq400_FMT_abc {</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordtype">int</span> get_empty();</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <a class="code hl_typedef" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a>&amp; receive(<a class="code hl_class" href="classMultiCast.html">MultiCast</a>&amp; multicast);</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">protected</span>:</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keyword">static</span> <span class="keywordtype">int</span> maxq;</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <a class="code hl_typedef" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a>* fmt_cache;         <span class="comment">/* fmt_cache[maxq] possible store for short list of FMT instances */</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    std::deque&lt;int&gt; empties;        <span class="comment">/* indexes fmt_cache .. avoid copy */</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    std::deque&lt;int&gt; filled;     <span class="comment">/* indexes fmt_cache .. avoid copy; push from front, [0] is latest */</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> task();</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classacq400__FMT__rx.html#ac970a807d3f01751352cc30088e88e5c">process_fmt</a>(<span class="keywordtype">bool</span> first_time);<span class="comment"></span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">    /**&lt; main processing here */</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    acq400_FMT_rx(<span class="keyword">const</span> <span class="keywordtype">char</span>* portName);</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> update_fmt(<a class="code hl_typedef" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a>&amp; fmt, <span class="keywordtype">bool</span> first_time = <span class="keyword">false</span>);<span class="comment"></span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">    /**&lt; basic housekeeping and instrumentation */</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keywordtype">int</span> packet_count;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    epicsInt64 ts;</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keywordtype">int</span> fmt_pm_trg_evt;</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="keywordtype">int</span> get_empty();</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <a class="code hl_typedef" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a>&amp; receive(<a class="code hl_class" href="classMultiCast.html">MultiCast</a>&amp; multicast);</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">protected</span>:</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keyword">static</span> <span class="keywordtype">int</span> maxq;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <a class="code hl_typedef" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a>* fmt_cache;         <span class="comment">/* fmt_cache[maxq] possible store for short list of FMT instances */</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    std::deque&lt;int&gt; empties;        <span class="comment">/* indexes fmt_cache .. avoid copy */</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    std::deque&lt;int&gt; filled;     <span class="comment">/* indexes fmt_cache .. avoid copy; push from front, [0] is latest */</span></div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    epicsEventId rx_event;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keyword">virtual</span> ~acq400_FMT_rx();</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keyword">const</span> <a class="code hl_typedef" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a>&amp; get_fmt(<span class="keywordtype">unsigned</span> icache);</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordtype">int</span> <a class="code hl_function" href="classacq400__FMT__rx.html#a43a5122542f993dec473b0b085a05de6">waitFMT</a>(<span class="keywordtype">unsigned</span> timeout_ms);<span class="comment"></span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="comment">    /**&lt; clients block for FMT arrival. */</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> task();</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classacq400__FMT__rx.html#af338e5cc7f646327f502afca882e6f3f">process_fmt</a>(<a class="code hl_typedef" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a>&amp; fmt, <span class="keywordtype">bool</span> first_time);<span class="comment"></span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment">    /**&lt; main processing here */</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    acq400_FMT_rx(<span class="keyword">const</span> <span class="keywordtype">char</span>* portName);</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    epicsEventId rx_event;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordtype">int</span> P_FMT_PM_TRG_EVT;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordtype">int</span> P_FMT_PM_TRG_EVT_ACTION;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keyword">static</span> acq400_FMT_rx* <a class="code hl_function" href="classacq400__FMT__rx.html#a15eb6574ca62b18da80beacbf86e072e">instance</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* portName = 0);<span class="comment"></span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="comment">    /**&lt; singleton factory: first caller MUST set portName */</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>};</div>
-</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keyword">virtual</span> ~acq400_FMT_rx();</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keyword">const</span> <a class="code hl_typedef" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a>&amp; get_fmt(<span class="keywordtype">unsigned</span> icache);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keyword">const</span> epicsUInt16 <a class="code hl_function" href="classacq400__FMT__rx.html#a34e2356bb0c10211a3b6a7082dc341c3">getFMT_pm_trg_evt</a>();<span class="comment"></span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment">    /**&lt; returns true it pm_trg_evt is selected */</span></div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">#endif </span><span class="comment">/* XRMIOCAPP_SRC_ACQ400_FMT_RX_H_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keywordtype">int</span> <a class="code hl_function" href="classacq400__FMT__rx.html#a43a5122542f993dec473b0b085a05de6">waitFMT</a>(<span class="keywordtype">unsigned</span> timeout_ms);<span class="comment"></span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="comment">    /**&lt; clients block for FMT arrival. */</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keyword">static</span> acq400_FMT_rx* <a class="code hl_function" href="classacq400__FMT__rx.html#a15eb6574ca62b18da80beacbf86e072e">instance</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* portName = 0);<span class="comment"></span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="comment">    /**&lt; singleton factory: first caller MUST set portName */</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classacq400__FMT__rx.html#adf0ab9861a744aaa8bd96897096059fb">onPM_trg_evt</a>();<span class="comment"></span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="comment">    /**&lt; called if PM_trg_evt detected */</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>};</div>
+</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="preprocessor">#endif </span><span class="comment">/* XRMIOCAPP_SRC_ACQ400_FMT_RX_H_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="aacq400__FMT_8h_html"><div class="ttname"><a href="acq400__FMT_8h.html">acq400_FMT.h</a></div><div class="ttdoc">Fermi Multicast Table Abstract Base Class Created on: 16 Feb 2026 Author: pgm.</div></div>
 <div class="ttc" id="aclassMultiCast_html"><div class="ttname"><a href="classMultiCast.html">MultiCast</a></div><div class="ttdef"><b>Definition</b> Multicast.h:11</div></div>
-<div class="ttc" id="aclassacq400__FMT__rx_html_a15eb6574ca62b18da80beacbf86e072e"><div class="ttname"><a href="classacq400__FMT__rx.html#a15eb6574ca62b18da80beacbf86e072e">acq400_FMT_rx::instance</a></div><div class="ttdeci">static acq400_FMT_rx * instance(const char *portName=0)</div><div class="ttdef"><b>Definition</b> acq400_FMT_rx.cpp:216</div></div>
-<div class="ttc" id="aclassacq400__FMT__rx_html_a43a5122542f993dec473b0b085a05de6"><div class="ttname"><a href="classacq400__FMT__rx.html#a43a5122542f993dec473b0b085a05de6">acq400_FMT_rx::waitFMT</a></div><div class="ttdeci">int waitFMT(unsigned timeout_ms)</div><div class="ttdef"><b>Definition</b> acq400_FMT_rx.cpp:194</div></div>
-<div class="ttc" id="aclassacq400__FMT__rx_html_ac970a807d3f01751352cc30088e88e5c"><div class="ttname"><a href="classacq400__FMT__rx.html#ac970a807d3f01751352cc30088e88e5c">acq400_FMT_rx::process_fmt</a></div><div class="ttdeci">virtual void process_fmt(bool first_time)</div><div class="ttdef"><b>Definition</b> acq400_FMT_rx.cpp:89</div></div>
+<div class="ttc" id="aclassacq400__FMT__rx_html_a15eb6574ca62b18da80beacbf86e072e"><div class="ttname"><a href="classacq400__FMT__rx.html#a15eb6574ca62b18da80beacbf86e072e">acq400_FMT_rx::instance</a></div><div class="ttdeci">static acq400_FMT_rx * instance(const char *portName=0)</div><div class="ttdef"><b>Definition</b> acq400_FMT_rx.cpp:247</div></div>
+<div class="ttc" id="aclassacq400__FMT__rx_html_a34e2356bb0c10211a3b6a7082dc341c3"><div class="ttname"><a href="classacq400__FMT__rx.html#a34e2356bb0c10211a3b6a7082dc341c3">acq400_FMT_rx::getFMT_pm_trg_evt</a></div><div class="ttdeci">const epicsUInt16 getFMT_pm_trg_evt()</div><div class="ttdef"><b>Definition</b> acq400_FMT_rx.cpp:147</div></div>
+<div class="ttc" id="aclassacq400__FMT__rx_html_a43a5122542f993dec473b0b085a05de6"><div class="ttname"><a href="classacq400__FMT__rx.html#a43a5122542f993dec473b0b085a05de6">acq400_FMT_rx::waitFMT</a></div><div class="ttdeci">int waitFMT(unsigned timeout_ms)</div><div class="ttdef"><b>Definition</b> acq400_FMT_rx.cpp:225</div></div>
+<div class="ttc" id="aclassacq400__FMT__rx_html_adf0ab9861a744aaa8bd96897096059fb"><div class="ttname"><a href="classacq400__FMT__rx.html#adf0ab9861a744aaa8bd96897096059fb">acq400_FMT_rx::onPM_trg_evt</a></div><div class="ttdeci">void onPM_trg_evt()</div><div class="ttdef"><b>Definition</b> acq400_FMT_rx.cpp:184</div></div>
+<div class="ttc" id="aclassacq400__FMT__rx_html_af338e5cc7f646327f502afca882e6f3f"><div class="ttname"><a href="classacq400__FMT__rx.html#af338e5cc7f646327f502afca882e6f3f">acq400_FMT_rx::process_fmt</a></div><div class="ttdeci">virtual void process_fmt(FMT &amp;fmt, bool first_time)</div><div class="ttdef"><b>Definition</b> acq400_FMT_rx.cpp:96</div></div>
 <div class="ttc" id="axrm__structs_8h_html_af1a6b6471f8370aa1a2446aa06f3b4d2"><div class="ttname"><a href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a></div><div class="ttdeci">struct FMT_ROW FMT[FMT_ROWS]</div><div class="ttdoc">FMT : FNAL Multicast Table.</div><div class="ttdef"><b>Definition</b> xrm_structs.h:57</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

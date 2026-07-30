@@ -74,5 +74,5 @@ var searchData=
   ['p_5fts_5fusec_71',['P_TS_USEC',['../classacq400__asynPortDriver.html#ab629e1efafe11b50d4c2741d15743941',1,'acq400_asynPortDriver']]],
   ['p_5fupdates_72',['P_UPDATES',['../classacq400__asynPortDriver.html#a2cea5ca9ea28735fbb8d91c6c2a6d5ea',1,'acq400_asynPortDriver']]],
   ['pad_73',['pad',['../structFMT__ROW.html#a49e93a858ef69a2d133bbadaf8da55cb',1,'FMT_ROW::pad'],['../structSOE__LUT__ROW.html#a0c98f601d05f7bfe50bdc0a7bfbec435',1,'SOE_LUT_ROW::pad']]],
-  ['pv_5fid_74',['pv_id',['../structSOE__LUT__ROW.html#a6fb0547533bcbab31ac3300e7da7eec3',1,'SOE_LUT_ROW']]]
+  ['pv_5fid_74',['pv_id',['../structSOE__LUT__ROW.html#a6fb0547533bcbab31ac3300e7da7eec3',1,'SOE_LUT_ROW::pv_id'],['../structSOE__HOLD__HEADER.html#a39136c930ab3b72829b1683ecf09b580',1,'SOE_HOLD_HEADER::pv_id']]]
 ];

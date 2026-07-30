@@ -123,6 +123,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('acq400__FMT_8h
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="acq400__asynPortDriver_8h_source.html">acq400_asynPortDriver.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="xrm__structs_8h_source.html">xrm_structs.h</a>&quot;</code><br />
+<code>#include &quot;Multicast.h&quot;</code><br />
 </div>
 <p><a href="acq400__FMT_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -130,6 +131,23 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('acq400__FMT_8h
 Classes</h2></td></tr>
 <tr class="memitem:acq400_5FFMT_5Fabc" id="r_acq400_5FFMT_5Fabc"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classacq400__FMT__abc.html">acq400_FMT_abc</a></td></tr>
 <tr class="memitem:acq400_5FFMT_5Fabc_3A_3ACOLUMNS" id="r_acq400_5FFMT_5Fabc_3A_3ACOLUMNS"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structacq400__FMT__abc_1_1COLUMNS.html">acq400_FMT_abc::COLUMNS</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a414dc66168aff6321490d7af60cbebf0" id="r_a414dc66168aff6321490d7af60cbebf0"><td class="memItemLeft"><a id="a414dc66168aff6321490d7af60cbebf0" name="a414dc66168aff6321490d7af60cbebf0"></a>
+#define&#160;</td><td class="memItemRight"><b>PS_FMT_MC_GRP</b>&#160;&#160;&#160;&quot;FMT_MC_GRP&quot;    /* string, r/set on PINI */</td></tr>
+<tr class="memitem:aa7c746a2acbcc36ba09d1ca9beb0e778" id="r_aa7c746a2acbcc36ba09d1ca9beb0e778"><td class="memItemLeft"><a id="aa7c746a2acbcc36ba09d1ca9beb0e778" name="aa7c746a2acbcc36ba09d1ca9beb0e778"></a>
+#define&#160;</td><td class="memItemRight"><b>PS_FMT_MC_PORT</b>&#160;&#160;&#160;&quot;FMT_MC_PORT&quot;   /* asynInt32, r/set on PINI */</td></tr>
+<tr class="memitem:a0f1c4c14ebabdb8363066e1a00d7822b" id="r_a0f1c4c14ebabdb8363066e1a00d7822b"><td class="memItemLeft"><a id="a0f1c4c14ebabdb8363066e1a00d7822b" name="a0f1c4c14ebabdb8363066e1a00d7822b"></a>
+#define&#160;</td><td class="memItemRight"><b>PS_FMT_COL_ROWNUM</b>&#160;&#160;&#160;&quot;FMT_COL_ROWNUM&quot;  /* cosmetic for display, NOT part of <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a> */</td></tr>
+<tr class="memitem:ad3407f174ccbd6d3753c2e708afb6e2a" id="r_ad3407f174ccbd6d3753c2e708afb6e2a"><td class="memItemLeft"><a id="ad3407f174ccbd6d3753c2e708afb6e2a" name="ad3407f174ccbd6d3753c2e708afb6e2a"></a>
+#define&#160;</td><td class="memItemRight"><b>PS_FMT_COL_EVENT</b>&#160;&#160;&#160;&quot;FMT_COL_EVENT&quot;     /* asynInt16Array, ro */</td></tr>
+<tr class="memitem:af57f889fca61f7533117ba7a56a569c5" id="r_af57f889fca61f7533117ba7a56a569c5"><td class="memItemLeft"><a id="af57f889fca61f7533117ba7a56a569c5" name="af57f889fca61f7533117ba7a56a569c5"></a>
+#define&#160;</td><td class="memItemRight"><b>PS_FMT_COL_PAD</b>&#160;&#160;&#160;&quot;FMT_COL_PAD&quot;   /* asynInt16Array, ro */</td></tr>
+<tr class="memitem:ad76b1eefb1c5a276e0c5e11b1a496643" id="r_ad76b1eefb1c5a276e0c5e11b1a496643"><td class="memItemLeft"><a id="ad76b1eefb1c5a276e0c5e11b1a496643" name="ad76b1eefb1c5a276e0c5e11b1a496643"></a>
+#define&#160;</td><td class="memItemRight"><b>PS_FMT_COL_CLIDAT</b>&#160;&#160;&#160;&quot;FMT_COL_CLIDAT&quot;    /* asynInt32Array, ro */</td></tr>
+<tr class="memitem:aa2b689cc0f13c7db24a61eb083338064" id="r_aa2b689cc0f13c7db24a61eb083338064"><td class="memItemLeft"><a id="aa2b689cc0f13c7db24a61eb083338064" name="aa2b689cc0f13c7db24a61eb083338064"></a>
+#define&#160;</td><td class="memItemRight"><b>PS_FMT_COL_TS</b>&#160;&#160;&#160;&quot;FMT_COL_TS&quot;    /* asynInt64Array, ro */</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Fermi Multicast Table Abstract Base Class Created on: 16 Feb 2026 Author: pgm. </p>
