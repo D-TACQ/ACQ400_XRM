@@ -119,14 +119,14 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('structSOE__HOL
 </div><!--header-->
 <div class="contents">
 
-<p><a class="el" href="structSOE__HOLD__HEADER.html" title="SOE_HOLD_HEADER Header for Hold Table.">SOE_HOLD_HEADER</a> Header for Hold Table.  
+<p><a class="el" href="structSOE__HOLD__HEADER.html" title="SOE_HOLD_HEADER Header for Hold Table. lut_row is a copy of the relevant SOE_LUT_ROW,...">SOE_HOLD_HEADER</a> Header for Hold Table. lut_row is a copy of the relevant <a class="el" href="structSOE__LUT__ROW.html" title="SOE_LUT_ROW defines a row of SOE_LUT.">SOE_LUT_ROW</a>, for traceability.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="xrm__structs_8h_source.html">xrm_structs.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a39136c930ab3b72829b1683ecf09b580" id="r_a39136c930ab3b72829b1683ecf09b580"><td class="memItemLeft">epicsUInt32&#160;</td><td class="memItemRight"><a class="el" href="#a39136c930ab3b72829b1683ecf09b580">pv_id</a></td></tr>
+<tr class="memitem:aedd6b394b30f32ba6d16ef28d2791861" id="r_aedd6b394b30f32ba6d16ef28d2791861"><td class="memItemLeft"><a class="el" href="structSOE__LUT__ROW.html">SOE_LUT_ROW</a>&#160;</td><td class="memItemRight"><a class="el" href="#aedd6b394b30f32ba6d16ef28d2791861">lut_row</a></td></tr>
 <tr class="memitem:aaf4b5e4c825ceda88b03cdb5a55547a7" id="r_aaf4b5e4c825ceda88b03cdb5a55547a7"><td class="memItemLeft">epicsUInt32&#160;</td><td class="memItemRight"><a class="el" href="#aaf4b5e4c825ceda88b03cdb5a55547a7">client_data</a></td></tr>
 <tr class="memitem:aa377ef69c6715b5b8bdf7e40edf9c002" id="r_aa377ef69c6715b5b8bdf7e40edf9c002"><td class="memItemLeft">epicsInt64&#160;</td><td class="memItemRight"><a class="el" href="#aa377ef69c6715b5b8bdf7e40edf9c002">timestamp</a></td></tr>
 <tr class="memitem:a88622082c61c167cda71e35234ab1728" id="r_a88622082c61c167cda71e35234ab1728"><td class="memItemLeft">epicsUInt16&#160;</td><td class="memItemRight"><a class="el" href="#a88622082c61c167cda71e35234ab1728">data_offset</a></td></tr>
@@ -136,7 +136,10 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:adeb05ca6f52af2947ae44bb9b2221ea3" id="r_adeb05ca6f52af2947ae44bb9b2221ea3"><td class="memItemLeft">epicsUInt8&#160;</td><td class="memItemRight"><a class="el" href="#adeb05ca6f52af2947ae44bb9b2221ea3">sp_count</a></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="structSOE__HOLD__HEADER.html" title="SOE_HOLD_HEADER Header for Hold Table.">SOE_HOLD_HEADER</a> Header for Hold Table. </p>
+<div class="textblock"><p><a class="el" href="structSOE__HOLD__HEADER.html" title="SOE_HOLD_HEADER Header for Hold Table. lut_row is a copy of the relevant SOE_LUT_ROW,...">SOE_HOLD_HEADER</a> Header for Hold Table. lut_row is a copy of the relevant <a class="el" href="structSOE__LUT__ROW.html" title="SOE_LUT_ROW defines a row of SOE_LUT.">SOE_LUT_ROW</a>, for traceability. </p>
+<ul>
+<li>we embed a version id 'S'&lt;&lt;8 | VERSION to detect current and future updates. </li>
+</ul>
 </div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
 <a id="a86344279e078906a466913ca28266c0a" name="a86344279e078906a466913ca28266c0a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a86344279e078906a466913ca28266c0a">&#9670;&#160;</a></span>ai_count</h2>
@@ -199,18 +202,18 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a39136c930ab3b72829b1683ecf09b580" name="a39136c930ab3b72829b1683ecf09b580"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a39136c930ab3b72829b1683ecf09b580">&#9670;&#160;</a></span>pv_id</h2>
+<a id="aedd6b394b30f32ba6d16ef28d2791861" name="aedd6b394b30f32ba6d16ef28d2791861"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aedd6b394b30f32ba6d16ef28d2791861">&#9670;&#160;</a></span>lut_row</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">epicsUInt32 SOE_HOLD_HEADER::pv_id</td>
+          <td class="memname"><a class="el" href="structSOE__LUT__ROW.html">SOE_LUT_ROW</a> SOE_HOLD_HEADER::lut_row</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>links Event and Offset </p>
+<p>LUT entry that triggered this HOLD </p>
 
 </div>
 </div>

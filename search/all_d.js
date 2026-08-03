@@ -8,6 +8,7 @@ var searchData=
   ['list_5',['Todo List',['../todo.html',1,'']]],
   ['load_6',['load',['../structSamplePrams.html#a4d32f07bb92a5687a6c460d59eca073d',1,'SamplePrams']]],
   ['local_20customization_7',['Local Customization',['../index.html#autotoc_md2',1,'']]],
-  ['lutfmtstrategy1_8',['LutFmtStrategy1',['../classLutFmtStrategy1.html',1,'']]],
-  ['lutfmtstrategy2_9',['LutFmtStrategy2',['../classLutFmtStrategy2.html',1,'']]]
+  ['lut_5frow_8',['lut_row',['../structSOE__HOLD__HEADER.html#aedd6b394b30f32ba6d16ef28d2791861',1,'SOE_HOLD_HEADER']]],
+  ['lutfmtstrategy1_9',['LutFmtStrategy1',['../classLutFmtStrategy1.html',1,'']]],
+  ['lutfmtstrategy2_10',['LutFmtStrategy2',['../classLutFmtStrategy2.html',1,'']]]
 ];

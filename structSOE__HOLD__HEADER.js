@@ -4,7 +4,7 @@ var structSOE__HOLD__HEADER =
     [ "client_data", "structSOE__HOLD__HEADER.html#aaf4b5e4c825ceda88b03cdb5a55547a7", null ],
     [ "data_offset", "structSOE__HOLD__HEADER.html#a88622082c61c167cda71e35234ab1728", null ],
     [ "di_count", "structSOE__HOLD__HEADER.html#a52469ba858b454d81c248a92a1bd89ad", null ],
-    [ "pv_id", "structSOE__HOLD__HEADER.html#a39136c930ab3b72829b1683ecf09b580", null ],
+    [ "lut_row", "structSOE__HOLD__HEADER.html#aedd6b394b30f32ba6d16ef28d2791861", null ],
     [ "sp_count", "structSOE__HOLD__HEADER.html#adeb05ca6f52af2947ae44bb9b2221ea3", null ],
     [ "ss_u32", "structSOE__HOLD__HEADER.html#ae18c2916cff9ccabc722ff068466174d", null ],
     [ "timestamp", "structSOE__HOLD__HEADER.html#aa377ef69c6715b5b8bdf7e40edf9c002", null ]

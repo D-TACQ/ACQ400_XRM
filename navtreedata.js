@@ -58,7 +58,8 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"Multicast_8h_source.html"
+"Multicast_8h_source.html",
+"xrm__structs_8h_source.html"
 ];
 
 const SYNCONMSG = 'click to disable panel synchronization';

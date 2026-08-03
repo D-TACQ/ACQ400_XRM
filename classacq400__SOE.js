@@ -18,6 +18,8 @@ var classacq400__SOE =
     [ "P_SOE_HLD_COL_DATA_OFFSET", "classacq400__SOE.html#a7124814e4e2fa5d441d33fbbcb303c09", null ],
     [ "P_SOE_HLD_COL_DI1", "classacq400__SOE.html#a371be705f43f8480b342a46b9e3d3c12", null ],
     [ "P_SOE_HLD_COL_DI2", "classacq400__SOE.html#abc08ad22c925a4eed003ea6842643c5b", null ],
+    [ "P_SOE_HLD_COL_EVT", "classacq400__SOE.html#a1735de5dffd2e17a717f646d4f4d52c6", null ],
+    [ "P_SOE_HLD_COL_OFFSET_US", "classacq400__SOE.html#a49aeeae09ecf57d017cfa3dabf65f5c4", null ],
     [ "P_SOE_HLD_COL_PV_ID", "classacq400__SOE.html#a3632422ea55e16783f6bcc3c75c6a2cd", null ],
     [ "P_SOE_HLD_COL_ROWNUM", "classacq400__SOE.html#a6d1471a893229525217de6d9722941c0", null ],
     [ "P_SOE_HLD_COL_SP0", "classacq400__SOE.html#af46c9bf3b1101b061b2269472e81fcab", null ],
