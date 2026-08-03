@@ -285,15 +285,27 @@ public:
 		printf("Header Count:%d\n", iheader);
 	}
 };
+
 void parse(int* ht_data, unsigned nelems)
 {
 	if (G_verbose > 1 ) fprintf(stderr, "parse: %p, %u\n",
 			ht_data, nelems);
 
+	static int version;
+
 	Formatter::instance()->start(nelems);
 
 	for (SOE_HOLD_HEADER* header = (SOE_HOLD_HEADER*)ht_data;
 			header->lut_row.pv_id != 0; ++header){
+
+		if (version == 0){
+			version = getVersion(*header);
+			if (version == 0){
+				fprintf(stderr, "ERROR, obsolete version 0, abort\n");
+			}else{
+				fprintf(stderr, "Version %d HT found\n", version);
+			}
+		}
 		Formatter::instance()->print(header, ht_data+header->data_offset);
 	}
 	Formatter::instance()->finish();
@@ -349,7 +361,7 @@ void usage(const char* argv0)
 		"-f <file>      output to file\n"
 		"-F <format>	brief|json|bin|hexdump|hint\n"
 		"-U <updates>   update <updates> times, quit, default: forever\n"
-		"-# <max>       set maximum number of array elements to output"
+		"-# <max>       set maximum number of array elements to output\n"
 		"-e		AI output in egu\n"
 		;
 

@@ -128,7 +128,7 @@ static inline int setVersion(SOE_HOLD_HEADER& soe)
 static inline int getVersion(SOE_HOLD_HEADER& soe)
 {
 	if (soe.lut_row.pad>>8 == 'S'){
-		return soe.lut_row.pad&0xff00;
+		return soe.lut_row.pad&0x0ff;
 	}
 	return 0;
 }
