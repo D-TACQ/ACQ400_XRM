@@ -93,7 +93,9 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	createParam(PS_SOE_KBUF_WRT1,    	asynParamInt64,      &P_SOE_KBUF_WRT1);
 
 	createParam(PS_SOE_HLD_COL_ROWNUM,	asynParamInt8Array,  &P_SOE_HLD_COL_ROWNUM);
+	createParam(PS_SOE_HLD_COL_EVT,		asynParamInt16Array, &P_SOE_HLD_COL_EVT);
 	createParam(PS_SOE_HLD_COL_PV_ID,    	asynParamInt32Array, &P_SOE_HLD_COL_PV_ID);
+	createParam(PS_SOE_HLD_COL_OFFSET_US,	asynParamInt32Array, &P_SOE_HLD_COL_OFFSET_US);
 	createParam(PS_SOE_HLD_COL_CLIDAT,    	asynParamInt32Array, &P_SOE_HLD_COL_CLIDAT);
 	createParam(PS_SOE_HLD_COL_TS,    	asynParamInt64Array, &P_SOE_HLD_COL_TS);
 	createParam(PS_SOE_HLD_COL_AI1,	asynParamFloat32Array, &P_SOE_HLD_COL_AI1);
@@ -218,7 +220,9 @@ void acq400_SOE::update_hld_tab_columns()
 		int * di_raw = (int*)raw + samplePrams.DI_INDEX;
 		int * sp_raw = (int*)raw + samplePrams.SP_INDEX;
 
+		hold_cols.c_event[row] = the_hold_table[row].lut_row.event;
 		hold_cols.c_pv_id[row] = the_hold_table[row].lut_row.pv_id;
+		hold_cols.c_offset_us[row] = the_hold_table[row].lut_row.offset_us;
 		hold_cols.c_client_data[row] = the_hold_table[row].client_data;
 		hold_cols.c_timestamp[row] = the_hold_table[row].timestamp;
 
@@ -252,7 +256,9 @@ void acq400_SOE::update_hld_tab_callbacks(int n_u32)
 void acq400_SOE::update_hld_tab_columns_callbacks(void)
 {
 	doCallbacksInt8Array(hold_cols.c_rownum, 	hold_row_limit, P_SOE_HLD_COL_ROWNUM, 0);
+	doCallbacksInt16Array(hold_cols.c_event, 	hold_row_limit, P_SOE_HLD_COL_EVT, 0);
 	doCallbacksInt32Array(hold_cols.c_pv_id, 	hold_row_limit, P_SOE_HLD_COL_PV_ID, 0);
+	doCallbacksInt32Array(hold_cols.c_offset_us, 	hold_row_limit, P_SOE_HLD_COL_OFFSET_US, 0);
 	doCallbacksInt32Array(hold_cols.c_client_data,  hold_row_limit, P_SOE_HLD_COL_CLIDAT, 0);
 	doCallbacksInt64Array(hold_cols.c_timestamp, 	hold_row_limit, P_SOE_HLD_COL_TS, 0);
 	doCallbacksFloat32Array(hold_cols.c_AI1, 	hold_row_limit, P_SOE_HLD_COL_AI1, 0);

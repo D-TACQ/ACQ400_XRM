@@ -40,7 +40,9 @@
 #define PS_SOE_LUT_REDIT_COMMIT 	"SOE_LUT_REDIT_COMMIT"
 
 #define PS_SOE_HLD_COL_ROWNUM	 "SOE_HLD_COL_ROWNUM"
-#define PS_SOE_HLD_COL_PV_ID    "SOE_HLD_COL_PV_ID"
+#define PS_SOE_HLD_COL_EVT       "SOE_HLD_COL_EVT"
+#define PS_SOE_HLD_COL_PV_ID     "SOE_HLD_COL_PV_ID"
+#define PS_SOE_HLD_COL_OFFSET_US "SOE_HLD_COL_OFFSET_US"
 #define PS_SOE_HLD_COL_CLIDAT    "SOE_HLD_COL_CLIDAT"
 #define PS_SOE_HLD_COL_TS        "SOE_HLD_COL_TS"
 #define PS_SOE_HLD_COL_DATA_OFFSET "SOE_HLD_COL_DATA_OFFSET"
@@ -175,7 +177,9 @@ protected:
 
 	struct HOLD_COLS {
 		epicsInt8    c_rownum[SOE_HLD_ROWS];
-		epicsInt32  c_pv_id[SOE_HLD_ROWS];
+		epicsInt16   c_event[SOE_HLD_ROWS];
+		epicsInt32   c_pv_id[SOE_HLD_ROWS];
+		epicsInt32   c_offset_us[SOE_HLD_ROWS];
 		epicsInt32  c_client_data[SOE_HLD_ROWS];
 		epicsInt64  c_timestamp[SOE_HLD_ROWS];		// really U64 but..
 		epicsFloat32 c_AI1[SOE_HLD_ROWS];
@@ -252,7 +256,9 @@ protected:
 	int P_SOE_SMPL_SP_INDEX;	/**< Geometry: index of first SP word */
 
 	int P_SOE_HLD_COL_ROWNUM;	/**< HLD view show ROWNUM (synthetic)	*/
+	int P_SOE_HLD_COL_EVT;		/**< HLD view show EVT (from LUT) 	*/
 	int P_SOE_HLD_COL_PV_ID;	/**< HLD view show PV_ID		*/
+	int P_SOE_HLD_COL_OFFSET_US;	/**< HLD view show offset us (from LUT) */
 	int P_SOE_HLD_COL_CLIDAT;	/**< HLD view show CLIDAT		*/
 	int P_SOE_HLD_COL_TS;		/**< HLD view show TimeStamp		*/
 	int P_SOE_HLD_COL_DATA_OFFSET;	/**< HLD view show offset to data in HLD TABLE */

@@ -156,6 +156,7 @@ int  LutFmtStrategy1::build_hold_entry(
 	struct SOE_HOLD_HEADER& entry(ht[ihold]);
 
 	entry.lut_row = lut_row;
+	setVersion(entry);
 	//entry.client_data = fmt_row.client_data;
 	entry.client_data = bsi;
 	entry.timestamp = fmt_row.timestamp;

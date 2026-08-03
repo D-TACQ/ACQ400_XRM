@@ -94,7 +94,12 @@ const int SOE_LUT_ROWS = 64;
  */
 typedef struct SOE_LUT_ROW  SOE_LUT[SOE_LUT_ROWS];
 
-/** @brief SOE_HOLD_HEADER Header for Hold Table. */
+/** @brief SOE_HOLD_HEADER Header for Hold Table.
+ * lut_row is a copy of the relevant SOE_LUT_ROW, for traceability
+ * + we embed a version id 'S'<<8 | VERSION to detect current and future updates.
+ *
+ */
+
 struct SOE_HOLD_HEADER {
 	SOE_LUT_ROW lut_row;		/**< LUT entry that triggered this HOLD */
 	epicsUInt32 client_data;	/**< copied from FMT (if required) @todo more required?	*/
@@ -111,6 +116,23 @@ struct SOE_HOLD_HEADER {
 	epicsUInt8  di_count;           /**< number of DI (u32) in data				*/
 	epicsUInt8  sp_count;           /**< number of SP (u32) in data	Scratch Pad (meta-data) */
 };
+
+#define SOE_HOLD_HEADER_VERSION	1
+
+static inline int setVersion(SOE_HOLD_HEADER& soe)
+{
+	soe.lut_row.pad = ('S'<<8) | SOE_HOLD_HEADER_VERSION;
+	return SOE_HOLD_HEADER_VERSION;
+}
+
+static inline int getVersion(SOE_HOLD_HEADER& soe)
+{
+	if (soe.lut_row.pad>>8 == 'S'){
+		return soe.lut_row.pad&0xff00;
+	}
+	return 0;
+}
+
 
 const int SPAD0_SC = 0;                   /**< SPAD[0] is sample count (u32)			*/
 const int SPAD1_TS = 1;                   /**< SPAD[1] is WR TS 3 bit seconds, 28 bit ticks	*/
