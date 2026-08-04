@@ -165,14 +165,20 @@ typedef epicsUInt32 	U32;
 
   + use data_offset to access the data.
 
+ - the first 4 data elements shown are in fact a copy of the relevant SOE_LUT_ROW, where
+  + lut_row.pv_id, lut_row.event and lut_row.offset_us allow the user to check the row match with the original LUT definition.
+  + lut_row.pad has the table version encoding as
+  + 'S' << 16 | VERSION
+  + currently the VERSION is 1, but this should allow us to check on any future upgrade.
+
  - In summary, the memory layout looks like this:
 
- ROW  | pv_id | client_data | timestamp | data_offset | ss_u32 | ai_count | di_count | sp_count
-------|-------|-------------|-----------|-------------|--------|----------|----------|---------
- 0    | u32   | u32         | int64     | u16         | u8     | u8       | u8       | u8
- 1    | u32   | u32         | int64     | u16         | u8     | u8       | u8       | u8
- ...  | u32   | u32         | int64     | u16         | u8     | u8       | u8       | u8
- DEL  | 0     | 0           | 0         | 0           | 0      | 0        | 0        | 0
+ ROW  | pv_id,event,pad,offset_us | client_data | timestamp | data_offset | ss_u32 | ai_count | di_count | sp_count
+------|---------------------------|-------------|-----------|-------------|--------|----------|----------|---------
+ 0    | u32,u16,u16,int32         | u32         | int64     | u16         | u8     | u8       | u8       | u8
+ 1    | u32,u16,u16,int32         | u32         | int64     | u16         | u8     | u8       | u8       | u8
+ ...  | u32,u16,u16,int32         | u32         | int64     | u16         | u8     | u8       | u8       | u8
+ DEL  | 0,0,0,0                   | 0           | 0         | 0           | 0      | 0        | 0        | 0
 
  RAW  | ai | di | sp
  -----|----|----|---
@@ -182,15 +188,15 @@ typedef epicsUInt32 	U32;
 
 ```
   Example 4 entries
-  sizeof(SOE_HOLD_HEADER==22)
+  sizeof(SOE_HOLD_HEADER==32)
   XRMMAGPS: SSB=128 ruler in byte*2:
   00000111112222233333444445555566666777778888899999AAAAABBBBBCCCC
   0246802468024680246802468024680246802468024680246802468024680246
- |SOE HOLD 1 |
- |SOE HOLD 2 |
- |SOE HOLD 3 |
- |SOE HOLD 4 |
- |00000000000|
+ |SOE HOLD 1      |
+ |SOE HOLD 2      |
+ |SOE HOLD 3      |
+ |SOE HOLD 4      |
+ |0000000000000000|
  |RAW SMPL 1 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
  |RAW SMPL 2 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
  |RAW SMPL 3 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|
@@ -198,13 +204,34 @@ typedef epicsUInt32 	U32;
 
 
  showing the SOE HOLD struct on a line of bytes
- 0123456789012345678901|24680246802468024680246802468024680246802468024680246
- PVID                  |    epicsUInt32 pv_id;
- ____CLID______________|    epicsUInt32 client_data;
- ________TIMSTAMP______|    epicsInt64 timestamp;
- ________________DO____|    epicsUInt16 data_offset;
- __________________SADP|    epicsUInt8  ss_u32, ai_count, di_count, sp_count;
+ 0123456789012345678901246802468012468024680246802468024680246802468024680246
+ EV_______________________________|    epicsUInt16 event;
+ __PA_____________________________|    epicsUint16 pad;     // aka VERSION
+_____PVID ________________________|    epicsUInt32 pv_id;
+ ________OFFS_____________________|    epicsInt32  offset_usec;
+ ____________CLID_________________|    epicsUInt32 client_data;
+ ________________TIMSTAMP_________|    epicsInt64  timestamp;
+ ________________________DO_______|    epicsUInt16 data_offset;
+ __________________________SADP___|    epicsUInt8  ss_u32, ai_count, di_count, sp_count;
 
+ ```
+
+ Or in terms of offsets (sizes in bytes):
+ ```
+ (base) pgm@hoy6:~/PROJECTS/ACQ400/ACQ400_XRM$ ./bin/linux-x86_64/xrm_ht_monitor -S
+structure_test
+sizeof SOE_HOLD_HEADER 32
+offsetof        lut_row.event : 0
+offsetof          lut_row.pad : 2
+offsetof        lut_row.pv_id : 4
+offsetof    lut_row.offset_us : 8
+offsetof          client_data : 12
+offsetof            timestamp : 16
+offsetof          data_offset : 24
+offsetof               ss_u32 : 26
+offsetof             ai_count : 27
+offsetof             di_count : 28
+offsetof             sp_count : 29
  ```
 
  Actual wire protocol:
@@ -213,8 +240,8 @@ typedef epicsUInt32 	U32;
 
  - In the above example, MAGPS with 4 EVENTS,
    - NORD = (5 * sizeof(SOE_HOLD_HEADER))/sizeof(int32) + 4*SSB/sizeof(int32)
-   - NORD = (5 * 22)/4 + 128
-   - NORD = 156 @@todo 22 is not a good size for the structure..
+   - NORD = (5 * 32)/4 + 128
+   - NORD = 168
 
  @@todo We've attempted to meet the spirit of the requirement using the PVXS API
  to create an Array of Groups, but this has not been a success.

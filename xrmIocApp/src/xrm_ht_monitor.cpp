@@ -355,7 +355,8 @@ void usage(const char* argv0)
 {
 	std::cerr << "Usage: " << argv0 << " <opts> HOST\n"
 		"\n"
-		"monitors <HOST>:SOE_HLD and outputs selected format"
+		"monitors <HOST>:SOE_HLD and outputs selected format\n"
+		"-S		structure test - compare ARM and x86\n"
 		"-h 		Show this message\n"
 		"-W             wait_change (skip initial value\n"
 		"-f <file>      output to file\n"
@@ -387,16 +388,41 @@ Formatter* Formatter::instance(const char* mode)
 	}
 }
 
+#include <stddef.h>
+
+void structure_test()
+{
+	fprintf(stderr, "%s\n", __FUNCTION__);
+	fprintf(stderr, "sizeof SOE_HOLD_HEADER " FMTSZT "\n", sizeof(SOE_HOLD_HEADER));
+#define OFFSET_OF(s, f) \
+	fprintf(stderr, "offsetof %20s : " FMTSZT "\n", #f, offsetof(s, f))
+
+	OFFSET_OF(SOE_HOLD_HEADER, lut_row.event);
+	OFFSET_OF(SOE_HOLD_HEADER, lut_row.pad);
+	OFFSET_OF(SOE_HOLD_HEADER, lut_row.pv_id);
+	OFFSET_OF(SOE_HOLD_HEADER, lut_row.offset_us);
+
+	OFFSET_OF(SOE_HOLD_HEADER, client_data);
+	OFFSET_OF(SOE_HOLD_HEADER, timestamp);
+	OFFSET_OF(SOE_HOLD_HEADER, data_offset);
+	OFFSET_OF(SOE_HOLD_HEADER, ss_u32);
+	OFFSET_OF(SOE_HOLD_HEADER, ai_count);
+	OFFSET_OF(SOE_HOLD_HEADER, di_count);
+	OFFSET_OF(SOE_HOLD_HEADER, sp_count);
+}
 void ui(int argc, char* argv[])
 {
 	int opt;
 	const char* format = "json";
 
-	while((opt = getopt(argc, argv, "heWU:#:F:f:")) != -1){
+	while((opt = getopt(argc, argv, "SheWU:#:F:f:")) != -1){
 		switch(opt){
 		case 'h':
 			usage(argv[0]);
 			exit(0);
+		case 'S':
+			structure_test();
+			exit(1);
 		case 'f':
 			G_file_root = optarg;
 			break;
