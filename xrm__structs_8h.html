@@ -276,19 +276,26 @@ const int&#160;</td><td class="memItemRight"><b>XRM_INST_B_SP32</b> = 3</td></tr
 <li>use data_offset to access the data.</li>
 </ul>
 </li>
+<li>the first 4 data elements shown are in fact a copy of the relevant <a class="el" href="structSOE__LUT__ROW.html" title="SOE_LUT_ROW defines a row of SOE_LUT.">SOE_LUT_ROW</a>, where<ul>
+<li>lut_row.pv_id, lut_row.event and lut_row.offset_us allow the user to check the row match with the original LUT definition.</li>
+<li>lut_row.pad has the table version encoding as</li>
+<li>'S' &lt;&lt; 16 | VERSION</li>
+<li>currently the VERSION is 1, but this should allow us to check on any future upgrade.</li>
+</ul>
+</li>
 <li>In summary, the memory layout looks like this:</li>
 </ul>
 <table class="markdownTable">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadNone">ROW  </th><th class="markdownTableHeadNone">pv_id  </th><th class="markdownTableHeadNone">client_data  </th><th class="markdownTableHeadNone">timestamp  </th><th class="markdownTableHeadNone">data_offset  </th><th class="markdownTableHeadNone">ss_u32  </th><th class="markdownTableHeadNone">ai_count  </th><th class="markdownTableHeadNone">di_count  </th><th class="markdownTableHeadNone">sp_count  </th></tr>
+<th class="markdownTableHeadNone">ROW  </th><th class="markdownTableHeadNone">pv_id,event,pad,offset_us  </th><th class="markdownTableHeadNone">client_data  </th><th class="markdownTableHeadNone">timestamp  </th><th class="markdownTableHeadNone">data_offset  </th><th class="markdownTableHeadNone">ss_u32  </th><th class="markdownTableHeadNone">ai_count  </th><th class="markdownTableHeadNone">di_count  </th><th class="markdownTableHeadNone">sp_count  </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int64  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td></tr>
+<td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">u32,u16,u16,int32  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int64  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">1  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int64  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td></tr>
+<td class="markdownTableBodyNone">1  </td><td class="markdownTableBodyNone">u32,u16,u16,int32  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int64  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">...  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int64  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td></tr>
+<td class="markdownTableBodyNone">...  </td><td class="markdownTableBodyNone">u32,u16,u16,int32  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">int64  </td><td class="markdownTableBodyNone">u16  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td><td class="markdownTableBodyNone">u8  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">DEL  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td></tr>
+<td class="markdownTableBodyNone">DEL  </td><td class="markdownTableBodyNone">0,0,0,0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0  </td></tr>
 </table>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -298,30 +305,47 @@ const int&#160;</td><td class="memItemRight"><b>XRM_INST_B_SP32</b> = 3</td></tr
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">R1  </td><td class="markdownTableBodyNone">i16  </td><td class="markdownTableBodyNone">u32  </td><td class="markdownTableBodyNone">U32  </td></tr>
 </table>
-<div class="fragment"><div class="line"> Example 4 entries</div>
-<div class="line"> <span class="keyword">sizeof</span>(<a class="code hl_struct" href="structSOE__HOLD__HEADER.html">SOE_HOLD_HEADER</a>==22)</div>
-<div class="line"> XRMMAGPS: SSB=128 ruler in byte*2:</div>
-<div class="line"> 00000111112222233333444445555566666777778888899999AAAAABBBBBCCCC</div>
-<div class="line"> 0246802468024680246802468024680246802468024680246802468024680246</div>
-<div class="line">|SOE HOLD 1 |</div>
-<div class="line">|SOE HOLD 2 |</div>
-<div class="line">|SOE HOLD 3 |</div>
-<div class="line">|SOE HOLD 4 |</div>
-<div class="line">|00000000000|</div>
-<div class="line">|RAW SMPL 1 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|</div>
-<div class="line">|RAW SMPL 2 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|</div>
-<div class="line">|RAW SMPL 3 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|</div>
-<div class="line">|RAW SMPL 4 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|</div>
+<div class="fragment"><div class="line">  Example 4 entries</div>
+<div class="line">  <span class="keyword">sizeof</span>(<a class="code hl_struct" href="structSOE__HOLD__HEADER.html">SOE_HOLD_HEADER</a>==32)</div>
+<div class="line">  XRMMAGPS: SSB=128 ruler in byte*2:</div>
+<div class="line">  00000111112222233333444445555566666777778888899999AAAAABBBBBCCCC</div>
+<div class="line">  0246802468024680246802468024680246802468024680246802468024680246</div>
+<div class="line"> |SOE HOLD 1      |</div>
+<div class="line"> |SOE HOLD 2      |</div>
+<div class="line"> |SOE HOLD 3      |</div>
+<div class="line"> |SOE HOLD 4      |</div>
+<div class="line"> |0000000000000000|</div>
+<div class="line"> |RAW SMPL 1 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|</div>
+<div class="line"> |RAW SMPL 2 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|</div>
+<div class="line"> |RAW SMPL 3 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|</div>
+<div class="line"> |RAW SMPL 4 AIAIAIAIAIAIAIAIAIAIAIDIDISPSPSPSPSPSPSPSPSPSPSPSPSP|</div>
 <div class="line"> </div>
 <div class="line"> </div>
-<div class="line">showing the SOE HOLD struct on a line of bytes</div>
-<div class="line">0123456789012345678901|24680246802468024680246802468024680246802468024680246</div>
-<div class="line">PVID                  |    epicsUInt32 pv_id;</div>
-<div class="line">____CLID______________|    epicsUInt32 client_data;</div>
-<div class="line">________TIMSTAMP______|    epicsInt64 timestamp;</div>
-<div class="line">________________DO____|    epicsUInt16 data_offset;</div>
-<div class="line">__________________SADP|    epicsUInt8  ss_u32, ai_count, di_count, sp_count;</div>
+<div class="line"> showing the SOE HOLD struct on a line of bytes</div>
+<div class="line"> 0123456789012345678901246802468012468024680246802468024680246802468024680246</div>
+<div class="line"> EV_______________________________|    epicsUInt16 event;</div>
+<div class="line"> __PA_____________________________|    epicsUint16 pad;     <span class="comment">// aka VERSION</span></div>
+<div class="line">_____PVID ________________________|    epicsUInt32 pv_id;</div>
+<div class="line"> ________OFFS_____________________|    epicsInt32  offset_usec;</div>
+<div class="line"> ____________CLID_________________|    epicsUInt32 client_data;</div>
+<div class="line"> ________________TIMSTAMP_________|    epicsInt64  timestamp;</div>
+<div class="line"> ________________________DO_______|    epicsUInt16 data_offset;</div>
+<div class="line"> __________________________SADP___|    epicsUInt8  ss_u32, ai_count, di_count, sp_count;</div>
 <div class="ttc" id="astructSOE__HOLD__HEADER_html"><div class="ttname"><a href="structSOE__HOLD__HEADER.html">SOE_HOLD_HEADER</a></div><div class="ttdoc">SOE_HOLD_HEADER Header for Hold Table. lut_row is a copy of the relevant SOE_LUT_ROW,...</div><div class="ttdef"><b>Definition</b> xrm_structs.h:103</div></div>
+</div><!-- fragment --><p>Or in terms of offsets (sizes in bytes): </p><div class="fragment"><div class="line"> (base) pgm@hoy6:~/PROJECTS/ACQ400/ACQ400_XRM$ ./bin/linux-x86_64/xrm_ht_monitor -S</div>
+<div class="line">structure_test</div>
+<div class="line">sizeof <a class="code hl_struct" href="structSOE__HOLD__HEADER.html">SOE_HOLD_HEADER</a> 32</div>
+<div class="line">offsetof        lut_row.event : 0</div>
+<div class="line">offsetof          lut_row.pad : 2</div>
+<div class="line">offsetof        lut_row.pv_id : 4</div>
+<div class="line">offsetof    lut_row.offset_us : 8</div>
+<div class="line">offsetof          client_data : 12</div>
+<div class="line">offsetof            timestamp : 16</div>
+<div class="line">offsetof          data_offset : 24</div>
+<div class="line">offsetof               ss_u32 : 26</div>
+<div class="line">offsetof             ai_count : 27</div>
+<div class="line">offsetof             di_count : 28</div>
+<div class="line">offsetof             sp_count : 29</div>
 </div><!-- fragment --><p>Actual wire protocol:</p><ul>
 <li>We meet the letter of the requirement by sending as a PVA ARRAY of U32<ul>
 <li>where NORD gives the overall size of the table, including DATA.</li>
@@ -329,8 +353,8 @@ const int&#160;</td><td class="memItemRight"><b>XRM_INST_B_SP32</b> = 3</td></tr
 </li>
 <li>In the above example, MAGPS with 4 EVENTS,<ul>
 <li>NORD = (5 * sizeof(SOE_HOLD_HEADER))/sizeof(int32) + 4*SSB/sizeof(int32)</li>
-<li>NORD = (5 * 22)/4 + 128</li>
-<li>NORD = 156 @todo 22 is not a good size for the structure..</li>
+<li>NORD = (5 * 32)/4 + 128</li>
+<li>NORD = 168</li>
 </ul>
 </li>
 </ul>

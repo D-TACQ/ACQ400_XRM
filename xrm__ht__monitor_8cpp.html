@@ -132,6 +132,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('xrm__ht__monit
 <code>#include &quot;pvxsWrapper.h&quot;</code><br />
 <code>#include &quot;acq400_asyn_common.h&quot;</code><br />
 <code>#include &quot;pvxsWrapper.cpp&quot;</code><br />
+<code>#include &lt;stddef.h&gt;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -146,6 +147,7 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight"><b>AIMAX</b>&#160;&#160;&#160;128</td></tr>
 <tr class="memitem:a5ce564c72ae6bb39f6bfa4e034bde093" id="r_a5ce564c72ae6bb39f6bfa4e034bde093"><td class="memItemLeft"><a id="a5ce564c72ae6bb39f6bfa4e034bde093" name="a5ce564c72ae6bb39f6bfa4e034bde093"></a>
 #define&#160;</td><td class="memItemRight"><b>NEEDLE</b>&#160;&#160;&#160;&quot;value int32_t[] = &quot;</td></tr>
+<tr class="memitem:a5fde7607329449708df4c2285fb08f0d" id="r_a5fde7607329449708df4c2285fb08f0d"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a5fde7607329449708df4c2285fb08f0d">OFFSET_OF</a>(s,  f)</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -159,6 +161,8 @@ void&#160;</td><td class="memItemRight"><b>parse</b> (int *ht_data, unsigned nel
 void&#160;</td><td class="memItemRight"><b>parse</b> (char *txt)</td></tr>
 <tr class="memitem:aff1cc099e70ae9c9ea6d673c5b8109e8" id="r_aff1cc099e70ae9c9ea6d673c5b8109e8"><td class="memItemLeft"><a id="aff1cc099e70ae9c9ea6d673c5b8109e8" name="aff1cc099e70ae9c9ea6d673c5b8109e8"></a>
 void&#160;</td><td class="memItemRight"><b>usage</b> (const char *argv0)</td></tr>
+<tr class="memitem:abcdfbc88ed7312d261262f930eda948b" id="r_abcdfbc88ed7312d261262f930eda948b"><td class="memItemLeft"><a id="abcdfbc88ed7312d261262f930eda948b" name="abcdfbc88ed7312d261262f930eda948b"></a>
+void&#160;</td><td class="memItemRight"><b>structure_test</b> ()</td></tr>
 <tr class="memitem:aefed971bb036ae0ebbc8d0d0c0187046" id="r_aefed971bb036ae0ebbc8d0d0c0187046"><td class="memItemLeft"><a id="aefed971bb036ae0ebbc8d0d0c0187046" name="aefed971bb036ae0ebbc8d0d0c0187046"></a>
 void&#160;</td><td class="memItemRight"><b>ui</b> (int argc, char *argv[])</td></tr>
 <tr class="memitem:a0ddf1224851353fc92bfbff6f499fa97" id="r_a0ddf1224851353fc92bfbff6f499fa97"><td class="memItemLeft"><a id="a0ddf1224851353fc92bfbff6f499fa97" name="a0ddf1224851353fc92bfbff6f499fa97"></a>
@@ -186,7 +190,30 @@ const VDS *&#160;</td><td class="memItemRight"><b>G_eoff</b></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>reports structured data from SOE_HLD by wrapping pvxmonitor and decodeing the u32 array as HT </p>
 <p>Created on: 24 Mar 2026 Author: pgm </p>
-</div></div><!-- contents -->
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="a5fde7607329449708df4c2285fb08f0d" name="a5fde7607329449708df4c2285fb08f0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fde7607329449708df4c2285fb08f0d">&#9670;&#160;</a></span>OFFSET_OF</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define OFFSET_OF</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>s</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>f</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">fprintf(stderr, <span class="stringliteral">&quot;offsetof %20s : &quot;</span> FMTSZT <span class="stringliteral">&quot;\n&quot;</span>, #f, offsetof(s, f))</div>
+</div><!-- fragment -->
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
 <div id="page-nav-resize-handle"></div>
