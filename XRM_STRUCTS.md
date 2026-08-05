@@ -1,5 +1,5 @@
 
-- html version is best [here](https://d-tacq.github.io/ACQ400_XRM/md_XRM__STRUCTS.html/)
+- html version is best [here](https://d-tacq.github.io/ACQ400_XRM/md_XRM__STRUCTS.html)
 
 - here we have links to public wire-protocol structures
 
