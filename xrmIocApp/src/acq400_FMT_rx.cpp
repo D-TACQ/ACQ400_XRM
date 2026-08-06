@@ -164,8 +164,8 @@ void acq400_FMT_rx::task(void) {
 		int runstop;
 		lock();
 		gip(P_RUNSTOP, &runstop);
-
 		unlock();
+
 		if (runstop == 1){
 			FMT& fmt = receive(multicast);
 			rateLimit.newData(mrl_param);
@@ -176,14 +176,15 @@ void acq400_FMT_rx::task(void) {
 			}
 			lock();
 			updateTimeStamp();
+			sip(0, P_NULL_FMT_COUNT, null_fmt_count);
 			update_fmt_callbacks(rateLimit.goAhead());
 			unlock();
 			first_time = false;
 		}else{
 			usleep(50000);
+			sip(0, P_NULL_FMT_COUNT, null_fmt_count);
+			callParamCallbacks();
 		}
-		sip(0, P_NULL_FMT_COUNT, null_fmt_count);
-		callParamCallbacks();
 	}
 }
 
@@ -191,7 +192,6 @@ void acq400_FMT_rx::onPM_trg_evt()
 {
 	sip(0, P_FMT_PM_TRG_EVT_ACTION, 1);
 	callParamCallbacks();
-
 }
 
 asynStatus acq400_FMT_rx::writeInt32(asynUser *pasynUser, epicsInt32 value)
@@ -250,6 +250,9 @@ const FMT& acq400_FMT_rx::get_fmt(unsigned icache)
 		null_fmt_count = 0;
 		return fmt_cache[filled[icache]];
 	}else{
+		if (verbose && null_fmt_count == 0){
+			fprintf(stderr, "%s null_fmt_count goes NZ\n", FN);
+		}
 		++null_fmt_count;
 		return null_fmt;
 	}
