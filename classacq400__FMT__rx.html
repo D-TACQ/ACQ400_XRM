@@ -147,6 +147,10 @@ asynStatus&#160;</td><td class="memItemRight"><b>writeInt32</b> (asynUser *pasyn
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a15eb6574ca62b18da80beacbf86e072e" id="r_a15eb6574ca62b18da80beacbf86e072e"><td class="memItemLeft">static <a class="el" href="classacq400__FMT__rx.html">acq400_FMT_rx</a> *&#160;</td><td class="memItemRight"><a class="el" href="#a15eb6574ca62b18da80beacbf86e072e">instance</a> (const char *portName=0)</td></tr>
+<tr class="memitem:a8f82e57be27f7156993b960ee63d656e" id="r_a8f82e57be27f7156993b960ee63d656e"><td class="memItemLeft"><a id="a8f82e57be27f7156993b960ee63d656e" name="a8f82e57be27f7156993b960ee63d656e"></a>
+static bool&#160;</td><td class="memItemRight"><b>isNull</b> (const <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a> &amp;fmt)</td></tr>
+<tr class="memitem:afe72d5949f4687aed92e2473f4de9cc4" id="r_afe72d5949f4687aed92e2473f4de9cc4"><td class="memItemLeft"><a id="afe72d5949f4687aed92e2473f4de9cc4" name="afe72d5949f4687aed92e2473f4de9cc4"></a>
+static bool&#160;</td><td class="memItemRight"><b>hasEvent</b> (const <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a> &amp;fmt)</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pro-methods" class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -191,6 +195,10 @@ epicsEventId&#160;</td><td class="memItemRight"><b>rx_event</b></td></tr>
 int&#160;</td><td class="memItemRight"><b>P_FMT_PM_TRG_EVT</b></td></tr>
 <tr class="memitem:a712ed60c8396301d40c825a95b078a47" id="r_a712ed60c8396301d40c825a95b078a47"><td class="memItemLeft"><a id="a712ed60c8396301d40c825a95b078a47" name="a712ed60c8396301d40c825a95b078a47"></a>
 int&#160;</td><td class="memItemRight"><b>P_FMT_PM_TRG_EVT_ACTION</b></td></tr>
+<tr class="memitem:a1e680ac95eea7c6a388f8f63ed9971ab" id="r_a1e680ac95eea7c6a388f8f63ed9971ab"><td class="memItemLeft"><a id="a1e680ac95eea7c6a388f8f63ed9971ab" name="a1e680ac95eea7c6a388f8f63ed9971ab"></a>
+int&#160;</td><td class="memItemRight"><b>P_NULL_FMT_COUNT</b></td></tr>
+<tr class="memitem:a9a94b32662c760581e2ffde2dcb93117" id="r_a9a94b32662c760581e2ffde2dcb93117"><td class="memItemLeft"><a id="a9a94b32662c760581e2ffde2dcb93117" name="a9a94b32662c760581e2ffde2dcb93117"></a>
+int&#160;</td><td class="memItemRight"><b>null_fmt_count</b></td></tr>
 <tr class="inherit_header pro_attribs_classacq400__FMT__abc"><td colspan="2">Protected Attributes inherited from <a class="el" href="classacq400__FMT__abc.html">acq400_FMT_abc</a></td></tr>
 <tr class="memitem:a0a925316a7133116b22f3ff53dd749bc pro_attribs_classacq400__FMT__abc" id="r_a0a925316a7133116b22f3ff53dd749bc"><td class="memItemLeft">
 const int&#160;</td><td class="memItemRight"><b>n_cache</b></td></tr>
@@ -225,6 +233,8 @@ int&#160;</td><td class="memItemRight"><b>mrl_param</b></td></tr>
 Static Protected Attributes</h2></td></tr>
 <tr class="memitem:a721b70f31b5394dbf0f469072cca3427" id="r_a721b70f31b5394dbf0f469072cca3427"><td class="memItemLeft"><a id="a721b70f31b5394dbf0f469072cca3427" name="a721b70f31b5394dbf0f469072cca3427"></a>
 static int&#160;</td><td class="memItemRight"><b>maxq</b> = ::getenv_default(&quot;acq400_FMT_rx_maxq&quot;, 4)</td></tr>
+<tr class="memitem:a2260c7c6ca5c99b7c94d7e9638fd40b6" id="r_a2260c7c6ca5c99b7c94d7e9638fd40b6"><td class="memItemLeft"><a id="a2260c7c6ca5c99b7c94d7e9638fd40b6" name="a2260c7c6ca5c99b7c94d7e9638fd40b6"></a>
+static <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2">FMT</a>&#160;</td><td class="memItemRight"><b>null_fmt</b></td></tr>
 <tr class="inherit_header pro_static_attribs_classacq400__FMT__abc"><td colspan="2">Static Protected Attributes inherited from <a class="el" href="classacq400__FMT__abc.html">acq400_FMT_abc</a></td></tr>
 <tr class="memitem:a1b6360090bdd9e496227838effd1a52e pro_static_attribs_classacq400__FMT__abc" id="r_a1b6360090bdd9e496227838effd1a52e"><td class="memItemLeft">
 static int&#160;</td><td class="memItemRight"><b>verbose</b> = ::getenv_default(&quot;acq400_FMT_VERBOSE&quot;, 0)</td></tr>
