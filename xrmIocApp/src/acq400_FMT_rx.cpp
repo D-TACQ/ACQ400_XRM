@@ -182,6 +182,8 @@ void acq400_FMT_rx::task(void) {
 		}else{
 			usleep(50000);
 		}
+		sip(0, P_NULL_FMT_COUNT, null_fmt_count);
+		callParamCallbacks();
 	}
 }
 
