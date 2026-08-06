@@ -29,3 +29,11 @@ record(calcout, "${UUT}:FMT:PM_TRG:EVT:ACT:out")
 # sets output to 0 - in the PM case, transition to zero means "trigger"
 # we leave some other agent to re-enable the PM
 }
+
+record(longin, "${UUT}:FMT:NULL_FMT_COUNT")
+{
+	field(DTYP, "asynInt32")
+	field(INP, "@asyn($(PORT),$(ADDR),$(TIMEOUT))NULL_FMT_COUNT")
+	field(SCAN, "I/O Intr")
+	field(DESC, "counts FMT requests when none available")
+}

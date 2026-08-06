@@ -14,6 +14,8 @@
 #define PS_FMT_PM_TRG_EVT 		"FMT_PM_TRG_EVT"	/* asynInt32, rw */
 #define PS_FMT_PM_TRG_EVT_ACTION	"FMT_PM_TRG_EVT_ACTION" /* asynInt32, ro */
 
+#define PS_NULL_FMT_COUNT		"NULL_FMT_COUNT"	/* asynInt32, rw */
+
 #define NO_TRG_EVT	0
 
 /** FMT receiver
@@ -45,6 +47,11 @@ protected:
 
 	int P_FMT_PM_TRG_EVT;
 	int P_FMT_PM_TRG_EVT_ACTION;
+	int P_NULL_FMT_COUNT;
+
+	int null_fmt_count;
+
+	static FMT null_fmt;
 public:
 
 	virtual ~acq400_FMT_rx();
@@ -63,6 +70,15 @@ public:
 
 	void onPM_trg_evt();
 	/**< called if PM_trg_evt detected */
+
+	inline static bool isNull(const FMT& fmt){
+		const FMT_ROW row = fmt[0];
+		return row.event == 0 && row.timestamp == 0;
+	}
+	inline static bool hasEvent(const FMT& fmt){
+		const FMT_ROW row = fmt[0];
+		return row.event !=0 && row.timestamp != 0;
+	}
 };
 
 

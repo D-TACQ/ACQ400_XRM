@@ -277,16 +277,18 @@ acq400_SOE_Strategy::RC LutFmtStrategy1::operator() (
 
 	if (FMT_rx->waitFMT(acq400_SOE::CYCLE_MS) == 0){
 		const FMT& latest = FMT_rx->get_fmt(0);
-		const epicsInt64 fmt_ts = latest[0].timestamp;
+		if (acq400_FMT_rx::hasEvent(latest)){
+			const epicsInt64 fmt_ts = latest[0].timestamp;
 
-		acq400_SOE_Strategy::RC rc = timestamp_in_buf(soe, fmt_ts);
-		if (rc.status == SOE_SUCCESS){
-			rc = soe_lut_lookup(soe, latest, ht, rc);
+			acq400_SOE_Strategy::RC rc = timestamp_in_buf(soe, fmt_ts);
+			if (rc.status == SOE_SUCCESS){
+				rc = soe_lut_lookup(soe, latest, ht, rc);
+			}
+
+			return rc;
 		}
-		return rc;
-	} else {
-		return { E_TIMEOUT, };
 	}
+	return { E_TIMEOUT, };
 }
 
 class LutFmtStrategy2 : public LutFmtStrategy1
@@ -312,6 +314,9 @@ acq400_SOE_Strategy::RC LutFmtStrategy2::operator() (
 
 	const FMT& fmt = FMT_rx->get_fmt(0);
 
+	if (acq400_FMT_rx::isNull(fmt)){
+		return { E_TIMEOUT, };
+	}
 	acq400_SOE_Strategy::RC rc = timestamp_in_buf(soe, fmt[0].timestamp);
 	switch(rc.status){
 	case SOE_SUCCESS:
@@ -320,6 +325,9 @@ acq400_SOE_Strategy::RC LutFmtStrategy2::operator() (
 	case E_FMT_TS_TOO_EARLY_FOR_KB:
 		{
 			const FMT& fmt_m1 = FMT_rx->get_fmt(1);
+			if (acq400_FMT_rx::isNull(fmt_m1)){
+				return { E_TIMEOUT, };
+			}
 
 			rc = timestamp_in_buf(soe, fmt_m1[0].timestamp);
 			rc.fmt_num = FMT_PRE;
@@ -334,6 +342,10 @@ acq400_SOE_Strategy::RC LutFmtStrategy2::operator() (
 		for (unsigned retry = 0, delay = acq400_SOE::CYCLE_MS/5; retry < 5; ++retry){
 			if (FMT_rx->waitFMT(delay) == 0){
 				const FMT& latest = FMT_rx->get_fmt(0);
+				if (acq400_FMT_rx::isNull(latest)){
+					return { E_TIMEOUT, };
+				}
+
 				const epicsInt64 fmt_ts = latest[0].timestamp;
 				if (fmt_ts == fmt[0].timestamp){
 					continue;              // bogus:event was already set from a previous run

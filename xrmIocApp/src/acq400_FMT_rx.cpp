@@ -16,6 +16,7 @@ static const char *driverName="acq400_FMT_rx";
 
 int acq400_FMT_rx::maxq = ::getenv_default("acq400_FMT_rx_maxq", 4);
 
+FMT acq400_FMT_rx::null_fmt;
 
 acq400_FMT_rx::acq400_FMT_rx(const char* portName) :
 		acq400_FMT_abc(portName,
@@ -33,7 +34,8 @@ acq400_FMT_rx::acq400_FMT_rx(const char* portName) :
 		/* Default stack size*/ 0),
 		packet_count(0),
 		ts(0),
-		fmt_pm_trg_evt(NO_TRG_EVT)
+		fmt_pm_trg_evt(NO_TRG_EVT),
+		null_fmt_count(0)
 {
 	asynStatus status = asynSuccess;
 	fmt_cache = new FMT[maxq];
@@ -54,6 +56,8 @@ acq400_FMT_rx::acq400_FMT_rx(const char* portName) :
 
 	createParam(PS_FMT_PM_TRG_EVT,  asynParamInt32,	&P_FMT_PM_TRG_EVT);
 	createParam(PS_FMT_PM_TRG_EVT_ACTION,  asynParamInt32,	&P_FMT_PM_TRG_EVT_ACTION);
+	createParam(PS_NULL_FMT_COUNT,  asynParamInt32,	&P_NULL_FMT_COUNT);
+
 	sip(0, P_FMT_PM_TRG_EVT_ACTION, 0);
 
 	rx_event = epicsEventCreate(epicsEventEmpty);
@@ -240,8 +244,13 @@ int acq400_FMT_rx::waitFMT(unsigned timeout_ms)
 
 const FMT& acq400_FMT_rx::get_fmt(unsigned icache)
 {
-	assert(icache < filled.size());
-	return fmt_cache[filled[icache]];
+	if (icache < filled.size()){
+		null_fmt_count = 0;
+		return fmt_cache[filled[icache]];
+	}else{
+		++null_fmt_count;
+		return null_fmt;
+	}
 }
 
 acq400_FMT_rx* acq400_FMT_rx::instance(const char* portName)
