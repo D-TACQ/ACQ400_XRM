@@ -48,8 +48,9 @@
 #include <fcntl.h>
 
 #include "acq-util.h"
+#if 0
 #include "Knob.h"
-
+#endif
 using namespace std;
 
 namespace G {
@@ -61,7 +62,7 @@ namespace G {
 	int nchan = 32;
 	void* mapping;
 };
-
+#if 0
 struct poptOption opt_table[] = {
 	{ "site", 	's', POPT_ARG_INT, &G::site, 0, "site" },
 	{ "channel",    'c', POPT_ARG_INT, &G::channel, 0, "channel" },
@@ -72,6 +73,7 @@ struct poptOption opt_table[] = {
 	POPT_AUTOHELP
 	POPT_TABLEEND
 };
+#endif
 
 #define ALL_CHANNELS 0
 
@@ -133,6 +135,7 @@ bool fileExists(const char* fname)
 
 void get_offset(void);
 
+#if 0
 const char* cli(int argc, const char** argv, int& p1, int& p2)
 {
 	poptContext opt_context =
@@ -161,6 +164,7 @@ const char* cli(int argc, const char** argv, int& p1, int& p2)
 	}
 	return verb;
 }
+#endif
 
 struct Command {
 	const char* key;
@@ -211,12 +215,14 @@ unsigned AnaTrg::offset;
 
 void get_offset(void)
 {
+#if 0
 	char path[80];
 	snprintf(path, 80, "/etc/acq400/%d/AGIX", G::site);
 	if (fileExists(path)){
 		Knob ix(path);
 		ix.get(&AnaTrg::offset);
 	}
+#endif
 }
 
 struct NoneCommand : public Command {
@@ -286,6 +292,7 @@ AnaTrg& AnaTrg::instance()
 
 	return *_instance;
 }
+#if 0
 int main(int argc, const char** argv)
 {
 	if (getenv("SITE")){
@@ -302,3 +309,4 @@ int main(int argc, const char** argv)
 	}
 	return 0;
 }
+#endif

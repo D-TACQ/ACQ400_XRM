@@ -408,7 +408,7 @@ asynStatus acq400_INST::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    getParamName(function, &paramName);
 
 	    /* Set the parameter in the parameter library. */
-	    status = (asynStatus) setIntegerParam(addr, function, value);
+	    sip(addr, function, value);
 
 	    fprintf(stderr,
 			"%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
