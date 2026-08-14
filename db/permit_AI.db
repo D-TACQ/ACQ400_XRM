@@ -1,0 +1,96 @@
+
+record(mbbo, "${UUT}:${SITE}:PERMIT:AI:${CH}:M")	{
+        field(DTYP, "asynInt32")
+	field(OUT,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_MODE")
+	field(NOBT, "3")	
+	field(ZRST, "none")
+	field(ONST, "rising")
+	field(TWST, "falling")
+	field(THST, "inside")
+	field(FRST, "outside")
+	field(FLNK, "${UUT}:${SITE}:PERMIT:AI:${CH}:l2en")
+	field(DESC, "analog trigger mode")       	
+}
+
+record(calc, "${UUT}:${SITE}:PERMIT:AI:${CH}:l2en") {
+	field(INPA, "${UUT}:${SITE}:PERMIT:AI:${CH}:M")
+	field(CALC, "(A==3||A==4)")
+	field(FLNK, "${UUT}:${SITE}:PERMIT:AI:${CH}:w PP")
+}
+
+record(ao, "${UUT}:${SITE}:PERMIT:AI:${CH}:L1") {
+	field(DTYP, "asynFloat64")
+	field(OUT,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_L1")	
+	field(DRVH, "10")
+	field(DRVL, "-10")
+	field(HOPR, "10")
+	field(LOPR, "-10")
+	field(LINR, "LINEAR")
+	field(ESLO, "0.0787")
+	field(EOFF, "0")
+	field(EGU,  "V")
+	field(DESC, "analog trigger Level1")
+	field(PINI, "YES")
+	field(FLNK, "${UUT}:${SITE}:PERMIT:AI:${CH}:w PP")
+}
+
+record(ao, "${UUT}:${SITE}:PERMIT:AI:${CH}:L2") {	
+	field(DTYP, "asynFloat64")
+	field(OUT,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_L1")	
+	field(DRVH, "10")
+	field(DRVL, "-10")
+	field(HOPR, "10")
+	field(LOPR, "-10")
+	field(LINR, "LINEAR")
+	field(ESLO, "0.0787")
+	field(EOFF, "0")
+	field(EGU,  "V")
+	field(SDIS, "${UUT}:${SITE}:PERMIT:AI:${CH}:l2en")
+	field(DISV, "0")		
+	field(DESC, "analog trigger Level2")
+	field(PINI, "YES")
+}
+
+record(mbbo, "${UUT}:${SITE}:PERMIT:AI:${CH}:H") {
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_HP")
+	field(NOBT, "3")
+	field(ZRST, "0")
+	field(ONST, "1")
+	field(TWST, "2")
+	field(THST, "5")
+	field(FRST, "10")
+	field(FVST, "20")
+	field(ZRVL, "0")
+	field(ONVL, "1")
+	field(TWVL, "3")
+	field(THVL, "6")
+	field(FRVL, "13")
+	field(FVVL, "25")
+	field(DESC, "analog trigger hysterisis")
+	field(PINI, "YES")
+	field(VAL,  "1")
+	field(FLNK, "${UUT}:${SITE}:PERMIT:AI:${CH}:w PP")
+}
+
+record(bo, "${UUT}:${SITE}:PERMIT:AI:LOCK" ){
+        field(DTYP, "Soft Channel")
+        field(ZNAM, "unlocked")
+        field(ONAM, "locked")
+}
+
+record(bo, "${UUT}:${SITE}:PERMIT:AI:RESET") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "RESET PERMIT:AI")
+	field(DTYP, "stream")
+	field(OUT,  "@PERMIT:AI.proto setATD_Reset ${S14}")
+}
+
+record(bi, "${UUT}:${SITE}:PERMIT:AI:LIVE:${CH}") {
+        field(DTYP, "Soft Channel")
+        field(INP,  "${UUT}:${SITE}:PERMIT:AI:SRC${BANK}.B${BX}")
+        field(ZNAM, "0")
+        field(ONAM, "1")
+}
+
