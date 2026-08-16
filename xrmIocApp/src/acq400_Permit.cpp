@@ -60,7 +60,19 @@ bool PermitDSP::defineSite(int site, int nelem)
 	sites[site].nelem = nelem;
 	return true;
 }
-
+void PermitDSP::commit() {
+	for (int site = 1; site < MAX_SITES; ++site){
+		if (unsigned dirty = R_cache_map[site]){
+			unsigned* pth = th_base(site);
+			for (int ii = 0; dirty; ii++, dirty >>=1){
+				if (dirty&1){
+					pth[site] = R_cache[ii];
+				}
+			}
+			R_cache_map[site] = 0;
+		}
+	}
+}
 int acq400_Permit::nice    = ::getenv_default("acq400_PERMIT_NICE", 10);
 int acq400_Permit::verbose	= ::getenv_default("acq400_PERMIT_VERBOSE", 0);
 
@@ -118,6 +130,45 @@ void acq400_Permit::task_runner(void *drvPvt)
 void acq400_Permit::task()
 {
 	fprintf(stderr, "%s 01\n", FN);
+
+	epicsEventWait(eventId);
+
+	int fc = open("/dev/acq400.0.bq", O_RDONLY);
+	assert(fc >= 0);
+	int ib;
+
+	if ((ib = getBufferId(fc)) < 0){
+		fprintf(stderr, "ERROR: getBufferId() fail");
+		return;
+	}
+	MonitorRateLimit rateLimit;
+
+	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0;
+							runstop0 = runstop){
+		lock();
+		gip(P_RUNSTOP, &runstop);
+		unlock();
+		rateLimit.newData(mrl_param);
+
+		if (runstop == 1){
+			if (runstop != runstop0){
+				; // @@todo do switchon stuff
+			}
+			if (dsp.L_CACHE_lock.tryLock()){
+				dsp.commit();
+
+				for (int site = 1; site <= MAX_SITES; ++site){
+					peers[site]->flush_L_CACHE();
+				}
+
+				dsp.L_CACHE_lock.unlock();
+			}
+		}else{
+			if (runstop != runstop0){
+				;   // @@todo do switch off stuff
+			}
+		}
+	}
 }
 
 
