@@ -347,6 +347,14 @@ asynStatus acq400_Proxy::writeFloat32Array(asynUser *pasynUser, epicsFloat32 *va
 	return status;
 }
 
+const epicsFloat32* acq400_Proxy::getEslo(int site) const
+{
+	return eslo_src[site];
+}
+const epicsFloat32* acq400_Proxy::getEoff(int site) const
+{
+	return eoff_src[site];
+}
 
 acq400_Proxy* acq400_Proxy::_instance;
 

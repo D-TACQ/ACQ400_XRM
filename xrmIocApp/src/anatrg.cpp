@@ -51,6 +51,9 @@
 #if 0
 #include "Knob.h"
 #endif
+
+#include "anatrg.h"
+
 using namespace std;
 
 namespace G {
@@ -133,7 +136,7 @@ bool fileExists(const char* fname)
 	return stat(fname, &statbuf) == 0;
 }
 
-void get_offset(void);
+unsigned get_offset(void);
 
 #if 0
 const char* cli(int argc, const char** argv, int& p1, int& p2)
@@ -166,78 +169,75 @@ const char* cli(int argc, const char** argv, int& p1, int& p2)
 }
 #endif
 
-struct Command {
-	const char* key;
-	Command(const char* _key) : key(_key) {}
-	virtual unsigned operator() (int p1, int p2) = 0;
-	bool match(const char *testkey){
-		return strcmp(key, testkey) == 0;
-	}
-};
-class AnaTrg {
-	vector<Command*> commands;
-	AnaTrg();
-	void setThreshold(int chan, unsigned abcd){
-		unsigned *thblock = reinterpret_cast<unsigned *>(G::mapping);
-		thblock[chan-1] = abcd;
-	}
-	void setThreshold(unsigned abcd) {
+Command::Command(const char* _key) :
+		key(_key)
+{}
 
-		if (G::channel == ALL_CHANNELS){
-			for (int ic = 1; ic <= G::nchan; ++ic){
-				setThreshold(ic+offset, abcd);
-			}
-		}else{
-			setThreshold(G::channel+offset, abcd);
-		}
-	}
-public:
-	static AnaTrg& instance();
-	int operator() (const char* key, int p1, int p2) {
-		for (vector<Command*>::iterator it = commands.begin();
-				it != commands.end(); ++it){
-			Command& cursor = **it;
-			if (strcmp(key, "help") == 0){
-				printf("%s\n", cursor.key);
-			}else if (cursor.match(key)){
-				setThreshold(cursor(p1, p2));
-				return 0;
-			}
-		}
-
-		return -1;
-	}
-
-	static unsigned offset;
-};
-
-unsigned AnaTrg::offset;
-
-void get_offset(void)
+bool Command::match(const char *testkey)
 {
-#if 0
+	return strcmp(key, testkey) == 0;
+}
+
+void AnaTrg::setThreshold(int chan, unsigned abcd)
+{
+	unsigned *thblock = reinterpret_cast<unsigned *>(mapping);
+	thblock[chan-1] = abcd;
+}
+void AnaTrg::setThreshold(unsigned abcd)
+{
+	if (G::channel == ALL_CHANNELS){
+		for (int ic = 1; ic <= nchan; ++ic){
+			setThreshold(ic+offset, abcd);
+		}
+	}else{
+		setThreshold(offset, abcd);
+	}
+}
+
+int AnaTrg::operator() (const char* key, int p1, int p2, int hyst) {
+	for (vector<Command*>::iterator it = commands.begin();
+			it != commands.end(); ++it){
+		Command& cursor = **it;
+		if (strcmp(key, "help") == 0){
+			printf("%s\n", cursor.key);
+		}else if (cursor.match(key)){
+			setThreshold(cursor(p1, p2, hyst));
+			return 0;
+		}
+	}
+
+	return -1;
+}
+
+vector<Command*> AnaTrg::commands;
+
+unsigned get_offset(void)
+{
+	unsigned offset = 0;
+#ifdef STANDALONE
 	char path[80];
 	snprintf(path, 80, "/etc/acq400/%d/AGIX", G::site);
 	if (fileExists(path)){
 		Knob ix(path);
-		ix.get(&AnaTrg::offset);
+		ix.get(&offset);
 	}
 #endif
+	return offset;
 }
 
 struct NoneCommand : public Command {
 	NoneCommand() : Command("none") {}
-	virtual unsigned operator() (int p1, int p2){
+	virtual unsigned operator() (int p1, int p2, int hyst) const {
 		return ABCD(DISABLE_HI, DISABLE_LO, DISABLE_HI, DISABLE_LO);
 	}
 };
 
 struct RisingCommand: public Command {
 	RisingCommand() : Command("rising") {}
-	virtual unsigned operator() (int p1, int p2) {
+	virtual unsigned operator() (int p1, int p2, int hyst) const {
 		unsigned abcd;
 
-		abcd = ABCD(p1, p1 - G::hysteresis, DISABLE_HI, DISABLE_LO);
+		abcd = ABCD(p1, p1 - hyst, DISABLE_HI, DISABLE_LO);
 		if (G::verbose) printf("%s %d %d ABCD: 0x%08x\n", key, p1, p2, abcd);
 
 		return abcd;
@@ -246,10 +246,10 @@ struct RisingCommand: public Command {
 
 struct FallingCommand: public Command {
 	FallingCommand() : Command("falling") {}
-	virtual unsigned operator() (int p1, int p2) {
+	virtual unsigned operator() (int p1, int p2, int hyst) const {
 		unsigned abcd;
 
-		abcd = ABCD(DISABLE_HI, DISABLE_LO, p1 + G::hysteresis, p1);
+		abcd = ABCD(DISABLE_HI, DISABLE_LO, p1 + hyst, p1);
 		if (G::verbose) printf("%s %d %d ABCD: 0x%08x\n", key, p1, p2, abcd);
 
 		return abcd;
@@ -258,10 +258,10 @@ struct FallingCommand: public Command {
 
 struct InsideCommand: public Command {
 	InsideCommand() : Command("inside") {}
-	virtual unsigned operator() (int p1, int p2) {
+	virtual unsigned operator() (int p1, int p2, int hyst) const {
 		unsigned abcd;
 
-		abcd = ABCD(p1, p1 - G::hysteresis, p2 + G::hysteresis, p2);
+		abcd = ABCD(p1, p1 - hyst, p2 + hyst, p2);
 		if (G::verbose) printf("%s %d %d ABCD: 0x%08x\n", key, p1, p2, abcd);
 		return abcd;
 	}
@@ -269,29 +269,28 @@ struct InsideCommand: public Command {
 
 struct OutsideCommand: public Command {
 	OutsideCommand() : Command("outside") {}
-	virtual unsigned operator() (int p1, int p2) {
+	virtual unsigned operator() (int p1, int p2, int hyst) const {
 		unsigned abcd;
-		abcd = ABCD(p1, p2 - G::hysteresis, p1 + G::hysteresis, p2);
+		abcd = ABCD(p1, p2 - hyst, p1 + hyst, p2);
 		if (G::verbose) printf("%s %d %d ABCD: 0x%08x\n", key, p1, p2, abcd);
 		return abcd;
 	}
 };
 
-AnaTrg::AnaTrg()
+AnaTrg::AnaTrg(int _nchan, void* _mapping, unsigned _offset):
+	nchan(_nchan),
+	offset(_offset),
+	mapping(_mapping)
 {
-	commands.push_back(new NoneCommand);
-	commands.push_back(new RisingCommand);
-	commands.push_back(new FallingCommand);
-	commands.push_back(new InsideCommand);
-	commands.push_back(new OutsideCommand);
+	if (commands.size() == 0){
+		commands.push_back(new NoneCommand);
+		commands.push_back(new RisingCommand);
+		commands.push_back(new FallingCommand);
+		commands.push_back(new InsideCommand);
+		commands.push_back(new OutsideCommand);
+	}
 }
 
-AnaTrg& AnaTrg::instance()
-{
-	static AnaTrg* _instance = new AnaTrg;
-
-	return *_instance;
-}
 #if 0
 int main(int argc, const char** argv)
 {
@@ -302,10 +301,10 @@ int main(int argc, const char** argv)
 	int p1;
 	int p2;
 
-	if ((verb = cli(argc, argv, p1, p2)) != 0){
-		AnaTrg& at = AnaTrg::instance();
+	AnaTrg anaTrg(G::nchan, G::mapping, get_offset());
 
-		return at(verb, p1, p2);
+	if ((verb = cli(argc, argv, p1, p2)) != 0){
+		return anaTrg(verb, p1, p2);
 	}
 	return 0;
 }

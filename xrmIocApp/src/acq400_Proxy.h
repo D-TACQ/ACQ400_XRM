@@ -80,6 +80,10 @@ public:
 		assert(_instance != 0);
 		return &_instance->samplePrams;
 	}
+	static acq400_Proxy& instance() {
+		assert(_instance != 0);
+		return *_instance;
+	}
 	virtual ~acq400_Proxy() {}
 
 	virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
@@ -87,6 +91,7 @@ public:
 	virtual asynStatus writeFloat32Array(asynUser *pasynUser, epicsFloat32 *value,
 	                                       size_t nElements);
 
-
+	const epicsFloat32* getEslo(int site) const;
+	const epicsFloat32* getEoff(int site) const;
 };
 #endif /* XRMIOCAPP_SRC_ACQ400_PROXY_H_ */
