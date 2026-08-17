@@ -94,9 +94,9 @@ std::map<int, acq400_Permit*> acq400_Permit::peers;
 acq400_Permit::acq400_Permit(const char *portName, int _site, bool is_ai, int _nchan):
 	acq400_asynPortDriver(portName,
 	/* maxAddr */		1,
-	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|
+	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|asynUInt32DigitalMask|
 				asynDrvUserMask,
-	/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask,
+	/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|asynUInt32DigitalMask,
 	/* asynFlags no block*/ 0,
 	/* Autoconnect */       1,
 	/* Default priority */  0,
