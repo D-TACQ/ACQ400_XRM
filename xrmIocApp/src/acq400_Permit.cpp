@@ -41,6 +41,7 @@ using namespace std;
 
 
 PermitDSP::PermitDSP() {
+	memset(sites, 0, sizeof(SITE_DEF)*(MAX_SITES+1));
 	/* make the mapping */
 }
 PermitDSP& PermitDSP::instance(){
@@ -55,6 +56,7 @@ PermitDSP& PermitDSP::instance(){
 
 bool PermitDSP::defineSite(int site, int nelem)
 {
+	fprintf(stderr, "%s site:%d store:%d nelem:%d\n", FN, site, sites[site].site, nelem);
 	assert(sites[site].site == 0);
 	sites[site].site = site;         /** @@todo redundant .. struct not needed? */
 	sites[site].nelem = nelem;

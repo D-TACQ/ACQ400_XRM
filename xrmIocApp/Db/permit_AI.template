@@ -15,7 +15,7 @@ record(mbbo, "${UUT}:${SITE}:ANATRG:${CH}:M")	{
 record(calc, "${UUT}:${SITE}:ANATRG:${CH}:l2en") {
 	field(INPA, "${UUT}:${SITE}:ANATRG:${CH}:M")
 	field(CALC, "(A==3||A==4)")
-	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:w PP")
+#	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:w PP")
 }
 
 record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L1") {
@@ -31,7 +31,7 @@ record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L1") {
 	field(EGU,  "V")
 	field(DESC, "analog trigger Level1")
 	field(PINI, "YES")
-	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:w PP")
+#	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:w PP")
 }
 
 record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L2") {	
@@ -70,7 +70,7 @@ record(mbbo, "${UUT}:${SITE}:ANATRG:${CH}:H") {
 	field(DESC, "analog trigger hysterisis")
 	field(PINI, "YES")
 	field(VAL,  "1")
-	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:w PP")
+#	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:w PP")
 }
 
 record(bo, "${UUT}:${SITE}:ANATRG:LOCK" ){
