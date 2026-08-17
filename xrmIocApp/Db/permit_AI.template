@@ -79,18 +79,4 @@ record(bo, "${UUT}:${SITE}:ANATRG:LOCK" ){
         field(ONAM, "locked")
 }
 
-record(bo, "${UUT}:${SITE}:ANATRG:RESET") {
-	field(ONAM, "ON")
-	field(ZNAM, "OFF")
-	field(DESC, "RESET ANATRG")
-	field(DTYP, "stream")
-	field(OUT,  "@ANATRG.proto setATD_Reset ${S14}")
-}
-
-record(bi, "${UUT}:${SITE}:ANATRG:LIVE:${CH}") {
-        field(DTYP, "Soft Channel")
-        field(INP,  "${UUT}:${SITE}:ANATRG:SRC${BANK}.B${BX}")
-        field(ZNAM, "0")
-        field(ONAM, "1")
-}
 
