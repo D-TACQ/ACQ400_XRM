@@ -20,8 +20,9 @@ for site in $(echo $sites | tr , \  ); do
         echo acq400_Permit_Configure\($SPORT, $site, $IS_ADC, $NCHAN\)
         ARP="P=${IOC_HOST}:,R=${SPORT},PORT=${SPORT},ADDR=0,IMAX=100,OMAX=100,TB3=0,TIB0=0"
         echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
+	PRAMS="UUT=${IOC_HOST},PORT=$SPORT,SITE=$site,TIMEOUT=0"
         if [ $first_site ]; then
-                echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},FUN=PRMT\"\)
+                echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},ADDR=0,FUN=PRMT\"\)
 		echo dbLoadRecords\(\"db/acq400_PRMT_base.db\",\"${PRAMS}\"\)
 		
 		first_site=false
