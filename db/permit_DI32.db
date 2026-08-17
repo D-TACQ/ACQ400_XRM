@@ -1,10 +1,10 @@
 
 record(mbboDirect, "$(UUT):$(SITE):PRMT:DI32:CH_ACTIVE") {	
-	field(DTYP, "asynInt32")
+	field(DTYP, "asynUInt32Digital")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))PERMIT_DI_CH_ACTIVE")
 }
 
 record(mbboDirect, "$(UUT):$(SITE):PRMT:DI32:CH_VALUE") {	
-	field(DTYP, "asynInt32")
+	field(DTYP, "asynUInt32Digital")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))PERMIT_DI_CH_VALUE")
 }
