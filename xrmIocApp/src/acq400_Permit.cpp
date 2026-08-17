@@ -127,6 +127,19 @@ void acq400_Permit::task_runner(void *drvPvt)
 	((acq400_Permit *)drvPvt)->task();
 }
 
+void acq400_Permit::flush()
+{
+	if (dsp.L_CACHE_lock.tryLock()){
+		dsp.commit();
+
+		for (int site = 1; site <= MAX_SITES; ++site){
+			peers[site]->flush_L_CACHE();
+		}
+
+		dsp.L_CACHE_lock.unlock();
+	}
+}
+
 void acq400_Permit::task()
 {
 	fprintf(stderr, "%s 01\n", FN);
@@ -154,15 +167,7 @@ void acq400_Permit::task()
 			if (runstop != runstop0){
 				; // @@todo do switchon stuff
 			}
-			if (dsp.L_CACHE_lock.tryLock()){
-				dsp.commit();
-
-				for (int site = 1; site <= MAX_SITES; ++site){
-					peers[site]->flush_L_CACHE();
-				}
-
-				dsp.L_CACHE_lock.unlock();
-			}
+			flush();
 		}else{
 			if (runstop != runstop0){
 				;   // @@todo do switch off stuff
@@ -187,6 +192,27 @@ asynStatus acq400_Permit::writeInt32(asynUser *pasynUser, epicsInt32 value)
 		    if(status!=asynSuccess) return status;
 	    }
 
+	    if (function == P_RUNSTOP){
+		    if (value == 1){
+			    dsp.enable(true);
+			    epicsEventSignal(eventId);
+		    }else{
+			    dsp.enable(false);
+		    }
+	    }else if (function == P_MON_RL){
+		    mrl_param = value;
+	    }else if (function == P_PERMIT_LOCK){
+		    if (value){
+			    dsp.L_CACHE_lock.lock();
+		    }else{
+			    dsp.L_CACHE_lock.unlock();
+		    }
+	    }else if (function == P_PERMIT_COMMIT){
+		    /* force commit in own time */
+		    dsp.L_CACHE_lock.lock();
+		    flush();
+		    dsp.L_CACHE_lock.unlock();
+	    }
 	    /* Set the parameter in the parameter library. */
 	    status = (asynStatus) setIntegerParam(addr, function, value);
 
@@ -236,14 +262,19 @@ public:
 			for (int ic = 0; l_cache; ++ic, l_cache>>=1){
 				if (l_cache&1){
 					const int ch = ic;
-					char l1 = static_cast<int>((atd[ic].atd_v1 - eoff[ch])/eslo[ch])>>8;
-					char l2 = static_cast<int>((atd[ic].atd_v2 - eoff[ch])/eslo[ch])>>8;
-					int hyst = 1; /**< @@todo */
-
-					dsp.setElement(site, ic, (*anatrg.commands[atd[ic].atd_mode])(l1, l2, hyst));
+					const ATD& atdx = atd[ic];
+					/* float volts to raw char ..
+					 * cal esp eoff is a bit superfluous,
+					 * but importantly eslo gives range setting result.
+					 */
+					const char l1 = static_cast<int>((atdx.atd_v1 - eoff[ch])/eslo[ch])>>8;
+					const char l2 = static_cast<int>((atdx.atd_v2 - eoff[ch])/eslo[ch])>>8;
+					const int hyst = atdx.atd_hysteresis_pc*256/100;
+					const Command& command = *anatrg.commands[atd[ic].atd_mode];
+					dsp.setElement(site, ic, command(l1, l2, hyst));
 				}
 			}
-			fprintf(stderr, "%s STUB\n", FN);
+			dirty_L_CACHE = 0;
 		}
 	}
 };
@@ -267,6 +298,7 @@ public:
 		if (dirty_L_CACHE){
 			dsp.setElement(site, 0, dtd.dtd_active);
 			dsp.setElement(site, 1, dtd.dtd_value);
+			dirty_L_CACHE = 0;
 		}
 	}
 };
@@ -288,14 +320,23 @@ asynStatus acq400_Permit_DI::writeInt32(asynUser *pasynUser, epicsInt32 value)
 		    if(status!=asynSuccess) return status;
 	    }
 
-	    /* Set the parameter in the parameter library. */
-	    status = (asynStatus) setIntegerParam(addr, function, value);
+	    if (function == P_PERMIT_DI_CH_ACTIVE ||
+	        function == P_PERMIT_DI_CH_VALUE     ){
+		    dsp.L_CACHE_lock.lock();
 
-	    fprintf(stderr,
-	    	              "%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
-	    	              DN, FN, function, addr, paramName, value);
+		    if (function == P_PERMIT_DI_CH_ACTIVE){
+			    dtd.dtd_active = value;
+		    }else if (function == P_PERMIT_DI_CH_VALUE){
+			    dtd.dtd_value = value;
+		    }else{
+			    assert(function == P_PERMIT_DI_CH_ACTIVE ||
+			           function == P_PERMIT_DI_CH_VALUE);
+		    }
+		    dsp.L_CACHE_lock.unlock();
+	    }
 
-	    return status;
+
+	    return acq400_Permit::writeInt32(pasynUser, value);
 }
 
 asynStatus acq400_Permit_AI::writeInt32(asynUser *pasynUser, epicsInt32 value)
@@ -312,15 +353,25 @@ asynStatus acq400_Permit_AI::writeInt32(asynUser *pasynUser, epicsInt32 value)
 		    status = pasynManager->getAddr(pasynUser, &addr);
 		    if(status!=asynSuccess) return status;
 	    }
+	    if (function == P_PERMIT_ATD_MODE ||
+	        function == P_PERMIT_ATD_HP){
+		    dsp.L_CACHE_lock.lock();
+		    if (function == P_PERMIT_ATD_MODE){
+			    assert(value >= ATD::ATD_OFF && value <= ATD::ATD_OUTSIDE);
+			    atd[addr].atd_mode = (ATD::ATD_MODE)value;
+		    }else if (function == P_PERMIT_ATD_HP){
+			    assert(value >= 0.0 && value <= 100.0);
+			    atd[addr].atd_hysteresis_pc = value;
+		    }else{
+			    assert(function == P_PERMIT_ATD_MODE ||
+			           function == P_PERMIT_ATD_HP);
+		    }
+		    dsp.L_CACHE_lock.unlock();
+	    }
 
-	    /* Set the parameter in the parameter library. */
-	    status = (asynStatus) setIntegerParam(addr, function, value);
 
-	    fprintf(stderr,
-	    	              "%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
-	    	              DN, FN, function, addr, paramName, value);
 
-	    return status;
+	    return acq400_Permit::writeInt32(pasynUser, value);
 }
 
 asynStatus acq400_Permit_AI::writeFloat64(asynUser *pasynUser, epicsFloat64 value)
@@ -338,8 +389,22 @@ asynStatus acq400_Permit_AI::writeFloat64(asynUser *pasynUser, epicsFloat64 valu
 		    if(status!=asynSuccess) return status;
 	    }
 
+	    if (function == P_PERMIT_ATD_L1 || function == P_PERMIT_ATD_L2){
+		    dsp.L_CACHE_lock.lock();
+		    if (function == P_PERMIT_ATD_L1){
+			    atd[addr].atd_v1 = value;
+		    }else if (function == P_PERMIT_ATD_L2){
+			    atd[addr].atd_v2 = value;
+		    }else{
+			    assert(function == P_PERMIT_ATD_MODE ||
+			           function == P_PERMIT_ATD_HP);
+		    }
+		    dsp.L_CACHE_lock.unlock();
+	    }
+
+
 	    /* Set the parameter in the parameter library. */
-	    status = (asynStatus) setIntegerParam(addr, function, value);
+	    status = (asynStatus) setDoubleParam(addr, function, value);
 
 	    fprintf(stderr,
 	    	              "%s:%s: function=%d, addr=%d, name=%s, value=%.2f\n",

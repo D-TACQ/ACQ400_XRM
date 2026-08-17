@@ -39,7 +39,7 @@
 #define PS_PERMIT_LOCK		"PERMIT_LOCK"    /**<< update L_CACHE without touching R_CACHE (non-atomic params), also, untimed */
 
 struct ATD {
-	enum { ATD_OFF, ATD_RISING, ATD_FALLING, ATD_INSIDE, ATD_OUTSIDE } atd_mode;
+	enum ATD_MODE { ATD_OFF, ATD_RISING, ATD_FALLING, ATD_INSIDE, ATD_OUTSIDE } atd_mode;
 	float atd_v1;   /**<< start voltage, all modes */
 	float atd_v2;   /**<< second level, ATD_INSIDE, ATD_OUTSIDE */
 	unsigned char atd_hysteresis_pc; /**<<hysteresis percentage FS */
@@ -99,6 +99,7 @@ public:
 	void setElement(int site, int ch_off, unsigned element)
 	{
 		R_cache[element_offset(site)+ch_off];
+		R_cache_map[site] |= 1<<ch_off;
 	}
 	/**<< set element u32 return true on Success */
 
@@ -133,6 +134,7 @@ protected:
 	PermitDSP& dsp;
 	acq400_Permit(const char *portName, int site, bool is_ai, int nchan);
 
+	void flush();
 public:
 	virtual void flush_L_CACHE(void) = 0;
 
