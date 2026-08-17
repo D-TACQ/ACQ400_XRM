@@ -76,6 +76,17 @@ void PermitDSP::commit() {
 int acq400_Permit::nice    = ::getenv_default("acq400_PERMIT_NICE", 10);
 int acq400_Permit::verbose	= ::getenv_default("acq400_PERMIT_VERBOSE", 0);
 
+
+void PermitDSP::enable(bool en)
+{
+	// @@todo
+}
+void PermitDSP::reset()
+{
+	// @@todo
+}
+
+
 #define DI_NELEM	2	/**< active, state */
 
 std::map<int, acq400_Permit*> acq400_Permit::peers;
@@ -432,7 +443,7 @@ extern "C" {
 	{
 		printf("%s:%s R1002 %s\n", DN, FN, portName);
 
-		acq400_Permit::create_instance(portName, site, is_ai, nchan);
+		acq400_Permit::create_instance(portName, site, is_ai, nchan+1 /** addr from 1: */);
 		return 0;
 	}
 

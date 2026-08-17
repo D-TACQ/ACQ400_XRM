@@ -1,0 +1,24 @@
+# acq400_PRMT_base
+
+record(mbbo, "$(UUT):PRMT:COMMIT")
+{
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))PERMIT_COMMIT")
+	field(NOBT, "2")
+	field(ZRST, "OFF")
+	field(ONST, "L_CACHE")
+	field(TWST, "R_CACHE")
+	field(THST, "ALL")
+	field(ZRVL, "0")
+	field(ONVL, "1")
+	field(TWVL, "2")
+	field(THVL, "3")
+}
+
+record(bo, "$(UUT):PRMT:LOCK")
+{
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))PERMIT_LOCK")
+	field(ONAM, "UNLOCK")
+	field(ZNAM, "LOCK")
+}

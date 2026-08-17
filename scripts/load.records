@@ -89,6 +89,7 @@ if [ ! -z $XRM_SOE ] && [ "x$XRM_SOE" != "x0" ]; then
 	./scripts/load.soe $XRM_SOE
 fi
 
+[ ! -z $XRM_PRMT ]&& [ "x$XRM_PRMT" != "x0" ]		&& ./scripts/load.prmt $XRM_PRMT
 [ ! -z $XRM_PM ] && [ "x$XRM_PM" != "x0" ] 		&& ./scripts/load.pm $XRM_PM
 [ ! -z $XRM_INST1 ] && [ "x$XRM_INST1" != "x0" ] 	&& ./scripts/load.inst 1 $XRM_INST1
 [ ! -z $XRM_INST2 ] && [ "x$XRM_INST2" != "x0" ] 	&& ./scripts/load.inst 2 $XRM_INST2

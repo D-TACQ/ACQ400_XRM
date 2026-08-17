@@ -1,0 +1,33 @@
+#!/bin/sh
+# load.prmt: load permit monitors.
+
+get.site 0 aggregator >/tmp/aggregator.sh
+source /tmp/aggregator.sh
+
+first_site=true
+
+for site in $(echo $sites | tr , \  ); do
+        SPORT=PRMT$site
+        IS_ADC=$(get.site $site is_adc | awk '{ print $1 }')
+        if [ "x$IS_ADC" = "x1" ]; then
+                NCHAN=$(get.site $site NCHAN)
+        else
+                NCHAN=2       
+        fi
+        
+        echo acq400_Permit_Configure\($SPORT, $site, $IS_ADC, $NCHAN);
+        ARP="P=${IOC_HOST}:,R=${SPORT},PORT=${SPORT},ADDR=0,IMAX=100,OMAX=100,TB3=0,TIB0=0"
+        echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
+        if [ $first_site ]; then
+                echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},FUN=PRMT\"\)
+		echo dbLoadRecords\(\"db/acq400_PRMT_base.db\",\"${PRAMS}\"\)
+		
+		first_site=false
+        fi
+        if [ "x$IS_ADC" = "x1" ]; then
+                PDB=db/permit_AI_${NCHAN}CH.db
+                echo dbLoadRecords\(\"$PDB\",\"${PRAMS}\"\)
+	else
+		echo dbLoadRecords\(\"db/permit_DI32.db\",\"${PRAMS}\"\)
+        fi
+done
