@@ -51,8 +51,6 @@ PermitDSP::PermitDSP() {
 	}
 	map_base = (char*)mmap(0, MAP_LEN, PROT_READ|PROT_WRITE, MAP_SHARED, fd, DSP1_GLBASE);
 	assert(map_base != MAP_FAILED);
-	fprintf(stderr, "%s map_base %p\n", FN, map_base);
-
 }
 
 PermitDSP::~PermitDSP() {
@@ -65,6 +63,7 @@ PermitDSP& PermitDSP::instance(){
 	if (_instance == 0){
 		_instance = new PermitDSP;
 	}
+
 	return *_instance;
 }
 
@@ -159,16 +158,15 @@ void acq400_Permit::flush()
 {
 	if (dsp.L_CACHE_lock.tryLock()){
 		dsp.commit();
-
 		for (int site = 1; site <= MAX_SITES; ++site){
-			peers[site]->flush_L_CACHE();
+			if (peers[site] != 0){
+				peers[site]->flush_L_CACHE();
+			}
 		}
-
 		dsp.L_CACHE_lock.unlock();
 	}
 }
 
-#define VMARK	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__)
 void acq400_Permit::task()
 {
 	fprintf(stderr, "%s 01\n", FN);
@@ -184,17 +182,15 @@ void acq400_Permit::task()
 		return;
 	}
 	MonitorRateLimit rateLimit;
-	VMARK;
+
 	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0;
 							runstop0 = runstop){
-		VMARK;
 		lock();
 		gip(P_RUNSTOP, &runstop);
 		unlock();
 		rateLimit.newData(mrl_param);
-		VMARK;
+
 		if (runstop == 1){
-			VMARK;
 			if (runstop != runstop0){
 				dsp.enable(true);
 			}
