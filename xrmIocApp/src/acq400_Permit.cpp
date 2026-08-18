@@ -95,7 +95,7 @@ std::map<int, acq400_Permit*> acq400_Permit::peers;
 
 acq400_Permit::acq400_Permit(const char *portName, int _site, bool is_ai, int _nchan):
 	acq400_asynPortDriver(portName,
-	/* maxAddr */		1,
+	/* maxAddr */		_nchan+1,
 	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|asynUInt32DigitalMask|
 				asynDrvUserMask,
 	/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|asynUInt32DigitalMask,
@@ -121,7 +121,7 @@ acq400_Permit::acq400_Permit(const char *portName, int _site, bool is_ai, int _n
 	}else{
 		dsp.defineSite(site, DI_NELEM);
 	}
-	if (peers.size() == 0){
+	if (peers.size() == 1){
 		/* first unit updates L_CACHE and controls the R_CACHE for all */
 		status = (asynStatus)(epicsThreadCreate("PRMT_task",
 				epicsThreadPriorityHigh - nice,
@@ -428,11 +428,16 @@ asynStatus acq400_Permit_AI::writeFloat64(asynUser *pasynUser, epicsFloat64 valu
 
 void acq400_Permit::create_instance(const char *portName, int site, bool is_ai, int nchan)
 {
+#define TRACEP fprintf(stderr, "%s:%d site:%d peers.size():" FMTSZT "\n", FN, __LINE__, site, peers.size())
+	TRACEP;
 	if (peers[site] == 0){
+		TRACEP;
 		if (is_ai){
 			peers[site] = new acq400_Permit_AI(portName, site, nchan);
+			TRACEP;
 		}else{
 			peers[site] = new acq400_Permit_DI(portName, site);
+			TRACEP;
 		}
 	}
 }
