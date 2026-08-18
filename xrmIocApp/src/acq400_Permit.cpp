@@ -428,16 +428,11 @@ asynStatus acq400_Permit_AI::writeFloat64(asynUser *pasynUser, epicsFloat64 valu
 
 void acq400_Permit::create_instance(const char *portName, int site, bool is_ai, int nchan)
 {
-#define TRACEP fprintf(stderr, "%s:%d site:%d peers.size():" FMTSZT "\n", FN, __LINE__, site, peers.size())
-	TRACEP;
 	if (peers[site] == 0){
-		TRACEP;
 		if (is_ai){
 			peers[site] = new acq400_Permit_AI(portName, site, nchan);
-			TRACEP;
 		}else{
 			peers[site] = new acq400_Permit_DI(portName, site);
-			TRACEP;
 		}
 	}
 }
