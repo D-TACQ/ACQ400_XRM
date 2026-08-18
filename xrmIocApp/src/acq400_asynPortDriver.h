@@ -90,6 +90,7 @@ protected:
 		void newData(int mrl);
 	};
 	int mrl_param;                    // MUST be explicitly set by client ::writeInt32()
+	unsigned update;
 public:
 	/** single public constructor */
 	acq400_asynPortDriver(const char *portName, int maxAddr, int interfaceMask, int interruptMask,

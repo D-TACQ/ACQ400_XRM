@@ -135,6 +135,8 @@ protected:
 	acq400_Permit(const char *portName, int site, bool is_ai, int nchan);
 
 	void flush();
+
+	virtual void update_callbacks(bool call_array_callbacks);
 public:
 	virtual void flush_L_CACHE(void) = 0;
 

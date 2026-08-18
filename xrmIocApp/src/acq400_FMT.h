@@ -64,7 +64,6 @@ protected:
 
 	static void task_runner(void *drvPvt);
 
-	unsigned update;
 	epicsInt64 now_us;
 
 	int P_FMT_MC_GRP;		/**< MultiCast Group eg 224.x.x.x */

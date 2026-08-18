@@ -30,8 +30,7 @@ acq400_FMT_abc::acq400_FMT_abc(
 	                   int asynFlags, int autoConnect, int priority, int stackSize) :
 	acq400_asynPortDriver(portName, maxAddr, interfaceMask, interruptMask,
 			   asynFlags, autoConnect, priority, stackSize),
-	n_cache(_n_cache),
-	update(0)
+	n_cache(_n_cache)
 {
 	fmt_cache = new FMT[n_cache];
 	memset(fmt_cache, 0, n_cache*sizeof(FMT));

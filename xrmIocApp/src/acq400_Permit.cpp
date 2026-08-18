@@ -181,6 +181,10 @@ void acq400_Permit::task()
 				; // @@todo do switchon stuff
 			}
 			flush();
+
+			lock();
+			update_callbacks(rateLimit.goAhead());
+			unlock();
 		}else{
 			if (runstop != runstop0){
 				;   // @@todo do switch off stuff
@@ -425,6 +429,22 @@ asynStatus acq400_Permit_AI::writeFloat64(asynUser *pasynUser, epicsFloat64 valu
 
 	    return status;
 }
+
+void acq400_Permit::update_callbacks(bool call_array_callbacks)
+{
+	setIntegerParam(P_UPDATES, ++update);
+	callParamCallbacks();
+
+	if (call_array_callbacks){
+#if 0
+		doCallbacksInt8Array(pm_cols.c_rownum, 		MAX_PM_BUFFERS, P_COL_ROWNUM, 0);
+		doCallbacksInt16Array(pm_cols.c_ib_live, 	MAX_PM_BUFFERS, P_COL_IBLIVE, 0);
+#endif
+	}
+
+
+}
+
 
 void acq400_Permit::create_instance(const char *portName, int site, bool is_ai, int nchan)
 {

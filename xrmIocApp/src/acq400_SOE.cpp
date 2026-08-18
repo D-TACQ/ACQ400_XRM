@@ -43,7 +43,6 @@ acq400_SOE::acq400_SOE(const char* portName, acq400_SOE_Strategy* _strategy):
 	/* Default priority */  0,
 	/* Default stack size*/ 0),
 	strategy(_strategy),
-	update(0),
 	fmt_rx_timeouts(0), fmt_rx_success(0),
 	hold_row_limit(SOE_HLD_ROWS)
 {

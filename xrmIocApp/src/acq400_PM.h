@@ -75,8 +75,6 @@ protected:
 		epicsInt64  c_WRUS[MAX_PM_BUFFERS];
 	} pm_cols;
 
-	unsigned update;
-
 	SamplePrams samplePrams;
 	void get_sample_dimensions();
 

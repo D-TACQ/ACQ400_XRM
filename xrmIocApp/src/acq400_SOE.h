@@ -194,7 +194,6 @@ protected:
 		epicsInt32  c_WRVT[SOE_HLD_ROWS];
 		epicsInt64  c_WRUS[SOE_HLD_ROWS];
 	} hold_cols;
-	unsigned update;
 	unsigned fmt_rx_timeouts;
 	unsigned fmt_rx_success;
 	int hold_row_limit;
