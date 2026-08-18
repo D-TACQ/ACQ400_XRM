@@ -55,6 +55,8 @@ struct DTD {
 	}
 };
 
+#define MAP_LEN		0x10000
+#define DSP1_GLBASE	0x80000000
 #define DSP_TH_BASE	0xE000
 #define DSP_TH_SIZE	0x0300
 
@@ -67,7 +69,9 @@ class PermitDSP {
 /**< Singleton */
 
 private:
+	int fd;
 	char* map_base;
+
 
 	unsigned element_offset(int site){
 		return (site-1)*0x080;
@@ -81,6 +85,7 @@ private:
 
 
 	PermitDSP();
+	~PermitDSP();
 
 	struct SITE_DEF {
 		unsigned char site;  /**<< 1..6 */

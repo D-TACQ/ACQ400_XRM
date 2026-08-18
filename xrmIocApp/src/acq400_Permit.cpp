@@ -27,6 +27,7 @@
 #include "acq-util.h"
 #include "split2.h"
 #include <fcntl.h>                // open()
+#include <sys/mman.h>
 #include <unistd.h>
 #include <string.h>
 
@@ -43,6 +44,20 @@ using namespace std;
 PermitDSP::PermitDSP() {
 	memset(sites, 0, sizeof(SITE_DEF)*(MAX_SITES+1));
 	/* make the mapping */
+	fd = open("/dev/mem", O_RDWR);
+	if (fd <= 0){
+		perror("failed to open /dev/mem");
+		assert(0);
+	}
+	map_base = (char*)mmap(0, MAP_LEN, PROT_READ|PROT_WRITE, MAP_SHARED, fd, DSP1_GLBASE);
+	assert(map_base != MAP_FAILED);
+	fprintf(stderr, "%s map_base %p\n", FN, map_base);
+
+}
+
+PermitDSP::~PermitDSP() {
+	munmap(map_base, MAP_LEN);
+	close(fd);
 }
 PermitDSP& PermitDSP::instance(){
 	static PermitDSP* _instance;
@@ -153,6 +168,7 @@ void acq400_Permit::flush()
 	}
 }
 
+#define VMARK	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__)
 void acq400_Permit::task()
 {
 	fprintf(stderr, "%s 01\n", FN);
@@ -168,15 +184,17 @@ void acq400_Permit::task()
 		return;
 	}
 	MonitorRateLimit rateLimit;
-
+	VMARK;
 	for (int runstop, runstop0 = 0; (ib = getBufferId(fc)) >= 0;
 							runstop0 = runstop){
+		VMARK;
 		lock();
 		gip(P_RUNSTOP, &runstop);
 		unlock();
 		rateLimit.newData(mrl_param);
-
+		VMARK;
 		if (runstop == 1){
+			VMARK;
 			if (runstop != runstop0){
 				dsp.enable(true);
 			}
