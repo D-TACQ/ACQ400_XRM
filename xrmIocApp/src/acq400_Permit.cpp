@@ -178,7 +178,7 @@ void acq400_Permit::task()
 
 		if (runstop == 1){
 			if (runstop != runstop0){
-				; // @@todo do switchon stuff
+				dsp.enable(true);
 			}
 			flush();
 
@@ -187,7 +187,7 @@ void acq400_Permit::task()
 			unlock();
 		}else{
 			if (runstop != runstop0){
-				;   // @@todo do switch off stuff
+				dsp.enable(false);
 			}
 		}
 	}
@@ -211,10 +211,7 @@ asynStatus acq400_Permit::writeInt32(asynUser *pasynUser, epicsInt32 value)
 
 	    if (function == P_RUNSTOP){
 		    if (value == 1){
-			    dsp.enable(true);
 			    epicsEventSignal(eventId);
-		    }else{
-			    dsp.enable(false);
 		    }
 	    }else if (function == P_MON_RL){
 		    mrl_param = value;
@@ -432,7 +429,7 @@ asynStatus acq400_Permit_AI::writeFloat64(asynUser *pasynUser, epicsFloat64 valu
 
 void acq400_Permit::update_callbacks(bool call_array_callbacks)
 {
-	setIntegerParam(P_UPDATES, ++update);
+	sip(0, P_UPDATES, ++update);
 	callParamCallbacks();
 
 	if (call_array_callbacks){
