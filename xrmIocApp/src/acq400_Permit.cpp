@@ -316,8 +316,8 @@ public:
 	acq400_Permit_DI(const char *portName, int site):
 		acq400_Permit(portName, site, false, 2)
 	{
-		createParam(PS_PERMIT_DI_CH_ACTIVE,    	asynParamInt32,      &P_PERMIT_DI_CH_ACTIVE);
-		createParam(PS_PERMIT_DI_CH_VALUE,    	asynParamInt32,      &P_PERMIT_DI_CH_VALUE);
+		createParam(PS_PERMIT_DI_CH_ACTIVE, asynParamUInt32Digital, &P_PERMIT_DI_CH_ACTIVE);
+		createParam(PS_PERMIT_DI_CH_VALUE,  asynParamUInt32Digital, &P_PERMIT_DI_CH_VALUE);
 	}
 
 	virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
