@@ -47,7 +47,7 @@ dbLoadRecords("db/system.db","UUT=${HOST},ACQ400IOC=${ACQ400IOC},MODEL=${XRM_MOD
 dbLoadRecords("db/relay.db","UUT=${HOST},ACQ400IOC=${ACQ400IOC}")
 EOF
 # not 0:MODEL!	
-for model in $(egrep -e [0-6]:MODEL -e [0-6]:PART_NUM /tmp/records.dbl); do
+for model in $(egrep -e [0-6]:MODEL -e [0-6]:PART_NUM  -e [0:6]:NCHAN /tmp/records.dbl); do
 	suffix=${model#*:}
 cat - <<EOF
 dbLoadRecords("db/relay_suffix.db","UUT=${HOST},ACQ400IOC=${ACQ400IOC},SUFFIX=${suffix}")
