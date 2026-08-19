@@ -1,0 +1,47 @@
+record(longout, "${UUT}:PRMT:LUT:${ROW0}:EVENT"){
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),${ADDR},$(TIMEOUT)PRMT_LUT_EVENT")
+	info(Q:group, {
+		"${UUT}:PRMT:LUT:${ROW0}": {
+			"EVENT": { +channel: "VAL"}
+		}
+	})
+	field(DESC, "Event to trigger this ROW")
+}
+
+record(aao, "${UUT}:PRMT:LUT:${ROW0}:TH:AI"){
+	field(DTYP, "asynInt32ArrayOut")
+	field(OUT, "@asyn($(PORT),${ADDR},$(TIMEOUT)PRMT_LUT_TH_AI")
+	info(Q:group, {
+		"${UUT}:PRMT:LUT:${ROW0}": {
+			"TH:AI": { +channel: "VAL"}
+		}
+	))
+	field(FTVL, "ULONG")
+	field(NELM, "${NELM}")
+	field(DESC, "array AI thresholds, HI|LO")
+}
+	 
+record(aao, "${UUT}:PRMT:LUT:${ROW0}:TH:AI"){
+	field(DTYP, "asynInt32ArrayOut")
+	field(OUT, "@asyn($(PORT),${ADDR},$(TIMEOUT)PRMT_LUT_TH_DI")
+	info(Q:group, {
+		"${UUT}:PRMT:LUT:${ROW0}": {
+			"TH:DI": { +channel: "VAL"}
+		}
+	)}
+	field(FTVL, "ULONG")
+	field(NELM, "${NELM}")
+	field(DESC, "array DI, VALUE, ACTIVE pairs")
+}
+	 
+record(longout, "${UUT}:PRMT:LUT:${ROW0}:COMMIT"){
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(PORT),${ADDR},$(TIMEOUT)PRMT_LUT_EVENT")
+	info(Q:group, {
+		"${UUT}:PRMT:LUT:${ROW0}": {
+			"EVENT": { +channel: "VAL"}
+		}
+	})
+	field(DESC, "Event to trigger this ROW")	
+}
