@@ -25,3 +25,6 @@ html/
 latex/
 db/permit_AI_16CH.db
 db/permit_AI_32CH.db
+db/permit_lut_16R.db
+db/permit_lut_32R.db
+
