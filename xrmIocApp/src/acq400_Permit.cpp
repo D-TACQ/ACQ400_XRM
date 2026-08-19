@@ -135,7 +135,7 @@ acq400_Permit::acq400_Permit(const char *portName, int _site, bool is_ai, int _n
 	}else{
 		dsp.defineSite(site, DI_NELEM);
 	}
-	if (peers.size() == 1){
+	if (peers.size() == 0){
 		/* first unit updates L_CACHE and controls the R_CACHE for all */
 		status = (asynStatus)(epicsThreadCreate("PRMT_task",
 				epicsThreadPriorityHigh - nice,
@@ -459,7 +459,9 @@ void acq400_Permit::update_callbacks(bool call_array_callbacks)
 
 void acq400_Permit::create_instance(const char *portName, int site, bool is_ai, int nchan)
 {
-	if (peers[site] == 0){
+//	if (auto search = peers.find(site); search == peers.end()){ C++17 only
+	auto search = peers.find(site);
+	if (search == peers.end()){
 		if (is_ai){
 			peers[site] = new acq400_Permit_AI(portName, site, nchan);
 		}else{

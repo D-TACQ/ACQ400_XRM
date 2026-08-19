@@ -57,6 +57,7 @@ xrmIoc_DBD += acq400_Proxy.dbd
 xrmIoc_DBD += acq400_PM.dbd
 xrmIoc_DBD += acq400_INST.dbd
 xrmIoc_DBD += acq400_Permit.dbd
+xrmIoc_DBD += acq400_PermitLut.dbd
 
 # xrmIoc_registerRecordDeviceDriver.cpp derives from xrmIoc.dbd
 xrmIoc_SRCS += xrmIoc_registerRecordDeviceDriver.cpp
@@ -75,6 +76,7 @@ xrmIoc_SRCS += acq400_SOE_Strategy.cpp
 xrmIoc_SRCS += acq400_PM.cpp
 xrmIoc_SRCS += acq400_INST.cpp
 xrmIoc_SRCS += acq400_Permit.cpp
+xrmIoc_SRCS += acq400_PermitLut.cpp
 xrmIoc_SRCS += anatrg.cpp
 
 # this should be a lib from ACQ400DRV, copy bodily for now..

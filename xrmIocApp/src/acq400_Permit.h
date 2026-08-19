@@ -1,5 +1,5 @@
 /*
- * acq400_Permit.h
+ * acq400_Permit.h: one acq400_Permit per site, first site master
  *
  *  Created on: 14 Aug 2026
  *      Author: pgm
