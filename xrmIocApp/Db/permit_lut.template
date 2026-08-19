@@ -3,7 +3,7 @@ record(longout, "${UUT}:PRMT:LUT:${ROW0}:EVENT"){
 	field(OUT,  "@asyn($(PORT),${ADDR},$(TIMEOUT)PRMT_LUT_EVENT")
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:${ROW0}": {
-			"EVENT": { +channel: "VAL"}
+			"EVENT": { +channel: "VAL", +putorder:0	}
 		}
 	})
 	field(DESC, "Event to trigger this ROW")
@@ -14,7 +14,7 @@ record(aao, "${UUT}:PRMT:LUT:${ROW0}:TH:AI"){
 	field(OUT, "@asyn($(PORT),${ADDR},$(TIMEOUT)PRMT_LUT_TH_AI")
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:${ROW0}": {
-			"TH:AI": { +channel: "VAL"}
+			"TH:AI": { +channel: "VAL", +putorder:1}
 		}
 	})
 	field(FTVL, "ULONG")
@@ -27,7 +27,7 @@ record(aao, "${UUT}:PRMT:LUT:${ROW0}:TH:DI"){
 	field(OUT, "@asyn($(PORT),${ADDR},$(TIMEOUT)PRMT_LUT_TH_DI")
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:${ROW0}": {
-			"TH:DI": { +channel: "VAL"}
+			"TH:DI": { +channel: "VAL", +putorder:2}
 		}
 	})
 	field(FTVL, "ULONG")
@@ -40,7 +40,7 @@ record(longout, "${UUT}:PRMT:LUT:${ROW0}:COMMIT"){
 	field(OUT,  "@asyn($(PORT),${ADDR},$(TIMEOUT)PRMT_LUT_EVENT")
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:${ROW0}": {
-			"EVENT": { +channel: "VAL"}
+			"COMMIT": { +channel: "VAL", +putorder:3, +trigger:"*"}
 		}
 	})
 	field(DESC, "Event to trigger this ROW")	
