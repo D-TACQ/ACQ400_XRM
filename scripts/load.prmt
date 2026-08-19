@@ -40,10 +40,12 @@ DEF_PRMT_LUT_DB=db/permit_lut_16R.db
 PRMT_LUT_DB=db/permit_lut_${XRM_PRMT_LUT_ROWS}R.db
 
 if [ ! -e $PRMT_LUT_DB ]; then
-        echo "# $PRMT_LUT_DB does not exist, fallback to $DEF_PRMT_LUT_DB
+        echo "# $PRMT_LUT_DB does not exist, fallback to $DEF_PRMT_LUT_DB"
         PRMT_LUT_DB=$DEF_PRMT_LUT_DB
 fi
 PRMT_LUT_MAX_AI=128
-PRMT_LUT_MAX_DI=((2*2))
+PRMT_LUT_MAX_DI=$((2*2))
 PRAMS="UUT=${IOC_HOST},PORT=PRMT_LUT,TIMEOUT=0"
-echo dbLoadRecords\(\"db/$PRMT_LUT_DB\",\"${PRAMS}\"\)
+PRAMS="$PRAMS,MAX_AI=$PRMT_LUT_MAX_AI,MAX_DI=$PRMT_LUT_MAX_DI"
+echo dbLoadRecords\(\"$PRMT_LUT_DB\",\"${PRAMS}\"\)
+
