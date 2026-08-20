@@ -129,6 +129,7 @@ acq400_Permit::acq400_Permit(const char *portName, int _site, bool is_ai, int _n
 
 	createParam(PS_PERMIT_COMMIT,    	asynParamInt32,      &P_PERMIT_COMMIT);
 	createParam(PS_PERMIT_LOCK,    		asynParamInt32,      &P_PERMIT_LOCK);
+	fprintf(stderr, "%s P_PERMIT_LOCK:%d\n", FN, P_PERMIT_LOCK);
 
 	if (is_ai){
 		dsp.defineSite(site, nchan);
@@ -257,8 +258,6 @@ class acq400_Permit_AI: public acq400_Permit {
 	int P_PERMIT_ATD_MODE;
 	int P_PERMIT_ATD_L1;
 	int P_PERMIT_ATD_L2;
-	int P_PERMIT_ATD_HP;
-
 
 	ATD* atd;
 	AnaTrg anatrg;
@@ -271,15 +270,14 @@ public:
 		createParam(PS_PERMIT_ATD_MODE,    	asynParamInt32,      &P_PERMIT_ATD_MODE);
 		createParam(PS_PERMIT_ATD_L1,		asynParamFloat64,    &P_PERMIT_ATD_L1);
 		createParam(PS_PERMIT_ATD_L2,		asynParamFloat64,    &P_PERMIT_ATD_L2);
-		createParam(PS_PERMIT_ATD_HP,    	asynParamInt32,      &P_PERMIT_ATD_HP);
 
 		atd = new ATD[nchan+1];			/**< index 0 = ALL */
 		memset(atd, 0, (nchan+1)*sizeof(ATD));
 
 		for (int ic = 0; ic < nchan+1; ++ic){
 			sip(ic, P_PERMIT_ATD_MODE, 0);
-			sip(ic, P_PERMIT_ATD_L1, 0);
-			sip(ic, P_PERMIT_ATD_L2, 0);
+			sip(ic, P_PERMIT_ATD_L1, 0.0);
+			sip(ic, P_PERMIT_ATD_L2, 0.0);
 		}
 	}
 
@@ -387,19 +385,11 @@ asynStatus acq400_Permit_AI::writeInt32(asynUser *pasynUser, epicsInt32 value)
 		    status = pasynManager->getAddr(pasynUser, &addr);
 		    if(status!=asynSuccess) return status;
 	    }
-	    if (function == P_PERMIT_ATD_MODE ||
-	        function == P_PERMIT_ATD_HP){
+	    if (function == P_PERMIT_ATD_MODE){
 		    dsp.L_CACHE_lock.lock();
-		    if (function == P_PERMIT_ATD_MODE){
-			    assert(value >= ATD::ATD_OFF && value <= ATD::ATD_OUTSIDE);
-			    atd[addr].atd_mode = (ATD::ATD_MODE)value;
-		    }else if (function == P_PERMIT_ATD_HP){
-			    assert(value >= 0.0 && value <= 100.0);
-			    atd[addr].atd_hysteresis_pc = value;
-		    }else{
-			    assert(function == P_PERMIT_ATD_MODE ||
-			           function == P_PERMIT_ATD_HP);
-		    }
+
+		    assert(value >= ATD::ATD_OFF && value <= ATD::ATD_OUTSIDE);
+		    atd[addr].atd_mode = (ATD::ATD_MODE)value;
 		    dsp.L_CACHE_lock.unlock();
 	    }
 
@@ -430,8 +420,7 @@ asynStatus acq400_Permit_AI::writeFloat64(asynUser *pasynUser, epicsFloat64 valu
 		    }else if (function == P_PERMIT_ATD_L2){
 			    atd[addr].atd_v2 = value;
 		    }else{
-			    assert(function == P_PERMIT_ATD_MODE ||
-			           function == P_PERMIT_ATD_HP);
+			    assert(function == P_PERMIT_ATD_MODE);
 		    }
 		    dsp.L_CACHE_lock.unlock();
 	    }
@@ -449,7 +438,9 @@ asynStatus acq400_Permit_AI::writeFloat64(asynUser *pasynUser, epicsFloat64 valu
 
 void acq400_Permit::update_callbacks(bool call_array_callbacks)
 {
+	fprintf(stderr, "%s about to call sip %d\n", FN, P_UPDATES);
 	sip(0, P_UPDATES, ++update);
+	fprintf(stderr, "%s after    call sip %d\n", FN, P_UPDATES);
 	callParamCallbacks();
 
 	if (call_array_callbacks){

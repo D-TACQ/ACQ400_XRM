@@ -45,6 +45,7 @@ protected:
 	asynStatus sip(int addr, int pnum, int pram);
 	asynStatus sip(int addr, int pnum, unsigned pram);
 	asynStatus sip(int addr, int pnum, epicsInt64 pram);
+	asynStatus sip(int addr, int pnum, double pram);
 
 	/**
 	 * get string parameter

@@ -81,7 +81,16 @@ asynStatus acq400_asynPortDriver::sip(int addr, int pnum, epicsInt64 pram)
 	}
 	return status;
 }
-
+asynStatus acq400_asynPortDriver::sip(int addr, int param, double value)
+{
+	asynStatus status = setDoubleParam(addr, param, value);
+	if (status){
+		fprintf(stderr, "%s:%s:%d setDoubleParam %.2f fail\n",
+				DN, FN, addr, value);
+		assert(status == 0);
+	}
+	return status;
+}
 asynStatus acq400_asynPortDriver::gsp(int pnum, int maxchar, char* str)
 {
 	asynStatus status = getStringParam(pnum, 80, str);

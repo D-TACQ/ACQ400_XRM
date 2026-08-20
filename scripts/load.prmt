@@ -35,6 +35,7 @@ for site in $(echo $sites | tr , \  ); do
         fi
 done
 
+SPORT=PRMT_LUT
 XRM_PRMT_LUT_ROWS=${XRM_PRMT_LUT_ROWS:-16}
 DEF_PRMT_LUT_DB=db/permit_lut_16R.db
 PRMT_LUT_DB=db/permit_lut_${XRM_PRMT_LUT_ROWS}R.db
@@ -46,7 +47,11 @@ fi
 PRMT_LUT_MAX_AI=128
 MAX_AI2=$((PRMT_LUT_MAX_AI*2))
 PRMT_LUT_MAX_DI=$((2*2))
-PRAMS="UUT=${IOC_HOST},PORT=PRMT_LUT,TIMEOUT=0"
+echo acq400_PermitLut_Configure\($SPORT, $MAX_AI2\)
+ARP="P=${IOC_HOST}:,R=${SPORT},PORT=${SPORT},ADDR=0,IMAX=100,OMAX=100,TB3=0,TIB0=0"
+echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
+
+PRAMS="UUT=${IOC_HOST},SPORT=$SPORT,TIMEOUT=0"
 PRAMS="$PRAMS,MAX_AI=$PRMT_LUT_MAX_AI,MAX_AI2=$MAX_AI2,MAX_DI=$PRMT_LUT_MAX_DI"
 echo dbLoadRecords\(\"$PRMT_LUT_DB\",\"${PRAMS}\"\)
 
