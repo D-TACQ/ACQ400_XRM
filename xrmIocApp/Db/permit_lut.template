@@ -14,7 +14,7 @@ record(aao, "${UUT}:PRMT:LUT:${ROW0}:TH:AI"){
 	field(OUT, "@asyn($(PORT),${ADDR},$(TIMEOUT)PRMT_LUT_TH_AI")
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:${ROW0}": {
-			"TH:AI": { +channel: "VAL", +putorder:1}
+			"TH_AI": { +channel: "VAL", +putorder:1}
 		}
 	})
 	field(FTVL, "SHORT")
@@ -27,7 +27,7 @@ record(aao, "${UUT}:PRMT:LUT:${ROW0}:TH:DI"){
 	field(OUT, "@asyn($(PORT),${ADDR},$(TIMEOUT)PRMT_LUT_TH_DI")
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:${ROW0}": {
-			"TH:DI": { +channel: "VAL", +putorder:2}
+			"TH_DI": { +channel: "VAL", +putorder:2}
 		}
 	})
 	field(FTVL, "ULONG")
