@@ -23,6 +23,10 @@ acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
 	dsp(PermitDSP::instance())
 {
 
+	createParam(PS_PRMT_LUT_EVENT,  asynParamInt32,      &P_PRMT_LUT_EVENT);
+	createParam(PS_PRMT_LUT_TH_AI,  asynParamInt16Array, &P_PRMT_LUT_TH_AI);
+	createParam(PS_PRMT_LUT_TH_DI,  asynParamInt32Array, &P_PRMT_LUT_TH_DI);
+	createParam(PS_PRMT_LUT_COMMIT, asynParamInt32,      &P_PRMT_LUT_COMMIT);
 }
 void acq400_PermitLut::create_instance(const char *portName, int max_addr)
 {
