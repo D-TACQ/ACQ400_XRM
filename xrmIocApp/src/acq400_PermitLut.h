@@ -15,6 +15,7 @@
 #define MAX_ROWS	16   //* << LUT size from FNAL spec, one addr per row.
 
 
+#define PS_PRMT_LUT_SOFT_EVENT	"PRMT_LUT_SOFT_EVENT" // int, address
 #define PS_PRMT_LUT_EVENT	"PRMT_LUT_EVENT"  // int, scalar
 #define PS_PRMT_LUT_TH_AI	"PRMT_LUT_TH_AI"  // u32, vector NCHAN
 #define PS_PRMT_LUT_TH_DI       "PRMT_LUT_TH_DI"  // 2* UInt32Digital vector per site, max 2 sites

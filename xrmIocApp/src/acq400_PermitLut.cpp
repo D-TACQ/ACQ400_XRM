@@ -14,7 +14,7 @@ acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
 	acq400_asynPortDriver(portName,
 	/* maxAddr */		_max_addr,
 	/* Interface mask */    asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|asynUInt32DigitalMask|
-				asynDrvUserMask,
+				asynDrvUserMask|asynInt16ArrayMask|asynInt32ArrayMask,
 	/* Interrupt mask */	asynEnumMask|asynOctetMask|asynInt32Mask|asynInt64Mask|asynFloat64Mask|asynUInt32DigitalMask,
 	/* asynFlags no block*/ 0,
 	/* Autoconnect */       1,
