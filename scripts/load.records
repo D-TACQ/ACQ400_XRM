@@ -46,8 +46,8 @@ traceIocInit
 dbLoadRecords("db/system.db","UUT=${HOST},ACQ400IOC=${ACQ400IOC},MODEL=${XRM_MODEL},PART=${XRM_PART},$dba")
 dbLoadRecords("db/relay.db","UUT=${HOST},ACQ400IOC=${ACQ400IOC}")
 EOF
-# not 0:MODEL!	
-for model in $(egrep -e [0-6]:MODEL -e [0-6]:PART_NUM /tmp/records.dbl); do
+# not 0:MODEL! .. already in system.db, available right away.
+for model in $(egrep -e [1-6]:MODEL -e [0-6]:PART_NUM /tmp/records.dbl); do
 	suffix=${model#*:}
 cat - <<EOF
 dbLoadRecords("db/relay_suffix.db","UUT=${HOST},ACQ400IOC=${ACQ400IOC},SUFFIX=${suffix},DATATYPE=stringout")
