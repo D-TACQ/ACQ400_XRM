@@ -112,7 +112,7 @@
  * Typical transient recorder: 128*4MB
  * A streaming capture cycles through the buffers.
  * When a buffer is filled, the buffer index is passed to clients.
- * acq400_SOE used struct KBUF to model the buffer.
+ * acq400_SOE uses struct KBUF to model the buffer.
  */
 struct KBUF {
 	unsigned ib;        /**< kernel buffer index 0..N */
