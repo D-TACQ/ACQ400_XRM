@@ -1,6 +1,6 @@
 record(longout, "${UUT}:PRMT:LUT:${ROW0}:EVENT"){
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),${ADDR},$(TIMEOUT))PRMT_LUT_EVENT")
+	field(OUT,  "@asyn($(SPORT),${ADDR},$(TIMEOUT))PRMT_LUT_EVENT")
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:${ROW0}": {
 			"EVENT": { +channel: "VAL", +putorder:0	}
@@ -11,7 +11,7 @@ record(longout, "${UUT}:PRMT:LUT:${ROW0}:EVENT"){
 
 record(aao, "${UUT}:PRMT:LUT:${ROW0}:TH:AI"){
 	field(DTYP, "asynInt16ArrayOut")
-	field(OUT, "@asyn($(PORT),${ADDR},$(TIMEOUT))PRMT_LUT_TH_AI")
+	field(OUT, "@asyn($(SPORT),${ADDR},$(TIMEOUT))PRMT_LUT_TH_AI")
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:${ROW0}": {
 			"TH_AI": { +channel: "VAL", +putorder:1}
@@ -24,7 +24,7 @@ record(aao, "${UUT}:PRMT:LUT:${ROW0}:TH:AI"){
 	 
 record(aao, "${UUT}:PRMT:LUT:${ROW0}:TH:DI"){
 	field(DTYP, "asynInt32ArrayOut")
-	field(OUT, "@asyn($(PORT),${ADDR},$(TIMEOUT))PRMT_LUT_TH_DI")
+	field(OUT, "@asyn($(SPORT),${ADDR},$(TIMEOUT))PRMT_LUT_TH_DI")
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:${ROW0}": {
 			"TH_DI": { +channel: "VAL", +putorder:2}
@@ -37,7 +37,7 @@ record(aao, "${UUT}:PRMT:LUT:${ROW0}:TH:DI"){
 	 
 record(longout, "${UUT}:PRMT:LUT:${ROW0}:COMMIT"){
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(PORT),${ADDR},$(TIMEOUT))PRMT_LUT_EVENT")
+	field(OUT,  "@asyn($(SPORT),${ADDR},$(TIMEOUT))PRMT_LUT_EVENT")
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:${ROW0}": {
 			"COMMIT": { +channel: "VAL", +putorder:3, +trigger:"*"}
