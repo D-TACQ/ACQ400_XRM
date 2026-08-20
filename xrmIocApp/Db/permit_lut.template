@@ -45,3 +45,17 @@ record(longout, "${UUT}:PRMT:LUT:${ROW0}:COMMIT"){
 	})
 	field(DESC, "Event to trigger this ROW")	
 }
+# or maybe this way? https://epics-base.github.io/pvxs/qgroup.html#database-listing
+
+record(longout, "${UUT}:PRMT:LUT:${ROW0}:COMMIT2") {
+    field(MDEL, "-1") # ensure we always trigger group monitor
+    field(TPRO, "1")
+    info(Q:group, {
+	"${UUT}:PRMT:LUT:${ROW0}":{
+	    "_save":{+type:"proc",
+		     +channel:"VAL",
+		     +putorder:3,
+		     +trigger:"*"}
+	}
+    })
+}
