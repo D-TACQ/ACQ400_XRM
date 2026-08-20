@@ -10,16 +10,16 @@ record(longout, "${UUT}:PRMT:LUT:${ROW0}:EVENT"){
 }
 
 record(aao, "${UUT}:PRMT:LUT:${ROW0}:TH:AI"){
-	field(DTYP, "asynInt32ArrayOut")
+	field(DTYP, "asynInt16ArrayOut")
 	field(OUT, "@asyn($(PORT),${ADDR},$(TIMEOUT)PRMT_LUT_TH_AI")
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:${ROW0}": {
 			"TH:AI": { +channel: "VAL", +putorder:1}
 		}
 	})
-	field(FTVL, "ULONG")
-	field(NELM, "${MAX_AI}")
-	field(DESC, "array AI thresholds, HI|LO")
+	field(FTVL, "SHORT")
+	field(NELM, "${MAX_AI2}")
+	field(DESC, "array AI thresholds, LO,HI")
 }
 	 
 record(aao, "${UUT}:PRMT:LUT:${ROW0}:TH:DI"){
