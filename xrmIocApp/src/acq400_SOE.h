@@ -107,11 +107,18 @@
 #define PS_SOE_HLD_TABLE_WF	"SOE_HLD_TABLE_WF" // raw event table.
 
 
+/** @brief KBUF "Kernel BUFfer"
+ * On boot: KBUF's are preassigned for capture memory
+ * Typical transient recorder: 128*4MB
+ * A streaming capture cycles through the buffers.
+ * When a buffer is filled, the buffer index is passed to clients.
+ * acq400_SOE used struct KBUF to model the buffer.
+ */
 struct KBUF {
-	unsigned ib;
-	epicsInt64 wrt0;
-	epicsInt64 wrt1;
-	const char* raw;
+	unsigned ib;        /**< kernel buffer index 0..N */
+	epicsInt64 wrt0;    /**< WR timestamp at start.   */
+	epicsInt64 wrt1;    /**< WR timestamp at end.     */
+	const char* raw;    /**< PA of the raw data from DMA. */
 };
 
 struct SOE_DIMS {
