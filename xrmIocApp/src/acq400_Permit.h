@@ -149,7 +149,6 @@ public:
 	const int nchan;
 
 	virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
-
 	static void create_instance(const char *portName, int site, bool is_ai, int nchan);
 };
 

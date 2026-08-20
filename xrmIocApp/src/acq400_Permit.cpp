@@ -275,6 +275,12 @@ public:
 
 		atd = new ATD[nchan+1];			/**< index 0 = ALL */
 		memset(atd, 0, (nchan+1)*sizeof(ATD));
+
+		for (int ic = 0; ic < nchan+1; ++ic){
+			sip(ic, P_PERMIT_ATD_MODE, 0);
+			sip(ic, P_PERMIT_ATD_L1, 0);
+			sip(ic, P_PERMIT_ATD_L2, 0);
+		}
 	}
 
 	virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
