@@ -1,76 +1,168 @@
+# @DIAMOND pattern
+#http://www.aps.anl.gov/epics/tech-talk/2010/msg00131.php
+# FUN   : setpoint
+# FUN:r : readback
+# FUN:s : sync
+# FUN:w : write
 
+# @DIAMOND
 record(mbbo, "${UUT}:${SITE}:ANATRG:${CH}:M")	{
-        field(DTYP, "asynInt32")
-	field(OUT,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_MODE")
-	field(NOBT, "3")	
-	field(ZRST, "none")
-	field(ONST, "rising")
-	field(TWST, "falling")
-	field(THST, "inside")
-	field(FRST, "outside")
-	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:l2en")
-	field(DESC, "analog trigger mode")       	
+	field(DTYP, "Soft Channel")
+	field(DESC, "permit mode [IN]ACTIVE")
+
+	field(NOBT, "1")
+	field(ZRST, "INACTIVE")
+	field(ONST, "ACTIVE")
+	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:M:w PP")
 }
 
-record(calc, "${UUT}:${SITE}:ANATRG:${CH}:l2en") {
-	field(INPA, "${UUT}:${SITE}:ANATRG:${CH}:M")
-	field(CALC, "(A==3||A==4)")
-#	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:w PP")
-}
 
-record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L1") {
-	field(DTYP, "asynFloat64")
-	field(OUT,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_L1")	
-	field(DRVH, "10")
-	field(DRVL, "-10")
-	field(HOPR, "10")
-	field(LOPR, "-10")
-	field(LINR, "LINEAR")
-	field(ESLO, "0.0787")
-	field(EOFF, "0")
-	field(EGU,  "V")
-	field(DESC, "analog trigger Level1")
-	field(PINI, "YES")
-#	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:w PP")
-}
-
-record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L2") {	
-	field(DTYP, "asynFloat64")
-	field(OUT,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_L1")	
-	field(DRVH, "10")
-	field(DRVL, "-10")
-	field(HOPR, "10")
-	field(LOPR, "-10")
-	field(LINR, "LINEAR")
-	field(ESLO, "0.0787")
-	field(EOFF, "0")
-	field(EGU,  "V")
-	field(SDIS, "${UUT}:${SITE}:ANATRG:${CH}:l2en")
-	field(DISV, "0")		
-	field(DESC, "analog trigger Level2")
-	field(PINI, "YES")
-}
-
-record(mbbo, "${UUT}:${SITE}:ANATRG:${CH}:H") {
+record(mbbi, "${UUT}:${SITE}:ANATRG:${CH}:M:r")	{
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_HP")
-	field(NOBT, "3")
-	field(ZRST, "0")
-	field(ONST, "1")
-	field(TWST, "2")
-	field(THST, "5")
-	field(FRST, "10")
-	field(FVST, "20")
-	field(ZRVL, "0")
-	field(ONVL, "1")
-	field(TWVL, "3")
-	field(THVL, "6")
-	field(FRVL, "13")
-	field(FVVL, "25")
-	field(DESC, "analog trigger hysterisis")
+	field(INP,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_MODE")
+	field(SCAN, "I/O Intr")
 	field(PINI, "YES")
-	field(VAL,  "1")
-#	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:w PP")
+	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:M:s")
+
+	field(NOBT, "1")
+	field(ZRST, "INACTIVE")
+	field(ONST, "ACTIVE")
+}
+
+record(mbbo, "${UUT}:${SITE}:ANATRG:${CH}:M:s")	{
+	field(DTYP, "Soft Channel")
+	field(DOL,  "${UUT}:${SITE}:ANATRG:${CH}:M:r")
+	field(OMSL, "closed_loop")
+	field(OUT,  "${UUT}:${SITE}:ANATRG:${CH}:M PP")
+
+	field(NOBT, "1")
+	field(ZRST, "INACTIVE")
+	field(ONST, "ACTIVE")       	
+}
+
+record(mbbo, "${UUT}:${SITE}:ANATRG:${CH}:M:w")	{
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_MODE")
+	field(SDIS, "${UUT}:${SITE}:ANATRG:${CH}:M:s.PACT")
+	field(DISV, "1")
+
+	field(NOBT, "1")
+	field(ZRST, "INACTIVE")
+	field(ONST, "ACTIVE")
+}
+
+# @DIAMOND
+record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L1") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "analog trigger Level1")
+
+	field(DRVH, "10")
+	field(DRVL, "-10")
+	field(HOPR, "10")
+	field(LOPR, "-10")
+	field(LINR, "LINEAR")
+	field(ESLO, "0.0787")
+	field(EOFF, "0")
+	field(EGU,  "V")
+
+	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:L1:w PP")
+}
+
+record(ai, "${UUT}:${SITE}:ANATRG:${CH}:L1:r") {
+	field(DTYP, "asynFloat64")
+	field(INP,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_L1")
+	field(SCAN, "I/O Intr")
+	field(PINI, "YES")
+	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:L1:s")
+
+	field(DRVH, "10")
+	field(DRVL, "-10")
+	field(HOPR, "10")
+	field(LOPR, "-10")
+	field(LINR, "LINEAR")
+	field(ESLO, "0.0787")
+	field(EOFF, "0")
+	field(EGU,  "V")
+}
+
+record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L1:s") {
+	field(DTYP, "Soft Channel")
+        field(DOL,  "${UUT}:${SITE}:ANATRG:${CH}:L1:r")
+        field(OMSL, "closed_loop")
+        field(OUT,  "${UUT}:${SITE}:ANATRG:${CH}:L1 PP")
+}
+
+record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L1:w") {
+	field(DTYP, "asynFloat64")
+	field(OUT,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_L1")
+	field(SDIS, "${UUT}:${SITE}:ANATRG:${CH}:L1:s.PACT")
+	field(DISV, "0")
+
+	field(DRVH, "10")
+	field(DRVL, "-10")
+	field(HOPR, "10")
+	field(LOPR, "-10")
+	field(LINR, "LINEAR")
+	field(ESLO, "0.0787")
+	field(EOFF, "0")
+	field(EGU,  "V")
+}
+
+# @DIAMOND
+record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L2") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "analog trigger LeveL2")
+	
+	field(DRVH, "10")
+	field(DRVL, "-10")
+	field(HOPR, "10")
+	field(LOPR, "-10")
+	field(LINR, "LINEAR")
+	field(ESLO, "0.0787")
+	field(EOFF, "0")
+	field(EGU,  "V")
+
+	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:L2:w PP")
+}
+
+record(ai, "${UUT}:${SITE}:ANATRG:${CH}:L2:r") {
+	field(DTYP, "asynFloat64")
+	field(INP,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_L2")
+	field(SCAN, "I/O Intr")
+	field(PINI, "YES")
+	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:L2:s")
+	
+	field(DRVH, "10")
+	field(DRVL, "-10")
+	field(HOPR, "10")
+	field(LOPR, "-10")
+	field(LINR, "LINEAR")
+	field(ESLO, "0.0787")
+	field(EOFF, "0")
+	field(EGU,  "V")
+}
+
+record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L2:s") {
+	field(DTYP, "Soft Channel")
+	field(DOL,  "${UUT}:${SITE}:ANATRG:${CH}:L2:r")
+	field(OMSL, "closed_loop")
+	field(OUT,  "${UUT}:${SITE}:ANATRG:${CH}:L2 PP")
+}
+
+record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L2:w") {
+	field(DTYP, "asynFloat64")
+	field(OUT,  "@asyn(${PORT},${ADDR},${TIMEOUT})PERMIT_ATD_L2")
+	field(SDIS, "${UUT}:${SITE}:ANATRG:${CH}:L2:s.PACT")
+	field(DISV, "0")
+
+	field(DRVH, "10")
+	field(DRVL, "-10")
+	field(HOPR, "10")
+	field(LOPR, "-10")
+	field(LINR, "LINEAR")
+	field(ESLO, "0.0787")
+	field(EOFF, "0")
+	field(EGU,  "V")
 }
 
 record(bo, "${UUT}:${SITE}:ANATRG:LOCK" ){
