@@ -140,7 +140,7 @@ void PermitDSP::full_load(
 	unsigned* ai_th_ch = (unsigned*)ai_th_pairs;
 	unsigned* di_th_ch = (unsigned*)di_pairs;
 
-	for (int site = 1; site < MAX_SITES; ++site){
+	for (int site = 1; site <= MAX_SITES; ++site){
 		if (sites[site].site){
 			unsigned* pth = th_base(site);
 			unsigned* src = sites[site].is_ai? ai_th_ch: di_th_ch; // for message only
