@@ -91,6 +91,8 @@ void PermitDSP::commit() {
 	}
 }
 
+int PermitDSP::slug_mmap_writes = ::getenv_default("acq400_PERMIT_DSP_SLUG_MMAP_WRITES", 0);
+
 void PermitDSP::full_load(
 		epicsInt16* ai_th_pairs,/**< agg NCHAN LOW, HI pairs   */
 		epicsInt32* di_pairs)  /**< agg NDI32 VALUE, ACTIVE pairs */
@@ -108,6 +110,7 @@ void PermitDSP::full_load(
 					FN, site, map_base, sites[site].nelem, src, pth, (char*)pth-map_base);
 			for (int cursor = sites[site].nelem; cursor; --cursor){
 				*pth++ = *src++;
+				slug_mmap_writes && usleep(slug_mmap_writes);
 			}
 		}
 	}

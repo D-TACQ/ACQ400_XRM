@@ -68,6 +68,7 @@ class PermitDSP {
 /**< Singleton */
 
 private:
+	static int slug_mmap_writes;
 	int fd;
 	char* map_base;
 
