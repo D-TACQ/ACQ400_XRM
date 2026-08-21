@@ -26,7 +26,8 @@ acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
 {
 	memset(lut_rows, 0, MAX_ROWS*sizeof(PRMT_LUT_ROW));
 
-	createParam(PS_PRMT_LUT_EVENT,  asynParamInt32,      &P_PRMT_LUT_SOFT_EVENT);
+	createParam(PS_PRMT_LUT_SOFT_EVENT,  asynParamInt32, &P_PRMT_LUT_SOFT_EVENT);
+
 	createParam(PS_PRMT_LUT_EVENT,  asynParamInt32,      &P_PRMT_LUT_EVENT);
 	createParam(PS_PRMT_LUT_TH_AI,  asynParamInt16Array, &P_PRMT_LUT_TH_AI);
 	createParam(PS_PRMT_LUT_TH_DI,  asynParamInt32Array, &P_PRMT_LUT_TH_DI);
