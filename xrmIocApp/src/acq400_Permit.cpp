@@ -39,23 +39,41 @@ using namespace std;
 #define MARK	fprintf(stderr, "%s %d\n", FN, __LINE__)
 #define MARKI(p) fprintf(stderr, "%s %d P_ %s:%d\n", FN, __LINE__, #p, p)
 
+int PermitDSP::verbose = 	  ::getenv_default("acq400_PERMIT_DSP_VERBOSE", 0);
+int PermitDSP::slug_mmap_writes = ::getenv_default("acq400_PERMIT_DSP_SLUG_MMAP_WRITES", 0);
 
 
 PermitDSP::PermitDSP() {
 	memset(sites, 0, sizeof(SITE_DEF)*(MAX_SITES+1));
 	/* make the mapping */
-	fd = open("/dev/mem", O_RDWR);
-	if (fd <= 0){
-		perror("failed to open /dev/mem");
-		assert(0);
+
+	if (slug_mmap_writes == -1){
+		fp = fopen("/tmp/fake_dsp", "rw");
+		assert(fp);
+		char *k64 = new char[MAP_LEN];
+		memset(k64, 0, MAP_LEN);
+		fwrite(k64, MAP_LEN, 1, fp);
+		map_base = (char*)mmap(0, MAP_LEN, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(fp), 0);
+		fprintf(stderr, "using /tmp/fake_dsp\n");
+	}else{
+		fp = 0;
+		fd = open("/dev/mem", O_RDWR);
+		if (fd <= 0){
+			perror("failed to open /dev/mem");
+			assert(0);
+		}
+		map_base = (char*)mmap(0, MAP_LEN, PROT_READ|PROT_WRITE, MAP_SHARED, fd, DSP1_GLBASE);
 	}
-	map_base = (char*)mmap(0, MAP_LEN, PROT_READ|PROT_WRITE, MAP_SHARED, fd, DSP1_GLBASE);
 	assert(map_base != MAP_FAILED);
 }
 
 PermitDSP::~PermitDSP() {
 	munmap(map_base, MAP_LEN);
-	close(fd);
+	if (fp){
+		fclose(fp);
+	}else{
+		close(fd);
+	}
 }
 PermitDSP& PermitDSP::instance(){
 	static PermitDSP* _instance;
@@ -91,7 +109,28 @@ void PermitDSP::commit() {
 	}
 }
 
-int PermitDSP::slug_mmap_writes = ::getenv_default("acq400_PERMIT_DSP_SLUG_MMAP_WRITES", 0);
+
+void PermitDSP::load_site(unsigned *dst, unsigned** ppsrc, int nu)
+/**< load data for site, updating src pointer */
+{
+	unsigned *psrc = *ppsrc;
+
+	for (int cursor = nu; cursor; --cursor){
+		*dst++ = *psrc++;
+		if (slug_mmap_writes > 0){
+			if (slug_mmap_writes == 1){
+				volatile unsigned rb = *(dst-1);
+				if (rb != *(psrc-1)){
+					fprintf(stderr, "dsp mmap error: @%04" FML "x w:%08x r:%08x\n",
+							(char*)(dst-1)-map_base, *(psrc-1), rb);
+				}
+			}else{
+				usleep(slug_mmap_writes);
+			}
+		}
+	}
+	*ppsrc = psrc;
+}
 
 void PermitDSP::full_load(
 		epicsInt16* ai_th_pairs,/**< agg NCHAN LOW, HI pairs   */
@@ -104,14 +143,18 @@ void PermitDSP::full_load(
 	for (int site = 1; site < MAX_SITES; ++site){
 		if (sites[site].site){
 			unsigned* pth = th_base(site);
-			unsigned* src = sites[site].is_ai? ai_th_ch: di_th_ch;
-
-			fprintf(stderr, "%s site:%d map:%p write %d %p -> %p +%04x\n",
+			unsigned* src = sites[site].is_ai? ai_th_ch: di_th_ch; // for message only
+			if (verbose){
+				fprintf(stderr, "%s site:%d map:%p write %d %p -> %p @%04" FML "x\n",
 					FN, site, map_base, sites[site].nelem, src, pth, (char*)pth-map_base);
-			for (int cursor = sites[site].nelem; cursor; --cursor){
-				*pth++ = *src++;
-				slug_mmap_writes && usleep(slug_mmap_writes);
 			}
+
+			if (sites[site].is_ai){
+				load_site(pth, &ai_th_ch, sites[site].nelem);
+			}else{
+				load_site(pth, &di_th_ch, sites[site].nelem);
+			}
+
 		}
 	}
 }

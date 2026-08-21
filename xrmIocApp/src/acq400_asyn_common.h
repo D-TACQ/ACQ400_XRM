@@ -31,8 +31,10 @@
 /* fix printf compiler warning */
 #ifdef __arm__
 #define FMTSZT "%u"
+#define FML    ""
 #else
 #define FMTSZT "%lu"
+#define FML    "l"
 #endif
 
 /** SP32 : Scratch Pad 32 bit values, up to 16 values, index 0..7 usable. @@todo

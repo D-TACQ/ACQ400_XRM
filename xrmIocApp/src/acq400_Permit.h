@@ -68,8 +68,10 @@ class PermitDSP {
 /**< Singleton */
 
 private:
+	static int verbose;
 	static int slug_mmap_writes;
 	int fd;
+	FILE* fp;			// mmap file test hack
 	char* map_base;
 
 
@@ -82,10 +84,11 @@ private:
 	unsigned R_cache[DSP_TH_ELEMENTS];
 	unsigned R_cache_map[MAX_SITES];
 
-
-
 	PermitDSP();
 	~PermitDSP();
+
+	void load_site(unsigned *dst, unsigned** ppsrc, int nu);
+	/**< load data for site, updating src pointer */
 
 	struct SITE_DEF {
 		bool is_ai;
@@ -120,6 +123,7 @@ public:
 	void full_load(
 		epicsInt16* ai_th_pairs,/**< agg NCHAN LOW, HI pairs   */
 		epicsInt32* di_pairs);  /**< agg NDI32 VALUE, ACTIVE pairs */
+
 
 	static PermitDSP& instance();
 };
