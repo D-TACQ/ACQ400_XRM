@@ -35,7 +35,17 @@
 #define FMTSZT "%lu"
 #endif
 
-
+/** SP32 : Scratch Pad 32 bit values, up to 16 values, index 0..7 usable. @@todo
+ * @brief : the Scratch Pad appends padding/metadata to each sample
+ * WRV detail : 4 bit "seconds", 28 bit "ticks" with 25ns resolution;
+ * match seconds to WRS to get a full timestamp.
+ */
+namespace SP32 {
+const int SP0 = 0; /**< Sample Count, inserted by HW */
+const int SP1 = 1; /**< usec count, inserted by HW   */
+const int SP2 = 2; /**< WRV : White Rabbit Vernier time, inserted by HW. */
+const int SP3 = 3; /**< WRS : White Rabbit Seconds, inserted by SW.      */
+}
 #define SP0	0
 #define SP1	1
 #define SP2	2
