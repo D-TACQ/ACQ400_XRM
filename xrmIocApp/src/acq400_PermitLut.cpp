@@ -12,6 +12,8 @@
 #define DN	__FILE__
 #define FN	__FUNCTION__
 
+int acq400_PermitLut::verbose = ::getenv_default("acq400_PERMIT_LUT_VERBOSE", 0);
+
 acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
 	acq400_asynPortDriver(portName,
 	/* maxAddr */		_max_addr,
@@ -34,6 +36,7 @@ acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
 	createParam(PS_PRMT_LUT_COMMIT, asynParamInt32,      &P_PRMT_LUT_COMMIT);
 }
 
+#define MARK fprintf(stderr, "%s %d %s\n", __FILE__, __LINE__, __FUNCTION__)
 
 asynStatus acq400_PermitLut::writeInt32(asynUser *pasynUser, epicsInt32 value)
 {
@@ -60,12 +63,24 @@ asynStatus acq400_PermitLut::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	}else if (function == P_PRMT_LUT_EVENT){
 		assert(addr < MAX_ADDR);
 		lut_rows[addr].event = value;
+
+		if (verbose){
+			fprintf(stderr, "%s [%d] P_PRMT_LUT_EVENT value:%d\n",
+							FN, addr, value);
+		}
 	}else if (function == P_PRMT_LUT_SOFT_EVENT){
 		for (int ii = 0; ii < MAX_ROWS; ii += 1){
+
+			if (verbose){
+				fprintf(stderr, "%s [%d] value:%d lut event:%d\n",
+					FN, ii, value, lut_rows[ii].event);
+			}
+
 			if (value == lut_rows[ii].event){
 				PermitDSP::instance().full_load(
 					lut_rows[ii].ai_th_pairs,
 					lut_rows[ii].di_pairs);
+				break;
 			}
 		}
 	}

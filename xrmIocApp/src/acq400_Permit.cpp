@@ -95,21 +95,26 @@ void PermitDSP::full_load(
 		epicsInt16* ai_th_pairs,/**< agg NCHAN LOW, HI pairs   */
 		epicsInt32* di_pairs)  /**< agg NDI32 VALUE, ACTIVE pairs */
 {
+	MARK;
 	unsigned* ai_th_ch = (unsigned*)ai_th_pairs;
 	unsigned* di_th_ch = (unsigned*)di_pairs;
 
 	for (int site = 1; site < MAX_SITES; ++site){
-		unsigned* pth = th_base(site);
-		unsigned* src = sites[site].is_ai? ai_th_ch: di_th_ch;
+		if (sites[site].site){
+			unsigned* pth = th_base(site);
+			unsigned* src = sites[site].is_ai? ai_th_ch: di_th_ch;
 
-		for (int cursor = sites[site].nelem; cursor; --cursor){
-			*pth++ = *src++;
+			fprintf(stderr, "%s site:%d map:%p write %d %p -> %p +%04x\n",
+					FN, site, map_base, sites[site].nelem, src, pth, (char*)pth-map_base);
+			for (int cursor = sites[site].nelem; cursor; --cursor){
+				*pth++ = *src++;
+			}
 		}
 	}
 }
 
 int acq400_Permit::nice    = ::getenv_default("acq400_PERMIT_NICE", 10);
-int acq400_Permit::verbose	= ::getenv_default("acq400_PERMIT_VERBOSE", 0);
+int acq400_Permit::verbose = ::getenv_default("acq400_PERMIT_VERBOSE", 0);
 
 
 void PermitDSP::enable(bool en)
@@ -265,9 +270,11 @@ asynStatus acq400_Permit::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    /* Set the parameter in the parameter library. */
 	    status = (asynStatus) setIntegerParam(addr, function, value);
 
-	    fprintf(stderr,
+	    if (verbose){
+		    fprintf(stderr,
 	    	              "%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
 	    	              DN, FN, function, addr, paramName, value);
+	    }
 
 	    return status;
 }
@@ -449,9 +456,11 @@ asynStatus acq400_Permit_AI::writeFloat64(asynUser *pasynUser, epicsFloat64 valu
 	    /* Set the parameter in the parameter library. */
 	    status = (asynStatus) setDoubleParam(addr, function, value);
 
-	    fprintf(stderr,
+	    if (verbose){
+		    fprintf(stderr,
 	    	              "%s:%s: function=%d, addr=%d, name=%s, value=%.2f\n",
 	    	              DN, FN, function, addr, paramName, value);
+	    }
 
 	    return status;
 }
@@ -495,7 +504,7 @@ extern "C" {
 	{
 		printf("%s:%s R1002 %s\n", DN, FN, portName);
 
-		acq400_Permit::create_instance(portName, site, is_ai, nchan+1 /** addr from 1: */);
+		acq400_Permit::create_instance(portName, site, is_ai, nchan);
 		return 0;
 	}
 

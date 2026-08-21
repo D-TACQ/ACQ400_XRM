@@ -125,7 +125,7 @@ public:
 
 class acq400_Permit: public acq400_asynPortDriver {
 
-	static int verbose;
+
 	static int nice;
 
 	static std::map<int, acq400_Permit*> peers;
@@ -140,6 +140,7 @@ class acq400_Permit: public acq400_asynPortDriver {
 
 
 protected:
+	static int verbose;
 	unsigned dirty_L_CACHE;
 	PermitDSP& dsp;
 	acq400_Permit(const char *portName, int site, bool is_ai, int nchan);
