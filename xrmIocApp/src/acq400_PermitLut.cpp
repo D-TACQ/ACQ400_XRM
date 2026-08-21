@@ -6,6 +6,7 @@
  */
 
 #include "acq400_PermitLut.h"
+#include "acq400_Proxy.h"
 
 #define DN	__FILE__
 #define FN	__FUNCTION__
@@ -22,12 +23,155 @@ acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
 	/* Default stack size*/ 0),
 	dsp(PermitDSP::instance())
 {
+	memset(lut_rows, 0, MAX_ROWS*sizeof(PRMT_LUT_ROW));
 
 	createParam(PS_PRMT_LUT_EVENT,  asynParamInt32,      &P_PRMT_LUT_EVENT);
 	createParam(PS_PRMT_LUT_TH_AI,  asynParamInt16Array, &P_PRMT_LUT_TH_AI);
 	createParam(PS_PRMT_LUT_TH_DI,  asynParamInt32Array, &P_PRMT_LUT_TH_DI);
 	createParam(PS_PRMT_LUT_COMMIT, asynParamInt32,      &P_PRMT_LUT_COMMIT);
 }
+
+
+asynStatus acq400_PermitLut::writeInt32(asynUser *pasynUser, epicsInt32 value)
+{
+	int function = pasynUser->reason;
+	asynStatus status = asynSuccess;
+	const char *paramName;
+	int addr = 0;
+
+	/* Fetch the parameter string name for possible use in debugging */
+	getParamName(function, &paramName);
+
+	if (maxAddr > 1){
+		status = pasynManager->getAddr(pasynUser, &addr);
+		if(status!=asynSuccess) return status;
+	}
+
+	/* Set the parameter in the parameter library. */
+	status = (asynStatus) setIntegerParam(addr, function, value);
+
+	if (function == P_RUNSTOP) {
+		if (value == 1){
+			epicsEventSignal(eventId);
+		}
+	}else if (function == P_PRMT_LUT_EVENT){
+		assert(addr < MAX_ADDR);
+		lut_rows[addr].event = value;
+	}
+
+	/* Do callbacks so higher layers see any changes */
+	status = (asynStatus) callParamCallbacks();
+
+	if (status)
+		epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
+				"%s:%s: status=%d, function=%d, name=%s, value=%d",
+				DN, FN, status, function, paramName, value);
+	else
+		asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+				"%s:%s: function=%d, name=%s, value=%d\n",
+				DN, FN, function, paramName, value);
+	return status;
+}
+
+asynStatus acq400_PermitLut::writeInt16Array(
+	asynUser *pasynUser, epicsInt16 *value,	size_t nElements)
+{
+	int function = pasynUser->reason;
+	asynStatus status = asynSuccess;
+	const char *paramName;
+	int addr = 0;
+
+	/* Fetch the parameter string name for possible use in debugging */
+	getParamName(function, &paramName);
+
+
+	if (maxAddr > 1){
+		status = pasynManager->getAddr(pasynUser, &addr);
+		if(status!=asynSuccess) return status;
+	}
+
+	assert(addr < MAX_ADDR);
+
+	if (function == P_PRMT_LUT_TH_AI){
+		const SamplePrams* sp = acq400_Proxy::getSamplePrams();
+		const size_t expected_nchan = sp->AI_COUNT * NPAIR;
+
+		if (nElements == expected_nchan){
+			if (lut_rows[addr].ai_th_pairs == 0){
+				lut_rows[addr].ai_th_pairs = new epicsInt16[nElements];
+			}
+			memcpy(lut_rows[addr].ai_th_pairs, value, nElements*sizeof(epicsInt16));
+		}else{
+			status = asynError;
+		}
+	}
+
+	if (status)
+		epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
+				"%s:%s: status=%d, function=%d, name=%s, value=%p",
+				DN, FN, status, function, paramName, value);
+	else
+		asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+				"%s:%s: function=%d, name=%s, value=%p\n",
+				DN, FN, function, paramName, value);
+	return status;
+}
+asynStatus acq400_PermitLut::doCallbacksInt16Array(
+	epicsInt16 *value, size_t nElements, int reason, int addr)
+{
+	// no task() -> no callbacks (so far)
+	return asynSuccess;
+}
+
+asynStatus acq400_PermitLut::writeInt32Array(
+	asynUser *pasynUser, epicsInt32 *value,	size_t nElements)
+{
+	int function = pasynUser->reason;
+	asynStatus status = asynSuccess;
+	const char *paramName;
+	int addr = 0;
+
+	/* Fetch the parameter string name for possible use in debugging */
+	getParamName(function, &paramName);
+
+
+	if (maxAddr > 1){
+		status = pasynManager->getAddr(pasynUser, &addr);
+		if(status!=asynSuccess) return status;
+	}
+
+	if (function == P_PRMT_LUT_TH_DI){
+		const SamplePrams* sp = acq400_Proxy::getSamplePrams();
+		const size_t expected_nchan = sp->DI_COUNT * NPAIR;
+
+		if (nElements == expected_nchan){
+			if (lut_rows[addr].di_pairs == 0){
+				lut_rows[addr].di_pairs = new epicsInt32[nElements];
+			}
+			memcpy(lut_rows[addr].di_pairs, value, nElements*sizeof(epicsInt32));
+		}else{
+			status = asynError;
+		}
+	}
+
+	if (status)
+		epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize,
+				"%s:%s: status=%d, function=%d, name=%s, value=%p",
+				DN, FN, status, function, paramName, value);
+	else
+		asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+				"%s:%s: function=%d, name=%s, value=%p\n",
+				DN, FN, function, paramName, value);
+	return status;
+}
+asynStatus acq400_PermitLut::doCallbacksInt32Array(
+		epicsInt32 *value, size_t nElements, int reason, int addr)
+{
+	// no task() -> no callbacks (so far)
+	return asynSuccess;
+}
+
+
 void acq400_PermitLut::create_instance(const char *portName, int max_addr)
 {
 	new acq400_PermitLut(portName, max_addr);

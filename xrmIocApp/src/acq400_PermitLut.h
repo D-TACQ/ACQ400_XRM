@@ -21,13 +21,22 @@
 #define PS_PRMT_LUT_TH_DI       "PRMT_LUT_TH_DI"  // 2* UInt32Digital vector per site, max 2 sites
 #define PS_PRMT_LUT_COMMIT      "PRMT_LUT_COMMIT" // atomic update
 
-struct PRMT_LUT_ROW {
+/** @@todo may not be needed */
+struct _PRMT_LUT_ROW {
 	unsigned short event;
 	unsigned short commit;
 	unsigned short ai_count;
 	unsigned short di_count;
 	unsigned* th_ai;
 	unsigned* th_di;
+};
+
+#define NPAIR	2
+
+struct PRMT_LUT_ROW {
+	unsigned short event;	/**< event value to select row */
+	epicsInt16* ai_th_pairs;/**< agg NCHAN LOW, HI pairs   */
+	epicsInt32* di_pairs;   /**< agg NDI32 VALUE, ACTIVE pairs */
 };
 
 class acq400_PermitLut: public acq400_asynPortDriver {
@@ -39,9 +48,22 @@ class acq400_PermitLut: public acq400_asynPortDriver {
 	int P_PRMT_LUT_TH_DI;
 	int P_PRMT_LUT_COMMIT;
 
+	PRMT_LUT_ROW lut_rows[MAX_ROWS]; // lazy allocation
+
 protected:
 	acq400_PermitLut(const char *portName, int max_addr);
 
+	virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+
+	virtual asynStatus writeInt16Array(asynUser *pasynUser, epicsInt16 *value,
+					size_t nElements);
+	virtual asynStatus doCallbacksInt16Array(epicsInt16 *value,
+					size_t nElements, int reason, int addr);
+
+	virtual asynStatus writeInt32Array(asynUser *pasynUser, epicsInt32 *value,
+					size_t nElements);
+	virtual asynStatus doCallbacksInt32Array(epicsInt32 *value,
+	                                        size_t nElements, int reason, int addr);
 public:
 	static void create_instance(const char *portName, int max_addr);
 };
