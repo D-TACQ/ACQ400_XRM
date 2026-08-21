@@ -67,12 +67,13 @@ PermitDSP& PermitDSP::instance(){
 	return *_instance;
 }
 
-
-bool PermitDSP::defineSite(int site, int nelem)
+bool PermitDSP::defineSite(int site, bool is_ai, int nelem)
 {
 	fprintf(stderr, "%s site:%d store:%d nelem:%d\n", FN, site, sites[site].site, nelem);
 	assert(sites[site].site == 0);
+
 	sites[site].site = site;         /** @@todo redundant .. struct not needed? */
+	sites[site].is_ai = is_ai;
 	sites[site].nelem = nelem;
 	return true;
 }
@@ -89,6 +90,24 @@ void PermitDSP::commit() {
 		}
 	}
 }
+
+void PermitDSP::full_load(
+		epicsInt16* ai_th_pairs,/**< agg NCHAN LOW, HI pairs   */
+		epicsInt32* di_pairs)  /**< agg NDI32 VALUE, ACTIVE pairs */
+{
+	unsigned* ai_th_ch = (unsigned*)ai_th_pairs;
+	unsigned* di_th_ch = (unsigned*)di_pairs;
+
+	for (int site = 1; site < MAX_SITES; ++site){
+		unsigned* pth = th_base(site);
+		unsigned* src = sites[site].is_ai? ai_th_ch: di_th_ch;
+
+		for (int cursor = sites[site].nelem; cursor; --cursor){
+			*pth++ = *src++;
+		}
+	}
+}
+
 int acq400_Permit::nice    = ::getenv_default("acq400_PERMIT_NICE", 10);
 int acq400_Permit::verbose	= ::getenv_default("acq400_PERMIT_VERBOSE", 0);
 
@@ -132,9 +151,9 @@ acq400_Permit::acq400_Permit(const char *portName, int _site, bool is_ai, int _n
 	fprintf(stderr, "%s P_PERMIT_LOCK:%d\n", FN, P_PERMIT_LOCK);
 
 	if (is_ai){
-		dsp.defineSite(site, nchan);
+		dsp.defineSite(site, true, nchan);
 	}else{
-		dsp.defineSite(site, DI_NELEM);
+		dsp.defineSite(site, false, DI_NELEM);
 	}
 	if (peers.size() == 0){
 		/* first unit updates L_CACHE and controls the R_CACHE for all */
@@ -167,6 +186,7 @@ void acq400_Permit::flush()
 		dsp.L_CACHE_lock.unlock();
 	}
 }
+
 
 void acq400_Permit::task()
 {

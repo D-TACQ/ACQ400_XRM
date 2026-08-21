@@ -87,6 +87,7 @@ private:
 	~PermitDSP();
 
 	struct SITE_DEF {
+		bool is_ai;
 		unsigned char site;  /**<< 1..6 */
 		unsigned char nelem; /**<< DI:2, AI16:16, AI32:32 */
 	};
@@ -110,10 +111,15 @@ public:
 	unsigned get_permit_latch(int site) const;
 	unsigned get_permit_live(int site) const;
 
-	bool defineSite(int site, int nelem);
+	bool defineSite(int site, bool is_ai, int nelem);
 	/**< as each site is enumerated, declare it */
 	void commit();
 	/**< commit all values to TH RAM */
+
+	void full_load(
+		epicsInt16* ai_th_pairs,/**< agg NCHAN LOW, HI pairs   */
+		epicsInt32* di_pairs);  /**< agg NDI32 VALUE, ACTIVE pairs */
+
 	static PermitDSP& instance();
 };
 

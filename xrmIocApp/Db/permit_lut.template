@@ -59,3 +59,10 @@ record(longout, "${UUT}:PRMT:LUT:${ROW0}:COMMIT2") {
 	}
     })
 }
+
+record(longout, "${UUT}:PRMT:LUT:SOFT_EVENT"){
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(SPORT),${ADDR},$(TIMEOUT))PRMT_LUT_SOFT_EVENT")
+	field(DESC, "trigger this event")
+}
+

@@ -21,6 +21,7 @@
 #define PS_PRMT_LUT_TH_DI       "PRMT_LUT_TH_DI"  // 2* UInt32Digital vector per site, max 2 sites
 #define PS_PRMT_LUT_COMMIT      "PRMT_LUT_COMMIT" // atomic update
 
+
 /** @@todo may not be needed */
 struct _PRMT_LUT_ROW {
 	unsigned short event;
@@ -43,6 +44,7 @@ class acq400_PermitLut: public acq400_asynPortDriver {
 	static int verbose;
 	PermitDSP& dsp;
 
+	int P_PRMT_LUT_SOFT_EVENT;
 	int P_PRMT_LUT_EVENT;
 	int P_PRMT_LUT_TH_AI;
 	int P_PRMT_LUT_TH_DI;

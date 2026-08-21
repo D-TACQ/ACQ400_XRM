@@ -7,6 +7,7 @@
 
 #include "acq400_PermitLut.h"
 #include "acq400_Proxy.h"
+#include "acq400_Permit.h"
 
 #define DN	__FILE__
 #define FN	__FUNCTION__
@@ -25,6 +26,7 @@ acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
 {
 	memset(lut_rows, 0, MAX_ROWS*sizeof(PRMT_LUT_ROW));
 
+	createParam(PS_PRMT_LUT_EVENT,  asynParamInt32,      &P_PRMT_LUT_SOFT_EVENT);
 	createParam(PS_PRMT_LUT_EVENT,  asynParamInt32,      &P_PRMT_LUT_EVENT);
 	createParam(PS_PRMT_LUT_TH_AI,  asynParamInt16Array, &P_PRMT_LUT_TH_AI);
 	createParam(PS_PRMT_LUT_TH_DI,  asynParamInt32Array, &P_PRMT_LUT_TH_DI);
@@ -57,6 +59,14 @@ asynStatus acq400_PermitLut::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	}else if (function == P_PRMT_LUT_EVENT){
 		assert(addr < MAX_ADDR);
 		lut_rows[addr].event = value;
+	}else if (function == P_PRMT_LUT_SOFT_EVENT){
+		for (int ii = 0; ii < MAX_ROWS; ii += 1){
+			if (value == lut_rows[ii].event){
+				PermitDSP::instance().full_load(
+					lut_rows[ii].ai_th_pairs,
+					lut_rows[ii].di_pairs);
+			}
+		}
 	}
 
 	/* Do callbacks so higher layers see any changes */
