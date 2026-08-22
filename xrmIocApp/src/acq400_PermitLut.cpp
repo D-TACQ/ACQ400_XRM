@@ -116,7 +116,7 @@ asynStatus acq400_PermitLut::writeInt16Array(
 		if(status!=asynSuccess) return status;
 	}
 
-	assert(addr < MAX_ADDR);
+	assert(addr < MAX_ROWS);
 
 	if (function == P_PRMT_LUT_TH_AI){
 		const SamplePrams* sp = acq400_Proxy::getSamplePrams();
@@ -165,6 +165,8 @@ asynStatus acq400_PermitLut::writeInt32Array(
 		status = pasynManager->getAddr(pasynUser, &addr);
 		if(status!=asynSuccess) return status;
 	}
+
+	assert(addr < MAX_ROWS);
 
 	if (function == P_PRMT_LUT_TH_DI){
 		const SamplePrams* sp = acq400_Proxy::getSamplePrams();
