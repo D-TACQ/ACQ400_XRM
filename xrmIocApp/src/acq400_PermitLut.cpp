@@ -61,7 +61,7 @@ asynStatus acq400_PermitLut::writeInt32(asynUser *pasynUser, epicsInt32 value)
 			epicsEventSignal(eventId);
 		}
 	}else if (function == P_PRMT_LUT_EVENT){
-		assert(addr < MAX_ADDR);
+		assert(addr < MAX_ROWS);
 		lut_rows[addr].event = value;
 
 		if (verbose){
