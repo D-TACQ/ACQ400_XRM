@@ -68,6 +68,23 @@ class PermitDSP {
 /**< Singleton */
 
 private:
+
+	 struct REGS {
+		static const unsigned MODID  = 0x0000;
+		static const unsigned PCR    = 0x0004;
+		static const unsigned PICR   = 0x0018;
+		static const unsigned PTSITE = 0x0070;
+
+		static const unsigned PTLAT(const int site) { return 0x0100 + (site-1)*0x10; }
+		static const unsigned PTLIV(const int site) { return 0x0104 + (site-1)*0x10; }
+	} REGS;
+
+	unsigned* _get_regp(unsigned reg);
+	unsigned get(unsigned reg);
+	void set(unsigned reg, unsigned value);
+	void set_bits(unsigned reg, unsigned mask);
+	void clr_bits(unsigned reg, unsigned mask);
+
 	static int verbose;
 	static int slug_mmap_writes;
 	int fd;

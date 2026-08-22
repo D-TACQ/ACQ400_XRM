@@ -163,6 +163,36 @@ int acq400_Permit::nice    = ::getenv_default("acq400_PERMIT_NICE", 10);
 int acq400_Permit::verbose = ::getenv_default("acq400_PERMIT_VERBOSE", 0);
 
 
+unsigned* PermitDSP::_get_regp(unsigned reg)
+{
+	return (unsigned*)(map_base + reg);
+}
+unsigned PermitDSP::get(unsigned reg)
+{
+	volatile unsigned *pr = _get_regp(reg);
+	return *pr;
+}
+void PermitDSP::set(unsigned reg, unsigned value)
+{
+	volatile unsigned *pr = _get_regp(reg);
+	*pr = value;
+}
+void PermitDSP::set_bits(unsigned reg, unsigned mask)
+{
+	volatile unsigned *pr = _get_regp(reg);
+	unsigned rv = *pr;
+
+	*pr = rv |= mask;
+}
+void PermitDSP::clr_bits(unsigned reg, unsigned mask)
+{
+	volatile unsigned *pr = _get_regp(reg);
+	unsigned rv = *pr;
+
+	*pr = rv &= ~mask;
+}
+
+
 void PermitDSP::enable(bool en)
 {
 	// @@todo
