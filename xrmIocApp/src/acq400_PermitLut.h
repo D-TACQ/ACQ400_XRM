@@ -10,6 +10,7 @@
 
 #include "acq400_asyn_common.h"
 #include "acq400_Permit.h"
+#include <set>
 
 /* default. nb: not used, settable from st.cmd */
 #define MAX_ROWS	16   //* << LUT size from FNAL spec, one addr per row.
@@ -40,7 +41,14 @@ struct PRMT_LUT_ROW {
 	epicsInt32* di_pairs;   /**< agg NDI32 VALUE, ACTIVE pairs */
 };
 
+struct LutRowComparator {
+	bool operator()(PRMT_LUT_ROW& a, PRMT_LUT_ROW &b) const {
+		return a.event < b.event;
+	}
+};
+
 class acq400_PermitLut: public acq400_asynPortDriver {
+/**< singleton */
 	static int verbose;
 	PermitDSP& dsp;
 
@@ -51,6 +59,9 @@ class acq400_PermitLut: public acq400_asynPortDriver {
 	int P_PRMT_LUT_COMMIT;
 
 	PRMT_LUT_ROW lut_rows[MAX_ROWS]; // lazy allocation
+//	std::set<const PRMT_LUT_ROW*, LutRowComparator> lut_set;
+
+	static acq400_PermitLut* _instance;
 
 protected:
 	acq400_PermitLut(const char *portName, int max_addr);
@@ -67,6 +78,9 @@ protected:
 	virtual asynStatus doCallbacksInt32Array(epicsInt32 *value,
 	                                        size_t nElements, int reason, int addr);
 public:
+	void check_if_fmt_event_trigger(const FMT& fmt);
+
+	static acq400_PermitLut& instance();
 	static void create_instance(const char *portName, int max_addr);
 };
 

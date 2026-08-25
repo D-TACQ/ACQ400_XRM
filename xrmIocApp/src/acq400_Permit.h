@@ -9,6 +9,7 @@
 #define XRMIOCAPP_SRC_ACQ400_PERMIT_H_
 
 #include "acq400_asyn_common.h"
+#include "acq400_FMT_rx.h"
 #include "xrm_structs.h"
 #include "SamplePrams.h"
 #include <map>
@@ -107,6 +108,7 @@ private:
 	void load_site(unsigned *dst, unsigned** ppsrc, int nu);
 	/**< load data for site, updating src pointer */
 
+
 	struct SITE_DEF {
 		bool is_ai;
 		unsigned char site;  /**<< 1..6 */
@@ -166,6 +168,9 @@ protected:
 	unsigned dirty_L_CACHE;
 	PermitDSP& dsp;
 	acq400_Permit(const char *portName, int site, bool is_ai, int nchan);
+
+	acq400_FMT_rx* FMT_rx;
+	void check_if_fmt_event_trigger(const FMT& fmt);
 
 	void flush();
 

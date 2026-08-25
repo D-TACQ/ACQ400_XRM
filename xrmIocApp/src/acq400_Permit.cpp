@@ -22,6 +22,7 @@
  */
 
 #include "acq400_Permit.h"
+#include "acq400_PermitLut.h"
 #include "acq400_Proxy.h"
 #include "anatrg.h"
 #include "acq-util.h"
@@ -292,6 +293,10 @@ void acq400_Permit::task()
 		unlock();
 		rateLimit.newData(mrl_param);
 
+		if (FMT_rx == 0){
+			FMT_rx = acq400_FMT_rx::instance();
+		}
+
 		if (runstop == 1){
 			if (runstop != runstop0){
 				dsp.enable(true);
@@ -299,6 +304,7 @@ void acq400_Permit::task()
 			flush();
 
 			lock();
+			acq400_PermitLut::instance().check_if_fmt_event_trigger(FMT_rx->get_fmt(0));
 			update_callbacks(rateLimit.goAhead());
 			unlock();
 		}else{

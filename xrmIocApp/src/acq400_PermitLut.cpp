@@ -62,7 +62,11 @@ asynStatus acq400_PermitLut::writeInt32(asynUser *pasynUser, epicsInt32 value)
 		}
 	}else if (function == P_PRMT_LUT_EVENT){
 		assert(addr < MAX_ROWS);
+//		if (lut_rows[addr].event != value){
+//			lut_set.erase(&lut_rows[addr]);
+//		}
 		lut_rows[addr].event = value;
+//		lut_set.insert(&lut_rows[addr]);
 
 		if (verbose){
 			fprintf(stderr, "%s [%d] P_PRMT_LUT_EVENT value:%d\n",
@@ -199,10 +203,41 @@ asynStatus acq400_PermitLut::doCallbacksInt32Array(
 	return asynSuccess;
 }
 
+void acq400_PermitLut::check_if_fmt_event_trigger(const FMT& fmt)
+/**< nested linear search for first event match.
+ * max FMT_ROWS*MAX_ROWS iterations: 64*16 = 1024. That's quite small, so probably not a problem
+ * @@todo would like to use a std::set() but it's difficult to set up.
+ * "first make it work, then make it work fast"
+ */
+{
+	lock();
+	for (int fmt_row = 0; fmt_row < FMT_ROWS; ++fmt_row){
+		const epicsUInt16 fmt_event = fmt[fmt_row].event;
+		if (fmt_event == EV99){
+			break;
+		}
+		for (int pl_row = 0; pl_row < MAX_ROWS; ++pl_row){
+			if (fmt_event == lut_rows[pl_row].event){
+				PermitDSP::instance().full_load(
+					lut_rows[pl_row].ai_th_pairs, lut_rows[pl_row].di_pairs);
+				break;
+			}
+		}
+	}
+	unlock();
+}
 
+
+acq400_PermitLut *acq400_PermitLut::_instance;
+
+acq400_PermitLut& acq400_PermitLut::instance() {
+	assert(acq400_PermitLut::_instance != 0);
+	return *acq400_PermitLut::_instance;
+}
 void acq400_PermitLut::create_instance(const char *portName, int max_addr)
 {
-	new acq400_PermitLut(portName, max_addr);
+	assert(acq400_PermitLut::_instance == 0);
+	_instance = new acq400_PermitLut(portName, max_addr);
 }
 extern "C" {
 	/** EPICS iocsh callable function to call constructor for the testAsynPortDriver class.
