@@ -217,9 +217,10 @@ void acq400_PermitLut::check_if_fmt_event_trigger(const FMT& fmt)
 			break;
 		}
 		for (int pl_row = 0; pl_row < MAX_ROWS; ++pl_row){
-			if (fmt_event == lut_rows[pl_row].event){
+			const PRMT_LUT_ROW& plr = lut_rows[pl_row];
+			if (fmt_event == plr.event){
 				PermitDSP::instance().full_load(
-					lut_rows[pl_row].ai_th_pairs, lut_rows[pl_row].di_pairs);
+						plr.ai_th_pairs, plr.di_pairs);
 				break;
 			}
 		}
