@@ -39,6 +39,10 @@ struct PRMT_LUT_ROW {
 	unsigned short event;	/**< event value to select row */
 	epicsInt16* ai_th_pairs;/**< agg NCHAN LOW, HI pairs   */
 	epicsInt32* di_pairs;   /**< agg NDI32 VALUE, ACTIVE pairs */
+
+	bool operator<(const PRMT_LUT_ROW& other) const {
+		return event < other.event;
+	}
 };
 
 struct LutRowComparator {
@@ -59,7 +63,7 @@ class acq400_PermitLut: public acq400_asynPortDriver {
 	int P_PRMT_LUT_COMMIT;
 
 	PRMT_LUT_ROW lut_rows[MAX_ROWS]; // lazy allocation
-	std::set<unsigned short> event_set;
+	std::set<PRMT_LUT_ROW> event_set;
 
 	static acq400_PermitLut* _instance;
 
