@@ -63,6 +63,7 @@ class acq400_PermitLut: public acq400_asynPortDriver {
 
 	static acq400_PermitLut* _instance;
 
+	unsigned short last_load_event;
 protected:
 	acq400_PermitLut(const char *portName, int max_addr);
 

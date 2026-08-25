@@ -24,7 +24,8 @@ acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
 	/* Autoconnect */       1,
 	/* Default priority */  0,
 	/* Default stack size*/ 0),
-	dsp(PermitDSP::instance())
+	dsp(PermitDSP::instance()),
+	last_load_event(EV99)
 {
 	memset(lut_rows, 0, MAX_ROWS*sizeof(PRMT_LUT_ROW));
 
@@ -215,6 +216,8 @@ void acq400_PermitLut::check_if_fmt_event_trigger(const FMT& fmt)
 		const epicsUInt16 fmt_event = fmt[fmt_row].event;
 		if (fmt_event == EV99){
 			break;
+		}else if (fmt_event == last_load_event){
+			break;
 		}
 		if (event_set.count(fmt_event)){
 			for (int pl_row = 0; pl_row < MAX_ROWS; ++pl_row){
@@ -222,6 +225,7 @@ void acq400_PermitLut::check_if_fmt_event_trigger(const FMT& fmt)
 				if (fmt_event == plr.event){
 					PermitDSP::instance().full_load(
 							plr.ai_th_pairs, plr.di_pairs);
+					last_load_event = fmt_event;
 					break;
 				}
 			}
