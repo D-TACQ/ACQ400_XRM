@@ -59,7 +59,7 @@ class acq400_PermitLut: public acq400_asynPortDriver {
 	int P_PRMT_LUT_COMMIT;
 
 	PRMT_LUT_ROW lut_rows[MAX_ROWS]; // lazy allocation
-//	std::set<const PRMT_LUT_ROW*, LutRowComparator> lut_set;
+	std::set<unsigned short> event_set;
 
 	static acq400_PermitLut* _instance;
 

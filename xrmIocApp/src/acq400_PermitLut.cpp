@@ -62,11 +62,11 @@ asynStatus acq400_PermitLut::writeInt32(asynUser *pasynUser, epicsInt32 value)
 		}
 	}else if (function == P_PRMT_LUT_EVENT){
 		assert(addr < MAX_ROWS);
-//		if (lut_rows[addr].event != value){
-//			lut_set.erase(&lut_rows[addr]);
-//		}
+		if (lut_rows[addr].event != value){
+			event_set.erase(lut_rows[addr].event);
+		}
 		lut_rows[addr].event = value;
-//		lut_set.insert(&lut_rows[addr]);
+		event_set.insert(value);
 
 		if (verbose){
 			fprintf(stderr, "%s [%d] P_PRMT_LUT_EVENT value:%d\n",
@@ -216,12 +216,14 @@ void acq400_PermitLut::check_if_fmt_event_trigger(const FMT& fmt)
 		if (fmt_event == EV99){
 			break;
 		}
-		for (int pl_row = 0; pl_row < MAX_ROWS; ++pl_row){
-			const PRMT_LUT_ROW& plr = lut_rows[pl_row];
-			if (fmt_event == plr.event){
-				PermitDSP::instance().full_load(
-						plr.ai_th_pairs, plr.di_pairs);
-				break;
+		if (event_set.count(fmt_event)){
+			for (int pl_row = 0; pl_row < MAX_ROWS; ++pl_row){
+				const PRMT_LUT_ROW& plr = lut_rows[pl_row];
+				if (fmt_event == plr.event){
+					PermitDSP::instance().full_load(
+							plr.ai_th_pairs, plr.di_pairs);
+					break;
+				}
 			}
 		}
 	}
