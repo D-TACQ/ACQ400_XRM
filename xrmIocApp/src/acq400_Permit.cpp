@@ -549,9 +549,7 @@ asynStatus acq400_Permit_AI::writeFloat64(asynUser *pasynUser, epicsFloat64 valu
 
 void acq400_Permit::update_callbacks(bool call_array_callbacks)
 {
-	fprintf(stderr, "%s about to call sip %d\n", FN, P_UPDATES);
 	sip(0, P_UPDATES, ++update);
-	fprintf(stderr, "%s after    call sip %d\n", FN, P_UPDATES);
 	callParamCallbacks();
 
 	if (call_array_callbacks){

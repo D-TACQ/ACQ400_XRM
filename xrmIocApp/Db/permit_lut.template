@@ -37,7 +37,7 @@ record(aao, "${UUT}:PRMT:LUT:${ROW0}:TH:DI"){
 	 
 record(longout, "${UUT}:PRMT:LUT:${ROW0}:COMMIT"){
 	field(DTYP, "asynInt32")
-	field(OUT,  "@asyn($(SPORT),${ADDR},$(TIMEOUT))PS_PRMT_LUT_COMMIT")
+	field(OUT,  "@asyn($(SPORT),${ADDR},$(TIMEOUT))PRMT_LUT_COMMIT")
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:${ROW0}": {
 			"COMMIT": { +channel: "VAL", +putorder:3, +trigger:"*"}

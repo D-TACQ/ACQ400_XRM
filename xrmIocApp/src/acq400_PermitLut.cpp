@@ -221,8 +221,8 @@ void acq400_PermitLut::check_if_fmt_event_trigger(const FMT& fmt)
 		}else if (fmt_event == last_load_event){
 			break;
 		}
-#if 0
-		if (event_set.count(fmt_event)){
+#if 1
+		if (event_set.count({fmt_event,})){
 			for (int pl_row = 0; pl_row < MAX_ROWS; ++pl_row){
 				const PRMT_LUT_ROW& plr = lut_rows[pl_row];
 				if (fmt_event == plr.event){
@@ -234,12 +234,29 @@ void acq400_PermitLut::check_if_fmt_event_trigger(const FMT& fmt)
 			}
 		}
 #else
+		if (verbose){
+			fprintf(stderr, "%s find it %d %04x\n", FN, fmt_event, fmt_event);
+		}
 		auto it = event_set.find( {fmt_event, });
+		if (verbose){
+			fprintf(stderr, "%s find it %d %04x 99\n", FN, fmt_event, fmt_event);
+		}
 		if (it != event_set.end()){
+			if (verbose){
+				fprintf(stderr, "%s find it %d %04x success %d %04x %p %p\n",
+						FN, fmt_event, fmt_event,
+						it->event, it->event, it->ai_th_pairs, it->di_pairs);
+			}
 			PermitDSP::instance().full_load(
 				it->ai_th_pairs, it->di_pairs);
-				last_load_event = fmt_event;
+			if (verbose){
+				fprintf(stderr, "%s load done, sip it\n", FN);
+			}
+			last_load_event = fmt_event;
 			sip(0, P_PRMT_LUT_LAST_EVENT, fmt_event);
+			if (verbose){
+				fprintf(stderr, "%s load done 99\n", FN);
+			}
 		}
 #endif
 	}
