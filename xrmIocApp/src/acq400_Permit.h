@@ -105,6 +105,9 @@ private:
 
 	void map_fpga();
 	void map_shadow();
+
+	void fill_shadow(unsigned flags);
+
 	void close_map(struct FILEMAP& fm);
 	PermitDSP();
 	~PermitDSP();
@@ -148,6 +151,9 @@ public:
 		epicsInt32* di_pairs);  /**< agg NDI32 VALUE, ACTIVE pairs */
 
 
+	void _refresh_shadow_element(unsigned offset, unsigned lenw);
+	void refresh_shadow();
+
 	static PermitDSP& instance();
 };
 
@@ -160,6 +166,8 @@ class acq400_Permit: public acq400_asynPortDriver {
 
 	virtual void task();
 	static void task_runner(void *drvPvt);
+	virtual void shadow_task();
+	static void shadow_task_runner(void *drvPvt);
 
 	int P_PERMIT_TRG_STAT; /**<< latched status addr 1..6, perhaps 0: vector? 	*/
 	int P_PERMIT_TRG_LIVE; /**<< live status addr 1..6, perhaps 0: ALL?		*/

@@ -197,6 +197,26 @@ void PermitDSP::clr_bits(unsigned reg, unsigned mask)
 	*pr = rv &= ~mask;
 }
 
+void PermitDSP::_refresh_shadow_element(unsigned offset, unsigned lenw)
+{
+	unsigned* dst = (unsigned*)(shadow.map_base+offset);
+	unsigned* src = (unsigned*)(fpga.map_base+offset);
+
+	for (unsigned ii = 0; ii < lenw; ++ii){
+		dst[ii] = src[ii];
+	}
+}
+void PermitDSP::refresh_shadow() {
+	_refresh_shadow_element(REGS.MODID, 2);
+	_refresh_shadow_element(REGS.PICR, 1);
+	_refresh_shadow_element(REGS.PTSITE, 1);
+	for (int site = 1; site <= MAX_SITES; ++site){
+		if (sites[site].site){
+			_refresh_shadow_element(REGS.PTLAT(site), 2);
+			_refresh_shadow_element(DSP_TH_BASE+element_offset(site), sites[site].nelem);
+		}
+	}
+}
 
 void PermitDSP::enable(bool en)
 {
@@ -249,7 +269,16 @@ acq400_Permit::acq400_Permit(const char *portName, int _site, bool is_ai, int _n
 				(EPICSTHREADFUNC)task_runner,
 				this) == NULL);
 		if (status) {
-			printf("%s:%s: epicsThreadCreate failure\n", DN, FN);
+			printf("%s:%s:%d epicsThreadCreate failure\n", DN, FN, __LINE__);
+			return;
+		}
+		status = (asynStatus)(epicsThreadCreate("PRMT_shadow",
+				epicsThreadPriorityLow,
+				epicsThreadGetStackSize(epicsThreadStackMedium),
+				(EPICSTHREADFUNC)shadow_task_runner,
+				this) == NULL);
+		if (status) {
+			printf("%s:%s:%d epicsThreadCreate failure\n", DN, FN, __LINE__);
 			return;
 		}
 	}
@@ -258,6 +287,10 @@ acq400_Permit::acq400_Permit(const char *portName, int _site, bool is_ai, int _n
 void acq400_Permit::task_runner(void *drvPvt)
 {
 	((acq400_Permit *)drvPvt)->task();
+}
+void acq400_Permit::shadow_task_runner(void *drvPvt)
+{
+	((acq400_Permit *)drvPvt)->shadow_task();
 }
 
 void acq400_Permit::flush()
@@ -273,7 +306,13 @@ void acq400_Permit::flush()
 	}
 }
 
-
+void acq400_Permit::shadow_task()
+{
+	while(true){
+		dsp.refresh_shadow();
+		usleep(500000);
+	}
+}
 void acq400_Permit::task()
 {
 	fprintf(stderr, "%s 01\n", FN);
