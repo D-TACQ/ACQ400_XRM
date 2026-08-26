@@ -41,40 +41,53 @@ using namespace std;
 #define MARKI(p) fprintf(stderr, "%s %d P_ %s:%d\n", FN, __LINE__, #p, p)
 
 int PermitDSP::verbose = 	  ::getenv_default("acq400_PERMIT_DSP_VERBOSE", 0);
-int PermitDSP::slug_mmap_writes = ::getenv_default("acq400_PERMIT_DSP_SLUG_MMAP_WRITES", 0);
 
+void PermitDSP::map_fpga()
+{
+	fpga.fd = open("/dev/mem", O_RDWR);
+	if (fpga.fd <= 0){
+		perror("failed to open /dev/mem");
+		assert(fpga.fd <= 0);
+	}
+	fpga.map_base = (char*)mmap(0, MAP_LEN, PROT_READ|PROT_WRITE, MAP_SHARED, fpga.fd, DSP1_GLBASE);
+
+	assert(fpga.map_base != MAP_FAILED);
+}
+void PermitDSP::map_shadow()
+{
+	shadow.fd = open("/tmp/permit_shadow", O_RDWR|O_CREAT);
+	if (shadow.fd <= 0){
+		perror("/tmp/permit_shadow");
+		assert(shadow.fd <= 0);
+	}
+	char *k64 = new char[MAP_LEN];
+	memset(k64, 0, MAP_LEN);
+	write(shadow.fd, k64, MAP_LEN);
+	delete [] k64;
+	shadow.map_base = (char*)mmap(0, MAP_LEN, PROT_READ|PROT_WRITE, MAP_SHARED, shadow.fd, 0);
+}
+
+void PermitDSP::close_map(struct FILEMAP& fm)
+{
+	if (fm.map_base){
+		munmap(fm.map_base, MAP_LEN);
+	}
+	if (fm.fd){
+		close(fm.fd);
+	}
+}
 
 PermitDSP::PermitDSP() {
 	memset(sites, 0, sizeof(SITE_DEF)*(MAX_SITES+1));
 	/* make the mapping */
 
-	if (slug_mmap_writes == -1){
-		fp = fopen("/tmp/fake_dsp", "rw");
-		assert(fp);
-		char *k64 = new char[MAP_LEN];
-		memset(k64, 0, MAP_LEN);
-		fwrite(k64, MAP_LEN, 1, fp);
-		map_base = (char*)mmap(0, MAP_LEN, PROT_READ|PROT_WRITE, MAP_SHARED, fileno(fp), 0);
-		fprintf(stderr, "using /tmp/fake_dsp\n");
-	}else{
-		fp = 0;
-		fd = open("/dev/mem", O_RDWR);
-		if (fd <= 0){
-			perror("failed to open /dev/mem");
-			assert(0);
-		}
-		map_base = (char*)mmap(0, MAP_LEN, PROT_READ|PROT_WRITE, MAP_SHARED, fd, DSP1_GLBASE);
-	}
-	assert(map_base != MAP_FAILED);
+	map_fpga();
+	map_shadow();
 }
 
 PermitDSP::~PermitDSP() {
-	munmap(map_base, MAP_LEN);
-	if (fp){
-		fclose(fp);
-	}else{
-		close(fd);
-	}
+	close_map(fpga);
+	close_map(shadow);
 }
 PermitDSP& PermitDSP::instance(){
 	static PermitDSP* _instance;
@@ -118,17 +131,6 @@ void PermitDSP::load_site(unsigned *dst, unsigned** ppsrc, int nu)
 
 	for (int cursor = nu; cursor; --cursor){
 		*dst++ = *psrc++;
-		if (slug_mmap_writes > 0){
-			if (slug_mmap_writes == 1){
-				volatile unsigned rb = *(dst-1);
-				if (rb != *(psrc-1)){
-					fprintf(stderr, "dsp mmap error: @%04" FML "x w:%08x r:%08x\n",
-							(char*)(dst-1)-map_base, *(psrc-1), rb);
-				}
-			}else{
-				usleep(slug_mmap_writes);
-			}
-		}
 	}
 	*ppsrc = psrc;
 }
@@ -146,8 +148,10 @@ void PermitDSP::full_load(
 			unsigned* pth = th_base(site);
 			unsigned* src = sites[site].is_ai? ai_th_ch: di_th_ch; // for message only
 			if (verbose){
-				fprintf(stderr, "%s site:%d map:%p write %d %p -> %p @%04" FML "x\n",
-					FN, site, map_base, sites[site].nelem, src, pth, (char*)pth-map_base);
+				fprintf(stderr,
+					"%s site:%d map:%p write %d %p -> %p @%04" FML "x\n",
+					FN, site, fpga.map_base, sites[site].nelem,
+					src, pth, (char*)pth-fpga.map_base);
 			}
 
 			if (sites[site].is_ai){
@@ -166,7 +170,7 @@ int acq400_Permit::verbose = ::getenv_default("acq400_PERMIT_VERBOSE", 0);
 
 unsigned* PermitDSP::_get_regp(unsigned reg)
 {
-	return (unsigned*)(map_base + reg);
+	return (unsigned*)(fpga.map_base + reg);
 }
 unsigned PermitDSP::get(unsigned reg)
 {

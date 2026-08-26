@@ -87,21 +87,25 @@ private:
 	void clr_bits(unsigned reg, unsigned mask);
 
 	static int verbose;
-	static int slug_mmap_writes;
-	int fd;
-	FILE* fp;			// mmap file test hack
-	char* map_base;
+
+	struct FILEMAP {
+		int fd;
+		char* map_base;
+	} fpga, shadow;
 
 
 	unsigned element_offset(int site){
 		return (site-1)*0x080;
 	}
 	unsigned* th_base(int site) {
-		return (unsigned*)(map_base + DSP_TH_BASE + element_offset(site));
+		return (unsigned*)(fpga.map_base + DSP_TH_BASE + element_offset(site));
 	}
 	unsigned R_cache[DSP_TH_ELEMENTS];
 	unsigned R_cache_map[MAX_SITES];
 
+	void map_fpga();
+	void map_shadow();
+	void close_map(struct FILEMAP& fm);
 	PermitDSP();
 	~PermitDSP();
 
