@@ -1,0 +1,6 @@
+record(longin, "$(UUT):PRMT:LUT:LAST_EVENT"){
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(SPORT),0,$(TIMEOUT))PRMT_LUT_LAST_EVENT")
+	field(DESC, "indicates last event to load")
+	field(SCAN, "I/O Intr")
+}

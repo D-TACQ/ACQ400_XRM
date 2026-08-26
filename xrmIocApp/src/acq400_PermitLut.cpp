@@ -35,6 +35,7 @@ acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
 	createParam(PS_PRMT_LUT_TH_AI,  asynParamInt16Array, &P_PRMT_LUT_TH_AI);
 	createParam(PS_PRMT_LUT_TH_DI,  asynParamInt32Array, &P_PRMT_LUT_TH_DI);
 	createParam(PS_PRMT_LUT_COMMIT, asynParamInt32,      &P_PRMT_LUT_COMMIT);
+	createParam(PS_PRMT_LUT_LAST_EVENT, asynParamInt32,  &P_PRMT_LUT_LAST_EVENT);
 }
 
 #define MARK fprintf(stderr, "%s %d %s\n", __FILE__, __LINE__, __FUNCTION__)
@@ -85,6 +86,7 @@ asynStatus acq400_PermitLut::writeInt32(asynUser *pasynUser, epicsInt32 value)
 				PermitDSP::instance().full_load(
 					lut_rows[ii].ai_th_pairs,
 					lut_rows[ii].di_pairs);
+				sip(0, P_PRMT_LUT_LAST_EVENT, value);
 				break;
 			}
 		}
@@ -237,6 +239,7 @@ void acq400_PermitLut::check_if_fmt_event_trigger(const FMT& fmt)
 			PermitDSP::instance().full_load(
 				it->ai_th_pairs, it->di_pairs);
 				last_load_event = fmt_event;
+			sip(0, P_PRMT_LUT_LAST_EVENT, fmt_event);
 		}
 #endif
 	}

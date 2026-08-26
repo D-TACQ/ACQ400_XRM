@@ -22,6 +22,8 @@
 #define PS_PRMT_LUT_TH_DI       "PRMT_LUT_TH_DI"  // 2* UInt32Digital vector per site, max 2 sites
 #define PS_PRMT_LUT_COMMIT      "PRMT_LUT_COMMIT" // atomic update
 
+#define PS_PRMT_LUT_LAST_EVENT	"PRMT_LUT_LAST_EVENT"   // last event accepted
+
 
 /** @@todo may not be needed */
 struct _PRMT_LUT_ROW {
@@ -61,6 +63,7 @@ class acq400_PermitLut: public acq400_asynPortDriver {
 	int P_PRMT_LUT_TH_AI;
 	int P_PRMT_LUT_TH_DI;
 	int P_PRMT_LUT_COMMIT;
+	int P_PRMT_LUT_LAST_EVENT;
 
 	PRMT_LUT_ROW lut_rows[MAX_ROWS]; // lazy allocation
 	std::set<PRMT_LUT_ROW> event_set;
