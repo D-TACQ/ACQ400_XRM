@@ -352,8 +352,8 @@ void acq400_Permit::shadow_task()
 					if (verbose > 1){
 						unsigned rbk;
 						status = getUIntDigitalParam(P_PERMIT_TRG_STAT, &rbk, 0xffffffff);
-						fprintf(stderr, "INFO:%s get P:%d E:%d value:0x%08x\n",
-								FN, P_PERMIT_TRG_STAT, status, rbk);
+						fprintf(stderr, "INFO:%s get %s P:%d E:%d value:0x%08x\n",
+								FN, peer.portName, P_PERMIT_TRG_STAT, status, rbk);
 					}
 
 					peer.setUIntDigitalParam(0, P_PERMIT_TRG_LIVE,
@@ -365,8 +365,8 @@ void acq400_Permit::shadow_task()
 					if (verbose > 1){
 						unsigned rbk;
 						status = getUIntDigitalParam(P_PERMIT_TRG_LIVE, &rbk, 0xffffffff);
-						fprintf(stderr, "INFO:%s get P:%d E:%d value:0x%08x\n",
-								FN, P_PERMIT_TRG_LIVE, status, rbk);
+						fprintf(stderr, "INFO:%s get %s P:%d E:%d value:0x%08x\n",
+								FN, peer.portName, P_PERMIT_TRG_LIVE, status, rbk);
 					}
 					peer.callParamCallbacks();
 				}
