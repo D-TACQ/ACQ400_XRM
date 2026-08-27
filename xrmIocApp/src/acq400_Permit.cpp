@@ -318,11 +318,17 @@ void acq400_Permit::flush()
 
 unsigned PermitDSP::get_permit_latch(int site) const
 {
-	return *(unsigned*)shadow.map_base+REGS.PTLAT(site);
+	return *(unsigned*)(shadow.map_base+REGS.PTLAT(site));
 }
 unsigned PermitDSP::get_permit_live(int site) const
 {
-	return *(unsigned*)shadow.map_base+REGS.PTLIV(site);
+	return *(unsigned*)(shadow.map_base+REGS.PTLIV(site));
+}
+
+unsigned PermitDSP::clear_permit_latch(int site, unsigned mask) const
+{
+	*(unsigned*)(fpga.map_base+REGS.PTLAT(site)) = mask;
+	return mask;
 }
 
 void acq400_Permit::shadow_task()
@@ -420,6 +426,8 @@ asynStatus acq400_Permit::writeInt32(asynUser *pasynUser, epicsInt32 value)
 		    dsp.L_CACHE_lock.lock();
 		    flush();
 		    dsp.L_CACHE_lock.unlock();
+	    }else if (function == P_PERMIT_TRG_STAT){
+		    dsp.clear_permit_latch(addr, value);
 	    }
 	    /* Set the parameter in the parameter library. */
 	    status = (asynStatus) setIntegerParam(addr, function, value);

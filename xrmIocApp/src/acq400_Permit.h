@@ -145,6 +145,8 @@ public:
 	unsigned get_permit_latch(int site) const;
 	unsigned get_permit_live(int site) const;
 
+	unsigned clear_permit_latch(int site, unsigned mask) const;
+
 	bool defineSite(int site, bool is_ai, int nelem);
 	/**< as each site is enumerated, declare it */
 	void commit();
