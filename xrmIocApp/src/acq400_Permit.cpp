@@ -341,7 +341,7 @@ void acq400_Permit::shadow_task()
 			if (dsp.isActiveSite(site)){
 				sip(site, P_PERMIT_TRG_STAT, dsp.get_permit_latch(site));
 				sip(site, P_PERMIT_TRG_LIVE, dsp.get_permit_live(site));
-				callParamCallbacks(site, site);
+				peers[site]->callParamCallbacks();
 			}
 		}
 		unlock();
