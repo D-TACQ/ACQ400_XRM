@@ -61,10 +61,12 @@ void PermitDSP::map_shadow()
 		assert(shadow.fd <= 0);
 	}
 	char *k64 = new char[MAP_LEN];
-	memset(k64, 0, MAP_LEN);
+	assert(fpga.map_base != 0);
+	memset(k64, 0, MAP_LEN);           // to be overwritten, may as well not write garbage
 	write(shadow.fd, k64, MAP_LEN);
 	delete [] k64;
 	shadow.map_base = (char*)mmap(0, MAP_LEN, PROT_READ|PROT_WRITE, MAP_SHARED, shadow.fd, 0);
+	fill_shadow();                     // complete copy of fpga, do it once.
 }
 
 void PermitDSP::close_map(struct FILEMAP& fm)
@@ -77,7 +79,8 @@ void PermitDSP::close_map(struct FILEMAP& fm)
 	}
 }
 
-PermitDSP::PermitDSP() {
+PermitDSP::PermitDSP(): fpga({0,}), shadow({0,})
+	{
 	memset(sites, 0, sizeof(SITE_DEF)*(MAX_SITES+1));
 	/* make the mapping */
 
@@ -206,7 +209,14 @@ void PermitDSP::_refresh_shadow_element(unsigned offset, unsigned lenw)
 		dst[ii] = src[ii];
 	}
 }
-void PermitDSP::refresh_shadow() {
+
+void PermitDSP::fill_shadow()
+{
+	_refresh_shadow_element(0, MAP_LEN/sizeof(unsigned));
+}
+
+void PermitDSP::refresh_shadow()
+{
 	_refresh_shadow_element(REGS.MODID, 2);
 	_refresh_shadow_element(REGS.PICR, 1);
 	_refresh_shadow_element(REGS.PTSITE, 1);

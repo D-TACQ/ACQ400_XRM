@@ -106,7 +106,7 @@ private:
 	void map_fpga();
 	void map_shadow();
 
-	void fill_shadow(unsigned flags);
+	void fill_shadow();
 
 	void close_map(struct FILEMAP& fm);
 	PermitDSP();
