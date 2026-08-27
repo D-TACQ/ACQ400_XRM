@@ -15,14 +15,14 @@ record(mbboDirect, "${UUT}:${SITE}:PRMT:STAT:LATCH") {
 
 record(mbbiDirect, "${UUT}:${SITE}:PRMT:STAT:LATCH:r") {
 	field(DTYP, "asynUInt32Digital")
-	field(INP,  "@asynMask($(PORT),0,4294967295,$(TIMEOUT))PERMIT_TRG_LATCH")
+	field(INP,  "@asynMask($(PORT),0,4294967295,$(TIMEOUT))PERMIT_TRG_STAT")
 	field(SCAN, "I/O Intr")
 	field(FLNK, "${UUT}:${SITE}:PRMT:STAT:LATCH:s")
 }
 
 record(mbboDirect, "${UUT}:${SITE}:PRMT:STAT:LATCH:w") {
 	field(DTYP, "asynUInt32Digital")
-	field(OUT,  "@asynMask($(PORT),0,4294967295,$(TIMEOUT))PERMIT_TRG_LATCH")
+	field(OUT,  "@asynMask($(PORT),0,4294967295,$(TIMEOUT))PERMIT_TRG_STAT")
 	field(SDIS, "$(UUT):$(SITE):PRMT:STAT:LATCH:s.PACT")
 	field(DISV, "1")
 }

@@ -200,6 +200,8 @@ public:
 	const int nchan;
 
 	virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+	virtual asynStatus writeUInt32Digital(asynUser *pasynUser, epicsUInt32 value, epicsUInt32 mask);
+
 	static void create_instance(const char *portName, int site, bool is_ai, int nchan);
 };
 

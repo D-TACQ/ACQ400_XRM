@@ -258,12 +258,12 @@ acq400_Permit::acq400_Permit(const char *portName, int _site, bool is_ai, int _n
 {
 	asynStatus status = asynSuccess;
 
-	createParam(PS_PERMIT_TRG_STAT,    	asynParamInt32,      &P_PERMIT_TRG_STAT);
-	createParam(PS_PERMIT_TRG_LIVE,    	asynParamInt32,      &P_PERMIT_TRG_LIVE);
-
-
-	createParam(PS_PERMIT_COMMIT,    	asynParamInt32,      &P_PERMIT_COMMIT);
-	createParam(PS_PERMIT_LOCK,    		asynParamInt32,      &P_PERMIT_LOCK);
+	createParam(PS_PERMIT_TRG_STAT,    asynParamUInt32Digital,   &P_PERMIT_TRG_STAT);
+	fprintf(stderr, "%s P_PERMIT_TRG_STAT:%d\n", FN, P_PERMIT_TRG_STAT);
+	createParam(PS_PERMIT_TRG_LIVE,    asynParamUInt32Digital,   &P_PERMIT_TRG_LIVE);
+	fprintf(stderr, "%s P_PERMIT_TRG_LIVE:%d\n", FN, P_PERMIT_TRG_LIVE);
+	createParam(PS_PERMIT_COMMIT,      asynParamInt32,           &P_PERMIT_COMMIT);
+	createParam(PS_PERMIT_LOCK,    	   asynParamInt32,           &P_PERMIT_LOCK);
 	fprintf(stderr, "%s P_PERMIT_LOCK:%d\n", FN, P_PERMIT_LOCK);
 
 	if (is_ai){
@@ -339,9 +339,37 @@ void acq400_Permit::shadow_task()
 		lock();
 		for (int site = 1; site <= MAX_SITES; ++site){
 			if (dsp.isActiveSite(site)){
-				sip(site, P_PERMIT_TRG_STAT, dsp.get_permit_latch(site));
-				sip(site, P_PERMIT_TRG_LIVE, dsp.get_permit_live(site));
-				peers[site]->callParamCallbacks();
+				auto search = peers.find(site);
+				if (search != peers.end()){
+					acq400_Permit& peer = *search->second;
+					asynStatus status;
+					status = peer.setUIntDigitalParam(0, P_PERMIT_TRG_STAT,
+							dsp.get_permit_latch(site), 0xffffffff);
+					if (status != asynSuccess){
+						fprintf(stderr, "ERROR:%s failed to set P:%d E:%d\n",
+								FN, P_PERMIT_TRG_STAT, status);
+					}
+					if (verbose > 1){
+						unsigned rbk;
+						status = getUIntDigitalParam(P_PERMIT_TRG_STAT, &rbk, 0xffffffff);
+						fprintf(stderr, "INFO:%s get P:%d E:%d value:0x%08x\n",
+								FN, P_PERMIT_TRG_STAT, status, rbk);
+					}
+
+					peer.setUIntDigitalParam(0, P_PERMIT_TRG_LIVE,
+							dsp.get_permit_live(site), 0xffffffff);
+					if (status != asynSuccess){
+						fprintf(stderr, "ERROR:%s failed to set P:%d E:%d\n",
+								FN, P_PERMIT_TRG_STAT, status);
+					}
+					if (verbose > 1){
+						unsigned rbk;
+						status = getUIntDigitalParam(P_PERMIT_TRG_LIVE, &rbk, 0xffffffff);
+						fprintf(stderr, "INFO:%s get P:%d E:%d value:0x%08x\n",
+								FN, P_PERMIT_TRG_LIVE, status, rbk);
+					}
+					peer.callParamCallbacks();
+				}
 			}
 		}
 		unlock();
@@ -441,6 +469,35 @@ asynStatus acq400_Permit::writeInt32(asynUser *pasynUser, epicsInt32 value)
 	    return status;
 }
 
+
+asynStatus acq400_Permit::writeUInt32Digital(asynUser *pasynUser, epicsUInt32 value, epicsUInt32 mask)
+{
+	    int function = pasynUser->reason;
+	    asynStatus status = asynSuccess;
+	    const char *paramName;
+	    int addr = 0;
+
+	    /* Fetch the parameter string name for possible use in debugging */
+	    getParamName(function, &paramName);
+
+	    if (maxAddr > 1){
+		    status = pasynManager->getAddr(pasynUser, &addr);
+		    if(status!=asynSuccess) return status;
+	    }
+
+	    if (function == P_PERMIT_TRG_STAT){
+		    dsp.clear_permit_latch(addr, value);
+		    // no sip() equivalent .. it's a set/clear!0
+	    }
+
+	    if (verbose){
+		    fprintf(stderr,
+	    	              "%s:%s: function=%d, addr=%d, name=%s, value=%d\n",
+	    	              DN, FN, function, addr, paramName, value);
+	    }
+
+	    return status;
+}
 
 
 class acq400_Permit_AI: public acq400_Permit {
@@ -613,7 +670,6 @@ asynStatus acq400_Permit_AI::writeFloat64(asynUser *pasynUser, epicsFloat64 valu
 		    }
 		    dsp.L_CACHE_lock.unlock();
 	    }
-
 
 	    /* Set the parameter in the parameter library. */
 	    status = (asynStatus) setDoubleParam(addr, function, value);
