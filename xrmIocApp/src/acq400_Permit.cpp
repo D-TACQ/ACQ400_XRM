@@ -316,10 +316,29 @@ void acq400_Permit::flush()
 	}
 }
 
+unsigned PermitDSP::get_permit_latch(int site) const
+{
+	return *(unsigned*)shadow.map_base+REGS.PTLAT(site);
+}
+unsigned PermitDSP::get_permit_live(int site) const
+{
+	return *(unsigned*)shadow.map_base+REGS.PTLIV(site);
+}
+
 void acq400_Permit::shadow_task()
 {
 	while(true){
 		dsp.refresh_shadow();
+
+		lock();
+		for (int site = 1; site <= MAX_SITES; ++site){
+			if (dsp.isActiveSite(site)){
+				sip(site, P_PERMIT_TRG_STAT, dsp.get_permit_latch(site));
+				sip(site, P_PERMIT_TRG_LIVE, dsp.get_permit_live(site));
+				callParamCallbacks(site, site);
+			}
+		}
+		unlock();
 		usleep(500000);
 	}
 }

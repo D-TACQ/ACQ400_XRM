@@ -1,0 +1,35 @@
+# permit_status.db
+
+record(mbbiDirect, "${UUT}:${SITE}:PRMT:STAT:LIVE") {
+	field(DTYP, "asynUInt32Digital")
+	field(INP,  "@asynMask($(PORT),${SITE},4294967295,$(TIMEOUT))PERMIT_TRG_LIVE")
+	field(SCAN, "I/O Intr")
+	field(DESC, "site instantaneous value")
+}
+
+record(mbboDirect, "${UUT}:${SITE}:PRMT:STAT:LATCH") {
+	field(DTYP, "Soft Channel")
+	field(FLNK, "$(UUT):$(SITE):PRMT:STAT:LATCH:w PP")
+	field(DESC, "site latch value, write bit clear")
+}
+
+record(mbbiDirect, "${UUT}:${SITE}:PRMT:STAT:LATCH:r") {
+	field(DTYP, "asynUInt32Digital")
+	field(INP,  "@asynMask($(PORT),${SITE},4294967295,$(TIMEOUT))PERMIT_TRG_LATCH")
+	field(SCAN, "I/O Intr")
+	field(FLNK, "${UUT}:${SITE}:PRMT:STAT:LATCH:s")
+}
+
+record(mbboDirect, "${UUT}:${SITE}:PRMT:STAT:LATCH:w") {
+	field(DTYP, "asynUInt32Digital")
+	field(OUT,  "@asynMask($(PORT),${SITE},4294967295,$(TIMEOUT))PERMIT_TRG_LATCH")
+	field(SDIS, "$(UUT):$(SITE):PRMT:STAT:LATCH:s.PACT")
+	field(DISV, "1")
+}
+
+record(mbboDirect, "${UUT}:${SITE}:PRMT:STAT:LATCH:s") {
+	field(DTYP, "Soft Channel")
+	field(DOL,  "$(UUT):$(SITE):PRMT:STAT:LATCH:r")
+	field(OMSL, "closed_loop")
+	field(OUT,  "$(UUT):$(SITE):PRMT:STAT:LATCH PP")
+}

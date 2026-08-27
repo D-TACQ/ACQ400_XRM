@@ -131,6 +131,10 @@ public:
 	unsigned status(int addr);    /**<< latched status site 1..6 0:ALL? */
 	unsigned live(int addr);      /**<< live status site 1..6 0:ALL? */
 
+	bool isActiveSite(int site){
+		assert(site >=1 && site <= MAX_SITES);
+		return sites[site].site != 0;
+	}
 	void setElement(int site, int ch_off, unsigned element)
 	{
 		R_cache[element_offset(site)+ch_off];
