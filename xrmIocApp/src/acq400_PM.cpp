@@ -110,7 +110,7 @@ void acq400_PM::init_buffers(const unsigned nbuf)
 	if (verbose) fprintf(stderr, "%s 01\n", FN);
 	filled.clear();
 	empties.clear();
-	for (short ii = FIRST; ii <= (short)nbuf; ++ii){
+	for (short ii = FIRST; ii <= (short)nbuf+FIRST; ++ii){
 		if (verbose>1) fprintf(stderr, "%s 50\n", FN);
 		empties.push_back({-1, ii});
 	}
