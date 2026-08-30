@@ -31,6 +31,13 @@ var NAVTREE =
     [ "README", "md_README.html", null ],
     [ "XRM_STRUCTS", "md_XRM__STRUCTS.html", null ],
     [ "Todo List", "todo.html", null ],
+    [ "Namespaces", "namespaces.html", [
+      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
+      [ "Namespace Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Variables", "namespacemembers_vars.html", null ]
+      ] ]
+    ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
@@ -59,7 +66,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "Multicast_8h_source.html",
-"xrm__structs_8h_source.html"
+"structPRMT__LUT__ROW.html#ae1021c57667bf5ab06d81ffd6ee9570d"
 ];
 
 const SYNCONMSG = 'click to disable panel synchronization';

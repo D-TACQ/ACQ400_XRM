@@ -151,52 +151,71 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('acq400__asyn__
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="comment">/* fix printf compiler warning */</span></div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#ifdef __arm__</span></div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#define FMTSZT &quot;%u&quot;</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#define FMTSZT &quot;%lu&quot;</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#define SP0 0</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#define SP1 1</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#define SP2 2</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#define SP3 3</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keyword">typedef</span> <span class="keywordtype">short</span> AI16_t;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="keyword">typedef</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> DI32_t;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="keyword">typedef</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> DO32_t;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="keyword">typedef</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> SP32_t;</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>std::vector&lt;int&gt; csv2int(<span class="keyword">const</span> <span class="keywordtype">char</span>* csv);</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="keywordtype">bool</span> epicsTimeDiffLessThan(epicsTimeStamp&amp; t1, epicsTimeStamp&amp; t0, <span class="keywordtype">double</span> tgts);</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="keywordtype">bool</span> epicsTimeDiffGreaterThan(epicsTimeStamp&amp; t1, epicsTimeStamp&amp; t0, <span class="keywordtype">double</span> tgts);</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#define TICKSPERUS  40</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="preprocessor">#define USPS        1000000</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>epicsInt64 getWrTsUs(<span class="keywordtype">unsigned</span> wrse, <span class="keywordtype">unsigned</span> wrv);<span class="comment"></span></div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="comment">/**&lt; create full Timestamp from &lt;wrse&gt; White Rabbit Seconds from Epoch and</span></div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="comment"> * &lt;wrv&gt; : White Rabbit Vernier, the coded output from the WR firmware.</span></div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#define FML    &quot;&quot;</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#define FMTSZT &quot;%lu&quot;</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#define FML    &quot;l&quot;</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment"></span> </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment">/** SP32 : Scratch Pad 32 bit values, up to 16 values, index 0..7 usable. @@todo</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment"> * @brief : the Scratch Pad appends padding/metadata to each sample</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment"> * WRV detail : 4 bit &quot;seconds&quot;, 28 bit &quot;ticks&quot; with 25ns resolution;</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="comment"> * match seconds to WRS to get a full timestamp.</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="comment"> */</span></div>
+<div class="foldopen" id="foldopen00045" data-start="{" data-end="}">
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="namespaceSP32.html">   45</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceSP32.html">SP32</a> {</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="namespaceSP32.html#aad0a206819cd808e93a3b9680aeb8c7f">   46</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceSP32.html#aad0a206819cd808e93a3b9680aeb8c7f">SP0</a> = 0; <span class="comment">/**&lt; Sample Count, inserted by HW */</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="namespaceSP32.html#a13fc635b7c0399441b2a05a4ed645dac">   47</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceSP32.html#a13fc635b7c0399441b2a05a4ed645dac">SP1</a> = 1; <span class="comment">/**&lt; usec count, inserted by HW   */</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="namespaceSP32.html#a432a136093e497104901b538ba977f74">   48</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceSP32.html#a432a136093e497104901b538ba977f74">SP2</a> = 2; <span class="comment">/**&lt; WRV : White Rabbit Vernier time, inserted by HW. */</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="namespaceSP32.html#aa42153e54d0923d43cc8735698757544">   49</a></span><span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="namespaceSP32.html#aa42153e54d0923d43cc8735698757544">SP3</a> = 3; <span class="comment">/**&lt; WRS : White Rabbit Seconds, inserted by SW.      */</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>}</div>
+</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="preprocessor">#define SP0 0</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#define SP1 1</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="preprocessor">#define SP2 2</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#define SP3 3</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="keyword">typedef</span> <span class="keywordtype">short</span> AI16_t;</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="keyword">typedef</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> DI32_t;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="keyword">typedef</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> DO32_t;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="keyword">typedef</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> SP32_t;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>std::vector&lt;int&gt; csv2int(<span class="keyword">const</span> <span class="keywordtype">char</span>* csv);</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">#define NSPERTICK   25</span></div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="preprocessor">#define NSPS        1000000000</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keywordtype">bool</span> epicsTimeDiffLessThan(epicsTimeStamp&amp; t1, epicsTimeStamp&amp; t0, <span class="keywordtype">double</span> tgts);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="keywordtype">bool</span> epicsTimeDiffGreaterThan(epicsTimeStamp&amp; t1, epicsTimeStamp&amp; t0, <span class="keywordtype">double</span> tgts);</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>epicsInt64 getWrTsNs(<span class="keywordtype">unsigned</span> wrse, <span class="keywordtype">unsigned</span> wrv);<span class="comment"></span></div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="comment">/**&lt; create full Timestamp from &lt;wrse&gt; White Rabbit Seconds from Epoch and</span></div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="comment"> * &lt;wrv&gt; : White Rabbit Vernier, the coded output from the WR firmware.</span></div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="comment"> * wrv max = 40e6. 40e6 * 25 = 0x369aca00 -&gt; fits a u32</span></div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="comment"> * .. our 28 bit vernier is good to 250MHz.</span></div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>epicsInt64 getWrTs(<span class="keywordtype">unsigned</span> wrse, <span class="keywordtype">unsigned</span> wrv);</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="preprocessor">#define TICKSPERUS  40</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="preprocessor">#define USPS        1000000</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>epicsInt64 getWrTsUs(<span class="keywordtype">unsigned</span> wrse, <span class="keywordtype">unsigned</span> wrv);<span class="comment"></span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="comment">/**&lt; create full Timestamp from &lt;wrse&gt; White Rabbit Seconds from Epoch and</span></div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="comment"> * &lt;wrv&gt; : White Rabbit Vernier, the coded output from the WR firmware.</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="keyword">const</span> <span class="keywordtype">char</span>* getenv_default(<span class="keyword">const</span> <span class="keywordtype">char</span>* key, <span class="keyword">const</span> <span class="keywordtype">char</span>* def = <span class="stringliteral">&quot;echo undefined&quot;</span>);</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="preprocessor">#define NSPERTICK   25</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="preprocessor">#define NSPS        1000000000</span></div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="preprocessor">#endif </span><span class="comment">/* ACQ400IOCAPP_SRC_ACQ400_ASYN_COMMON_H_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>epicsInt64 getWrTsNs(<span class="keywordtype">unsigned</span> wrse, <span class="keywordtype">unsigned</span> wrv);<span class="comment"></span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="comment">/**&lt; create full Timestamp from &lt;wrse&gt; White Rabbit Seconds from Epoch and</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="comment"> * &lt;wrv&gt; : White Rabbit Vernier, the coded output from the WR firmware.</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="comment"> * wrv max = 40e6. 40e6 * 25 = 0x369aca00 -&gt; fits a u32</span></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="comment"> * .. our 28 bit vernier is good to 250MHz.</span></div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>epicsInt64 getWrTs(<span class="keywordtype">unsigned</span> wrse, <span class="keywordtype">unsigned</span> wrv);</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="keyword">const</span> <span class="keywordtype">char</span>* getenv_default(<span class="keyword">const</span> <span class="keywordtype">char</span>* key, <span class="keyword">const</span> <span class="keywordtype">char</span>* def = <span class="stringliteral">&quot;echo undefined&quot;</span>);</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="preprocessor">#endif </span><span class="comment">/* ACQ400IOCAPP_SRC_ACQ400_ASYN_COMMON_H_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="aacq400__asynPortDriver_8h_html"><div class="ttname"><a href="acq400__asynPortDriver_8h.html">acq400_asynPortDriver.h</a></div><div class="ttdoc">common base class connects all acq400 PortDriver implementations</div></div>
+<div class="ttc" id="anamespaceSP32_html"><div class="ttname"><a href="namespaceSP32.html">SP32</a></div><div class="ttdoc">: the Scratch Pad appends padding/metadata to each sample WRV detail : 4 bit &quot;seconds&quot;,...</div><div class="ttdef"><b>Definition</b> acq400_asyn_common.h:45</div></div>
+<div class="ttc" id="anamespaceSP32_html_a13fc635b7c0399441b2a05a4ed645dac"><div class="ttname"><a href="namespaceSP32.html#a13fc635b7c0399441b2a05a4ed645dac">SP32::SP1</a></div><div class="ttdeci">const int SP1</div><div class="ttdef"><b>Definition</b> acq400_asyn_common.h:47</div></div>
+<div class="ttc" id="anamespaceSP32_html_a432a136093e497104901b538ba977f74"><div class="ttname"><a href="namespaceSP32.html#a432a136093e497104901b538ba977f74">SP32::SP2</a></div><div class="ttdeci">const int SP2</div><div class="ttdef"><b>Definition</b> acq400_asyn_common.h:48</div></div>
+<div class="ttc" id="anamespaceSP32_html_aa42153e54d0923d43cc8735698757544"><div class="ttname"><a href="namespaceSP32.html#aa42153e54d0923d43cc8735698757544">SP32::SP3</a></div><div class="ttdeci">const int SP3</div><div class="ttdef"><b>Definition</b> acq400_asyn_common.h:49</div></div>
+<div class="ttc" id="anamespaceSP32_html_aad0a206819cd808e93a3b9680aeb8c7f"><div class="ttname"><a href="namespaceSP32.html#aad0a206819cd808e93a3b9680aeb8c7f">SP32::SP0</a></div><div class="ttdeci">const int SP0</div><div class="ttdef"><b>Definition</b> acq400_asyn_common.h:46</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

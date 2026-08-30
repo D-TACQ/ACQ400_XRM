@@ -201,17 +201,22 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('acq400__Proxy_
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        assert(_instance != 0);</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        <span class="keywordflow">return</span> &amp;_instance-&gt;samplePrams;</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    }</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keyword">virtual</span> ~acq400_Proxy() {}</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="keyword">virtual</span> asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keyword">virtual</span> asynStatus writeFloat32Array(asynUser *pasynUser, epicsFloat32 *value,</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                                           <span class="keywordtype">size_t</span> nElements);</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keyword">static</span> acq400_Proxy&amp; instance() {</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        assert(_instance != 0);</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        <span class="keywordflow">return</span> *_instance;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    }</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keyword">virtual</span> ~acq400_Proxy() {}</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keyword">virtual</span> asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>};</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keyword">virtual</span> asynStatus writeFloat32Array(asynUser *pasynUser, epicsFloat32 *value,</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>                                           <span class="keywordtype">size_t</span> nElements);</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="keyword">const</span> epicsFloat32* getEslo(<span class="keywordtype">int</span> site) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keyword">const</span> epicsFloat32* getEoff(<span class="keywordtype">int</span> site) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>};</div>
 </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="preprocessor">#endif </span><span class="comment">/* XRMIOCAPP_SRC_ACQ400_PROXY_H_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="preprocessor">#endif </span><span class="comment">/* XRMIOCAPP_SRC_ACQ400_PROXY_H_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="aSamplePrams_8h_html"><div class="ttname"><a href="SamplePrams_8h.html">SamplePrams.h</a></div><div class="ttdoc">defines SamplePrams, sample geometry definition struct.</div></div>
 <div class="ttc" id="aclassacq400__asynPortDriver_html_a9f9c10c5f2117e4ddccc32de7b469cee"><div class="ttname"><a href="classacq400__asynPortDriver.html#a9f9c10c5f2117e4ddccc32de7b469cee">acq400_asynPortDriver::acq400_asynPortDriver</a></div><div class="ttdeci">acq400_asynPortDriver(const char *portName, int maxAddr, int interfaceMask, int interruptMask, int asynFlags, int autoConnect, int priority, int stackSize)</div><div class="ttdef"><b>Definition</b> acq400_asynPortDriver.cpp:16</div></div>
 <div class="ttc" id="astructSamplePrams_html"><div class="ttname"><a href="structSamplePrams.html">SamplePrams</a></div><div class="ttdef"><b>Definition</b> SamplePrams.h:11</div></div>

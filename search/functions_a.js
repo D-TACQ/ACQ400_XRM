@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['validate_0',['validate',['../structSamplePrams.html#a983e5e0ba20521dbe02e9bea6f9cbb8c',1,'SamplePrams']]]
+  ['process_5ffmt_0',['process_fmt',['../classacq400__FMT__rx.html#af338e5cc7f646327f502afca882e6f3f',1,'acq400_FMT_rx']]]
 ];

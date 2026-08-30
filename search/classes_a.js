@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['nullstrategy_0',['NullStrategy',['../classNullStrategy.html',1,'']]]
+  ['kbuf_0',['KBUF',['../structKBUF.html',1,'']]]
 ];

@@ -188,6 +188,8 @@ virtual void&#160;</td><td class="memItemRight"><b>task</b> ()</td></tr>
 asynStatus&#160;</td><td class="memItemRight"><b>sip</b> (int addr, int pnum, unsigned pram)</td></tr>
 <tr class="memitem:a6c6cbfd2ed5aee78a20ae5cded780f9c pro_methods_classacq400__asynPortDriver" id="r_a6c6cbfd2ed5aee78a20ae5cded780f9c"><td class="memItemLeft">
 asynStatus&#160;</td><td class="memItemRight"><b>sip</b> (int addr, int pnum, epicsInt64 pram)</td></tr>
+<tr class="memitem:ac2496a6344a38d72554c35e9a891b407 pro_methods_classacq400__asynPortDriver" id="r_ac2496a6344a38d72554c35e9a891b407"><td class="memItemLeft">
+asynStatus&#160;</td><td class="memItemRight"><b>sip</b> (int addr, int pnum, double pram)</td></tr>
 <tr class="memitem:aa71f3ea1cf1c21cc2efda82cfc154dc9 pro_methods_classacq400__asynPortDriver" id="r_aa71f3ea1cf1c21cc2efda82cfc154dc9"><td class="memItemLeft">asynStatus&#160;</td><td class="memItemRight"><a class="el" href="classacq400__asynPortDriver.html#aa71f3ea1cf1c21cc2efda82cfc154dc9">gsp</a> (int pnum, int maxchar, char *str)</td></tr>
 <tr class="memitem:a4e8463a6553fbdd9f57ed513c885b371 pro_methods_classacq400__asynPortDriver" id="r_a4e8463a6553fbdd9f57ed513c885b371"><td class="memItemLeft">
 asynStatus&#160;</td><td class="memItemRight"><b>ssp</b> (int pnum, const char *str)</td></tr>
@@ -208,8 +210,6 @@ Protected Attributes</h2></td></tr>
 struct <a class="el" href="structacq400__SOE_1_1COLUMNS.html">acq400_SOE::COLUMNS</a>&#160;</td><td class="memItemRight"><b>cols</b></td></tr>
 <tr class="memitem:a2dcb2686c66f527525f1fbf65ee91be9" id="r_a2dcb2686c66f527525f1fbf65ee91be9"><td class="memItemLeft"><a id="a2dcb2686c66f527525f1fbf65ee91be9" name="a2dcb2686c66f527525f1fbf65ee91be9"></a>
 struct <a class="el" href="structacq400__SOE_1_1HOLD__COLS.html">acq400_SOE::HOLD_COLS</a>&#160;</td><td class="memItemRight"><b>hold_cols</b></td></tr>
-<tr class="memitem:abbd2426726a63157c90048d3e8a4373e" id="r_abbd2426726a63157c90048d3e8a4373e"><td class="memItemLeft"><a id="abbd2426726a63157c90048d3e8a4373e" name="abbd2426726a63157c90048d3e8a4373e"></a>
-unsigned&#160;</td><td class="memItemRight"><b>update</b></td></tr>
 <tr class="memitem:ad08aea8dfbdcdfa4d112d9cd795cf5fa" id="r_ad08aea8dfbdcdfa4d112d9cd795cf5fa"><td class="memItemLeft"><a id="ad08aea8dfbdcdfa4d112d9cd795cf5fa" name="ad08aea8dfbdcdfa4d112d9cd795cf5fa"></a>
 unsigned&#160;</td><td class="memItemRight"><b>fmt_rx_timeouts</b></td></tr>
 <tr class="memitem:a65c4d6a59f20fe3039dad2f72a00ae2b" id="r_a65c4d6a59f20fe3039dad2f72a00ae2b"><td class="memItemLeft"><a id="a65c4d6a59f20fe3039dad2f72a00ae2b" name="a65c4d6a59f20fe3039dad2f72a00ae2b"></a>
@@ -285,6 +285,8 @@ int&#160;</td><td class="memItemRight"><b>ib</b></td></tr>
 <tr class="memitem:a3690e8a159d060f86993c2cccb528b1d pro_attribs_classacq400__asynPortDriver" id="r_a3690e8a159d060f86993c2cccb528b1d"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="classacq400__asynPortDriver.html#a3690e8a159d060f86993c2cccb528b1d">P_MON_RL</a></td></tr>
 <tr class="memitem:a4a97a88792c21ee9759db38e5b3c59e1 pro_attribs_classacq400__asynPortDriver" id="r_a4a97a88792c21ee9759db38e5b3c59e1"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>mrl_param</b></td></tr>
+<tr class="memitem:a8b3edc46260bb9dfa34d1b99bd291d99 pro_attribs_classacq400__asynPortDriver" id="r_a8b3edc46260bb9dfa34d1b99bd291d99"><td class="memItemLeft">
+unsigned&#160;</td><td class="memItemRight"><b>update</b></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pro-static-attribs" class="groupheader"><a id="pro-static-attribs" name="pro-static-attribs"></a>
 Static Protected Attributes</h2></td></tr>
@@ -392,7 +394,7 @@ static <a class="el" href="classacq400__SOE.html">acq400_SOE</a> *&#160;</td><td
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Stat: Delta TS: time between <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table.">FMT</a> and latest <a class="el" href="structKBUF.html">KBUF</a> </p>
+<p>Stat: Delta TS: time between <a class="el" href="xrm__structs_8h.html#af1a6b6471f8370aa1a2446aa06f3b4d2" title="FMT : FNAL Multicast Table.">FMT</a> and latest <a class="el" href="structKBUF.html" title="KBUF &quot;Kernel BUFfer&quot; On boot: KBUF&#39;s are preassigned for capture memory Typical transient recorder: 1...">KBUF</a> </p>
 
 </div>
 </div>
@@ -990,7 +992,7 @@ static <a class="el" href="classacq400__SOE.html">acq400_SOE</a> *&#160;</td><td
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Current <a class="el" href="structKBUF.html">KBUF</a> number </p>
+<p>Current <a class="el" href="structKBUF.html" title="KBUF &quot;Kernel BUFfer&quot; On boot: KBUF&#39;s are preassigned for capture memory Typical transient recorder: 1...">KBUF</a> number </p>
 
 </div>
 </div>
@@ -1013,7 +1015,7 @@ static <a class="el" href="classacq400__SOE.html">acq400_SOE</a> *&#160;</td><td
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Current <a class="el" href="structKBUF.html">KBUF</a> start time </p>
+<p>Current <a class="el" href="structKBUF.html" title="KBUF &quot;Kernel BUFfer&quot; On boot: KBUF&#39;s are preassigned for capture memory Typical transient recorder: 1...">KBUF</a> start time </p>
 
 </div>
 </div>
@@ -1036,7 +1038,7 @@ static <a class="el" href="classacq400__SOE.html">acq400_SOE</a> *&#160;</td><td
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Current <a class="el" href="structKBUF.html">KBUF</a> end time </p>
+<p>Current <a class="el" href="structKBUF.html" title="KBUF &quot;Kernel BUFfer&quot; On boot: KBUF&#39;s are preassigned for capture memory Typical transient recorder: 1...">KBUF</a> end time </p>
 
 </div>
 </div>
@@ -1519,7 +1521,7 @@ static <a class="el" href="classacq400__SOE.html">acq400_SOE</a> *&#160;</td><td
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Geometry: number of SP32 columns in data </p>
+<p>Geometry: number of <a class="el" href="namespaceSP32.html" title=": the Scratch Pad appends padding/metadata to each sample WRV detail : 4 bit &quot;seconds&quot;,...">SP32</a> columns in data </p>
 
 </div>
 </div>

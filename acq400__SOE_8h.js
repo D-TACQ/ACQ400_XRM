@@ -1,6 +1,6 @@
 var acq400__SOE_8h =
 [
-    [ "KBUF", "structKBUF.html", null ],
+    [ "KBUF", "structKBUF.html", "structKBUF" ],
     [ "SOE_DIMS", "structSOE__DIMS.html", null ],
     [ "acq400_SOE_Strategy", "classacq400__SOE__Strategy.html", "classacq400__SOE__Strategy" ],
     [ "acq400_SOE_Strategy::RC", "structacq400__SOE__Strategy_1_1RC.html", null ],

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['offset_5fus_0',['offset_us',['../structSOE__LUT__ROW.html#a510773f491f530929bb6d555f73ba32b',1,'SOE_LUT_ROW']]]
+  ['nsam_0',['NSAM',['../structSamplePrams.html#a1a3c4e502a01ce7e5dc06e5dd910690a',1,'SamplePrams']]]
 ];

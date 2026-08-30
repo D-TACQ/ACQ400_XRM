@@ -129,12 +129,16 @@ Inheritance diagram for acq400_asynPortDriver:</div>
 <area href="classacq400__FMT__abc.html" alt="acq400_FMT_abc" shape="rect" coords="78,112,224,136"/>
 <area href="classacq400__INST.html" alt="acq400_INST" shape="rect" coords="390,112,536,136"/>
 <area href="classacq400__PM.html" alt="acq400_PM" shape="rect" coords="546,112,692,136"/>
-<area href="classacq400__Proxy.html" alt="acq400_Proxy" shape="rect" coords="702,112,848,136"/>
-<area href="classacq400__SOE.html" alt="acq400_SOE" shape="rect" coords="858,112,1004,136"/>
+<area href="classacq400__Permit.html" alt="acq400_Permit" shape="rect" coords="702,112,848,136"/>
+<area href="classacq400__PermitLut.html" alt="acq400_PermitLut" shape="rect" coords="858,112,1004,136"/>
+<area href="classacq400__Proxy.html" alt="acq400_Proxy" shape="rect" coords="1014,112,1160,136"/>
+<area href="classacq400__SOE.html" alt="acq400_SOE" shape="rect" coords="1170,112,1316,136"/>
 <area href="classacq400__FMT__Sim.html" alt="acq400_FMT_Sim" shape="rect" coords="0,168,146,192"/>
 <area href="classacq400__FMT__rx.html" alt="acq400_FMT_rx" shape="rect" coords="156,168,302,192"/>
 <area href="classacq400__INST__SPY.html" alt="acq400_INST_SPY" shape="rect" coords="312,168,458,192"/>
 <area href="classacq400__INST__STR.html" alt="acq400_INST_STR" shape="rect" coords="468,168,614,192"/>
+<area href="classacq400__Permit__AI.html" alt="acq400_Permit_AI" shape="rect" coords="624,168,770,192"/>
+<area href="classacq400__Permit__DI.html" alt="acq400_Permit_DI" shape="rect" coords="780,168,926,192"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -156,6 +160,8 @@ Protected Member Functions</h2></td></tr>
 asynStatus&#160;</td><td class="memItemRight"><b>sip</b> (int addr, int pnum, unsigned pram)</td></tr>
 <tr class="memitem:a6c6cbfd2ed5aee78a20ae5cded780f9c" id="r_a6c6cbfd2ed5aee78a20ae5cded780f9c"><td class="memItemLeft"><a id="a6c6cbfd2ed5aee78a20ae5cded780f9c" name="a6c6cbfd2ed5aee78a20ae5cded780f9c"></a>
 asynStatus&#160;</td><td class="memItemRight"><b>sip</b> (int addr, int pnum, epicsInt64 pram)</td></tr>
+<tr class="memitem:ac2496a6344a38d72554c35e9a891b407" id="r_ac2496a6344a38d72554c35e9a891b407"><td class="memItemLeft"><a id="ac2496a6344a38d72554c35e9a891b407" name="ac2496a6344a38d72554c35e9a891b407"></a>
+asynStatus&#160;</td><td class="memItemRight"><b>sip</b> (int addr, int pnum, double pram)</td></tr>
 <tr class="memitem:aa71f3ea1cf1c21cc2efda82cfc154dc9" id="r_aa71f3ea1cf1c21cc2efda82cfc154dc9"><td class="memItemLeft">asynStatus&#160;</td><td class="memItemRight"><a class="el" href="#aa71f3ea1cf1c21cc2efda82cfc154dc9">gsp</a> (int pnum, int maxchar, char *str)</td></tr>
 <tr class="memitem:a4e8463a6553fbdd9f57ed513c885b371" id="r_a4e8463a6553fbdd9f57ed513c885b371"><td class="memItemLeft"><a id="a4e8463a6553fbdd9f57ed513c885b371" name="a4e8463a6553fbdd9f57ed513c885b371"></a>
 asynStatus&#160;</td><td class="memItemRight"><b>ssp</b> (int pnum, const char *str)</td></tr>
@@ -169,6 +175,8 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a3690e8a159d060f86993c2cccb528b1d" id="r_a3690e8a159d060f86993c2cccb528b1d"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a3690e8a159d060f86993c2cccb528b1d">P_MON_RL</a></td></tr>
 <tr class="memitem:a4a97a88792c21ee9759db38e5b3c59e1" id="r_a4a97a88792c21ee9759db38e5b3c59e1"><td class="memItemLeft"><a id="a4a97a88792c21ee9759db38e5b3c59e1" name="a4a97a88792c21ee9759db38e5b3c59e1"></a>
 int&#160;</td><td class="memItemRight"><b>mrl_param</b></td></tr>
+<tr class="memitem:a8b3edc46260bb9dfa34d1b99bd291d99" id="r_a8b3edc46260bb9dfa34d1b99bd291d99"><td class="memItemLeft"><a id="a8b3edc46260bb9dfa34d1b99bd291d99" name="a8b3edc46260bb9dfa34d1b99bd291d99"></a>
+unsigned&#160;</td><td class="memItemRight"><b>update</b></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>common base class connects all acq400 PortDriver implementations </p>

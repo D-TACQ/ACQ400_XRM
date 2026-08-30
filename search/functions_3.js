@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['instance_0',['instance',['../classacq400__FMT__rx.html#a15eb6574ca62b18da80beacbf86e072e',1,'acq400_FMT_rx']]],
-  ['isvalid_1',['isValid',['../structSamplePrams.html#afe26780281bfec337d9c3eb68ffa6893',1,'SamplePrams']]]
+  ['full_5fload_0',['full_load',['../classPermitDSP.html#a5ac339ba9aaf99dec42f9a1d005f458c',1,'PermitDSP']]]
 ];

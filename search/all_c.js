@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['kbuf_0',['KBUF',['../structKBUF.html',1,'']]]
+  ['json_5fformatter_0',['JSON_Formatter',['../classJSON__Formatter.html',1,'']]]
 ];
