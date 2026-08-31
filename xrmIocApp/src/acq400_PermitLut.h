@@ -24,6 +24,18 @@
 
 #define PS_PRMT_LUT_LAST_EVENT	"PRMT_LUT_LAST_EVENT"   // last event accepted
 
+/**< NTTable view of the permit lut - show Event and Active selection for LUT row
+ *  "Active" : 32 bit mask showing participating channels - AI, DI, same treatment.
+ *  empty site? Active=0
+ */
+
+#define PS_PRMT_LUT_EV_COL	"PS_PRMT_LUT_EV_COL"
+#define PS_PRMT_LUT_S1_COL	"PS_PRMT_LUT_S1_COL"
+#define PS_PRMT_LUT_S2_COL	"PS_PRMT_LUT_S2_COL"
+#define PS_PRMT_LUT_S3_COL	"PS_PRMT_LUT_S3_COL"
+#define PS_PRMT_LUT_S4_COL	"PS_PRMT_LUT_S4_COL"
+#define PS_PRMT_LUT_S5_COL	"PS_PRMT_LUT_S5_COL"
+#define PS_PRMT_LUT_S6_COL	"PS_PRMT_LUT_S6_COL"
 
 /** @@todo may not be needed */
 struct _PRMT_LUT_ROW {
@@ -65,12 +77,29 @@ class acq400_PermitLut: public acq400_asynPortDriver {
 	int P_PRMT_LUT_COMMIT;
 	int P_PRMT_LUT_LAST_EVENT;
 
+	int P_PRMT_LUT_EV_COL;
+	int P_PRMT_LUT_00_COL;
+	int P_PRMT_LUT_S1_COL;
+	int P_PRMT_LUT_S2_COL;
+	int P_PRMT_LUT_S3_COL;
+	int P_PRMT_LUT_S4_COL;
+	int P_PRMT_LUT_S5_COL;
+	int P_PRMT_LUT_S6_COL;
+
 	PRMT_LUT_ROW lut_rows[MAX_ROWS]; // lazy allocation
 	std::set<PRMT_LUT_ROW> event_set;
 
 	static acq400_PermitLut* _instance;
 
+	unsigned cols[MAX_SITES+1][MAX_ROWS];    /** [0]: event, [123456]: Sn Active mask */
+
 	unsigned short last_load_event;
+
+
+	void set_EV_col(int addr, unsigned event);
+	void set_AI_selection_col(int addr, short ai_th_pairs[], int npairs);
+	void set_DI_selection_col(int addr, epicsInt32 di_pairs[], int npairs);
+
 protected:
 	acq400_PermitLut(const char *portName, int max_addr);
 

@@ -28,6 +28,7 @@ acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
 	last_load_event(EV99)
 {
 	memset(lut_rows, 0, MAX_ROWS*sizeof(PRMT_LUT_ROW));
+	memset(cols, 0, (MAX_SITES+1)*MAX_ROWS*sizeof(unsigned));
 
 	createParam(PS_PRMT_LUT_SOFT_EVENT,  asynParamInt32, &P_PRMT_LUT_SOFT_EVENT);
 
@@ -36,6 +37,14 @@ acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
 	createParam(PS_PRMT_LUT_TH_DI,  asynParamInt32Array, &P_PRMT_LUT_TH_DI);
 	createParam(PS_PRMT_LUT_COMMIT, asynParamInt32,      &P_PRMT_LUT_COMMIT);
 	createParam(PS_PRMT_LUT_LAST_EVENT, asynParamInt32,  &P_PRMT_LUT_LAST_EVENT);
+
+	createParam(PS_PRMT_LUT_EV_COL, asynParamInt32Array, &P_PRMT_LUT_EV_COL);
+	createParam(PS_PRMT_LUT_S1_COL, asynParamInt32Array, &P_PRMT_LUT_S1_COL);
+	createParam(PS_PRMT_LUT_S2_COL, asynParamInt32Array, &P_PRMT_LUT_S2_COL);
+	createParam(PS_PRMT_LUT_S3_COL, asynParamInt32Array, &P_PRMT_LUT_S3_COL);
+	createParam(PS_PRMT_LUT_S4_COL, asynParamInt32Array, &P_PRMT_LUT_S4_COL);
+	createParam(PS_PRMT_LUT_S5_COL, asynParamInt32Array, &P_PRMT_LUT_S5_COL);
+	createParam(PS_PRMT_LUT_S6_COL, asynParamInt32Array, &P_PRMT_LUT_S6_COL);
 }
 
 #define MARK fprintf(stderr, "%s %d %s\n", __FILE__, __LINE__, __FUNCTION__)
@@ -69,6 +78,7 @@ asynStatus acq400_PermitLut::writeInt32(asynUser *pasynUser, epicsInt32 value)
 		}
 		lut_rows[addr].event = value;
 		event_set.insert(lut_rows[addr]);
+		set_EV_col(addr, value);
 
 		if (verbose){
 			fprintf(stderr, "%s [%d] P_PRMT_LUT_EVENT value:%d\n",
@@ -134,6 +144,7 @@ asynStatus acq400_PermitLut::writeInt16Array(
 				lut_rows[addr].ai_th_pairs = new epicsInt16[nElements];
 			}
 			memcpy(lut_rows[addr].ai_th_pairs, value, nElements*sizeof(epicsInt16));
+			set_AI_selection_col(addr, lut_rows[addr].ai_th_pairs, nElements/NPAIR);
 		}else{
 			status = asynError;
 		}
@@ -184,6 +195,7 @@ asynStatus acq400_PermitLut::writeInt32Array(
 				lut_rows[addr].di_pairs = new epicsInt32[nElements];
 			}
 			memcpy(lut_rows[addr].di_pairs, value, nElements*sizeof(epicsInt32));
+			set_DI_selection_col(addr, lut_rows[addr].di_pairs, nElements/NPAIR);
 		}else{
 			status = asynError;
 		}
@@ -261,6 +273,27 @@ void acq400_PermitLut::check_if_fmt_event_trigger(const FMT& fmt)
 #endif
 	}
 	unlock();
+}
+
+void acq400_PermitLut::set_EV_col(int addr, unsigned event)
+{
+	cols[0][addr] = event;
+}
+void acq400_PermitLut::set_AI_selection_col(int addr, short ai_th_pairs[], int npairs)
+{
+	for (int ai32 = 0; ai32 < npairs/32; ++ai32){
+		int site = FIRST_AI_SITE + ai32;
+		; // @@TODO
+	}
+}
+
+/* more TODO : make a dirty value and a slow poll to call calbacks on dirty */
+void acq400_PermitLut::set_DI_selection_col(int addr, epicsInt32 di_pairs[], int npairs)
+{
+	for (int di32 = 0; di32 < npairs; ++di32){
+		int site = FIRST_DI_SITE + di32;
+		cols[site][addr] = di_pairs[di32*NPAIR+1];    /* active, value */
+	}
 }
 
 

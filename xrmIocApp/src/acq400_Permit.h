@@ -25,6 +25,9 @@
 #define MAX_ADDR  (MAX_SITES+1)    // site 0 and selection of 1..6
 
 
+#define FIRST_AI_SITE	1
+#define FIRST_DI_SITE	5
+
 #define PS_PERMIT_TRG_STAT	"PERMIT_TRG_STAT" /**<< latched status addr 1..6, perhaps 0: vector? 	*/
 #define PS_PERMIT_TRG_LIVE	"PERMIT_TRG_LIVE" /**<< live status addr 1..6, perhaps 0: ALL?		*/
 #define PS_PERMIT_ATD_MODE	"PERMIT_ATD_MODE"
