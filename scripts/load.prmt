@@ -51,7 +51,7 @@ echo acq400_PermitLut_Configure\($SPORT, $MAX_AI2\)
 ARP="P=${IOC_HOST}:,R=${SPORT},PORT=${SPORT},ADDR=0,IMAX=100,OMAX=100,TB3=0,TIB0=0"
 echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
 
-PRAMS="UUT=${IOC_HOST},SPORT=$SPORT,TIMEOUT=0"
+PRAMS="UUT=${IOC_HOST},PORT=$SPORT,SPORT=$SPORT,TIMEOUT=0"
 echo dbLoadRecords\(\"db/acq400_asyn_base.db\",\"${PRAMS},ADDR=0,FUN=PRMT_LUT\"\)
 echo dbLoadRecords\(\"db/permit_lut0.db\",\"${PRAMS}\"\)
 echo dbLoadRecords\(\"db/permit_lut_diags.db\",\"${PRAMS},PL_ROWS=${XRM_PRMT_LUT_ROWS}\"\)
