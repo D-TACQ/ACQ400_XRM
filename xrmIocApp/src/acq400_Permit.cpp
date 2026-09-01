@@ -331,48 +331,46 @@ unsigned PermitDSP::clear_permit_latch(int site, unsigned mask) const
 	return mask;
 }
 
+#define FM32	0xffffffff
+
 void acq400_Permit::shadow_task()
 {
 	while(true){
 		dsp.refresh_shadow();
 
-		lock();
 		for (int site = 1; site <= MAX_SITES; ++site){
 			if (dsp.isActiveSite(site)){
 				auto search = peers.find(site);
 				if (search != peers.end()){
 					acq400_Permit& peer = *search->second;
 					asynStatus status;
-					status = peer.setUIntDigitalParam(0, P_PERMIT_TRG_STAT,
-							dsp.get_permit_latch(site), 0xffffffff);
+
+					unsigned live = dsp.get_permit_live(site);
+					unsigned latch = dsp.get_permit_latch(site);
+
+					peer.lock();
+					status = peer.setUIntDigitalParam(
+							0, P_PERMIT_TRG_STAT, latch, FM32);
 					if (status != asynSuccess){
 						fprintf(stderr, "ERROR:%s failed to set P:%d E:%d\n",
 								FN, P_PERMIT_TRG_STAT, status);
-					}
-					if (verbose > 1){
-						unsigned rbk;
-						status = getUIntDigitalParam(P_PERMIT_TRG_STAT, &rbk, 0xffffffff);
-						fprintf(stderr, "INFO:%s get %s P:%d E:%d value:0x%08x\n",
-								FN, peer.portName, P_PERMIT_TRG_STAT, status, rbk);
 					}
 
-					peer.setUIntDigitalParam(0, P_PERMIT_TRG_LIVE,
-							dsp.get_permit_live(site), 0xffffffff);
+					peer.setUIntDigitalParam(
+							0, P_PERMIT_TRG_LIVE, live, FM32);
 					if (status != asynSuccess){
 						fprintf(stderr, "ERROR:%s failed to set P:%d E:%d\n",
 								FN, P_PERMIT_TRG_STAT, status);
 					}
-					if (verbose > 1){
-						unsigned rbk;
-						status = getUIntDigitalParam(P_PERMIT_TRG_LIVE, &rbk, 0xffffffff);
-						fprintf(stderr, "INFO:%s get %s P:%d E:%d value:0x%08x\n",
-								FN, peer.portName, P_PERMIT_TRG_LIVE, status, rbk);
-					}
 					peer.callParamCallbacks();
+					peer.unlock();
+					if (verbose > 1){
+						fprintf(stderr, "%s P:%s STAT:%08x LIVE:%08x\n",
+								FN, peer.portName, latch, live);
+					}
 				}
 			}
 		}
-		unlock();
 		usleep(500000);
 	}
 }
