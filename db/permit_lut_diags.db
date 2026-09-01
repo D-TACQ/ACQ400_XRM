@@ -31,21 +31,6 @@ record(waveform, "${UUT}:SOE_HLD:TAB:ROWNUM")
 	})
 }
 
-record(waveform, "${UUT}:PRMT:LUT:TAB:EVENT" ){
-	field(DTYP, "asynInt32ArrayIn")
-	field(INP,  "@asyn($(SPORT),0,$(TIMEOUT))P_PRMT_LUT_EV_COL")
-	field(FTVL, "LONG")
-	field(SCAN, "I/O Intr")
-	field(NELM, "${PL_ROWS}") 
-	field(DESC, "Event Column")
-	
-	info(Q:group, {
-		"${UUT}:PRMT:LUT:TAB": {
-			"value.EVENT": {+type:"plain", 
-					 +channel:"VAL", +putorder:1 }
-		}
-	})	
-}
 
 record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S1" ){
 	field(DTYP, "asynInt32ArrayIn")
@@ -58,7 +43,7 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S1" ){
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:TAB": {
 			"value.ACT_S1": {+type:"plain", 
-					 +channel:"VAL", +putorder:2 }
+					 +channel:"VAL", +putorder:1 }
 		}
 	})	
 }
@@ -74,7 +59,7 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S2" ){
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:TAB": {
 			"value.ACT_S2": {+type:"plain", 
-					 +channel:"VAL", +putorder:3 }
+					 +channel:"VAL", +putorder:2 }
 		}
 	})	
 }
@@ -90,7 +75,7 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S3" ){
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:TAB": {
 			"value.ACT_S3": {+type:"plain", 
-					 +channel:"VAL", +putorder:4 }
+					 +channel:"VAL", +putorder:3 }
 		}
 	})	
 }
@@ -107,7 +92,7 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S4" ){
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:TAB": {
 			"value.ACT_S4": {+type:"plain", 
-					 +channel:"VAL", +putorder:5 }
+					 +channel:"VAL", +putorder:4 }
 		}
 	})	
 }
@@ -123,7 +108,7 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S5" ){
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:TAB": {
 			"value.ACT_S5": {+type:"plain", 
-					 +channel:"VAL", +putorder:6 }
+					 +channel:"VAL", +putorder:5 }
 		}
 	})	
 }
@@ -139,10 +124,29 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S6" ){
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:TAB": {
 			"value.ACT_S6": {+type:"plain", 
-					 +channel:"VAL", +putorder:7 }
+					 +channel:"VAL", +putorder: }
 		}
 	})	
 }
+
+record(waveform, "${UUT}:PRMT:LUT:TAB:EVENT" ){
+	field(DTYP, "asynInt32ArrayIn")
+	field(INP,  "@asyn($(SPORT),0,$(TIMEOUT))PRMT_LUT_EV_COL")
+	field(FTVL, "LONG")
+	field(SCAN, "I/O Intr")
+	field(NELM, "${PL_ROWS}") 
+	field(DESC, "Event Column")
+	
+	info(Q:group, {
+		"${UUT}:PRMT:LUT:TAB": {
+			"value.EVENT": {+type:"plain", 
+					 +channel:"VAL", +putorder:7,
+					 +trigger:"*"
+			}
+		}
+	})	
+}
+
 
 record(longout, "${UUT}:PRMT:LUT:TAB:Save") {
     field(MDEL, "-1") # ensure we always trigger group monitor

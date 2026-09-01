@@ -74,15 +74,47 @@ void acq400_PermitLut::task_runner(void *drvPvt)
 }
 
 void acq400_PermitLut::doDiagsCallbacks() {
-	if (verbose) fprintf(stderr, "%s 01\n", FN);
+	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__);
 
-	doCallbacksInt8Array(c_rownum, 	            MAX_ROWS, P_PRMT_LUT_COL_ROW_NUM, 0);
+	if (verbose) fprintf(stderr, "%s c_rownum:%p P_PRMT_LUT_COL_ROW_NUM:%d\n",
+			FN,c_rownum,P_PRMT_LUT_COL_ROW_NUM);
+	if (verbose){
+		fprintf(stderr, "rownum:");
+		for (int ii = 0; ii < MAX_ROWS; ++ii){
+			fprintf(stderr, "%d,", c_rownum[ii]);
+		}
+		fprintf(stderr, "\n");
+	}
+//	doCallbacksInt8Array(c_rownum, 	            MAX_ROWS, P_PRMT_LUT_COL_ROW_NUM, 0);
+
+//	return;
+	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__);
+
 	doCallbacksInt32Array((epicsInt32*)cols[0], MAX_ROWS, P_PRMT_LUT_EV_COL, 0);
+	if (verbose){
+		fprintf(stderr, "events:");
+		for (int ii = 0; ii < MAX_ROWS; ++ii){
+			fprintf(stderr, "%d,", cols[0][ii]);
+		}
+		fprintf(stderr, "\n");
+	}
+
+	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__);
+
 	doCallbacksInt32Array((epicsInt32*)cols[1], MAX_ROWS, P_PRMT_LUT_S1_COL, 0);
+
+	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__);
+/*
 	doCallbacksInt32Array((epicsInt32*)cols[2], MAX_ROWS, P_PRMT_LUT_S2_COL, 0);
 	doCallbacksInt32Array((epicsInt32*)cols[3], MAX_ROWS, P_PRMT_LUT_S3_COL, 0);
 	doCallbacksInt32Array((epicsInt32*)cols[4], MAX_ROWS, P_PRMT_LUT_S4_COL, 0);
+*/
+	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__);
+
 	doCallbacksInt32Array((epicsInt32*)cols[5], MAX_ROWS, P_PRMT_LUT_S5_COL, 0);
+
+	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__);
+
 	doCallbacksInt32Array((epicsInt32*)cols[6], MAX_ROWS, P_PRMT_LUT_S6_COL, 0);
 
 	if (verbose) fprintf(stderr, "%s 99\n", FN);
@@ -368,7 +400,8 @@ void acq400_PermitLut::set_AI_selection_col(int addr, short ai_th_pairs[], int n
 				}
 			}
 		}
-		cols[site][addr] = nactive*10000 + last*100 + first;
+
+		cols[site][addr] = nactive*10000 + last*100 + (nactive? first: 0);
 	}
 }
 
@@ -394,7 +427,8 @@ void acq400_PermitLut::set_DI_selection_col(int addr, epicsInt32 di_pairs[], int
 				}
 			}
 		}
-		cols[site][addr] = nactive*10000 + last*100 + first;
+
+		cols[site][addr] = nactive*10000 + last*100 + (nactive? first: 0);
 	}
 }
 
