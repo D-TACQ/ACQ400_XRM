@@ -40,7 +40,6 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:EVENT" ){
 	field(NELM, "${PL_ROWS}") 
 	field(DESC, "Event Column")
 	
-	
 	info(Q:group, {
 		"${UUT}:PRMT:LUT:TAB": {
 			"value.EVENT": {+type:"plain", 

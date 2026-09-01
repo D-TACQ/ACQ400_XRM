@@ -76,47 +76,18 @@ void acq400_PermitLut::task_runner(void *drvPvt)
 void acq400_PermitLut::doDiagsCallbacks() {
 	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__);
 
-	if (verbose) fprintf(stderr, "%s c_rownum:%p P_PRMT_LUT_COL_ROW_NUM:%d LEN:%d\n",
-			FN,c_rownum,P_PRMT_LUT_COL_ROW_NUM, MAX_ROWS);
-	if (verbose){
-		fprintf(stderr, "rownum:");
-		for (int ii = 0; ii < MAX_ROWS; ++ii){
-			fprintf(stderr, "%d,", c_rownum[ii]);
-		}
-		fprintf(stderr, "\n");
-	}
-	if (verbose < 2)
+#if 0
+		// core-dumps. @@todo dunno why
 	doCallbacksInt8Array(c_rownum, 	            MAX_ROWS, P_PRMT_LUT_COL_ROW_NUM, 0);
-
-	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__);
-
+#endif
 	doCallbacksInt32Array((epicsInt32*)cols[0], MAX_ROWS, P_PRMT_LUT_EV_COL, 0);
-	if (verbose){
-		fprintf(stderr, "events:");
-		for (int ii = 0; ii < MAX_ROWS; ++ii){
-			fprintf(stderr, "%d,", cols[0][ii]);
-		}
-		fprintf(stderr, "\n");
-	}
-
-	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__);
-
 	doCallbacksInt32Array((epicsInt32*)cols[1], MAX_ROWS, P_PRMT_LUT_S1_COL, 0);
-
-	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__);
-
 	doCallbacksInt32Array((epicsInt32*)cols[2], MAX_ROWS, P_PRMT_LUT_S2_COL, 0);
 	doCallbacksInt32Array((epicsInt32*)cols[3], MAX_ROWS, P_PRMT_LUT_S3_COL, 0);
 	doCallbacksInt32Array((epicsInt32*)cols[4], MAX_ROWS, P_PRMT_LUT_S4_COL, 0);
-
-	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__);
-
 	doCallbacksInt32Array((epicsInt32*)cols[5], MAX_ROWS, P_PRMT_LUT_S5_COL, 0);
-
-	if (verbose) fprintf(stderr, "%s %d\n", FN, __LINE__);
-
 	doCallbacksInt32Array((epicsInt32*)cols[6], MAX_ROWS, P_PRMT_LUT_S6_COL, 0);
-
+	doCallbacksInt32Array((epicsInt32*)cols[0], MAX_ROWS, P_PRMT_LUT_EV_COL, 0);
 	if (verbose) fprintf(stderr, "%s 99\n", FN);
 }
 void acq400_PermitLut::task()
