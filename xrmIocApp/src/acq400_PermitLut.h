@@ -87,7 +87,6 @@ class acq400_PermitLut: public acq400_asynPortDriver {
 	int P_PRMT_LUT_LAST_EVENT;
 
 	int P_PRMT_LUT_EV_COL;
-	int P_PRMT_LUT_00_COL;
 	int P_PRMT_LUT_S1_COL;
 	int P_PRMT_LUT_S2_COL;
 	int P_PRMT_LUT_S3_COL;
@@ -101,6 +100,7 @@ class acq400_PermitLut: public acq400_asynPortDriver {
 
 	static acq400_PermitLut* _instance;
 
+	epicsInt8    c_rownum[MAX_ROWS];
 	unsigned cols[MAX_SITES+1][MAX_ROWS];    /** [0]: event, [123456]: Sn Active mask */
 
 	unsigned short last_load_event;
@@ -110,6 +110,11 @@ class acq400_PermitLut: public acq400_asynPortDriver {
 	void set_AI_selection_col(int addr, short ai_th_pairs[], int npairs);
 	void set_DI_selection_col(int addr, epicsInt32 di_pairs[], int npairs);
 
+	void doDiagsCallbacks();
+	virtual void task();
+	static void task_runner(void *drvPvt);
+
+	bool dirty;
 protected:
 	acq400_PermitLut(const char *portName, int max_addr);
 
@@ -122,8 +127,6 @@ protected:
 
 	virtual asynStatus writeInt32Array(asynUser *pasynUser, epicsInt32 *value,
 					size_t nElements);
-	virtual asynStatus doCallbacksInt32Array(epicsInt32 *value,
-	                                        size_t nElements, int reason, int addr);
 public:
 	void check_if_fmt_event_trigger(const FMT& fmt);
 

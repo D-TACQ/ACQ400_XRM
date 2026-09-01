@@ -12,6 +12,8 @@
 #define DN	__FILE__
 #define FN	__FUNCTION__
 
+#define ACQ400_PERMIT_LUT_USLEEP	770000
+
 int acq400_PermitLut::verbose = ::getenv_default("acq400_PERMIT_LUT_VERBOSE", 0);
 
 acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
@@ -28,7 +30,12 @@ acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
 	dsp(PermitDSP::instance()),
 	last_load_event(EV99)
 {
+	asynStatus status = asynSuccess;
+
 	memset(lut_rows, 0, MAX_ROWS*sizeof(PRMT_LUT_ROW));
+	for (int row = 0; row < MAX_ROWS; ++row){
+		c_rownum[row] = row;
+	}
 	memset(cols, 0, (MAX_SITES+1)*MAX_ROWS*sizeof(unsigned));
 
 	createParam(PS_PRMT_LUT_SOFT_EVENT,  asynParamInt32, &P_PRMT_LUT_SOFT_EVENT);
@@ -46,6 +53,51 @@ acq400_PermitLut::acq400_PermitLut(const char *portName, int _max_addr):
 	createParam(PS_PRMT_LUT_S4_COL, asynParamInt32Array, &P_PRMT_LUT_S4_COL);
 	createParam(PS_PRMT_LUT_S5_COL, asynParamInt32Array, &P_PRMT_LUT_S5_COL);
 	createParam(PS_PRMT_LUT_S6_COL, asynParamInt32Array, &P_PRMT_LUT_S6_COL);
+	createParam(PS_PRMT_LUT_COL_ROW_NUM, asynParamInt8Array, &P_PRMT_LUT_COL_ROW_NUM);
+
+	status = (asynStatus)(epicsThreadCreate("PRMT_LUT_task",
+			epicsThreadPriorityLow,
+			epicsThreadGetStackSize(epicsThreadStackMedium),
+			(EPICSTHREADFUNC)task_runner,
+			this) == NULL);
+	if (status) {
+		printf("%s:%s:%d epicsThreadCreate failure\n", DN, FN, __LINE__);
+		return;
+	}
+
+}
+
+
+void acq400_PermitLut::task_runner(void *drvPvt)
+{
+	((acq400_PermitLut *)drvPvt)->task();
+}
+
+void acq400_PermitLut::doDiagsCallbacks() {
+	doCallbacksInt8Array(c_rownum, 	            MAX_ROWS, P_PRMT_LUT_COL_ROW_NUM, 0);
+	doCallbacksInt32Array((epicsInt32*)cols[0], MAX_ROWS, P_PRMT_LUT_EV_COL, 0);
+	doCallbacksInt32Array((epicsInt32*)cols[1], MAX_ROWS, P_PRMT_LUT_S1_COL, 0);
+	doCallbacksInt32Array((epicsInt32*)cols[2], MAX_ROWS, P_PRMT_LUT_S2_COL, 0);
+	doCallbacksInt32Array((epicsInt32*)cols[3], MAX_ROWS, P_PRMT_LUT_S3_COL, 0);
+	doCallbacksInt32Array((epicsInt32*)cols[4], MAX_ROWS, P_PRMT_LUT_S4_COL, 0);
+	doCallbacksInt32Array((epicsInt32*)cols[5], MAX_ROWS, P_PRMT_LUT_S5_COL, 0);
+	doCallbacksInt32Array((epicsInt32*)cols[6], MAX_ROWS, P_PRMT_LUT_S6_COL, 0);
+}
+void acq400_PermitLut::task()
+{
+	fprintf(stderr, "%s 01\n", FN);
+
+	epicsEventWait(eventId);
+
+	while(true){
+		lock();
+		if (dirty){
+			doDiagsCallbacks();
+			dirty = false;
+		}
+		unlock();
+		usleep(ACQ400_PERMIT_LUT_USLEEP);
+	}
 }
 
 #define MARK fprintf(stderr, "%s %d %s\n", __FILE__, __LINE__, __FUNCTION__)
@@ -79,7 +131,11 @@ asynStatus acq400_PermitLut::writeInt32(asynUser *pasynUser, epicsInt32 value)
 		}
 		lut_rows[addr].event = value;
 		event_set.insert(lut_rows[addr]);
+
+		lock();
 		set_EV_col(addr, value);
+		dirty = true;
+		unlock();
 
 		if (verbose){
 			fprintf(stderr, "%s [%d] P_PRMT_LUT_EVENT value:%d\n",
@@ -145,7 +201,12 @@ asynStatus acq400_PermitLut::writeInt16Array(
 				lut_rows[addr].ai_th_pairs = new epicsInt16[nElements];
 			}
 			memcpy(lut_rows[addr].ai_th_pairs, value, nElements*sizeof(epicsInt16));
+
+			lock();
 			set_AI_selection_col(addr, lut_rows[addr].ai_th_pairs, nElements/NPAIR);
+			dirty = true;
+			unlock();
+
 		}else{
 			status = asynError;
 		}
@@ -196,7 +257,12 @@ asynStatus acq400_PermitLut::writeInt32Array(
 				lut_rows[addr].di_pairs = new epicsInt32[nElements];
 			}
 			memcpy(lut_rows[addr].di_pairs, value, nElements*sizeof(epicsInt32));
+
+			lock();
 			set_DI_selection_col(addr, lut_rows[addr].di_pairs, nElements/NPAIR);
+			dirty = true;
+			unlock();
+
 		}else{
 			status = asynError;
 		}
@@ -211,12 +277,6 @@ asynStatus acq400_PermitLut::writeInt32Array(
 				"%s:%s: function=%d, name=%s, value=%p\n",
 				DN, FN, function, paramName, value);
 	return status;
-}
-asynStatus acq400_PermitLut::doCallbacksInt32Array(
-		epicsInt32 *value, size_t nElements, int reason, int addr)
-{
-	// no task() -> no callbacks (so far)
-	return asynSuccess;
 }
 
 void acq400_PermitLut::check_if_fmt_event_trigger(const FMT& fmt)
