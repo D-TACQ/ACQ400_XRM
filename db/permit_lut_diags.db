@@ -20,7 +20,7 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:Labels_") {
 #record(waveform, "${UUT}:PRMT:LUT:TAB:ROWNUM")
 #{
 #	field(DTYP, "asynInt8ArrayIn")
-#	field(INP,  "@asyn($(SPORT),0,$(TIMEOUT))PRMT_LUT_COL_RN")
+#	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PRMT_LUT_COL_RN")
 #	field(FTVL, "UCHAR")
 #	field(NELM, "${PL_ROWS}")
 #	field(SCAN, "I/O Intr")
@@ -34,7 +34,7 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:Labels_") {
 #}
 record(waveform, "${UUT}:PRMT:LUT:TAB:EVENT" ){
 	field(DTYP, "asynInt32ArrayIn")
-	field(INP,  "@asyn($(SPORT),0,$(TIMEOUT))PRMT_LUT_EV_COL")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PRMT_LUT_EV_COL")
 	field(FTVL, "LONG")
 	field(SCAN, "I/O Intr")
 	field(NELM, "${PL_ROWS}") 
@@ -54,7 +54,7 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:EVENT" ){
 
 record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S1" ){
 	field(DTYP, "asynInt32ArrayIn")
-	field(INP,  "@asyn($(SPORT),0,$(TIMEOUT))PRMT_LUT_S1_COL")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PRMT_LUT_S1_COL")
 	field(FTVL, "LONG")
 	field(SCAN, "I/O Intr")
 	field(NELM, "${PL_ROWS}") 
@@ -70,7 +70,7 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S1" ){
 
 record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S2" ){
 	field(DTYP, "asynInt32ArrayIn")
-	field(INP,  "@asyn($(SPORT),0,$(TIMEOUT))PRMT_LUT_S2_COL")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PRMT_LUT_S2_COL")
 	field(FTVL, "LONG")
 	field(SCAN, "I/O Intr")
 	field(NELM, "${PL_ROWS}") 
@@ -86,7 +86,7 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S2" ){
 
 record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S3" ){
 	field(DTYP, "asynInt32ArrayIn")
-	field(INP,  "@asyn($(SPORT),0,$(TIMEOUT))PRMT_LUT_S3_COL")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PRMT_LUT_S3_COL")
 	field(FTVL, "LONG")
 	field(SCAN, "I/O Intr")
 	field(NELM, "${PL_ROWS}") 
@@ -103,7 +103,7 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S3" ){
 
 record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S4" ){
 	field(DTYP, "asynInt32ArrayIn")
-	field(INP,  "@asyn($(SPORT),0,$(TIMEOUT))PRMT_LUT_S4_COL")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PRMT_LUT_S4_COL")
 	field(FTVL, "LONG")
 	field(SCAN, "I/O Intr")
 	field(NELM, "${PL_ROWS}") 
@@ -119,7 +119,7 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S4" ){
 
 record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S5" ){
 	field(DTYP, "asynInt32ArrayIn")
-	field(INP,  "@asyn($(SPORT),0,$(TIMEOUT))PRMT_LUT_S5_COL")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PRMT_LUT_S5_COL")
 	field(FTVL, "LONG")
 	field(SCAN, "I/O Intr")
 	field(NELM, "${PL_ROWS}") 
@@ -135,7 +135,7 @@ record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S5" ){
 
 record(waveform, "${UUT}:PRMT:LUT:TAB:ACT:S6" ){
 	field(DTYP, "asynInt32ArrayIn")
-	field(INP,  "@asyn($(SPORT),0,$(TIMEOUT))PRMT_LUT_S6_COL")
+	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PRMT_LUT_S6_COL")
 	field(FTVL, "LONG")
 	field(SCAN, "I/O Intr")
 	field(NELM, "${PL_ROWS}") 
