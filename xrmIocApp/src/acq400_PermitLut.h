@@ -44,7 +44,7 @@
 #define PS_PRMT_LUT_S4_COL	"PRMT_LUT_S4_COL"
 #define PS_PRMT_LUT_S5_COL	"PRMT_LUT_S5_COL"
 #define PS_PRMT_LUT_S6_COL	"PRMT_LUT_S6_COL"
-#define PS_PRMT_LUT_COL_ROW_NUM "PRMT_LUT_COL_ROW_NUM"
+#define PS_PRMT_LUT_COL_ROW_NUM "PRMT_LUT_COL_RN"
 
 /** @@todo may not be needed */
 struct _PRMT_LUT_ROW {
