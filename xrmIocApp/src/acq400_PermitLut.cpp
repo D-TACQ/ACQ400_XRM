@@ -74,6 +74,8 @@ void acq400_PermitLut::task_runner(void *drvPvt)
 }
 
 void acq400_PermitLut::doDiagsCallbacks() {
+	if (verbose) fprintf(stderr, "%s 01\n", FN);
+
 	doCallbacksInt8Array(c_rownum, 	            MAX_ROWS, P_PRMT_LUT_COL_ROW_NUM, 0);
 	doCallbacksInt32Array((epicsInt32*)cols[0], MAX_ROWS, P_PRMT_LUT_EV_COL, 0);
 	doCallbacksInt32Array((epicsInt32*)cols[1], MAX_ROWS, P_PRMT_LUT_S1_COL, 0);
@@ -82,6 +84,8 @@ void acq400_PermitLut::doDiagsCallbacks() {
 	doCallbacksInt32Array((epicsInt32*)cols[4], MAX_ROWS, P_PRMT_LUT_S4_COL, 0);
 	doCallbacksInt32Array((epicsInt32*)cols[5], MAX_ROWS, P_PRMT_LUT_S5_COL, 0);
 	doCallbacksInt32Array((epicsInt32*)cols[6], MAX_ROWS, P_PRMT_LUT_S6_COL, 0);
+
+	if (verbose) fprintf(stderr, "%s 99\n", FN);
 }
 void acq400_PermitLut::task()
 {
@@ -91,6 +95,10 @@ void acq400_PermitLut::task()
 
 	while(true){
 		lock();
+		setIntegerParam(P_UPDATES, ++update);
+		//setInteger64Param(P_TS_USEC, now_us);
+		callParamCallbacks();
+
 		if (dirty){
 			doDiagsCallbacks();
 			dirty = false;
