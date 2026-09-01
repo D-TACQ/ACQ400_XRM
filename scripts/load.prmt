@@ -53,6 +53,9 @@ echo dbLoadRecords\(\"db/asynRecord.db\",\"${ARP}\"\)
 
 PRAMS="UUT=${IOC_HOST},SPORT=$SPORT,TIMEOUT=0"
 echo dbLoadRecords\(\"db/permit_lut0.db\",\"${PRAMS}\"\)
+echo dbLoadRecords\(\"db/permit_lut_diags.db\",\"${PRAMS},PL_ROWS=${XRM_PRMT_LUT_ROWS}\"\)
 PRAMS="$PRAMS,MAX_AI=$PRMT_LUT_MAX_AI,MAX_AI2=$MAX_AI2,MAX_DI=$PRMT_LUT_MAX_DI"
 echo dbLoadRecords\(\"$PRMT_LUT_DB\",\"${PRAMS}\"\)
+
+
 

@@ -27,15 +27,24 @@
 /**< NTTable view of the permit lut - show Event and Active selection for LUT row
  *  "Active" : 32 bit mask showing participating channels - AI, DI, same treatment.
  *  empty site? Active=0
+ *  Phoebus displays decimal integer.
+ *   - a bit mask is indecipherable in decimal
+ *
+ *  Sx COL encoding : ACTIVE*10000, LAST*100, FIRST*1
+ *   - eg  323201   : 32 active channels, LAST=32 FIRST=1
+ *   - eg   23201   :  2 active channels, LAST=32, FIRST=1
+ *   - eg   40401   :  4 active channels, LAST=4, FIRST=1
+ *   - eg   43229   :  4 active channels, LAST=32, FIRST=29
  */
 
-#define PS_PRMT_LUT_EV_COL	"PS_PRMT_LUT_EV_COL"
-#define PS_PRMT_LUT_S1_COL	"PS_PRMT_LUT_S1_COL"
-#define PS_PRMT_LUT_S2_COL	"PS_PRMT_LUT_S2_COL"
-#define PS_PRMT_LUT_S3_COL	"PS_PRMT_LUT_S3_COL"
-#define PS_PRMT_LUT_S4_COL	"PS_PRMT_LUT_S4_COL"
-#define PS_PRMT_LUT_S5_COL	"PS_PRMT_LUT_S5_COL"
-#define PS_PRMT_LUT_S6_COL	"PS_PRMT_LUT_S6_COL"
+#define PS_PRMT_LUT_EV_COL	"PRMT_LUT_EV_COL"
+#define PS_PRMT_LUT_S1_COL	"PRMT_LUT_S1_COL"
+#define PS_PRMT_LUT_S2_COL	"PRMT_LUT_S2_COL"
+#define PS_PRMT_LUT_S3_COL	"PRMT_LUT_S3_COL"
+#define PS_PRMT_LUT_S4_COL	"PRMT_LUT_S4_COL"
+#define PS_PRMT_LUT_S5_COL	"PRMT_LUT_S5_COL"
+#define PS_PRMT_LUT_S6_COL	"PRMT_LUT_S6_COL"
+#define PS_PRMT_LUT_COL_ROW_NUM "PRMT_LUT_COL_ROW_NUM"
 
 /** @@todo may not be needed */
 struct _PRMT_LUT_ROW {
@@ -85,6 +94,7 @@ class acq400_PermitLut: public acq400_asynPortDriver {
 	int P_PRMT_LUT_S4_COL;
 	int P_PRMT_LUT_S5_COL;
 	int P_PRMT_LUT_S6_COL;
+	int P_PRMT_LUT_COL_ROW_NUM;
 
 	PRMT_LUT_ROW lut_rows[MAX_ROWS]; // lazy allocation
 	std::set<PRMT_LUT_ROW> event_set;

@@ -282,8 +282,24 @@ void acq400_PermitLut::set_EV_col(int addr, unsigned event)
 void acq400_PermitLut::set_AI_selection_col(int addr, short ai_th_pairs[], int npairs)
 {
 	for (int ai32 = 0; ai32 < npairs/32; ++ai32){
-		int site = FIRST_AI_SITE + ai32;
-		; // @@TODO
+		const int site = FIRST_AI_SITE + ai32;
+
+		unsigned nactive = 0;
+		unsigned first = 33;
+		unsigned last  = 0;
+
+		for (unsigned ic = 0; ic < 32; ++ic){
+			if (ai_th_pairs[ic*2] != ai_th_pairs[ic*2+1]){
+				nactive += 1;
+				if (ic < first){
+					first = ic+1;
+				}
+				if (ic >= last){
+					last = ic + 1;
+				}
+			}
+		}
+		cols[site][addr] = nactive*10000 + last*100 + first;
 	}
 }
 
@@ -291,8 +307,25 @@ void acq400_PermitLut::set_AI_selection_col(int addr, short ai_th_pairs[], int n
 void acq400_PermitLut::set_DI_selection_col(int addr, epicsInt32 di_pairs[], int npairs)
 {
 	for (int di32 = 0; di32 < npairs; ++di32){
-		int site = FIRST_DI_SITE + di32;
-		cols[site][addr] = di_pairs[di32*NPAIR+1];    /* active, value */
+		const int site = FIRST_DI_SITE + di32;
+
+		unsigned nactive = 0;
+		unsigned first = 33;
+		unsigned last  = 0;
+		unsigned active = di_pairs[di32*NPAIR+1];
+
+		for (unsigned dx = 0; active; active >>=1l, ++dx ){
+			if (active&1){
+				nactive += 1;
+				if (dx < first){
+					first = dx + 1; // first counts from 1
+				}
+				if (dx >= last){
+					last = dx + 1;
+				}
+			}
+		}
+		cols[site][addr] = nactive*10000 + last*100 + first;
 	}
 }
 
