@@ -55,7 +55,7 @@ void PermitDSP::map_fpga()
 }
 void PermitDSP::map_shadow()
 {
-	shadow.fd = open("/tmp/permit_shadow", O_RDWR|O_CREAT);
+	shadow.fd = open("/tmp/permit_shadow", O_RDWR|O_CREAT, 0666);
 	if (shadow.fd <= 0){
 		perror("/tmp/permit_shadow");
 		assert(shadow.fd <= 0);
