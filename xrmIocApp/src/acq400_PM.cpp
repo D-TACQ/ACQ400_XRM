@@ -244,7 +244,7 @@ void acq400_PM::task()
 				    char* raw_ptr = spX_from_live ? 
 					Buffer::the_buffers[bpi.ib_live]->getBase() : 
 					(char*)user_store[bpi.ib_store].data();
-				    update_pm_tab_row(irow++, raw_ptr;
+				    update_pm_tab_row(irow++, raw_ptr);
 				}
 			}
 			lock();
