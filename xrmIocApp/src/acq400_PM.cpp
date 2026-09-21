@@ -89,8 +89,6 @@ void acq400_PM::task_runner(void *drvPvt)
 	((acq400_PM *)drvPvt)->task();
 }
 
-int FIRST=2;   // @@todo SWAG. Make official.
-
 
 void acq400_PM::get_sample_dimensions()
 {
@@ -110,8 +108,9 @@ void acq400_PM::init_buffers(const unsigned nbuf)
 	if (verbose) fprintf(stderr, "%s 01\n", FN);
 	filled.clear();
 	empties.clear();
-	for (short ii = FIRST; ii <= (short)nbuf+FIRST; ++ii){
+	for (short ii = 0; ii <= (short)nbuf; ++ii){
 		if (verbose>1) fprintf(stderr, "%s 50\n", FN);
+		user_store[ii].resize(BURST_LW);
 		empties.push_back({-1, ii});
 	}
 }
@@ -136,11 +135,15 @@ void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
 			FN, fill_from, bp.ib_store, bp.ib_live);
 
 	filled.push_front(bp);
+	Buffer* src_bp = Buffer::the_buffers[bp.ib_live];
 
-	Buffer* dst_bp = Buffer::the_buffers[bp.ib_store];
-	unsigned long arg = BURST_LW << 10 | bp.ib_live;
-	int rc = ioctl(dst_bp->getFD(), ACQ400_HB_COPYFROM_LEN, arg);
+	void* dst = user_store[bp.ib_store].data();
+	void* src = src_bp->getBase();
+	size_t bytes_to_copy = BURST_LW * sizeof(int);
 
+	memcpy(dst, src, bytes_to_copy);
+
+	/*
 	if (rc != 0){
 		char msg[80];
 		snprintf(msg, 80, "ERROR dst:\"%s\" ioctl fail %d arg %08lx",
@@ -152,6 +155,7 @@ void acq400_PM::stash_buffer(int ib_live, const unsigned nbuf)
 			fprintf(stderr, "%s:%s ioctl %08lx success\n", __FILE__, FN, arg);
 		}
 	}
+	*/
 }
 
 void acq400_PM::update_pm_callbacks(bool call_array_callbacks )
@@ -178,10 +182,10 @@ void acq400_PM::update_pm_callbacks(bool call_array_callbacks )
 
 
 
-void acq400_PM::update_pm_tab_row(int row, int ib)
+void acq400_PM::update_pm_tab_row(int row, char* raw_base)
 {
 	const int SSL = SSB/sizeof(long);
-	char* raw = Buffer::the_buffers[ib]->getBase() + SKIP_ES*SSB;
+	char* raw = raw_base + SKIP_ES*SSB;
 	int * sp_raw = (int*)raw + SOE_SMPL_SP_INDEX;
 	const int lrow = row*SSL;
 	unsigned wrs, wrv;
@@ -237,7 +241,10 @@ void acq400_PM::task()
 				pm_cols.c_ib_live[irow] = bpi.ib_live;
 				pm_cols.c_ib_store[irow] = bpi.ib_store;
 				if (rateLimit.goAhead()){
-					update_pm_tab_row(irow++, spX_from_live? bpi.ib_live: bpi.ib_store);
+				    char* raw_ptr = spX_from_live ? 
+					Buffer::the_buffers[bpi.ib_live]->getBase() : 
+					(char*)user_store[bpi.ib_store].data();
+				    update_pm_tab_row(irow++, raw_ptr;
 				}
 			}
 			lock();
@@ -249,7 +256,7 @@ void acq400_PM::task()
 			int baddr = 0;
 			lock();
 			for (auto&& bpi: filled){
-				int* bp = (int*)Buffer::the_buffers[bpi.ib_store]->getBase();
+				int* bp = user_store[bpi.ib_store].data();
 				doCallbacksInt32Array(bp, BURST_LW, P_RAWBUF, baddr++);
 			}
 			unlock();

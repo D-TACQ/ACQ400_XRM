@@ -25,6 +25,7 @@
 #include <numeric>
 #include <string>
 #include <deque>
+#include <vector>
 
 struct BufferPair {
 	short ib_live;	// index of live buffer
@@ -57,6 +58,7 @@ class acq400_PM: public acq400_asynPortDriver {
 protected:
 	std::deque<BufferPair> empties;
 	std::deque<BufferPair> filled;
+	std::vector<int> user_store[MAX_PM_BUFFERS];
 
 	void init_buffers(const unsigned nbuf);
 	void stash_buffer(int ib_live, const unsigned nbuf);
@@ -78,7 +80,7 @@ protected:
 	SamplePrams samplePrams;
 	void get_sample_dimensions();
 
-	virtual void update_pm_tab_row(int row, int ib);
+	virtual void update_pm_tab_row(int row, char* raw_base);
 	virtual void update_pm_callbacks(bool call_array_callbacks);
 
 	virtual void task();
