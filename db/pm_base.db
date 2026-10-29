@@ -2,6 +2,7 @@
 
 record(bo, "${UUT}:PM:RUNSTOP")
 {
+	field(DESC, "Control for starting/stopping")
 	field(PINI, "YES")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))RUNSTOP")
@@ -13,10 +14,12 @@ record(bo, "${UUT}:PM:RUNSTOP")
 # see fmt_rx.db
 record(calcout, "${UUT}:FMT:PM_TRG:EVT:ACT:out")
 {
+	field(DESC, "TODO")
 	field(OUT, "${UUT}:PM:RUNSTOP PP")
 }
 record(longin, "${UUT}:PM:UPDATES")
 {
+	field(DESC, "TODO")
 	field(PINI, "NO")
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))UPDATES")
@@ -26,6 +29,7 @@ record(longin, "${UUT}:PM:UPDATES")
 
 record(longout, "${UUT}:PM:NBUF")
 {
+	field(DESC, "Number of buffers TODO")
 	field(PINI, "YES")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))NBUF")
@@ -34,14 +38,10 @@ record(longout, "${UUT}:PM:NBUF")
 
 record(int64in, "${UUT}:PM:TS_USEC")
 {
+	field(DESC, "Timestamp in microseconds TODO")
 	field(PINI, "NO")
 	field(DTYP, "asynInt64")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))TS_USEC")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
 }
-
-
-
-
-
