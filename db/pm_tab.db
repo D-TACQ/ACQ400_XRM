@@ -1,4 +1,5 @@
 record(waveform, "${UUT}:PM:TAB:Labels_") {
+	field(DESC, "")
 	field(FTVL, "STRING")
 	field(NELM, "11")
 	field(INP , {const:["Row", "Live Buf", "PM Buf", "TIMESTAMP",
@@ -13,7 +14,8 @@ record(waveform, "${UUT}:PM:TAB:Labels_") {
 }
 
 record(waveform, "${UUT}:PM:TAB:ROWNUM")
-{
+{ 
+	field(DESC, "Row number in PM Table")
 	field(DTYP, "asynInt8ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_ROWNUM")
 	field(FTVL, "UCHAR")
@@ -29,6 +31,7 @@ record(waveform, "${UUT}:PM:TAB:ROWNUM")
 
 record(waveform, "${UUT}:PM:TAB:IBLIVE")
 {
+	field(DESC, "Live buffer number in PM Table")
 	field(DTYP, "asynInt16ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_IBLIVE")
 	field(FTVL, "USHORT")
@@ -45,6 +48,7 @@ record(waveform, "${UUT}:PM:TAB:IBLIVE")
 
 record(waveform, "${UUT}:PM:TAB:IBSTORE")
 {
+	field(DESC, "Stored buffer number in PM Table")
 	field(DTYP, "asynInt16ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_IBSTORE")
 	field(FTVL, "USHORT")
@@ -60,6 +64,7 @@ record(waveform, "${UUT}:PM:TAB:IBSTORE")
 
 record(waveform, "${UUT}:PM:TAB:TS")
 {
+	field(DESC, "Timestamp in PM Table")
 	field(DTYP, "asynInt64ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_TS")
 	field(FTVL, "INT64")
@@ -75,6 +80,7 @@ record(waveform, "${UUT}:PM:TAB:TS")
 
 record(waveform, "${UUT}:PM:TAB:SP0")
 {
+	field(DESC, "SPAD0 in PM Table")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_SP0")
 	field(FTVL, "ULONG")
@@ -90,6 +96,7 @@ record(waveform, "${UUT}:PM:TAB:SP0")
 
 record(waveform, "${UUT}:PM:TAB:SP1")
 {
+	field(DESC, "SPAD1 in PM Table")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_SP1")
 	field(FTVL, "ULONG")
@@ -105,6 +112,7 @@ record(waveform, "${UUT}:PM:TAB:SP1")
 
 record(waveform, "${UUT}:PM:TAB:SP2")
 {
+	field(DESC, "SPAD2 in PM Table")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_SP2")
 	field(FTVL, "ULONG")
@@ -117,8 +125,10 @@ record(waveform, "${UUT}:PM:TAB:SP2")
 		}
 	})
 }
+
 record(waveform, "${UUT}:PM:TAB:SP3")
 {
+	field(DESC, "SPAD3 in PM Table")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_SP3")
 	field(FTVL, "ULONG")
@@ -134,6 +144,7 @@ record(waveform, "${UUT}:PM:TAB:SP3")
 
 record(waveform, "${UUT}:PM:TAB:WRVS")
 {
+	field(DESC, "WR Vernier seconds in PM Table")
 	field(DTYP, "asynInt8ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_WRVS")
 	field(FTVL, "UCHAR")
@@ -149,6 +160,7 @@ record(waveform, "${UUT}:PM:TAB:WRVS")
 
 record(waveform, "${UUT}:PM:TAB:WRVT")
 {
+	field(DESC, "WR Vernier time in PM Table")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_WRVT")
 	field(FTVL, "ULONG")
@@ -164,6 +176,7 @@ record(waveform, "${UUT}:PM:TAB:WRVT")
 
 record(waveform, "${UUT}:PM:TAB:WRUS")
 {
+	field(DESC, "WR microseconds in PM Table")
 	field(DTYP, "asynInt64ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))PM_COL_WRUS")
 	field(FTVL, "INT64")
@@ -176,7 +189,9 @@ record(waveform, "${UUT}:PM:TAB:WRUS")
 		}
 	})
 }
+
 record(longout, "${UUT}:PM:TAB:Save") {
+    field(DESC, "Table save in PM Table")
     field(MDEL, "-1") # ensure we always trigger group monitor
     field(TPRO, "1")
     info(Q:group, {
