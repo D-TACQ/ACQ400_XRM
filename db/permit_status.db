@@ -1,19 +1,20 @@
 # permit_status.db
 
 record(mbbiDirect, "${UUT}:${SITE}:PRMT:STAT:LIVE") {
+	field(DESC, "site instantaneous value")
 	field(DTYP, "asynUInt32Digital")
 	field(INP,  "@asynMask($(PORT),0,4294967295,$(TIMEOUT))PERMIT_TRG_LIVE")
 	field(SCAN, "I/O Intr")
-	field(DESC, "site instantaneous value")
 }
 
 record(mbboDirect, "${UUT}:${SITE}:PRMT:STAT:LATCH") {
+	field(DESC, "site latch value, write bit clear")
 	field(DTYP, "Soft Channel")
 	field(FLNK, "$(UUT):$(SITE):PRMT:STAT:LATCH:w PP")
-	field(DESC, "site latch value, write bit clear")
 }
 
 record(mbbiDirect, "${UUT}:${SITE}:PRMT:STAT:LATCH:r") {
+	field(DESC, "site latch value, write bit clear (read helper PV)")
 	field(DTYP, "asynUInt32Digital")
 	field(INP,  "@asynMask($(PORT),0,4294967295,$(TIMEOUT))PERMIT_TRG_STAT")
 	field(SCAN, "I/O Intr")
@@ -21,6 +22,7 @@ record(mbbiDirect, "${UUT}:${SITE}:PRMT:STAT:LATCH:r") {
 }
 
 record(mbboDirect, "${UUT}:${SITE}:PRMT:STAT:LATCH:w") {
+	field(DESC, "site latch value, write bit clear (write helper PV)")
 	field(DTYP, "asynUInt32Digital")
 	field(OUT,  "@asynMask($(PORT),0,4294967295,$(TIMEOUT))PERMIT_TRG_STAT")
 	field(SDIS, "$(UUT):$(SITE):PRMT:STAT:LATCH:s.PACT")
@@ -28,6 +30,7 @@ record(mbboDirect, "${UUT}:${SITE}:PRMT:STAT:LATCH:w") {
 }
 
 record(mbboDirect, "${UUT}:${SITE}:PRMT:STAT:LATCH:s") {
+	field(DESC, "site latch value, write bit clear (sync helper PV)")
 	field(DTYP, "Soft Channel")
 	field(DOL,  "$(UUT):$(SITE):PRMT:STAT:LATCH:r")
 	field(OMSL, "closed_loop")
