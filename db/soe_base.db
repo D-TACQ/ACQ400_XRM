@@ -2,6 +2,7 @@
 
 record(bo, "${UUT}:SOE:RUNSTOP")
 {
+	field(DESC, "Start/stop Sample on Event")
 	field(PINI, "YES")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))RUNSTOP")
@@ -13,6 +14,7 @@ record(bo, "${UUT}:SOE:RUNSTOP")
 
 record(mbbo, "${UUT}:SOE:STRATEGY")
 {
+	field(DESC, "Select which SoE strategy to use")
 	field(PINI, "YES")
 	field(VAL,  "0")
 	field(DTYP, "asynInt32")
@@ -38,6 +40,7 @@ record(mbbo, "${UUT}:SOE:STRATEGY")
 }
 record(longin, "${UUT}:SOE:UPDATES")
 {
+	field(DESC, "Count of SoE updates")
 	field(PINI, "NO")
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))UPDATES")
@@ -47,6 +50,7 @@ record(longin, "${UUT}:SOE:UPDATES")
 
 record(longin, "${UUT}:SOE:FMT_RX_TIMEOUTS")
 {
+	field(DESC, "Count of FMT RX timeouts")
 	field(PINI, "NO")
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_RX_TIMEOUTS")
@@ -58,87 +62,80 @@ record(longin, "${UUT}:SOE:FMT_RX_TIMEOUTS")
 
 record(longin, "${UUT}:SOE:FMT_RX_TIMEOUT_REASON")
 {
+	field(DESC, "reason for last error")
 	field(PINI, "NO")
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_RX_TIMEOUT_REASON")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
-
-	field(DESC, "reason for last error")
 }
 
 record(longin, "${UUT}:SOE:FMT_RX_SUCCESS")
 {
+	field(DESC, "Successful matchups")
 	field(PINI, "NO")
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_RX_SUCCESS")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
-
-	field(DESC, "Successful matchups")
 }
 
 record(int64in, "${UUT}:SOE:FMT:DELTA_TS")
 {
+	field(DESC, "Difference first Buf TS and FMT TS")
 	field(PINI, "NO")
 	field(DTYP, "asynInt64")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_DELTA_TS")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
-
-	field(DESC, "Difference first Buf TS and FMT TS")
 	field(EGU,  "usec")
 }
 
 record(longin, "${UUT}:SOE:FMT:EV_MATCHES")
 {
+	field(DESC, "Number of Events matched this CYCLE")
 	field(PINI, "NO")
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_EV_MATCHES")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
-
-	field(DESC, "Number of Events matched this CYCLE")
 }
 
 record(longin, "${UUT}:SOE:FMT:EV_NIB")
 {
+	field(DESC, "Number of Events NOT IN BUFFER")
 	field(PINI, "NO")
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_EV_NOT_IN_BUFFER")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
-
-	field(DESC, "Number of Events NOT IN BUFFER")
 }
 
 
 record(longin, "${UUT}:SOE:FMT:BUF_POS")
 {
+	field(DESC, "FMT buffer in use -1:PRE, 0:CUR, 1:NEXT")
 	field(PINI, "NO")
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_BUF_POS")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
-
-	field(DESC, "FMT buffer in use -1:PRE, 0:CUR, 1:NEXT")
 }
-
 
 record(longin, "${UUT}:SOE:FMT:NEXT_RETRY")
 {
+	field(DESC, "if NEXT, numretries (delay CYCLE/5)")
 	field(PINI, "NO")
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_FMT_NEXT_RETRY")
 	field(SCAN, "I/O Intr")
 	field(TSE,  "-2")
-
-	field(DESC, "if NEXT, numretries (delay CYCLE/5)")
 	#            1234567890123456789012345678901234567890
 }
 
 record(int64in, "${UUT}:SOE:TS_USEC")
 {
+	field(DESC, "Timestamp in microseconds")
 	field(PINI, "NO")
 	field(DTYP, "asynInt64")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TS_USEC")
@@ -149,6 +146,7 @@ record(int64in, "${UUT}:SOE:TS_USEC")
 
 record(longin, "${UUT}:SOE:KBUF:INDEX")
 {
+	field(DESC, "current buffer number")
 	field(PINI, "NO")
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_KBUF_INDEX")
@@ -159,10 +157,10 @@ record(longin, "${UUT}:SOE:KBUF:INDEX")
 			"INDEX": {+channel:"VAL"}
 		}
 	})
-	field(DESC, "current buffer number")
 }
 record(int64in, "${UUT}:SOE:KBUF:WRT0")
 {
+	field(DESC, "start time in buffer")
 	field(PINI, "NO")
 	field(DTYP, "asynInt64")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_KBUF_WRT0")
@@ -173,10 +171,10 @@ record(int64in, "${UUT}:SOE:KBUF:WRT0")
 			"WRT0": {+channel:"VAL"}
 		}
 	})
-	field(DESC, "start time in buffer")
 }
 record(int64in, "${UUT}:SOE:KBUF:WRT1")
 {
+	field(DESC, "end time in buffer")
 	field(PINI, "NO")
 	field(DTYP, "asynInt64")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_KBUF_WRT1")
@@ -187,11 +185,11 @@ record(int64in, "${UUT}:SOE:KBUF:WRT1")
 			"WRT1": {+channel:"VAL"}
 		}
 	})
-	field(DESC, "end time in buffer")
 }
 
 
 record(waveform, "${UUT}:SOE_LUT:TAB:Labels_") {
+	field(DESC, "Labels for SoE LUT")
 	field(FTVL, "STRING")
 	field(NELM, "5")
 	field(INP , {const:["Row", "Event", "Pad", "PV_ID", "OFFSET_US"]})
@@ -206,6 +204,7 @@ record(waveform, "${UUT}:SOE_LUT:TAB:Labels_") {
 
 record(waveform, "${UUT}:SOE_LUT:TAB:ROWNUM")
 {
+	field(DESC, "Row numbers for SoE LUT")
 	field(DTYP, "asynInt8ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_LUT_COL_ROWNUM")
 	field(FTVL, "UCHAR")
@@ -221,6 +220,7 @@ record(waveform, "${UUT}:SOE_LUT:TAB:ROWNUM")
 
 record(waveform, "${UUT}:SOE_LUT:TAB:EVENT")
 {
+	field(DESC, "Event number in SoE LUT")
 	field(DTYP, "asynInt16ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_LUT_COL_EVENT")
 	field(FTVL, "USHORT")
@@ -236,6 +236,7 @@ record(waveform, "${UUT}:SOE_LUT:TAB:EVENT")
 
 record(waveform, "${UUT}:SOE_LUT:TAB:PAD")
 {
+	field(DESC, "Pad value in SoE LUT")
 	field(DTYP, "asynInt16ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_LUT_COL_PAD")
 	field(FTVL, "USHORT")
@@ -249,9 +250,9 @@ record(waveform, "${UUT}:SOE_LUT:TAB:PAD")
 	})
 }
 
-
 record(waveform, "${UUT}:SOE_LUT:TAB:PV_ID")
 {
+	field(DESC, "PV ID in SoE LUT")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_LUT_COL_PV_ID")
 	field(FTVL, "ULONG")
@@ -267,6 +268,7 @@ record(waveform, "${UUT}:SOE_LUT:TAB:PV_ID")
 
 record(waveform, "${UUT}:SOE_LUT:TAB:TS")
 {
+	field(DESC, "Timestamp in SoE LUT")
 	field(DTYP, "asynInt64ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_LUT_COL_OFFSET_US")
 	field(FTVL, "INT64")
@@ -281,7 +283,9 @@ record(waveform, "${UUT}:SOE_LUT:TAB:TS")
 	})
 }
 
-record(longout, "${UUT}:SOE_LUT:TAB:Save") {
+record(longout, "${UUT}:SOE_LUT:TAB:Save")
+{
+    field(DESC, "TODO")
     field(MDEL, "-1") # ensure we always trigger group monitor
     field(TPRO, "1")
     info(Q:group, {
@@ -297,6 +301,7 @@ record(longout, "${UUT}:SOE_LUT:TAB:Save") {
 
 record(longout, "${UUT}:SOE_LUT:REDIT:ROW")
 {
+	field(DESC, "Start row in SoE LUT roweditor")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_ROW")
 	field(PINI, "YES")
@@ -307,8 +312,10 @@ record(longout, "${UUT}:SOE_LUT:REDIT:ROW")
 		}
 	})
 }
+
 record(longout, "${UUT}:SOE_LUT:REDIT:ROWCOUNT")
 {
+	field(DESC, "N rows to edit in SoE LUT roweditor")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_ROWCOUNT")
 	field(PINI, "YES")
@@ -320,9 +327,9 @@ record(longout, "${UUT}:SOE_LUT:REDIT:ROWCOUNT")
 	})
 }
 
-
 record(longout, "${UUT}:SOE_LUT:REDIT:EVENT")
 {
+	field(DESC, "Start event number in SoE LUT roweditor")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_EVENT")
 	field(PINI, "YES")
@@ -333,8 +340,10 @@ record(longout, "${UUT}:SOE_LUT:REDIT:EVENT")
 		}
 	})
 }
+
 record(longout, "${UUT}:SOE_LUT:REDIT:EVENT_STEP")
 {
+	field(DESC, "Incerement events by N per row in SoE LUT roweditor")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_EVENT_STEP")
 	field(PINI, "YES")
@@ -345,8 +354,10 @@ record(longout, "${UUT}:SOE_LUT:REDIT:EVENT_STEP")
 		}
 	})
 }
+
 record(longout, "${UUT}:SOE_LUT:REDIT:PV_ID")
 {
+	field(DESC, "Start PV ID in SoE LUT roweditor")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_PV_ID")
 	field(PINI, "YES")
@@ -357,8 +368,10 @@ record(longout, "${UUT}:SOE_LUT:REDIT:PV_ID")
 		}
 	})
 }
+
 record(longout, "${UUT}:SOE_LUT:REDIT:PV_ID_STEP")
 {
+	field(DESC, "Increment PV ID by N per row in SoE LUT roweditor")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_PV_ID_STEP")
 	field(PINI, "YES")
@@ -369,8 +382,10 @@ record(longout, "${UUT}:SOE_LUT:REDIT:PV_ID_STEP")
 		}
 	})
 }
+
 record(longout, "${UUT}:SOE_LUT:REDIT:OFFSET_US")
 {
+	field(DESC, "Starting value for offset usec in SoE LUT roweditor")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_OFFSET_US")
 	field(PINI, "YES")
@@ -384,6 +399,7 @@ record(longout, "${UUT}:SOE_LUT:REDIT:OFFSET_US")
 
 record(longout, "${UUT}:SOE_LUT:REDIT:OFFSET_US_STEP")
 {
+	field(DESC, "Increment offset usec by N per row in SoE LUT roweditor")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_OFFSET_US_STEP")
 	field(PINI, "YES")
@@ -397,6 +413,7 @@ record(longout, "${UUT}:SOE_LUT:REDIT:OFFSET_US_STEP")
 
 record(longout, "${UUT}:SOE_LUT:REDIT:COMMIT")
 {
+	field(DESC, "Run roweditor with the set option on the SoE LUT")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SOE_LUT_REDIT_COMMIT")
 	info(Q:group, {
