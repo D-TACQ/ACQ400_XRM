@@ -2,6 +2,7 @@
 
 record(mbbo, "$(UUT):PRMT:COMMIT")
 {
+	field(DESC, "TODO")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))PERMIT_COMMIT")
 	field(NOBT, "2")
@@ -17,6 +18,7 @@ record(mbbo, "$(UUT):PRMT:COMMIT")
 
 record(bo, "$(UUT):PRMT:LOCK")
 {
+	field(DESC, "TODO")
 	field(DTYP, "asynInt32")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))PERMIT_LOCK")
 	field(ONAM, "UNLOCK")
