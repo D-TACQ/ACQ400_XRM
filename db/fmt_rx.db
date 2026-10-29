@@ -1,16 +1,16 @@
 
-
 record(longout, "${UUT}:FMT:PM_TRG:EVT")
 {
+	field(DESC, "SPEC EVENT that will trigger PM")
 	field(DTYP, "asynInt32")
 	field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_PM_TRG_EVT")
 	field(PINI, "YES")
 	field(VAL,  "0")
-	field(DESC, "SPEC EVENT that will trigger PM")
 }
 
 record(bi, "${UUT}:FMT:PM_TRG:EVT:ACT")
 {
+	field(DESC, "TODO")
 	field(DTYP, "asynInt32")
 	field(INP, "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_PM_TRG_EVT_ACTION")
 	field(SCAN, "I/O Intr")
@@ -20,6 +20,7 @@ record(bi, "${UUT}:FMT:PM_TRG:EVT:ACT")
 
 record(calcout, "${UUT}:FMT:PM_TRG:EVT:ACT:out")
 {
+	field(DESC, "TODO")
 	field(INPA, "${UUT}:FMT:PM_TRG:EVT:ACT")
 	field(CALC, "A")
 	field(OOPT, "Transition To Non-zero")
@@ -32,8 +33,8 @@ record(calcout, "${UUT}:FMT:PM_TRG:EVT:ACT:out")
 
 record(longin, "${UUT}:FMT:NULL_FMT_COUNT")
 {
+	field(DESC, "counts FMT requests when none available")
 	field(DTYP, "asynInt32")
 	field(INP, "@asyn($(PORT),$(ADDR),$(TIMEOUT))NULL_FMT_COUNT")
 	field(SCAN, "I/O Intr")
-	field(DESC, "counts FMT requests when none available")
 }
