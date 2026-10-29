@@ -3,6 +3,7 @@
 
 record(stringin, "${UUT}:FMT:MC_GROUP")
 {
+	field(DESC, "Multicast group for FMT multicast table")
 	field(PINI, "YES")
 	field(DTYP, "asynOctetRead")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_MC_GRP")
@@ -11,6 +12,7 @@ record(stringin, "${UUT}:FMT:MC_GROUP")
 
 record(longin, "${UUT}:FMT:MC_PORT")
 {
+	field(DESC, "Multicast port for FMT multicast table")
 	field(PINI, "YES")
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FMT_MC_PORT")
@@ -20,6 +22,7 @@ record(longin, "${UUT}:FMT:MC_PORT")
 
 
 record(waveform, "${UUT}:FMT:TAB:Labels_") {
+	field(DESC, "Column labels for FMT table")
         field(FTVL, "STRING")
         field(NELM, "5")
         field(INP , {const:["Row", "Event", "Pad", "CliDat", "TS"]})
@@ -34,6 +37,7 @@ record(waveform, "${UUT}:FMT:TAB:Labels_") {
 
 record(waveform, "${UUT}:FMT:TAB:ROWNUM")
 {
+	field(DESC, "Row numbers for FMT table")
 	field(DTYP, "asynInt8ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_ROWNUM")
 	field(FTVL, "UCHAR")
@@ -50,6 +54,7 @@ record(waveform, "${UUT}:FMT:TAB:ROWNUM")
 
 record(waveform, "${UUT}:FMT:TAB:EVENT")
 {
+	field(DESC, "Events for FMT table")
 	field(DTYP, "asynInt16ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_EVENT")
 	field(FTVL, "USHORT")
@@ -65,6 +70,7 @@ record(waveform, "${UUT}:FMT:TAB:EVENT")
 
 record(waveform, "${UUT}:FMT:TAB:PAD")
 {
+	field(DESC, "Pad value for FMT table")
 	field(DTYP, "asynInt16ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_PAD")
 	field(FTVL, "USHORT")
@@ -81,6 +87,7 @@ record(waveform, "${UUT}:FMT:TAB:PAD")
 
 record(waveform, "${UUT}:FMT:TAB:CLIDAT")
 {
+	field(DESC, "CLIDAT field value for FMT table")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_CLIDAT")
 	field(FTVL, "ULONG")
@@ -96,6 +103,7 @@ record(waveform, "${UUT}:FMT:TAB:CLIDAT")
 
 record(waveform, "${UUT}:FMT:TAB:TS")
 {
+	field(DESC, "Timestamp value for FMT table")
 	field(DTYP, "asynInt64ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FMT_COL_TS")
 	field(FTVL, "INT64")
@@ -111,6 +119,7 @@ record(waveform, "${UUT}:FMT:TAB:TS")
 }
 
 record(longout, "${UUT}:FMT:TAB:Save") {
+    field(DESC, "TODO")
     field(MDEL, "-1") # ensure we always trigger group monitor
     field(TPRO, "1")
     info(Q:group, {
