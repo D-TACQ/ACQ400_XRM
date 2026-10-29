@@ -1,13 +1,14 @@
 record(waveform, "${UUT}:SOE_HLD" ){
+	field(DESC, "RAW SoE holding table buffer")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_TABLE_WF")
 	field(FTVL, "LONG")
 	field(SCAN, "I/O Intr")
 	field(NELM, "6400")            # biggest possible.
-	field(DESC, "RAW hold buffer")
 }
 
 record(waveform, "${UUT}:SOE_HLD:TAB:Labels_") {
+	field(DESC, "Labels for SoE holding table columns")
 	field(FTVL, "STRING")
 	field(NELM, "17")
 	field(INP , {const:["Row", "EVENT", "PV_ID", "OFFSET_US", "CLIDAT", "TIMESTAMP",
@@ -24,6 +25,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:Labels_") {
 
 record(waveform, "${UUT}:SOE_HLD:TAB:ROWNUM")
 {
+	field(DESC, "Row numbers in SoE HT")
 	field(DTYP, "asynInt8ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_ROWNUM")
 	field(FTVL, "UCHAR")
@@ -39,6 +41,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:ROWNUM")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:EVT")
 {
+	field(DESC, "Event numbers in SoE HT")
 	field(DTYP, "asynInt16ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_EVT")
 	field(FTVL, "USHORT")
@@ -54,6 +57,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:EVT")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:PV_ID")
 {
+	field(DESC, "PV IDs in SoE HT")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_PV_ID")
 	field(FTVL, "ULONG")
@@ -69,6 +73,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:PV_ID")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:OFF_US")
 {
+	field(DESC, "Offset in microseconds in SoE HT")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_OFFSET_US")
 	field(FTVL, "LONG")
@@ -85,6 +90,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:OFF_US")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:CLIDAT")
 {
+	field(DESC, "CLIDAT in SoE HT")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_CLIDAT")
 	field(FTVL, "ULONG")
@@ -100,6 +106,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:CLIDAT")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:TS")
 {
+	field(DESC, "Timestamp in SoE HT")
 	field(DTYP, "asynInt64ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_TS")
 	field(FTVL, "INT64")
@@ -116,6 +123,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:TS")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:AI1")
 {
+	field(DESC, "First AI channel in SoE HT")
 	field(DTYP, "asynFloat32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_AI1")
 	field(FTVL, "FLOAT")
@@ -131,6 +139,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:AI1")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:AI2")
 {
+	field(DESC, "Second AI channel in SoE HT")
 	field(DTYP, "asynFloat32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_AI2")
 	field(FTVL, "FLOAT")
@@ -146,6 +155,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:AI2")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:DI1")
 {
+	field(DESC, "First DI channel in SoE HT")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_DI1")
 	field(FTVL, "ULONG")
@@ -161,6 +171,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:DI1")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:DI2")
 {
+	field(DESC, "Second DI channel in SoE HT")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_DI2")
 	field(FTVL, "ULONG")
@@ -176,6 +187,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:DI2")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:SP0")
 {
+	field(DESC, "First SPAD word in SoE HT")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_SP0")
 	field(FTVL, "ULONG")
@@ -191,6 +203,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:SP0")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:SP1")
 {
+	field(DESC, "Second SPAD word in SoE HT")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_SP1")
 	field(FTVL, "ULONG")
@@ -206,6 +219,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:SP1")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:SP2")
 {
+	field(DESC, "Third SPAD word in SoE HT")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_SP2")
 	field(FTVL, "ULONG")
@@ -221,6 +235,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:SP2")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:SP3")
 {
+	field(DESC, "Fourth SPAD word in SoE HT")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_SP3")
 	field(FTVL, "ULONG")
@@ -236,6 +251,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:SP3")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:WRVS")
 {
+	field(DESC, "WR Vernier seconds in SoE HT")
 	field(DTYP, "asynInt8ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_WRVS")
 	field(FTVL, "UCHAR")
@@ -251,6 +267,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:WRVS")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:WRVT")
 {
+	field(DESC, "WR Vernier in SoE HT")
 	field(DTYP, "asynInt32ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_WRVT")
 	field(FTVL, "ULONG")
@@ -266,6 +283,7 @@ record(waveform, "${UUT}:SOE_HLD:TAB:WRVT")
 
 record(waveform, "${UUT}:SOE_HLD:TAB:WRUS")
 {
+	field(DESC, "WR microseconds	 in SoE HT")
 	field(DTYP, "asynInt64ArrayIn")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SOE_HLD_COL_WRUS")
 	field(FTVL, "INT64")
@@ -278,7 +296,9 @@ record(waveform, "${UUT}:SOE_HLD:TAB:WRUS")
 		}
 	})
 }
+
 record(longout, "${UUT}:SOE_HLD:TAB:Save") {
+    field(DESC, "TODO")
     field(MDEL, "-1") # ensure we always trigger group monitor
     field(TPRO, "1")
     info(Q:group, {
