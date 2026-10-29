@@ -1,11 +1,12 @@
 # Base records for INST
 
 # intermediates: not in group, for local calc.
-record (stringin,  "${UUT}:${FUN}:STRATEGY") {
+record (stringin,  "${UUT}:${FUN}:STRATEGY")
+{
+	field(DESC, "strategy: master or spy")
 	field(DTYP, "asynOctetRead")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))INST_STRATEGY")
 	field(SCAN, "I/O Intr")
-	field(DESC, "strategy: master or spy")
 	info(Q:group, {
 		"${UUT}:${FUN}:REDIS:SET": {
 			"STRATEGY": {+channel:"VAL"}
@@ -13,7 +14,9 @@ record (stringin,  "${UUT}:${FUN}:STRATEGY") {
 	})	
 }
 
-record (stringout,  "${UUT}:${FUN}:REDIS_HOST") {
+record (stringout,  "${UUT}:${FUN}:REDIS_HOST")
+{
+	field(DESC, "hostname or IP of redis server")
 	field(DTYP, "asynOctetWrite")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_HOST")
 	field(PINI, "YES")
@@ -25,7 +28,9 @@ record (stringout,  "${UUT}:${FUN}:REDIS_HOST") {
 	})	
 }
 
-record (stringout,  "${UUT}:${FUN}:REDIS_PORT") {
+record (stringout,  "${UUT}:${FUN}:REDIS_PORT")
+{
+	field(DESC, "redis port on redis server")
 	field(DTYP, "asynOctetWrite")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_PORT")
 	field(PINI, "YES")
@@ -37,7 +42,9 @@ record (stringout,  "${UUT}:${FUN}:REDIS_PORT") {
 	})	
 }
 
-record (stringout,  "${UUT}:${FUN}:ACQ_PORT") {
+record (stringout,  "${UUT}:${FUN}:ACQ_PORT")
+{
+	field(DESC, "ACQ data port to connect to (e.g. 4210)")
 	field(DTYP, "asynOctetWrite")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))ACQ_PORT")
 	field(PINI, "YES")
@@ -48,10 +55,12 @@ record (stringout,  "${UUT}:${FUN}:ACQ_PORT") {
 		}
 	})
 }
-record (stringout,  "${UUT}:${FUN}:REDIS_MKEY") {
+
+record (stringout,  "${UUT}:${FUN}:REDIS_MKEY")
+{
+	field(DESC, "Redis base key (UUT hostname?)")
 	field(DTYP, "asynOctetWrite")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_MKEY")
-	field(DESC, "Major (UUT) key")
 	field(PINI, "YES")
 	field(VAL,  "${REDIS_MKEY}")
 	
@@ -62,7 +71,9 @@ record (stringout,  "${UUT}:${FUN}:REDIS_MKEY") {
 	})	
 }
 
-record (longin, "${UUT}:${FUN}:REDIS_BCOUNT") {
+record (longin, "${UUT}:${FUN}:REDIS_BCOUNT")
+{
+	field(DESC, "N buffers (cycles) so far")
 	field(DTYP, "asynInt32")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_BCOUNT")
 	field(SCAN, "I/O Intr")
@@ -72,10 +83,11 @@ record (longin, "${UUT}:${FUN}:REDIS_BCOUNT") {
 			"BCOUNT": {+channel:"VAL"}
 		}
 	})
-	field(DESC, "# buffers (cycles) so far")	
 }
 
-record (stringin, "${UUT}:${FUN}:REDIS_STATUS") {
+record (stringin, "${UUT}:${FUN}:REDIS_STATUS")
+{
+	field(DESC, "Redis status value")	
 	field(DTYP, "asynOctetRead")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_STATUS")
 	field(SCAN, "I/O Intr")
@@ -85,14 +97,14 @@ record (stringin, "${UUT}:${FUN}:REDIS_STATUS") {
 			"STATUS": {+channel:"VAL"}
 		}
 	})
-	field(DESC, "status value")	
 }
 
-record (stringin,  "${UUT}:${FUN}:REDIS_MMKEY") {
+record (stringin,  "${UUT}:${FUN}:REDIS_MMKEY")
+{
+	field(DESC, "Latest Major/Minor (UUT/Timestamp) key")
 	field(DTYP, "asynOctetRead")
 	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))REDIS_MMKEY")
 	field(SCAN, "I/O Intr")
-	field(DESC, "Latest Major/Minor (UUT/Timestamp) key")
 	
 	info(Q:group, {
 		"${UUT}:${FUN}:REDIS:STA": {
@@ -101,7 +113,9 @@ record (stringin,  "${UUT}:${FUN}:REDIS_MMKEY") {
 	})
 }
 
-record (stringout,  "${UUT}:${FUN}:STREAM_SUBSET_MASK") {
+record (stringout,  "${UUT}:${FUN}:STREAM_SUBSET_MASK")
+{
+	field(DESC, "Channel mask to select subset of channels")
 	field(DTYP, "asynOctetWrite")
 	field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))STREAM_SUBSET_MASK")
 	field(DOL,  {pva: {pv:"${ACQ400IOC}:0:STREAM_SUBSET_MASK", "proc":"CPP"}})
