@@ -1,6 +1,7 @@
 # relay records from UUT
 
 record (${DATATYPE}, "${UUT}:${SUFFIX}") {
+	field(DESC, "Relayed record from acq400ioc")
 	field(DTYP, "Soft Channel")
 	field(DOL,  {pva: {pv:"${ACQ400IOC}:${SUFFIX}", "proc":"CPP"}})	
 	field(OMSL, "closed_loop")
